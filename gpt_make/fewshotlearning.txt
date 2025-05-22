@@ -1,0 +1,128 @@
+One Tech Blog
+
+CLOSE
+キーワード
+キーワードを入力
+IoT
+ブロックチェーン
+暗号
+SSI
+カテゴリー
+
+カテゴリーを選択
+タグ
+ActcastAmplifyAWSAzureChatGPTCI/CDDIDDockerDroneECSeVTOLFargateFlaskHypeledgerHyperledgerIdentityiOSIoTJAMStackJavaJOSEJWTNode.jsPythonRaspberryPiServerlessShap-ESSISwiftSwiftUIUIKitVue.jsWeb5x.509ZKPホラクラシー画像処理空飛ぶクルマ
+検索
+CLOSE
+カテゴリー一覧
+AI
+Backend
+Blockchain
+Drone
+eVTOL
+Frontend
+General
+Identity Wallet
+IoT
+Mobile
+NFT
+PlayCanvas
+Programming
+Security
+SSI
+XR
+タグ一覧
+Actcast Amplify AWS Azure ChatGPT CI/CD DID Docker Drone ECS eVTOL Fargate Flask Hypeledger Hyperledger Identity iOS IoT JAMStack Java JOSE JWT Node.js Python RaspberryPi Serverless Shap-E SSI Swift SwiftUI UIKit Vue.js Web5 x.509 ZKP ホラクラシー 画像処理 空飛ぶクルマ
+HOMEAIFew-shot Learning : 少ない画像データで学習する【前編】
+Few-shot Learning : 少ない画像データで学習する【前編】
+2020-12-09 2023-10-11 AI 19652回 0件
+AI
+
+GMOグローバルサイン・ホールディングスCTO室の@zulfazlihussinです。
+私はhakaru.aiの開発チームのAI開発を担当しております。この記事では、機械学習を使って少ない画像データでも効率的に学習することができるFew-shot Learning手法について述べます。また、複数の情報源（画像⇆テキスト）からZero-shot学習について、興味がある方は、こちらの記事をお読みいただければと思います。
+
+背景
+画像解析の分野で一番有名な出来事として、画像認識の精度を争う競技大会、ImageNet Larger Scale Visual Recognition Challenge（ILSVRC）の2012年の大会があります。この大会では、
+初めて深層学習を使った機械学習モデルが、他のチームが採用したモデルに10%以上の差をつけて優勝しました。このイベント以来、深層学習を使った画像認識が注目を浴びています。
+
+今は、多くの深層学習を使った画像認識手法が研究されており、ライブラリやツールなどで一般のユーザも簡単に応用できるようになりました。
+
+深層学習ではたくさんのデータを使って、高い精度で画像を認識することができますが、データが少ない場合は画像を認識することが困難と言われています。人間ならば、過去少数回見たことがある物体が、目の前に同じような物体が現れたとき、それを思い出して認識することが可能でしょう。下記のOmniglotデータセットからの例を見てみましょう（Omniglotデータセットは50種類の言語で書いた手書き文字のデータセットです）。例えば、写真（a）と写真（b）はそれぞれのキャラクタ番号が51と29になっており、次の写真（c）のキャラクタ番号を当てようとします。ほとんどの人は、正しく51と答えるでしょう。
+
+
+これはなぜでしょうか？
+人間はこれまでの学習経験を活かして、考えることができるからです。機械学習の分野でも人間らしく考えることができるように多くの手法が提案されています。その一つは、過去の経験を活かして、少ないデータで新しい学習ができるFew-shot learningの学習手法です。
+
+機械学習はどうやって画像を認識するのか？
+例えば、猫と電車の２種類の画像が複数枚あるとします。猫の画像は “猫” でラベルを付け、電車の画像は “電車” でラベルを付けます。機械学習は “猫はどんな画像？ 電車はどんな画像？” を知るために、全ラベル付画像データを学習し、経験を蓄積します。学習するとき、まず、“猫”の重みと”電車”の重みを同じ値で初期化します。次はラベル付画像、X を入力します（X の画像は ”猫” でラベルを付けています）。X のラベルが “猫” なので、X に対して”猫”の重みを大きくし、“電車”の重みを小さくします。これは、次回 X と似ているような画像があるとき、“猫” と判定するようにしたいからです。入力画像を十分な画像数で繰り返し学習することで、各画像の “猫” の重みと “電車” 重みがだんだん分かるようになります。そして、未知の画像を推理するとき、“猫” の重みの方が大きければ猫と判定し、“電車” 重みが大きければ電車と判定します。
+
+十分な画像数とは一体どれぐらいなのか？
+画像数がどれぐらい必要かは画像の種類、または学習手法によって異なります。以下は機械学習を用いた画像認識プロジェクトで使った画像数を示しています。これを見て分かるかと思いますが、ほとんどのプロジェクトは良い精度を得るために膨大な画像数を学習しなければなりません。
+
+プロジェクト名	タスク	データ数
+MNIST	手書き文字認識	70,000
+CIFAR-10	物体認識	60,000
+MegaFace	顔認識	5,700,000
+FaceNet	顔認識	450,000
+MITCSAIL	画像アノテーション	897,000
+学習する画像数が少ないと、過学習が起こります。
+過学習とは、教師データのみを学習し過ぎてしまった状態です。これにより、少しでも教師データと異なる新しい画像（明るさ等）を推理するとき、その画像が判定できなくなります。過学習を起こらないようにするために、大量のデータを学習しなければなりません。
+
+また、深層学習では新しいクラス（画像のラベル）の画像を適応するとき、既存のモデルパラメータの全体を更新しなければなりません。そのため、新しいクラスを追加するのに、全体のモデルパラメータを再学習をする必要があります。モデルパラメータはラベルと画像の関係を表す値です（重みなど）。
+
+Few-shot Learningとは
+Few-shot Learningとは少ないデータ（画像等）で効率的に学習することができる学習手法です。
+Few-shot learningの場合、過去に学習した経験値を応用して、新しいクラスの学習を追加することができるようになります。また、全体の再学習が不要のため、少ない画像数で学習することが可能になります。また、Few-shot Learningは、最近話題になっているGPT-3にも採用され、タスクに特化したパラメータの更新を行わずにさまざまなタスクを解決できるよう組み込まれています。GPTのベース技術でもあるTransformerについての記事 「Transformerをゼロから実装する」 も書きましたので、参考していただければと思います。
+
+なぜFew-shot learningは少ないデータでの学習が可能なのか？
+Few-shot Learningではtransfer learning（もしくはmeta-transfer learning ）手法を使って、過去に学習したモデルのパラメータを新しく学習したいモデルのパラメータへ移転し、初期値として使うことができます［3］。そのため、少ないデータ数での学習が可能になります。
+
+Few-shot Learningについては、複数のアプローチが研究されています。その一つは、メタ学習のアプローチ（meta-learning）です。メタ学習では一般の深層学習と異なり、モデルのパラメータそのもの学習するではなく、モデルパラメータがどうやって変化しているかのことを学習します。つまり、モデルパラメータの学習方法を学習します（learning to learn）［2］。メタ学習の中にも複数の手法が提案されています。その中の有力な手法の１つに、MAML（Model-Agnostic Meta-Learning）があります。
+
+MAML（Model-Agnostic Meta-Learning）
+MAML［1］では画像分類タスクを課題設定として考えます。画像分類タスクとは画像の中に写っている物体が「猫」、「犬」、「車」、「電車」など事前に定義されたラベルの中でどれが一番適切かと識別する課題です。複数分類タスクの学習を行った後、新しい分類タスクを学習したいときだけ、少ないデータで新しいクラスの分類を学習することが可能にするのです。
+
+例えば、３文字の手書き文字 A, B, C を３つの分類タスクの学習済のモデルがあるとします。手書き文字Dを新しい分類タスクとして学習したいとき、A,B,Cのモデルのパラメータを初期値として使います。初期値から少量のD文字のデータを学習することで、未知の手書き文字 X を入力するとき、A, B, C, D の中でがどれかという分類が可能になります。
+
+以下はMAMLを考案した論文［1］で紹介したイメージ図を示しています。MAMLではメタ学習で学習したパラメータを最適化します。最適解を導き出すためには、勾配落下ステップを経て損失関数,L を最小化するように初期 θ を探索しています。
+
+
+終わり
+以上で前編を終わります。
+後編では、MAMLについて説明し、論文［1］で紹介した実験結果について述べたいと思います。
+
+参考
+[1] C. Finn, P. Abbeel, S. Levine; Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks; Proceedings of the 34 th International Conference on Machine Learning, Sydney, Australia; 2017
+[2] M. Andrychowicz, M. Denil, S. Gomez, M. W. Hoffman, D. Pfau, T. Schaul, and N. de Freitas; Learning to learn by gradient descent by gradient descent; In Advances in Neural Information Processing Systems; 3981–3989; 2016
+[3] Q. Sun, Y. Liu, T. Chua, B. Schiele; Meta-Transfer Learning for Few-Shot Learning; Computer Vision and Pattern Recognition; 2019
+前の記事Self Sovereign Identity (SSI)の現在地
+2020-12-02
+Self Sovereign Identity (SSI)の現在地
+次の記事iPhoneのLiDARスキャナとPlayCanvasを使って、手軽に3Dモデルを作ってブラウザで動かしてみた。
+2020-12-15
+iPhoneのLiDARスキャナとPlayCanvasを使って、手軽に3Dモデルを作ってブラウザで動かしてみた。
+関連する記事
+AI
+Causal Inference : 起らなかった状況の因果効果を推定する
+Causal Inference : 起らなかった状況の因果効果を推定する
+AI
+マルチモーダル対応の CLIP モデルを使った zero-shot の画像分類を実装する
+マルチモーダル対応の CLIP モデルを使った zero-shot の画像分類を実装する
+AI
+OpenVINOでfine-tuningしたBERTモデルを使用する
+OpenVINOでfine-tuningしたBERTモデルを使用する
+コメントを書く
+メールアドレスが公開されることはありません。 ※ が付いている欄は必須項目です
+
+コメント ※
+名前 ※
+
+メール ※
+
+サイト
+
+ 次回のコメントで使用するためブラウザーに自分の名前、メールアドレス、サイトを保存する。
+
+© GMO GlobalSign Holdings K.K.
+https://www.gmogshd.com/
+グローバルサイン認証サイト　SSL secured クリックして確認　GlobalSign byGMO dark_typeA_100x50.png
