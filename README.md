@@ -26,8 +26,12 @@ where $ \mu $ and $ \sigma $ are the mean and standard deviation of $ x $, and $
 
 LayerNorm acts like a “temperature regulator” for each layer, ensuring that signals remain well-scaled and learning stays stable and efficient.
 
-![1760994689080](image/README/1760994689080.png)
 
+LayerNorm is learnable layer.
+
+Visualize the distribution of output changed by learning.
+
+![layer_norm](image/README/layernorm_training.gif)
 
 ## Inner Features
 
@@ -48,7 +52,6 @@ the prediction of trained ViT.
 ViT is trained with the dataset "CIFAR-10".
 
 ![1760993518301](image/README/1760993518301.png)
-
 
 ## reference site
 
