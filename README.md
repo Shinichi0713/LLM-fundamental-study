@@ -26,12 +26,41 @@ where $ \mu $ and $ \sigma $ are the mean and standard deviation of $ x $, and $
 
 LayerNorm acts like a “temperature regulator” for each layer, ensuring that signals remain well-scaled and learning stays stable and efficient.
 
-
 LayerNorm is learnable layer.
 
 Visualize the distribution of output changed by learning.
 
 ![layer_norm](image/README/layernorm_training.gif)
+
+## Annotation Function
+
+By taking the inner product between each Query and Key, we compute the relevance scores:
+
+$$
+\text{score}(Q, K) = Q K^\top
+$$
+
+→ This produces a score matrix indicating  **how much each word attends to every other word** .
+
+(The shape is ( n \times n ))
+
+---
+
+### (2) Scaling and Softmax Normalization
+
+The scores are then normalized into a probability distribution as follows:
+
+$$
+\text{Attention Weights} = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)
+$$
+
+Dividing by ( \sqrt{d_k} ) prevents the inner product values from becoming too large,
+
+which helps stabilize the gradients during training.
+
+
+![1761459118097](image/README/1761459118097.png)
+
 
 ## Inner Features
 
