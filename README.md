@@ -44,8 +44,6 @@ $$
 
 (The shape is ( n \times n ))
 
----
-
 ### (2) Scaling and Softmax Normalization
 
 The scores are then normalized into a probability distribution as follows:
@@ -60,6 +58,18 @@ which helps stabilize the gradients during training.
 
 
 ![1761459118097](image/README/1761459118097.png)
+
+### attention of token toward the others
+
+* The **i-th row** of the attention matrix shows  *“when the query is token i, which keys (tokens) it pays attention to (assigns weight to)”* .
+* Main patterns:
+
+  * **Diagonal dominance** — the token mainly attends to itself or nearby tokens → local processing (common in language models)
+  * **Focus on CLS / [EOS]** — capturing overall sentence context or summary (typical in classification tasks)
+  * **Attention following phrase structure** — e.g., verbs strongly attending to their objects, adjectives attending to the nouns they modify (semantic relationships)
+  * **Specialization across heads** — some heads focus on local relationships, while others capture long-range dependencies
+
+![1761463514970](image/README/1761463514970.png)
 
 
 ## Inner Features
