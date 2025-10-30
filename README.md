@@ -44,7 +44,7 @@ $$
 
 (The shape is ( n \times n ))
 
-### (2) Scaling and Softmax Normalization
+### Scaling and Softmax Normalization
 
 The scores are then normalized into a probability distribution as follows:
 
@@ -55,7 +55,6 @@ $$
 Dividing by ( \sqrt{d_k} ) prevents the inner product values from becoming too large,
 
 which helps stabilize the gradients during training.
-
 
 ![1761459118097](image/README/1761459118097.png)
 
@@ -70,7 +69,6 @@ which helps stabilize the gradients during training.
   * **Specialization across heads** — some heads focus on local relationships, while others capture long-range dependencies
 
 ![1761463514970](image/README/1761463514970.png)
-
 
 ## Inner Features
 
