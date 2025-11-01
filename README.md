@@ -8,13 +8,13 @@ this site exists to study LLM and technic of VLM.
 
 **Layer Normalization (LayerNorm)** helps stabilize neural network training by normalizing each layer’s activations per sample (not across the batch).
 
-For an input vector ( x ), it normalizes using:
+For an input vector $x$, it normalizes using:
 
 $$
 \text{LayerNorm}(x_i) = \gamma \frac{(x_i - \mu)}{\sigma + \epsilon} + \beta
 $$
 
-where $ \mu $ and $ \sigma $ are the mean and standard deviation of $ x $, and $ \gamma, \beta $ are learnable parameters.
+where $\mu$ and $\sigma$ are the mean and standard deviation of $x$, and $\gamma, \beta$ are learnable parameters.
 
 **Why it stabilizes training:**
 
