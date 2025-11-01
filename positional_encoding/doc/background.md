@@ -20,7 +20,8 @@ Transformer の Self-Attention は、単にトークン同士の関係のみを�
 
 👉 **Positional Encoding は「順番の意味」を学習させるために導入される**
 
----
+> LLMには順序情報がなければ区別が出来ない
+
 
 ## ✅ Positional Encoding の役割・機能
 
@@ -32,7 +33,11 @@ Transformer の Self-Attention は、単にトークン同士の関係のみを�
 | 相対的関係の理解       | 「5語後」「2語前」など相対位置の情報（RoPE 等）  |
 | 長文の文脈保持         | 文の位置に応じて Attention を調整                |
 
----
+> トークンに位置を付与し、順序を理解させる。
+>
+> 順序に依存する意味理解を行う
+>
+> 文の位置に応じてAttentionを調整する
 
 ## ✅ Positional Encoding がなかった場合
 

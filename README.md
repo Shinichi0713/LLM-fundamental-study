@@ -70,6 +70,17 @@ which helps stabilize the gradients during training.
 
 ![1761463514970](image/README/1761463514970.png)
 
+## Positional Encoding
+
+Positional encoding serves the role of capturing positional relationships in language.
+
+The logic is to generate sine and cosine waves with different frequencies depending on the embedding dimension, allowing the model to recognize both short-range and long-range dependencies through the wave values.
+
+I implemented positional encoding in PyTorch and visualized the wave patterns according to the position and dimension.
+
+![1761986434087](image/README/1761986434087.png)
+
+
 ## Inner Features
 
 with VLM-Lens, we analysis the inner feature.
