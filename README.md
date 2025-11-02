@@ -72,6 +72,8 @@ which helps stabilize the gradients during training.
 
 ## Positional Encoding
 
+### Absolute PE
+
 Positional encoding serves the role of capturing positional relationships in language.
 
 The logic is to generate sine and cosine waves with different frequencies depending on the embedding dimension, allowing the model to recognize both short-range and long-range dependencies through the wave values.
@@ -79,6 +81,18 @@ The logic is to generate sine and cosine waves with different frequencies depend
 I implemented positional encoding in PyTorch and visualized the wave patterns according to the position and dimension.
 
 ![1761986434087](image/README/1761986434087.png)
+
+### relative PE
+
+Relative positional encoding teaches an AI model the positional relationships between tokens in a sentence.
+
+One of its main characteristics is that it maintains stable performance even when sentence length varies.
+
+In implementation, markers representing positional information are embedded inside the attention mechanism, so that this information is incorporated when the embedding vectors are processed.
+
+Below figure the work of relative positional information.
+
+![1762062689199](image/README/1762062689199.png)
 
 
 ## Inner Features
