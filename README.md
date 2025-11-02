@@ -94,7 +94,6 @@ Below figure the work of relative positional information.
 
 ![1762062689199](image/README/1762062689199.png)
 
-
 ## Inner Features
 
 with VLM-Lens, we analysis the inner feature.
