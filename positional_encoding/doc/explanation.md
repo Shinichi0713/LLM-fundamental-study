@@ -1,3 +1,5 @@
+# Positional Encoding
+
 LLM（大規模言語モデル）で用いられる**Positional Encoding（位置表現）**には、Transformer登場以降さまざまな手法が提案されています。
 
 以下に、主な方式を体系的にまとめます。
@@ -14,7 +16,6 @@ LLM（大規模言語モデル）で用いられる**Positional Encoding（位�
 | 回転型（Rotary）      | 回転変換で相対位置を表現    | GPT-NeoX、LLaMA、Mistral、Qwen |
 | 注意機構応用（ALiBi） | 距離に応じてAttentionを減衰 | BLOOM、DS-Trlモデルなど        |
 
----
 
 ## ✅ 各方式の具体例
 
@@ -32,7 +33,6 @@ PE(pos,2i+1)=cos(pos/10000^(2i/d))
 
 初期Transformer、GPT-2
 
----
 
 ### 2) 学習型 Positional Embedding（Learned）
 
@@ -43,7 +43,6 @@ PE(pos,2i+1)=cos(pos/10000^(2i/d))
 
 BERT、T5初期など
 
----
 
 ### 3) 相対位置情報（Relative Position Encoding）
 
@@ -68,7 +67,6 @@ Transformer-XL、T5、DeBERTa
 
 DeBERTaは"disentangled attention"でさらに改良
 
----
 
 ### 4) RoPE（Rotary Positional Encoding）
 
