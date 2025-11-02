@@ -1,4 +1,3 @@
-
 # 🎯 Purpose
 
 This site exists to study **Large Language Models (LLMs)** and **Vision-Language Models (VLMs)** — focusing on transformer architecture internals, normalization techniques, attention mechanisms, positional encoding strategies, and internal representation analysis.
@@ -146,6 +145,29 @@ https://www.youtube.com/watch?v=NatwshCTe_4
 
 Always verify version compatibility:
 https://pytorch.org/get-started/locally/
+
+
+### Wiki about LLM
+
+Here is my wili, which indicate information of LLM.
+
+https://github.com/Shinichi0713/LLM-fundamental-study.wiki.git
+
+
+### Arxiv
+
+Here is a natural English translation:
+
+> It is the most well-known and largest paper archive site in the machine learning field. When searching for machine learning papers, you will almost always end up here.
+
+If you'd like a more formal or academic wording, here is another option:
+
+> It is the most prominent and largest repository of research papers in the field of machine learning. When searching for machine learning-related papers, one will almost inevitably arrive at this site.
+
+Let me know if you want a more casual version or one tailored for a presentation or book!
+
+https://arxiv.org/
+
 
 ---
 
