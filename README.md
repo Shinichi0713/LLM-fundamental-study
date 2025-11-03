@@ -94,6 +94,13 @@ Below figure the work of relative positional information.
 
 ![1762062689199](image/README/1762062689199.png)
 
+After learning relation with using dataset, visualize the weight of head of relative, horizontal axis means the distance of token.
+
+With this result, with using relative pe, basically, attention focus on nearside tokens. And the farer, attention become less focus.
+
+![1762136383941](image/README/1762136383941.png)
+
+
 ## Inner Features
 
 with VLM-Lens, we analysis the inner feature.
