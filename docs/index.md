@@ -193,3 +193,13 @@ This site serves as a technical journal for:
 - AI interpretability tools directory
 
 Stay tuned as the study evolves!
+
+## Reference
+
+1. Roadmap of LLM
+[2. ](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm)
+
+2. Roadmap of VLM
+
+https://shinichi0713.github.io/LLM-fundamental-study/roadmap_vlm
+
