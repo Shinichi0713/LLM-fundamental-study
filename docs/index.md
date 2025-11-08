@@ -1,3 +1,7 @@
+---
+layout: default
+title: ホーム
+---
 # 🎯 Purpose
 
 This site exists to study **Large Language Models (LLMs)** and **Vision-Language Models (VLMs)** — focusing on transformer architecture internals, normalization techniques, attention mechanisms, positional encoding strategies, and internal representation analysis.
