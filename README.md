@@ -70,6 +70,40 @@ which helps stabilize the gradients during training.
 
 ![1761463514970](image/README/1761463514970.png)
 
+
+
+### Tokenizer
+
+In this experiment, we used **SentencePiece** to train a tokenizer for Japanese text segmentation using the  **Livedoor News Corpus** .
+
+**Output Results:**
+
+Before training, every character was treated as a separate token.
+
+```
+🔹 Before Training (Character-level segmentation):
+['私', 'は', '自', '然', '言', '語', '処', '理', 'を', '勉', '強', 'し', 'て', 'い', 'ま', 'す', '。']
+
+['そ', 'の', 'ソ', 'フ', 'ト', 'ウ', 'ェ', 'ア', 'は', '多', 'く', 'の', 'ユ', 'ー', 'ザ', 'ー', 'か', 'ら', '賛', '同', 'を', '得', 'て', 'い', 'る', '。']
+```
+
+
+After training, the SentencePiece model produced the following segmentation results.
+It learned that words like **“して” (shite)** and **“から” (kara)** should be kept together as single tokens.
+
+However, terms like **“自然言語解析” (natural language analysis)** and **“ソフトウェア” (software)** were still split into multiple parts.
+This is likely because such words appeared less frequently in the Livedoor dataset.
+
+With a larger training corpus, we expect the model to recognize compound words like “自然言語解析” and “ソフトウェア” as unified tokens.
+
+```
+🔹 After Training (SentencePiece segmentation):
+['▁', '私', 'は', '自', '然', '言', '語', '処', '理', 'を', '勉', '強', 'して', 'い', 'ます', '。']
+['▁', 'その', 'ソ', 'フ', 'ト', 'ウ', 'ェ', 'ア', 'は', '多', 'く', 'の', 'ユ', 'ー', 'ザ', 'ー', 'から', '賛', '同', 'を', '得', 'ている', '。']
+```
+
+
+
 ## Positional Encoding
 
 ### Absolute PE
@@ -99,7 +133,6 @@ After learning relation with using dataset, visualize the weight of head of rela
 With this result, with using relative pe, basically, attention focus on nearside tokens. And the farer, attention become less focus.
 
 ![1762136383941](image/README/1762136383941.png)
-
 
 ## Inner Features
 
