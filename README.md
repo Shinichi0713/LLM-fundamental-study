@@ -129,6 +129,13 @@ With this result, with using relative pe, basically, attention focus on nearside
 
 ![1762136383941](image/README/1762136383941.png)
 
+### RoPE
+
+with using RoPE, show transition of the attention score.
+
+![layer_norm](image/README/attn_animation.gif)
+
+
 ## Inner Features
 
 with VLM-Lens, we analysis the inner feature.
