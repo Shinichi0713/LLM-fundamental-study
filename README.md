@@ -70,9 +70,7 @@ which helps stabilize the gradients during training.
 
 ![1761463514970](image/README/1761463514970.png)
 
-
-
-### Tokenizer
+## Tokenizer
 
 In this experiment, we used **SentencePiece** to train a tokenizer for Japanese text segmentation using the  **Livedoor News Corpus** .
 
@@ -87,7 +85,6 @@ Before training, every character was treated as a separate token.
 ['そ', 'の', 'ソ', 'フ', 'ト', 'ウ', 'ェ', 'ア', 'は', '多', 'く', 'の', 'ユ', 'ー', 'ザ', 'ー', 'か', 'ら', '賛', '同', 'を', '得', 'て', 'い', 'る', '。']
 ```
 
-
 After training, the SentencePiece model produced the following segmentation results.
 It learned that words like **“して” (shite)** and **“から” (kara)** should be kept together as single tokens.
 
@@ -101,8 +98,6 @@ With a larger training corpus, we expect the model to recognize compound words l
 ['▁', '私', 'は', '自', '然', '言', '語', '処', '理', 'を', '勉', '強', 'して', 'い', 'ます', '。']
 ['▁', 'その', 'ソ', 'フ', 'ト', 'ウ', 'ェ', 'ア', 'は', '多', 'く', 'の', 'ユ', 'ー', 'ザ', 'ー', 'から', '賛', '同', 'を', '得', 'ている', '。']
 ```
-
-
 
 ## Positional Encoding
 
