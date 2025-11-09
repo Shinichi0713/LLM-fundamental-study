@@ -99,16 +99,7 @@ BERT-baseより小さいモデルでも同等性能を達成。
 | 学習方式         | RoBERTa-style / RTD      | 汎化性能向上                     |
 | 実装最適化       | FlashAttention           | GPUメモリ削減・高速化            |
 
----
 
-もし希望があれば、
+wikipediaでMLM
 
-📊「Modern BERT と BERT の構造比較図」
-
-や
-
-🧪「RoPE入り vs なし の可視化実験コード」
-
-もセットで出すことができます。
-
-どちらを見てみたいですか？
+![1762664182175](image/explanation/1762664182175.png)
