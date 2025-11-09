@@ -135,7 +135,6 @@ with using RoPE, show transition of the attention score.
 
 ![layer_norm](image/README/attn_animation.gif)
 
-
 ## Inner Features
 
 with VLM-Lens, we analysis the inner feature.
@@ -143,6 +142,14 @@ with VLM-Lens, we analysis the inner feature.
 visualize as heat map.
 
 ![1760833255365](image/README/1760833255365.png)
+
+### ModernBert
+
+
+![1762669526990](image/README/1762669526990.png)
+
+I performed MLM (Masked Language Modeling) with Modern-BERT on a small language dataset. After that, I visualized the attention scores.
+
 
 ## ViT
 
