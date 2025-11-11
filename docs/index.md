@@ -13,6 +13,11 @@ Our goal is to:
 - Experiment with PyTorch implementations
 - Study VLM and LLM techniques hands-on
 
+
+Code is stored next URL:
+
+[Shinichi0713/LLM-fundamental-study: this site is the fundamental page of LLM-mechanism](https://github.com/Shinichi0713/LLM-fundamental-study)
+
 ---
 
 # 📚 Archives: Deep Learning / LLM / VLM Research Notes
@@ -27,9 +32,9 @@ Below are key experiments and notes designed to deepen understanding of **transf
 
 Formula:
 
-\[
+$$
 \text{LayerNorm}(x_i)=\gamma\frac{x_i-\mu}{\sigma+\epsilon}+\beta
-\]
+$$
 
 Where:
 
@@ -56,17 +61,17 @@ We tracked the output distribution before and after training:
 
 ### Dot-Product Attention
 
-\[
+$$
 \text{score}(Q,K)=QK^T
-\]
+$$
 
 This builds a matrix of **token-to-token relevance** (shape: \( n \times n \)).
 
 ### Softmax Scaling
 
-\[
+$$
 \text{Attention} = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)
-\]
+$$
 
 Scaling by \( \sqrt{d_k} \) prevents overly large values and stabilizes gradients.
 
@@ -150,13 +155,11 @@ https://www.youtube.com/watch?v=NatwshCTe_4
 Always verify version compatibility:
 https://pytorch.org/get-started/locally/
 
-
 ### Wiki about LLM
 
 Here is my wili, which indicate information of LLM.
 
 https://github.com/Shinichi0713/LLM-fundamental-study.wiki.git
-
 
 ### Arxiv
 
@@ -171,7 +174,6 @@ If you'd like a more formal or academic wording, here is another option:
 Let me know if you want a more casual version or one tailored for a presentation or book!
 
 https://arxiv.org/
-
 
 ---
 
@@ -201,9 +203,7 @@ Stay tuned as the study evolves!
 ## Reference
 
 1. Roadmap of LLM
-[2. ](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm)
-
+   [2. ](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm)
 2. Roadmap of VLM
 
 https://shinichi0713.github.io/LLM-fundamental-study/roadmap_vlm
-
