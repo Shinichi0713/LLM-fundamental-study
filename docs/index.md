@@ -13,8 +13,11 @@ Our goal is to:
 - Experiment with PyTorch implementations
 - Study VLM and LLM techniques hands-on
 
-
 Code is stored next URL:
+
+[Shinichi0713/LLM-fundamental-study: this site is the fundamental page of LLM-mechanism](https://github.com/Shinichi0713/LLM-fundamental-study)
+
+On the other hand, I have Reinforcement-Learning repository also.
 
 [Shinichi0713/LLM-fundamental-study: this site is the fundamental page of LLM-mechanism](https://github.com/Shinichi0713/LLM-fundamental-study)
 
