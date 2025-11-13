@@ -135,6 +135,16 @@ with using RoPE, show transition of the attention score.
 
 ![layer_norm](image/README/attn_animation.gif)
 
+
+
+I compared Absolute Positional Encoding (PE) and Rotary Position Embedding (RoPE).
+
+While Absolute PE explicitly encodes the position of each token within a sentence, RoPE naturally incorporates the **relative distance between tokens** into the Attention computation.
+
+I visualized the positional embeddings (PE) of each token for both methods.
+
+![1762981322548](image/README/1762981322548.png)
+
 ## Inner Features
 
 with VLM-Lens, we analysis the inner feature.
@@ -145,11 +155,9 @@ visualize as heat map.
 
 ### ModernBert
 
-
 ![1762669526990](image/README/1762669526990.png)
 
 I performed MLM (Masked Language Modeling) with Modern-BERT on a small language dataset. After that, I visualized the attention scores.
-
 
 ## ViT
 
