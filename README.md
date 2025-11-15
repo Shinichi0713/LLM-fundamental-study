@@ -58,6 +58,17 @@ which helps stabilize the gradients during training.
 
 ![1761459118097](image/README/1761459118097.png)
 
+### Multi-Head attention
+
+Here are the key characteristics of Multi-Head Attention:
+Multiple Perspectives (多様な視点): It's like having multiple specialized "heads" (attention mechanisms) analyzing the same input at the same time.
+Diverse Relationships (多様な関係性): Each head learns to focus on different types of relationships or patterns between words. For instance, one might focus on a verb and its subject, while another captures a pronoun's reference to a distant noun.
+Richer Understanding (より豊かな理解): By combining the insights from all the heads, the model gets a deeper, more nuanced, and richer understanding of the input data.
+Parallel Processing (並列処理): These attention calculations happen in parallel, making the process efficient.
+Enhanced Expressiveness (表現力の向上): This mechanism allows the model to capture complex information from the entire input sequence, which improves its overall ability to handle language tasks.
+
+![1763166137173](image/README/1763166137173.png)
+
 ### attention of token toward the others
 
 * The **i-th row** of the attention matrix shows  *“when the query is token i, which keys (tokens) it pays attention to (assigns weight to)”* .
