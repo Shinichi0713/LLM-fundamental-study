@@ -2,6 +2,26 @@
 
 this site exists to study LLM and technic of VLM.
 
+## Related Repositories
+
+Code is stored next URL:
+
+[Shinichi0713/LLM-fundamental-study: this site is the fundamental page of LLM-mechanism](https://github.com/Shinichi0713/LLM-fundamental-study)
+
+On the other hand, I have Reinforcement-Learning repository also.
+
+[Shinichi0713/Reinforce-Learning-Study](https://github.com/Shinichi0713/Reinforce-Learning-Study)
+
+## site map
+
+1. Roadmap of LLM
+   [indicate Roadmap of LLM](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm)
+2. Roadmap of VLM
+   [indicate Roadmap of VLM](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_vlm)
+3. Sparce Attention
+   [Explanation of Sparce Attention](https://shinichi0713.github.io/LLM-fundamental-study/sparce_attention)
+
+
 # Archives
 
 ## LayerNorm Work
@@ -61,10 +81,11 @@ which helps stabilize the gradients during training.
 ### Multi-Head attention
 
 Here are the key characteristics of Multi-Head Attention:
+
 - Multiple Perspectives (多様な視点): It's like having multiple specialized "heads" (attention mechanisms) analyzing the same input at the same time.
 - Diverse Relationships (多様な関係性): Each head learns to focus on different types of relationships or patterns between words. For instance, one might focus on a verb and its subject, while another captures a pronoun's reference to a distant noun.
 - Richer Understanding (より豊かな理解): By combining the insights from all the heads, the model gets a deeper, more nuanced, and richer understanding of the input data.
-Parallel Processing (並列処理): These attention calculations happen in parallel, making the process efficient.
+  Parallel Processing (並列処理): These attention calculations happen in parallel, making the process efficient.
 - Enhanced Expressiveness (表現力の向上): This mechanism allows the model to capture complex information from the entire input sequence, which improves its overall ability to handle language tasks.
 
 ![1763166137173](image/README/1763166137173.png)
@@ -74,7 +95,6 @@ Parallel Processing (並列処理): These attention calculations happen in paral
 Each token only attends to tokens within a**fixed, adjacent window** around itself. This mimics locality bias in CNNs.
 
 ![1763177663253](image/README/1763177663253.png)
-
 
 ### attention of token toward the others
 
