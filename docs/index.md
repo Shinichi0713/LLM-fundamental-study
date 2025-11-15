@@ -21,8 +21,7 @@ Code is stored next URL:
 
 On the other hand, I have Reinforcement-Learning repository also.
 
-[Shinichi0713/LLM-fundamental-study: this site is the fundamental page of LLM-mechanism](https://github.com/Shinichi0713/LLM-fundamental-study)
-
+[Shinichi0713/Reinforce-Learning-Study](https://github.com/Shinichi0713/Reinforce-Learning-Study)
 
 ## site map
 
@@ -32,6 +31,7 @@ On the other hand, I have Reinforcement-Learning repository also.
    [indicate Roadmap of VLM](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_vlm)
 3. Sparce Attention
    [Explanation of Sparce Attention](https://shinichi0713.github.io/LLM-fundamental-study/sparce_attention)
+
 ---
 
 # 📚 Archives: Deep Learning / LLM / VLM Research Notes
@@ -213,5 +213,3 @@ This site serves as a technical journal for:
 - AI interpretability tools directory
 
 Stay tuned as the study evolves!
-
-

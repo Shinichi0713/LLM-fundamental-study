@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shinichi0713.github.io/LLM-fundamental-study/sitemap.xml

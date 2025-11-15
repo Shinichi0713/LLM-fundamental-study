@@ -4,7 +4,7 @@
       <loc>https://shinichi0713.github.io/LLM-fundamental-study/</loc>
       <lastmod>2025-11-15</lastmod>
       <changefreq>daily</changefreq>
-      <priority>1.0</priority>
+      <priority>0.95</priority>
    </url>
    <url>
       <loc>https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm</loc>
@@ -23,5 +23,11 @@
       <lastmod>2025-11-15</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.6</priority>
+   </url>
+   <url>
+      <loc>https://github.com/Shinichi0713/LLM-fundamental-study</loc>
+      <lastmod>2025-11-15</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>1.0</priority>
    </url>
 </urlset>
