@@ -13,6 +13,8 @@ Our goal is to:
 - Experiment with PyTorch implementations
 - Study VLM and LLM techniques hands-on
 
+## Related Repositories
+
 Code is stored next URL:
 
 [Shinichi0713/LLM-fundamental-study: this site is the fundamental page of LLM-mechanism](https://github.com/Shinichi0713/LLM-fundamental-study)
@@ -21,6 +23,15 @@ On the other hand, I have Reinforcement-Learning repository also.
 
 [Shinichi0713/LLM-fundamental-study: this site is the fundamental page of LLM-mechanism](https://github.com/Shinichi0713/LLM-fundamental-study)
 
+
+## site map
+
+1. Roadmap of LLM
+   [indicate Roadmap of LLM](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm)
+2. Roadmap of VLM
+   [indicate Roadmap of VLM](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_vlm)
+3. Sparce Attention
+   [Explanation of Sparce Attention](https://shinichi0713.github.io/LLM-fundamental-study/sparce_attention)
 ---
 
 # 📚 Archives: Deep Learning / LLM / VLM Research Notes
@@ -41,8 +52,8 @@ $$
 
 Where:
 
-- \( \mu \), \( \sigma \) = mean & standard deviation of input
-- \( \gamma \), \( \beta \) = learnable parameters
+- $\mu$, $ \sigma $ = mean & standard deviation of input
+- $ \gamma $, $ \beta $ = learnable parameters
 
 ### ✅ Why LayerNorm Helps Transformers
 
@@ -68,7 +79,7 @@ $$
 \text{score}(Q,K)=QK^T
 $$
 
-This builds a matrix of **token-to-token relevance** (shape: \( n \times n \)).
+This builds a matrix of **token-to-token relevance** (shape: $ n \times n $).
 
 ### Softmax Scaling
 
@@ -76,7 +87,7 @@ $$
 \text{Attention} = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)
 $$
 
-Scaling by \( \sqrt{d_k} \) prevents overly large values and stabilizes gradients.
+Scaling by $ \sqrt{d_k} $ prevents overly large values and stabilizes gradients.
 
 ![1761459118097](image/README/1761459118097.png)
 
@@ -203,10 +214,4 @@ This site serves as a technical journal for:
 
 Stay tuned as the study evolves!
 
-## Reference
 
-1. Roadmap of LLM
-   [2. ](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm)
-2. Roadmap of VLM
-
-https://shinichi0713.github.io/LLM-fundamental-study/roadmap_vlm
