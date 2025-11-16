@@ -21,7 +21,6 @@ On the other hand, I have Reinforcement-Learning repository also.
 3. Sparce Attention
    [Explanation of Sparce Attention](https://shinichi0713.github.io/LLM-fundamental-study/sparce_attention)
 
-
 # Archives
 
 ## LayerNorm Work
@@ -95,6 +94,12 @@ Here are the key characteristics of Multi-Head Attention:
 Each token only attends to tokens within a**fixed, adjacent window** around itself. This mimics locality bias in CNNs.
 
 ![1763177663253](image/README/1763177663253.png)
+
+### Local + GLobal Attention
+
+I implemented this using Global + Local attention.While using Local Attention only yielded the previously mentioned result (referring to limited context), incorporating Global Attention allows attention to cover the entire sequence as shown below.This method, adopted by Big Bird (Big Bird: Transformers for Longer Sequences), is an approach that achieves both high computational speed (linear, $O(n)$ complexity) and strong performance.
+
+<img src="image/README/1763253457385.png" alt="代替テキスト" width="700" style="display: block; margin: 0 auto;">
 
 ### attention of token toward the others
 
