@@ -1,0 +1,68 @@
+# ワークフローの名前
+name: Generate Sitemap
+
+# ワークフローが実行されるタイミング
+on:
+  push:
+    branches:
+      - main  # 'main' ブランチにプッシュされた時（'master' の場合は書き換えてください）
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    # このジョブがリポジトリに書き込む（sitemap.xmlをコミットする）権限を設定
+    permissions:
+      contents: write
+
+    steps:
+      # ---------------------------------------------------------------
+      # 1. Node.js のセットアップ
+      # サイトマップ生成ツール（sitemap-generator-cli）を使うためにNode.js環境を準備
+      # ---------------------------------------------------------------
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Node.jsのバージョンを指定
+
+      # ---------------------------------------------------------------
+      # 2. サイトマップ生成ツールのインストール
+      # ---------------------------------------------------------------
+      - name: Install sitemap-generator-cli
+        run: npm install -g sitemap-generator-cli
+
+      # ---------------------------------------------------------------
+      # 3. サイトマップの生成
+      # ここが一番重要です！
+      # ---------------------------------------------------------------
+      - name: Generate Sitemap
+        run: |
+          # ！！！▼▼▼ あなたのサイトのURLに必ず書き換えてください ▼▼▼！！！
+          sitemap-generator-cli https://shinichi0713.github.io/LLM-fundamental-study/ --filepath sitemap.xml
+          
+          # サイトマップが正常に生成されたか確認（デバッグ用）
+          echo "Sitemap generated:"
+          ls -l sitemap.xml
+
+      # ---------------------------------------------------------------
+      # 4. 生成されたsitemap.xmlを 'gh-pages' ブランチにデプロイ
+      # peaceiris/actions-gh-pages アクションを使用します
+      # ---------------------------------------------------------------
+      - name: Deploy Sitemap to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          # GitHub Actionsが自動的に発行するトークン
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
+          # デプロイ先のブランチ名（GitHub Pagesの公開設定に合わせてください）
+          publish_branch: main
+          
+          # デプロイするファイルが含まれるディレクトリ
+          # この例では、直前に sitemap.xml をルートに生成したため '.' を指定
+          publish_dir: .
+          
+          # 既存のgh-pagesブランチのファイルを保持する
+          keep_files: true
+          
+          # コミットメッセージ
+          commit_message: "docs: Auto-generate sitemap [skip ci]"
