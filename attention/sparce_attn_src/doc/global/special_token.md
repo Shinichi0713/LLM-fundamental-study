@@ -184,16 +184,171 @@ out = ctx_local + ctx_global
 
 ---
 
-必要であれば—
+# 実装での違い
 
-### ✔ Global Attention の可視化コード
+以下で、あなたの **HybridSparseAttention** のコードが
 
-### ✔ Transformer モデルへ組み込む簡易サンプル
+---
 
-### ✔ CLS トークン以外の Global Token の設計ノウハウ
+# ✅ **どこで Global Attention を計算しているか？**
 
-### ✔ Local only と Global+Local の性能比較実験コード
+# ✅ **特殊トークンはどのように扱われているか？**
 
-なども作成できます。
+を **コード行番号ごとに明確に解説**します。
 
-続けますか？
+---
+
+# 🔍 **1. Global Attention の計算箇所（最重要）**
+
+結論からいうと、グローバルアテンションは **以下 2 箇所**で計算されます。
+
+---
+
+# ✅ **① Global Key / Value の抽出（prep）**
+
+```python
+# 4) Global part: gather global keys/values
+...
+global_idx_list.append(idx)
+...
+K_global[b, :, :G_b, :] = kg
+V_global[b, :, :G_b, :] = vg
+global_token_mask[b, :G_b] = True
+```
+
+### ✔ ここでやっていること
+
+* `global_mask[b] == True` になっている位置だけを抽出
+* それを全てのヘッドに対して **K_global / V_global** に詰める
+
+---
+
+# ✅ **② Global Attention スコアの計算**
+
+```python
+scores_global = torch.einsum("bhtd,bhgd->bhtg", q, K_global) / sqrt(dh)
+```
+
+### ✔ この行が **グローバルアテンション**本体
+
+* Q（全 token） → Global K（G 個の token）
+  のアテンションを計算している。
+
+### 出力 shape：
+
+```
+scores_global: (B, H, T, G)
+```
+
+---
+
+# 🔍 **③ Local + Global を結合する部分**
+
+```python
+scores_cat = torch.cat([scores_local, scores_global], dim=-1)
+attn_weights_cat = F.softmax(scores_cat, dim=-1)
+```
+
+### ✔ Local + Global の両方を softmax でまとめる
+
+これによりトークンは：
+
+* 近傍ウィンドウ（local）
+* 特殊トークン（global）
+
+の両方から attention を選べる。
+
+---
+
+# 🔍 **④ Global Attention の重みで V_global を加重平均**
+
+```python
+ctx_global = torch.einsum("bhtg,bhgd->bhtd", w_global, V_global)
+```
+
+### ✔ local context と global context を足し合わせて最終出力を作る
+
+---
+
+# 📌 **以上の 4 箇所が Global Attention の流れ**
+
+特に **scores_global の einsum が中心**です。
+
+---
+
+# 🚨 **2. 特殊トークン（Global Token）はどこにある？**
+
+あなたの実装では **明確な特殊トークン ID は存在しません**。
+
+代わりに：
+
+---
+
+# ✅ **特殊トークン = global_mask[b, t] = True の位置**
+
+```python
+global_mask: Optional[torch.Tensor] # (B, T) bool: True -> this position is global token
+```
+
+つまり：
+
+* 入力時にユーザーが
+  「このトークンは global token として振る舞わせたい」
+  と指定する仕組み。
+
+### 例：
+
+CLS のようにすべてのトークンから見られるトークンを作りたいなら：
+
+```python
+global_mask[b, 0] = True
+```
+
+のようにすれば、0番目のトークンがグローバル化される。
+
+---
+
+# 🎯 **3. 特殊トークンの働きは何か？**
+
+以下の動作をする **Longformer や BigBird の global attention token と同じ**。
+
+---
+
+## ✨ **Global token の性質**
+
+### ✔ **Local token → Global token へ “必ず” Attention できる**
+
+* 全 token の Q が、global キー（K_global）へアクセスできる
+* つまり local window の制限を完全に無視する
+
+### ✔ **Global token → 全 token を Attention できる**
+
+* Global token も local token も変わらず Q を持つ
+* 全ての token の K/V をまとめて見れる
+  （※現実の Longformer では global token の attention は dense に実装）
+
+---
+
+# 🎉 **まとめ**
+
+---
+
+# ✅ **どこで Global Attention を計算している？**
+
+### → 次の行です：
+
+```python
+scores_global = torch.einsum("bhtd,bhgd->bhtg", q, K_global)
+```
+
+これは Q と Global K との Attention スコア計算。
+
+---
+
+# ✅ **特殊トークンはある？**
+
+### → **あるが、ID で定義しているのではなく、global_mask で指定**
+
+* `global_mask[b, t] = True` の位置が **global token**
+* その token だけが “全ての token へ向かう Global Attention” を持つ
+
