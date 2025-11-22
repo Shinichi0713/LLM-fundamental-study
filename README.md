@@ -195,6 +195,16 @@ visualize as heat map.
 
 ![1760833255365](image/README/1760833255365.png)
 
+### NewArchitecture
+Now thinking new architecture.
+
+Key feature is next.
+- PE is used RoPE.
+- Attention is Hybrid Attention.
+- Normalize is LayerNorm.
+
+![1763850597068](image/README/1763850597068.png)
+
 ### ModernBert
 
 ![1762669526990](image/README/1762669526990.png)
