@@ -2,6 +2,9 @@
 
 this site exists to study LLM and technic of VLM.
 
+<img src="image/README/welcom_llm.png" alt="代替テキスト" width="700" style="display: block; margin: 0 auto;">
+
+
 ## Related Repositories
 
 Code is stored next URL:
@@ -15,11 +18,11 @@ On the other hand, I have Reinforcement-Learning repository also.
 ## site map
 
 1. Roadmap of LLM
-   [indicate Roadmap of LLM](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_llm)
+   [indicate Roadmap of LLM](https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/docs/roadmap_llm.md)
 2. Roadmap of VLM
-   [indicate Roadmap of VLM](https://shinichi0713.github.io/LLM-fundamental-study/roadmap_vlm)
+   [indicate Roadmap of VLM](https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/docs/roadmap_vlm.md)
 3. Sparce Attention
-   [Explanation of Sparce Attention](https://shinichi0713.github.io/LLM-fundamental-study/sparce_attention)
+   [Explanation of Sparce Attention](https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/docs/sparce_attention.md)
 
 # Archives
 

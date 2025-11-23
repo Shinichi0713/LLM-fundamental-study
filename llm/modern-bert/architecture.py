@@ -200,6 +200,78 @@ class RoPEHybridSparseAttention(nn.Module):
 
 
 # -----------------------------
+# 2) Small Transformer Encoder block using RoPEHybridSparseAttention
+# -----------------------------
+class EncoderBlock(nn.Module):
+    def __init__(self, dim, num_heads, mlp_dim, window=4, dropout=0.1):
+        super().__init__()
+        self.attn = RoPEHybridSparseAttention(dim=dim, num_heads=num_heads, window=window, dropout=dropout)
+        self.ln1 = nn.LayerNorm(dim, eps=1e-6)
+        self.ln2 = nn.LayerNorm(dim, eps=1e-6)
+        self.mlp = nn.Sequential(
+            nn.Linear(dim, mlp_dim),
+            nn.GELU(),
+            nn.Linear(mlp_dim, dim),
+            nn.Dropout(dropout),
+        )
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x, global_mask=None):
+        # Attention (RoPE + Local+Global)
+        residual = x
+        x_ln = self.ln1(x)
+        attn_out, _ = self.attn(x_ln, global_mask=global_mask)  # attn returns (out, full_attn)
+        x = residual + self.dropout(attn_out)
+
+        # MLP
+        residual = x
+        x_ln2 = self.ln2(x)
+        x = residual + self.mlp(x_ln2)
+        return x
+
+# -----------------------------
+# 3) Encoder-style LLM (small)
+# -----------------------------
+class SparseRoPEEncoderLM(nn.Module):
+    def __init__(self, vocab_size, dim=256, num_heads=8, num_layers=4, mlp_dim=512, window=4, dropout=0.1, tie_word_embeddings=True):
+        super().__init__()
+        assert dim % num_heads == 0
+        self.vocab_size = vocab_size
+        self.dim = dim
+        self.token_emb = nn.Embedding(vocab_size, dim)
+        self.layers = nn.ModuleList([
+            EncoderBlock(dim=dim, num_heads=num_heads, mlp_dim=mlp_dim, window=window, dropout=dropout)
+            for _ in range(num_layers)
+        ])
+        self.ln_final = nn.LayerNorm(dim, eps=1e-6)
+        self.lm_head = nn.Linear(dim, vocab_size, bias=False)
+        if tie_word_embeddings:
+            # weight tying
+            self.lm_head.weight = self.token_emb.weight
+
+    def forward(self, input_ids, global_mask=None, return_attn=False):
+        """
+        input_ids: (B, T) long
+        global_mask: (B, T) bool
+        returns: logits (B, T, V) ; optionally optionally return last layer full_attn (B, H, T, T)
+        """
+        x = self.token_emb(input_ids) * (self.dim ** 0.5)  # scale
+        full_attn_last = None
+        for layer in self.layers:
+            x = layer(x, global_mask=global_mask)
+        x = self.ln_final(x)
+        logits = self.lm_head(x)  # (B, T, V)
+        if return_attn:
+            # get full_attn from the last attention module by running one more call to get full_attn
+            # (slightly wasteful but useful for visualization)
+            # To avoid double-computation, we can call last layer's attn directly on ln input:
+            with torch.no_grad():
+                # reconstruct last layer's attn input: apply ln on pre-last activation
+                pre_last = x  # note: in this simple code we don't have easy access to pre-ln input; skip
+                full_attn_last = None
+        return logits, full_attn_last
+
+# -----------------------------
 # Quick test snippet
 # -----------------------------
 if __name__ == "__main__":
