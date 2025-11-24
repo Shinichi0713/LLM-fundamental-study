@@ -271,6 +271,100 @@ class SparseRoPEEncoderLM(nn.Module):
                 full_attn_last = None
         return logits, full_attn_last
 
+
+# -----------------------------
+# 4) MLM Head Module (BERT style)
+# -----------------------------
+class RoPEMaskedLMHead(nn.Module):
+    """
+    BERTスタイルのMLMヘッド。
+    Encoderの出力に対して、非線形変換と正規化を行ってから単語予測を行います。
+    構成: Linear -> GELU -> LayerNorm -> Linear (Decoder)
+    """
+    def __init__(self, dim, vocab_size):
+        super().__init__()
+        self.dense = nn.Linear(dim, dim)
+        self.activation = nn.GELU()
+        self.layer_norm = nn.LayerNorm(dim, eps=1e-6)
+        self.decoder = nn.Linear(dim, vocab_size, bias=False)
+        
+        # 出力層にはバイアス項をつけるのが一般的です
+        self.bias = nn.Parameter(torch.zeros(vocab_size))
+        self.decoder.bias = self.bias
+
+    def forward(self, features):
+        x = self.dense(features)
+        x = self.activation(x)
+        x = self.layer_norm(x)
+        # 射影してLogitsを得る
+        x = self.decoder(x)
+        return x
+
+  
+# -----------------------------
+# 5) Sparse RoPE BERT for Masked LM
+# -----------------------------
+class SparseRoPEBertForMaskedLM(nn.Module):
+    def __init__(self, vocab_size, dim=256, num_heads=8, num_layers=4, mlp_dim=512, window=4, dropout=0.1, tie_word_embeddings=True):
+        super().__init__()
+        assert dim % num_heads == 0
+        self.vocab_size = vocab_size
+        self.dim = dim
+        
+        # 埋め込み層
+        self.token_emb = nn.Embedding(vocab_size, dim)
+        
+        # エンコーダー層 (既存のEncoderBlockを使用)
+        self.layers = nn.ModuleList([
+            EncoderBlock(dim=dim, num_heads=num_heads, mlp_dim=mlp_dim, window=window, dropout=dropout)
+            for _ in range(num_layers)
+        ])
+        
+        # 元のコードにあったEncoder最終段のLNは、MLMヘッド内にLNがあるため
+        # ここでは必須ではありませんが、BERTのアーキテクチャに従い
+        # エンコーダー出力そのものを安定させるために入れても構いません。
+        # 今回はBERT本来の構成に近づけるため、Head側にLNを任せ、ここは削除またはそのままパスします。
+        # (ただし、Pre-LN構成の場合は最後にLNを入れるのが通例なので、念のため残しておきます)
+        self.ln_final = nn.LayerNorm(dim, eps=1e-6)
+
+        # MLM用ヘッド (Linear -> GELU -> LN -> Linear)
+        self.mlm_head = RoPEMaskedLMHead(dim, vocab_size)
+
+        # Weight Tying (埋め込み層と出力層の重み共有)
+        if tie_word_embeddings:
+            self.mlm_head.decoder.weight = self.token_emb.weight
+
+        # 損失関数
+        self.loss_fct = nn.CrossEntropyLoss()
+
+    def forward(self, input_ids, global_mask=None, labels=None):
+        """
+        input_ids: (B, T) - 一部が[MASK]トークンに置き換わっている入力
+        global_mask: (B, T) - Global Attentionを使う位置
+        labels: (B, T) - MLMの正解ラベル（計算対象外のトークンは -100 にする）
+        """
+        # 1. Embedding
+        x = self.token_emb(input_ids) * (self.dim ** 0.5)
+
+        # 2. Encoder Stack
+        for layer in self.layers:
+            x = layer(x, global_mask=global_mask)
+        
+        # Final Norm (Encoderの出力安定化)
+        sequence_output = self.ln_final(x)
+
+        # 3. MLM Head
+        prediction_scores = self.mlm_head(sequence_output)  # (B, T, V)
+
+        # 4. Loss Calculation (Optional)
+        loss = None
+        if labels is not None:
+            # CrossEntropyLossは (N, C) と (N) の入力を期待するため、次元を変更
+            # -100 のラベルは自動的に無視されます
+            loss = self.loss_fct(prediction_scores.view(-1, self.vocab_size), labels.view(-1))
+
+        return prediction_scores, loss
+
 # -----------------------------
 # Quick test snippet
 # -----------------------------
