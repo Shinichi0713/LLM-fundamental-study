@@ -1,14 +1,14 @@
 # ワークフローの名前
-name: Generate Sitemap
+name: Generate and Deploy Sitemap
 
 # ワークフローが実行されるタイミング
 on:
   push:
     branches:
-      - main  # 'main' ブランチにプッシュされた時（'master' の場合は書き換えてください）
+      - main 
 
 jobs:
-  build-and-deploy:
+  generate-sitemap:
     runs-on: ubuntu-latest
 
     # このジョブがリポジトリに書き込む（sitemap.xmlをコミットする）権限を設定
@@ -17,52 +17,54 @@ jobs:
 
     steps:
       # ---------------------------------------------------------------
-      # 1. Node.js のセットアップ
-      # サイトマップ生成ツール（sitemap-generator-cli）を使うためにNode.js環境を準備
+      # 1. リポジトリのチェックアウト（必須）
+      # Git履歴から最終更新日（<lastmod>）を取得するために必要です
       # ---------------------------------------------------------------
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          node-version: '20' # Node.jsのバージョンを指定
-
-      # ---------------------------------------------------------------
-      # 2. サイトマップ生成ツールのインストール
-      # ---------------------------------------------------------------
-      - name: Install sitemap-generator-cli
-        run: npm install -g sitemap-generator-cli
-
-      # ---------------------------------------------------------------
-      # 3. サイトマップの生成
-      # ここが一番重要です！
-      # ---------------------------------------------------------------
-      - name: Generate Sitemap
-        run: |
-          # ！！！▼▼▼ あなたのサイトのURLに必ず書き換えてください ▼▼▼！！！
-          sitemap-generator-cli https://shinichi0713.github.io/LLM-fundamental-study/ --filepath sitemap.xml
+          # lastmodのために完全な履歴を取得
+          fetch-depth: 0 
           
-          # サイトマップが正常に生成されたか確認（デバッグ用）
-          echo "Sitemap generated:"
-          ls -l sitemap.xml
+      # ---------------------------------------------------------------
+      # 2. サイトマップの生成と<lastmod>の挿入（主要な修正点）
+      # 専用アクションを使い、Git履歴から最終更新日を自動取得します。
+      # ---------------------------------------------------------------
+      - name: Generate Sitemap with Lastmod and Exclusion
+        uses: jayanta525/sitemap-generator-action@v1
+        with:
+          # サイトのベースURLを正確に指定
+          base_url: https://shinichi0713.github.io/LLM-fundamental-study
+          
+          # 除外したいファイルのパターンをカンマ区切りで指定（問題解決のため）
+          # SECURITY.html や 404.html などの管理ファイルを確実に除外
+          exclude_paths: |
+            SECURITY.html,
+            404.html,
+            *.pdf
+            
+          # <lastmod> タグを有効化（GSCエラー対策の最重要項目）
+          lastmod: true
+          
+          # 出力ファイル名
+          output_path: ./sitemap.xml
 
       # ---------------------------------------------------------------
-      # 4. 生成されたsitemap.xmlを 'gh-pages' ブランチにデプロイ
-      # peaceiris/actions-gh-pages アクションを使用します
+      # 3. 生成されたsitemap.xmlをデプロイ
       # ---------------------------------------------------------------
-      - name: Deploy Sitemap to gh-pages branch
+      - name: Deploy Sitemap
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # GitHub Actionsが自動的に発行するトークン
           github_token: ${{ secrets.GITHUB_TOKEN }}
           
-          # デプロイ先のブランチ名（GitHub Pagesの公開設定に合わせてください）
+          # デプロイ先のブランチ名
           publish_branch: main
           
           # デプロイするファイルが含まれるディレクトリ
-          # この例では、直前に sitemap.xml をルートに生成したため '.' を指定
           publish_dir: .
           
           # 既存のgh-pagesブランチのファイルを保持する
           keep_files: true
           
           # コミットメッセージ
-          commit_message: "docs: Auto-generate sitemap [skip ci]"
+          commit_message: "docs: Auto-generate sitemap with lastmod [skip ci]"
