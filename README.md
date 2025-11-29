@@ -226,6 +226,26 @@ ViT is trained with the dataset "CIFAR-10".
 
 ![1760993518301](image/README/1760993518301.png)
 
+## tuning of LLM
+
+investigate how to tune LLM.
+summary is descripted as below.
+
+mainly, intent to use these knowledge to train LLM, which generate sentence.
+
+![1760993518301](image/README/learning_llm.png)
+
+overview:
+https://shinichi0713.github.io/LLM-fundamental-study/docs/11-fine-tuning
+
+PEFT:
+https://shinichi0713.github.io/LLM-fundamental-study/docs/12-retain-cost-fine-tuning
+
+LLM-learning:
+https://shinichi0713.github.io/LLM-fundamental-study/docs/13-LLM-learning
+
+
+
 ## reference site
 
 #### NLPコロキウム
