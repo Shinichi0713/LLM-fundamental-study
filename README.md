@@ -110,7 +110,7 @@ Each token only attends to tokens within a**fixed, adjacent window** around itse
 
 I implemented this using Global + Local attention.While using Local Attention only yielded the previously mentioned result (referring to limited context), incorporating Global Attention allows attention to cover the entire sequence as shown below.This method, adopted by Big Bird (Big Bird: Transformers for Longer Sequences), is an approach that achieves both high computational speed (linear, $O(n)$ complexity) and strong performance.
 
-<img src="image/README/1763586561478.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+<img src="image/README/1763586561478.png" alt="代替テキスト" width="420" style="display: block; margin: 0 auto;">
 
 
 ### attention of token toward the others
