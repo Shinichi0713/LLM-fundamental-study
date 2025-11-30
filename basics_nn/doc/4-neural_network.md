@@ -1,10 +1,27 @@
-ニューラルネットワーク（NN）をグラフ理論の視点から理解するための、最も効果的な実装例題は、NNの**順伝播（Forward Propagation）を有向非巡回グラフ（DAG）の探索**としてコーディングすることです。
+ューラルネットワーク（NN）をグラフ理論の視点から理解するための、最も効果的な実装例題は、NNの**順伝播（Forward Propagation）を有向非巡回グラフ（DAG）の探索**としてコーディングすることです。
 
 ここでは、NNの基本形である「多層パーセプトロン（MLP）」を例に、グラフ理論とNNを結びつける実装例を提案します。
 
----
+## DAGとは？
 
-## 🎯 例題のテーマ：DAGとしての順伝播実装
+のっけからDAG?となると思います。
+
+DAGは、一般的に「有向非巡回グラフ」（Directed Acyclic Graph）の略称です。
+グラフ理論における特定のデータ構造を指し、計算機科学やデータ処理の分野でよく使用されています。
+
+### もう少し詳しく
+
+DAGは、以下の2つの主要な特性を持つグラフです。
+
+- 有向 (Directed): グラフ内のノード（頂点）間の接続（エッジ）には方向があります。データや処理は、あるノードから別のノードへ一方向に流れます。
+- 非巡回 (Acyclic): グラフ内にサイクル（循環）が存在しません。つまり、あるノードから出発して、その経路をたどって再び元のノードに戻ってくることは不可能です。
+
+__構造のイメージ__
+
+- ノード (Nodes/Vertices): 処理のステップ、データセット、またはタスクの単位を表します。
+- エッジ (Edges): ノード間の依存関係、つまり「どの処理の後にどの処理を行うべきか」という流れを表します。
+
+## 例題のテーマ：DAGとしての順伝播実装
 
 ### グラフ理論の概念とNNの対応
 
@@ -71,17 +88,18 @@ graph_weights = {
 def forward_pass(input_data, graph_weights):
     # ノードごとの活性化値を格納する辞書
     activations = {}
-  
+ 
     # 1. 入力層の値をセット
     activations['Input_1'] = input_data[0]
     activations['Input_2'] = input_data[1]
-  
+ 
     # 2. 処理順序（トポロジカルソート）に従って計算を実行
+    # トポロジカルソート: 計算の依存関係に基づいたノードの処理順序
     sorted_nodes = ['Hidden_1', 'Hidden_2', 'Output_1']
 
     for node in sorted_nodes:
         input_sum = 0
-      
+  
         # 3. ノードへの入力の計算（入力エッジの総和）
         for source_node, connections in graph_weights.items():
             for target_node, weight in connections:
@@ -90,14 +108,15 @@ def forward_pass(input_data, graph_weights):
                     input_sum += activations[source_node] * weight
 
         # 4. 活性化関数（例：ReLU）を適用
-        # activations[node] = activation_function(input_sum + bias) 
-        # (ここでは簡略化のため、活性化関数とバイアスを省略)
+        # (ここでは簡略化のため、活性化関数とバイアスを省略し、積和をそのまま出力とする)
         activations[node] = input_sum
-  
+ 
     return activations['Output_1']
 ```
 
-### 🔑 この例題から得られる深い理解
+上記コードを使って任意の入力で計算させてみると以下のように動作します。
+
+### この例題から得られること
 
 この実装を通じて、以下の重要な概念がグラフ理論とNNの接点であることが理解できます。
 
