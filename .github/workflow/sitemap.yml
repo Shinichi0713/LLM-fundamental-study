@@ -11,60 +11,51 @@ jobs:
   generate-sitemap:
     runs-on: ubuntu-latest
 
-    # このジョブがリポジトリに書き込む（sitemap.xmlをコミットする）権限を設定
     permissions:
       contents: write
 
     steps:
       # ---------------------------------------------------------------
-      # 1. リポジトリのチェックアウト（必須）
-      # Git履歴から最終更新日（<lastmod>）を取得するために必要です
+      # 1. リポジトリのチェックアウト（変更なし）
       # ---------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # lastmodのために完全な履歴を取得
           fetch-depth: 0 
           
       # ---------------------------------------------------------------
-      # 2. サイトマップの生成と<lastmod>の挿入（主要な修正点）
-      # 専用アクションを使い、Git履歴から最終更新日を自動取得します。
+      # 2. サイトマップの生成と<lastmod>の挿入（修正箇所）
+      # XMLスキーマ参照を削除し、標準形式を強制します。
       # ---------------------------------------------------------------
-      - name: Generate Sitemap with Lastmod and Exclusion
+      - name: Generate Sitemap with Standard XML Template
         uses: jayanta525/sitemap-generator-action@v1
         with:
-          # サイトのベースURLを正確に指定
           base_url: https://shinichi0713.github.io/LLM-fundamental-study
           
-          # 除外したいファイルのパターンをカンマ区切りで指定（問題解決のため）
-          # SECURITY.html や 404.html などの管理ファイルを確実に除外
+          # ★★★ 修正箇所: 標準的なXMLテンプレートを使用 ★★★
+          # 以前の問題の原因と推測される xsi:schemaLocation を含めない
+          sitemap_template: |
+            <?xml version="1.0" encoding="UTF-8"?>
+            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            %URLS%
+            </urlset>
+            
           exclude_paths: |
             SECURITY.html,
             404.html,
             *.pdf
             
-          # <lastmod> タグを有効化（GSCエラー対策の最重要項目）
           lastmod: true
-          
-          # 出力ファイル名
           output_path: ./sitemap.xml
 
       # ---------------------------------------------------------------
-      # 3. 生成されたsitemap.xmlをデプロイ
+      # 3. 生成されたsitemap.xmlをデプロイ（変更なし）
       # ---------------------------------------------------------------
       - name: Deploy Sitemap
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          
-          # デプロイ先のブランチ名
           publish_branch: main
-          
-          # デプロイするファイルが含まれるディレクトリ
           publish_dir: .
-          
-          # 既存のgh-pagesブランチのファイルを保持する
           keep_files: true
-          
-          # コミットメッセージ
           commit_message: "docs: Auto-generate sitemap with lastmod [skip ci]"
