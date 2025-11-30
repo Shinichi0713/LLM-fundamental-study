@@ -36,6 +36,42 @@ The foundation of Graph Theory dates back to the 18th century with mathematician
 
 <img src="image/basic_readme/nn_forward_pass.gif" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
+## Activate Function
+
+__Exercise: Spiral Data Classification Challenge__
+
+1. Challenge Overview
+
+The goal of this exercise is to classify a spiral dataset where two colors of data points are intricately intertwined in a spiral shape. This dataset represents a non-linearly separable problem.
+
+The challenge involves training a simple neural network to classify these red and blue points into their respective categories, comparing two different model setups:
+
+Experiment A (Expected Failure): Train the model without an activation function (or using only a linear function).
+
+Experiment B (Expected Success): Train the model with a non-linear activation function (such as ReLU).
+
+2. Expected Results
+
+The results visually demonstrate the critical role of non-linearity in deep learning models.
+
+Experiment A (Linear Model):
+
+The model will only be able to draw a single straight line (or a flat plane in higher dimensions) as a decision boundary.
+
+Since the data is spiraled and cannot be separated by a straight line, the model will fail to classify the points correctly.
+
+The accuracy score will stagnate around 50% (equivalent to random guessing).
+
+Experiment B (Non-Linear Model):
+
+The model will introduce non-linearity through the activation function, allowing it to transform the data space internally.
+
+The learned decision boundary will become complex and curvy, enabling it to follow the intricate shape of the spiral.
+
+<img src="image/basic_readme/1764476662805.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+
+
 ## GradientDescent
 
 The core relationship between **Gradient Descent** and **Neural Networks** is that Gradient Descent is the **optimization algorithm** that enables the network to **learn**.
