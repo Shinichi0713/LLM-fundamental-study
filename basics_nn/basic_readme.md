@@ -1,6 +1,40 @@
 # Purpose of this page
 this page is created to show the basic of neural network, which helps to understand neural network. 
 
+## Graph Theorem
+
+Graph Theory provides the fundamental mathematical framework for understanding the structure and processes of neural networks (NNs).
+
+### 1. Structural Correspondence (The Mapping)
+
+The elements of a common Multi-Layer Perceptron (MLP) are directly mapped to graph theory terms:
+
+| Graph Theory Term | Neural Network Element |
+| :--- | :--- |
+| **Node (Vertex)** | **Neuron (Unit)** |
+| **Edge (Link)** | **Connection (Synapse)** |
+| **Weighted/Directed Graph** | **Weighted connections** where signals flow unidirectionally. |
+
+### 2. Network Structure: Directed Acyclic Graph (DAG)
+
+The architecture of most standard neural networks is defined as a **Directed Acyclic Graph (DAG)**.
+
+* **Directed:** Information (signals) always flows in **one direction**—from the input layer through the hidden layers to the output layer (Forward Propagation).
+* **Acyclic:** There are **no loops or cycles** within the network, which ensures that the computation sequence can be strictly ordered.
+
+### 3. Computational Process
+
+Calculations within a neural network are described as **operations on nodes and edges**:
+
+* **Forward Propagation:** The input $I_j$ to a neuron $j$ is the **sum of weighted inputs** from all connecting input edges. This is mathematically expressed as:
+    $$I_j = \sum_{i} O_i \cdot W_{ij} + Bias_j$$
+* **Backpropagation:** The process of updating weights during learning (minimizing loss) is an optimization method described as traversing the **graph's edges in reverse**, calculating and propagating the gradient (partial derivatives) of the loss function.
+
+### Historical Origin
+
+The foundation of Graph Theory dates back to the 18th century with mathematician **Leonhard Euler**. His solution to the **"Seven Bridges of Königsberg problem"** in 1736, where he modeled landmasses as vertices and bridges as edges, established the structural basis for the entire field.
+
+<img src="image/basic_readme/nn_forward_pass.gif" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
 ## GradientDescent
 
