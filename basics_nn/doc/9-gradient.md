@@ -126,9 +126,6 @@ plt.show()
 * オレンジの点線が「勾配（傾き）」です。
 * 傾きが右肩上がり（プラス）なので、損失を減らす（**$y$**軸を下げる）には、**左（マイナス方向）**へ進めばよいことがわかります。
 
-
-
-
 # 具体的な計算法
 
 ニューラルネットワークの勾配を計算する具体的な手法は、**「誤差逆伝播法（Backpropagation / バックプロパゲーション）」**と呼ばれます。
@@ -228,7 +225,7 @@ PyTorchなどのライブラリは、裏側でこの「掛け算の連鎖」を�
 
 **Python**
 
-```
+```python
 class SimpleNode:
     def __init__(self):
         self.x = None
@@ -241,30 +238,30 @@ class SimpleNode:
         self.x = x
         self.w = w
         self.t = t
-      
+    
         # 1. 予測の計算 y = x * w
         self.y = self.x * self.w
-      
+    
         # 2. 損失の計算 L = (y - t)^2
         loss = (self.y - self.t) ** 2
-      
+    
         return loss
 
     # 逆伝播（勾配計算）
     def backward(self):
         # 連鎖律: dL/dw = (dL/dy) * (dy/dw)
-      
+    
         # 1. 後ろからの勾配 (dL/dy)
         # L = (y - t)^2 の微分 -> 2 * (y - t)
         grad_L_y = 2 * (self.y - self.t)
-      
+    
         # 2. 手前の勾配 (dy/dw)
         # y = x * w の微分 (wで微分) -> x
         grad_y_w = self.x
-      
+    
         # 3. 最終的な勾配 (dL/dw)
         grad_w = grad_L_y * grad_y_w
-      
+    
         return grad_w
 
 # --- 実行 ---
@@ -296,3 +293,194 @@ print(f"Updated Weight: {w_new}")
 1. ニューラルネットは巨大な「計算の連なり（計算グラフ）」である。
 2. 勾配を知るために、ゴール（損失）からスタート（入力パラメータ）に向かって、**「局所的な微分」を次々と掛け算**していく。
 3. これを**誤差逆伝播法（バックプロパゲーション）**と呼び、これが現在のAI学習のエンジンとなっている。
+
+
+# 勾配の可視化
+
+はい、可能です。ニューラルネットワークの醍醐味である\*\*「誤差逆伝播（Backpropagation）」\*\*の様子を可視化しましょう。
+
+順伝播（Forward）が「左から右へ信号が流れる」のに対し、逆伝播（Backward）は\*\*「右から左へ『誤差（責任）』が流れていく」\*\*様子が見られます。
+
+これを\*\*「ミスの責任追及ツアー」\*\*としてアニメーション化します。
+
+-----
+
+## 💻 アニメーションコード：勾配の逆流（Backpropagation）
+
+このコードは、計算グラフの\*\*後ろ（出力層）**から**前（入力層）\*\*に向かって、赤紫色の「勾配（Gradient）」が伝わっていく様子を描画します。
+
+※ 簡略化のため、活性化関数は線形（微分が1）として計算しています。
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+# --- 1. 前回の順伝播の結果と設定 ---
+# 入力
+I = np.array([1.0, 0.5])
+# 重み
+W_h = np.array([[0.1, 0.3], [0.2, 0.4]])
+W_o = np.array([[0.5], [0.6]])
+
+# 順伝播の計算 (値を固定)
+H = I @ W_h # [0.2, 0.5]
+O = H @ W_o # [0.4]
+
+# 正解データ (Target) と誤差
+Target = 1.0
+Loss = (O[0] - Target)**2  # (0.4 - 1.0)^2 = 0.36
+
+# --- 2. 勾配の手計算 (Chain Rule) ---
+
+# STEP 1: 出力層の誤差勾配 dL/dO
+# L = (O - T)^2  => dL/dO = 2*(O - T)
+grad_O = 2 * (O[0] - Target) # 2 * (0.4 - 1.0) = -1.2
+
+# STEP 2: 出力層の重みの勾配 dL/dW_o
+# O = H @ W_o => dL/dW_o = H.T * grad_O
+grad_W_o = H * grad_O # [0.2*-1.2, 0.5*-1.2] = [-0.24, -0.6]
+
+# STEP 3: 隠れ層への逆伝播誤差 dL/dH
+# dL/dH = grad_O * W_o.T
+grad_H = grad_O * W_o.flatten() # -1.2 * [0.5, 0.6] = [-0.6, -0.72]
+
+# STEP 4: 入力層の重みの勾配 dL/dW_h
+# H = I @ W_h => dL/dW_h = I.T * grad_H
+# 行列演算的に書くと少し複雑ですが、要素ごとに計算します
+grad_W_h = np.outer(I, grad_H)
+# [[1.0*-0.6, 1.0*-0.72],
+#  [0.5*-0.6, 0.5*-0.72]]
+
+# --- 3. アニメーションステップの定義 ---
+# (step_name, active_edges(target to source), text_info)
+bp_steps = [
+    # Step 0: 損失の発生
+    ("STEP 0: Calculate Loss Gradient", [], 
+     {'O1': f"Error\n{grad_O:.2f}"}),
+    
+    # Step 1: 出力層の重みへの勾配伝播 (O -> H)
+    ("STEP 1: Backprop to Output Weights", [('O1', 'H1'), ('O1', 'H2')], 
+     {'edge_HO': grad_W_o}),
+    
+    # Step 2: 隠れ層への誤差伝達
+    ("STEP 2: Error reaches Hidden Nodes", [], 
+     {'H1': f"Grad\n{grad_H[0]:.2f}", 'H2': f"Grad\n{grad_H[1]:.2f}"}),
+    
+    # Step 3: 入力層の重みへの勾配伝播 (H -> I)
+    ("STEP 3: Backprop to Input Weights", [('H1', 'I1'), ('H2', 'I1'), ('H1', 'I2'), ('H2', 'I2')], 
+     {'edge_IH': grad_W_h})
+]
+
+# --- 4. 可視化設定 ---
+node_pos = {'I1': (1, 2), 'I2': (1, 1), 'H1': (2, 2.5), 'H2': (2, 0.5), 'O1': (3, 1.5)}
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.axis('off')
+ax.set_xlim(0.5, 3.5); ax.set_ylim(0, 3.5)
+
+# 描画要素の初期化
+nodes_scatter = ax.scatter([], [], s=900, color='white', edgecolor='purple', zorder=5)
+edges_lines = {}
+grad_texts = {} # 勾配値を表示するテキスト
+
+# 全エッジ描画 (初期は薄いグレー)
+all_edges = [('I1', 'H1'), ('I1', 'H2'), ('I2', 'H1'), ('I2', 'H2'), ('H1', 'O1'), ('H2', 'O1')]
+for u, v in all_edges:
+    # 逆方向 (v -> u) として管理しやすくするが、描画は u-v
+    x_u, y_u = node_pos[u]; x_v, y_v = node_pos[v]
+    line, = ax.plot([x_u, x_v], [y_u, y_v], color='lightgray', linewidth=1, linestyle='-')
+    edges_lines[(v, u)] = line # Keyは逆方向 (Target -> Source)
+
+# ノード描画
+for name, (x, y) in node_pos.items():
+    ax.scatter(x, y, s=900, color='white', edgecolor='black', zorder=5)
+    ax.text(x, y, name, ha='center', va='center', fontsize=12, color='black')
+    grad_texts[name] = ax.text(x, y - 0.3, "", fontsize=9, color='purple', ha='center', fontweight='bold')
+
+# 重み勾配表示用のテキスト (エッジの中間)
+w_grad_texts = {}
+for u, v in all_edges:
+    xu, yu = node_pos[u]; xv, yv = node_pos[v]
+    w_grad_texts[(v, u)] = ax.text((xu+xv)/2, (yu+yv)/2, "", fontsize=8, color='purple', backgroundcolor='white')
+
+# --- 5. 更新関数 ---
+def update(frame):
+    title, active_edges, info = bp_steps[frame]
+    ax.set_title(title, fontsize=16, color='purple')
+    
+    # エッジのリセット
+    for line in edges_lines.values():
+        line.set_color('lightgray')
+        line.set_linewidth(1)
+        line.set_linestyle('-')
+    
+    # アクティブなエッジ（逆流経路）を強調
+    for v, u in active_edges:
+        if (v, u) in edges_lines:
+            line = edges_lines[(v, u)]
+            line.set_color('purple') # 勾配の色
+            line.set_linewidth(3)
+            # 矢印っぽく見せるためにスタイル変更も可能だが今回は色で表現
+            
+    # テキスト情報の更新
+    # 1. ノード勾配
+    for name in node_pos:
+        if name in info:
+            grad_texts[name].set_text(info[name])
+        elif frame == 0: # 初期化
+             grad_texts[name].set_text("")
+             
+    # 2. 重み勾配 (Edge Gradients)
+    for key, text_obj in w_grad_texts.items():
+        text_obj.set_text("") # 一旦クリア
+        
+    if 'edge_HO' in info:
+        grads = info['edge_HO'] # [-0.24, -0.6]
+        w_grad_texts[('O1', 'H1')].set_text(f"grad\n{grads[0]:.2f}")
+        w_grad_texts[('O1', 'H2')].set_text(f"grad\n{grads[1]:.2f}")
+        
+    if 'edge_IH' in info:
+        grads = info['edge_IH']
+        # I1->H1, I1->H2, I2->H1, I2->H2
+        w_grad_texts[('H1', 'I1')].set_text(f"{grads[0,0]:.2f}")
+        w_grad_texts[('H2', 'I1')].set_text(f"{grads[0,1]:.2f}")
+        w_grad_texts[('H1', 'I2')].set_text(f"{grads[1,0]:.2f}")
+        w_grad_texts[('H2', 'I2')].set_text(f"{grads[1,1]:.2f}")
+
+    return list(edges_lines.values()) + list(grad_texts.values()) + list(w_grad_texts.values())
+
+ani = FuncAnimation(fig, update, frames=len(bp_steps), interval=2500, blit=True)
+# plt.show()
+# ani.save('backprop_viz.gif', writer='pillow')
+```
+
+-----
+
+## 🟣 このアニメーションの見方（勾配の分布）
+
+この可視化では、**紫色**が「勾配（Gradient）」の流れを表しています。
+
+### STEP 0: 誤差の発生 (Right End)
+
+  * **場所:** 出力層 `O1`
+  * **現象:** 正解とのズレ（Error）から、最初の勾配（-1.2）が生まれます。「もっと値を小さくしろ！（マイナス方向）」という命令です。
+
+### STEP 1: 出力層の重みの修正 (Right to Middle)
+
+  * **場所:** エッジ `H -> O`
+  * **現象:** 紫色の線が `O1` から `H1`, `H2` へ逆流します。
+  * **意味:** エッジ上の数値（例: `-0.24`）は、「この重みをこれだけ修正しろ」という指令書です。
+
+### STEP 2: 責任の分配 (Middle Nodes)
+
+  * **場所:** 隠れ層 `H1`, `H2`
+  * **現象:** 重みを通して誤差が逆流し、隠れ層のノードに「お前たちの出力がこれだけ悪かったせいで誤差が出たぞ」という勾配（`Grad`）が届きます。
+
+### STEP 3: 入力層まで伝播 (Middle to Left)
+
+  * **場所:** エッジ `I -> H`
+  * **現象:** さらに紫色の線が左端まで伸び、入力層に近い重みに対する修正量（勾配）が計算されます。
+
+### 結論：勾配の分布とは
+
+このように、たった一つの出力誤差からスタートし、**「連鎖律」というバケツリレー**によって、ネットワーク内の\*\*すべての接続（重み）に適切な「修正指令（勾配）」が行き渡る（分布する）\*\*様子が確認できます。これが学習の正体です。
