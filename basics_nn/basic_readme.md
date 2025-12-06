@@ -1,5 +1,6 @@
 # Purpose of this page
-this page is created to show the basic of neural network, which helps to understand neural network. 
+
+this page is created to show the basic of neural network, which helps to understand neural network.
 
 ## Graph Theorem
 
@@ -9,10 +10,10 @@ Graph Theory provides the fundamental mathematical framework for understanding t
 
 The elements of a common Multi-Layer Perceptron (MLP) are directly mapped to graph theory terms:
 
-| Graph Theory Term | Neural Network Element |
-| :--- | :--- |
-| **Node (Vertex)** | **Neuron (Unit)** |
-| **Edge (Link)** | **Connection (Synapse)** |
+| Graph Theory Term                 | Neural Network Element                                              |
+| :-------------------------------- | :------------------------------------------------------------------ |
+| **Node (Vertex)**           | **Neuron (Unit)**                                             |
+| **Edge (Link)**             | **Connection (Synapse)**                                      |
 | **Weighted/Directed Graph** | **Weighted connections** where signals flow unidirectionally. |
 
 ### 2. Network Structure: Directed Acyclic Graph (DAG)
@@ -27,7 +28,9 @@ The architecture of most standard neural networks is defined as a **Directed Acy
 Calculations within a neural network are described as **operations on nodes and edges**:
 
 * **Forward Propagation:** The input $I_j$ to a neuron $j$ is the **sum of weighted inputs** from all connecting input edges. This is mathematically expressed as:
-    $$I_j = \sum_{i} O_i \cdot W_{ij} + Bias_j$$
+  $$
+  j = \sum_{i} O_i \cdot W_{ij} + Bias_j
+  $$
 * **Backpropagation:** The process of updating weights during learning (minimizing loss) is an optimization method described as traversing the **graph's edges in reverse**, calculating and propagating the gradient (partial derivatives) of the loss function.
 
 ### Historical Origin
@@ -37,17 +40,17 @@ The foundation of Graph Theory dates back to the 18th century with mathematician
 <img src="image/basic_readme/nn_forward_pass.gif" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
 ## Fully Connect Layer
+
 Core Concepts Illustrated by the Fully Connected Layer Example
 
-1.  **The Function of the Fully Connected Layer:**
-    The primary job of the Fully Connected Layer is to take the input data, perform a **weighted multiplication** (multiplying the input values by their corresponding weights), and then calculate the **sum** of these products, finally adding the bias. This is the **linear transformation** ($y = Wx + b$).
+1. **The Function of the Fully Connected Layer:**
+   The primary job of the Fully Connected Layer is to take the input data, perform a **weighted multiplication** (multiplying the input values by their corresponding weights), and then calculate the **sum** of these products, finally adding the bias. This is the **linear transformation** ($y = Wx + b$).
+2. **The Meaning of Weights ($W$):**
+   The **weights** represent how **important** or **influential** a specific input feature is in determining the final result, and whether that influence is **positive or negative**.
 
-2.  **The Meaning of Weights ($W$):**
-    The **weights** represent how **important** or **influential** a specific input feature is in determining the final result, and whether that influence is **positive or negative**.
-    * *Example:* A high positive weight on "Taste" means that feature strongly increases the "Satisfaction Score." A negative weight on "Price" means that feature strongly decreases the score.
-
-3.  **The Process of Learning:**
-    **AI learning** is the process where, using a large volume of data (e.g., recorded ramen experiences and actual satisfaction scores), the system automatically finds the **optimal** values for the **weights ($W$)** and **bias ($b$)** to minimize prediction errors. This process determines the network's "preferences" and decision-making logic. 
+   * *Example:* A high positive weight on "Taste" means that feature strongly increases the "Satisfaction Score." A negative weight on "Price" means that feature strongly decreases the score.
+3. **The Process of Learning:**
+   **AI learning** is the process where, using a large volume of data (e.g., recorded ramen experiences and actual satisfaction scores), the system automatically finds the **optimal** values for the **weights ($W$)** and **bias ($b$)** to minimize prediction errors. This process determines the network's "preferences" and decision-making logic.
 
 ```python
 import numpy as np
@@ -84,11 +87,11 @@ def fully_connected_forward(X_in, W_params, b_params):
     # X_in (1, 3) と W_params.T (3, 1) の積は (1, 1) となります。
     # NumPyでは @ 演算子または np.dot を使用
     weighted_sum = X_in @ W_params.T 
-    
+  
     # 処理 2: バイアス b の加算
     # weighted_sum (1, 1) に b_params (1,) がブロードキャストされて加算されます。
     output = weighted_sum + b_params
-    
+  
     # スコア（要素を取り出す）
     return output.item()
 
@@ -101,7 +104,6 @@ score_b = fully_connected_forward(shop_b_np, W, b)
 print(f"A店の満足度: {score_a:.1f} 点")
 print(f"B店の満足度: {score_b:.1f} 点")
 ```
-
 
 ## Activate Function
 
@@ -137,8 +139,6 @@ The learned decision boundary will become complex and curvy, enabling it to foll
 
 <img src="image/basic_readme/1764476662805.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
-
-
 ## GradientDescent
 
 The core relationship between **Gradient Descent** and **Neural Networks** is that Gradient Descent is the **optimization algorithm** that enables the network to **learn**.
@@ -160,16 +160,84 @@ Gradient Descent is the essential mechanism used to adjust the parameters (**wei
 ### 3. Updating Parameters (Gradient Descent)
 
 * The Gradient calculated by Backpropagation indicates the direction of **steepest ascent** (where the loss increases fastest).
-* **Gradient Descent** then updates the parameters by moving in the **opposite direction** (steepest descent). 
+* **Gradient Descent** then updates the parameters by moving in the **opposite direction** (steepest descent).
 * The **Learning Rate** ($\eta$) determines the step size taken in this opposite direction, according to the formula:
-    $$
-    \theta_{\text{new}} = \theta_{\text{old}} - \eta \nabla J(\theta)
-    $$
+  $$
+  theta_{\text{new}} = \theta_{\text{old}} - \eta \nabla J(\theta)
+  $$
 
 ### 4. Role of Optimizers
 
 * In practical deep learning, basic Gradient Descent is often replaced by more advanced **Optimizers** (like **Adam** or **RMSprop**).
 * These advanced methods are still fundamentally built on the principle of Gradient Descent—they calculate and use the gradient—but they incorporate techniques (like momentum or adaptive learning rates) to make the learning process faster and more stable.
 
-
 <img src="doc/image/gradient_descent_animation.gif" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+
+
+## Optimization Algorithms in Neural Networks: An Overview and Evolution
+
+The optimization algorithms used in neural networks are primarily based on  **Gradient Descent (GD)** . They have evolved consistently with the goal of **overcoming the shortcomings of GD and achieving faster, more stable convergence to a better solution.**
+
+This evolutionary path addresses key challenges arising from data scale-up, computational resource constraints, and the complex geometry of loss functions (e.g., narrow valleys, flat regions).
+
+---
+
+## Key Stages in the Evolution of Optimization Algorithms
+
+The evolution of optimization algorithms can be broadly divided into three main stages:
+
+### 1. Birth of Gradient Descent (GD) and Initial Challenges
+
+| **Stage**   | **Algorithm**                         | **Development Rationale and Challenge**                                                                                                                                                                                    |
+| ----------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Initial** | **Batch Gradient Descent (Batch GD)** | **Mathematical Foundation:**Established as the method to find the minimum value by moving in the opposite direction of the gradient (slope), based on the mathematical principle that the function's value will always decrease. |
+|                   |                                             | **Challenge:**Calculating the gradient requires processing the**entire training dataset**for a single parameter update, leading to prohibitively high computational cost and time when the dataset is massive.       |
+
+### 2. Introduction of SGD and Momentum
+
+Innovations were introduced to solve the computational efficiency problem and accelerate convergence.
+
+| **Stage**      | **Algorithm**                         | **Development Rationale and Challenge**                                                                                                                                                                                                                                                                       |
+| -------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Efficiency** | **Stochastic Gradient Descent (SGD)** | **Rationale:**Conceived to solve the computational cost issue of Batch GD. It drastically improves computational efficiency by using the gradient from only a**small, randomly selected subset of data (mini-batch)**for parameter updates.                                                                   |
+|                      | **Momentum / Nesterov**               | **Rationale:**SGD has a tendency to**oscillate**near the bottom of a loss function's valley. By introducing the concept of**inertia**from physics, it remembers the previous update direction and adds it to the current gradient, reducing oscillation and allowing for more stable convergence. |
+
+### 3. Emergence of Adaptive Learning Rates
+
+SGD still required **manual tuning** of the learning rate (**$\alpha$**) and applied a **uniform learning rate** to all parameters, which was inefficient. Algorithms were developed to automatically adjust the learning rate for each parameter.
+
+| **Stage**      | **Algorithm**                         | **Development Rationale and Features**                                                                                                                                                                                                                                                                                                  |
+| -------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Adaptivity** | **AdaGrad**                           | **Rationale:**Adjusts the learning rate for each parameter proportional to the inverse of the sum of squared past gradients. This allows for**larger learning rates for parameters with sparse, small gradients**and**smaller learning rates for parameters with frequent, large gradients.**                               |
+|                      | **RMSprop**                           | **Rationale:**AdaGrad's use of a cumulative sum causes the**learning rate to shrink too aggressively toward zero**as training progresses. RMSprop solves this by using an**Exponential Moving Average (EMA)**of the squared gradients instead of the sum, mitigating the decay and enabling long-term learning on large datasets. |
+|                      | **Adam (Adaptive Moment Estimation)** | **Rationale:**Developed by combining the benefits of RMSprop's**adaptive learning rate**with Momentum's **inertia** . It is one of the most widely used algorithms today due to its**high performance and stability**across many neural network tasks.                                                                |
+
+
+## Chronology of Optimization Algorithms
+
+The development of optimization algorithms chronologically:
+
+| **Era** | **Algorithm** | **Key Improvement**                                               |
+| ------------- | ------------------- | ----------------------------------------------------------------------- |
+| 1950s         | **Batch GD**  | Mathematical foundation                                                 |
+| 1960s         | **SGD**       | Improvement in**Computational Efficiency**(Mini-batching)         |
+| 1980s         | **Momentum**  | Suppression of**Oscillation**and faster convergence (Inertia)     |
+| 2011          | **AdaGrad**   | **Per-parameter learning rate**adjustment (Adaptivity)            |
+| 2012          | **RMSprop**   | Mitigates AdaGrad's**aggressive learning rate decay**             |
+| 2014          | **Adam**      | Integrates RMSprop's**Adaptivity**and Momentum's**Inertia** |
+
+
+## Implementation and Visualization
+
+As part of my LLM learning process, I implemented several optimization algorithms in NumPy and created an animation to visually inspect their convergence properties. The implemented algorithms were  **SGD** ,  **RMSprop** , and  **Adam** .
+
+
+<img src="image/basic_readme/optimizer_animation.gif" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+![1764991193450](image/basic_readme/1764991193450.png)
+
+![1764991307695](image/basic_readme/1764991307695.png)
+
+
+
