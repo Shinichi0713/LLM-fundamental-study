@@ -241,7 +241,7 @@ summary is descripted as below.
 
 mainly, intent to use these knowledge to train LLM, which generate sentence.
 
-![1760993518301](image/README/learning_llm.png)
+<img src="image/README/learning_llm.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
 overview:
 [what is fine tuning?](https://shinichi0713.github.io/LLM-fundamental-study/docs/11-fine-tuning)
@@ -251,8 +251,6 @@ PEFT:
 
 LLM-learning:
 [efficiently train llm](https://shinichi0713.github.io/LLM-fundamental-study/docs/13-LLM-learning)
-
-
 
 ## reference site
 
