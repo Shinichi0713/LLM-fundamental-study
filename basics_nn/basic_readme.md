@@ -240,4 +240,29 @@ As part of my LLM learning process, I implemented several optimization algorithm
 ![1764991307695](image/basic_readme/1764991307695.png)
 
 
+## Effect of Layer Normalization on Learning Stability
 
+**Layer Normalization** has the effect of **stabilizing the training process**.
+
+We investigated this effect by comparing models with and without Layer Normalization using non-linear classification data.
+
+The results obtained are summarized below:
+
+
+### 1. Speed of Convergence (Learning Speed) 🚀
+
+By suppressing the variance (fluctuation) across individual data samples, Layer Normalization enables the model to consistently grasp the underlying patterns it needs to learn.
+
+Observing the progression of the loss, it can be confirmed that the loss **converges much earlier** when Layer Normalization is present .
+
+
+### 2. Classification Boundary (Decision Boundary) 📉
+
+The visualization below shows the classification boundaries at **Epoch 2000** for the models with and without Layer Normalization.
+
+* **Without Layer Normalization:** The classification boundary is observed to be **jagged** (or rough).
+* **With Layer Normalization:** The classification boundary is confirmed to be **smoothly classified** .
+
+![1765077714052](image/basic_readme/1765077714052.png)
+
+![1765077690549](image/basic_readme/1765077690549.png)

@@ -600,8 +600,550 @@ __決定境界（classification boundary）__
 
 ### 🔸 ※Dropout との比較実験も可能
 
+
+__例題:__ レイヤー正則化（Layer Normalization）の効果
+
+以下では **「レイヤー正則化（Layer Normalization）」の効果が“見て分かる”例題** を示します。
+
+LayerNorm（LN）を入れることで以下の効果が期待できます。
+
+* **学習が安定する**
+* **決定境界がなめらかになる**
+* **局所解にハマりにくい**
+
+ニューラルネットにLayerNormの有無で差をつけて、分類が難しい問題で差がつきやすいと考えられます。
+ここでは、**非線形が強く、内部変数のスケールが不安定になりやすいタスク**
+＝おなじみの「らせん状の分類（Spiral classification）」を使います。
+
+**結果として見えること**
+
+LayerNormありだと：
+
+- 勾配が暴走しづらい
+- 途中の活性値が安定する
+- 決定境界が滑らか
+
+なしだと振動したり収束が遅い、ということで差を確認できます。
+
+
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# ======== Spiral Dataset ========
+def generate_spiral(n_points, n_classes):
+    X = np.zeros((n_points * n_classes, 2))
+    y = np.zeros(n_points * n_classes, dtype="uint8")
+
+    for class_idx in range(n_classes):
+        ix = range(n_points * class_idx, n_points * (class_idx + 1))
+        r = np.linspace(0.0, 1, n_points)
+        t = np.linspace(class_idx * 4, (class_idx + 1) * 4, n_points) + np.random.randn(n_points) * 0.2
+        X[ix] = np.c_[r * np.sin(t), r * np.cos(t)]
+        y[ix] = class_idx
+
+    return torch.tensor(X, dtype=torch.float32), torch.tensor(y)
+
+
+# ======== MLP Model Definition ========
+class MLP(nn.Module):
+    def __init__(self, use_ln=False):
+        super().__init__()
+        layers = []
+        layers.append(nn.Linear(2, 128))
+        if use_ln:
+            layers.append(nn.LayerNorm(128))
+        layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(128, 128))
+        if use_ln:
+            layers.append(nn.LayerNorm(128))
+        layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(128, 3))
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.net(x)
+
+
+# ======== Decision Boundary Plot ========
+def plot_decision_boundary(model, X, y, title=""):
+    model.eval()
+    x_min, x_max = X[:,0].min()-0.5, X[:,0].max()+0.5
+    y_min, y_max = X[:,1].min()-0.5, X[:,1].max()+0.5
+
+    xx, yy = np.meshgrid(
+        np.linspace(x_min, x_max, 200),
+        np.linspace(y_min, y_max, 200)
+    )
+    grid = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float32)
+    with torch.no_grad():
+        pred = model(grid).argmax(dim=1).reshape(xx.shape)
+
+    plt.contourf(xx, yy, pred, alpha=0.3)
+    plt.scatter(X[:,0], X[:,1], c=y, s=10, cmap="rainbow")
+    plt.title(title)
+    plt.pause(0.1)
+    plt.clf()
+
+
+# ======== Training Function ========
+def train_and_visualize(use_ln=False):
+    X, y = generate_spiral(100, 3)
+
+    model = MLP(use_ln=use_ln)
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    criterion = nn.CrossEntropyLoss()
+
+    plt.figure(figsize=(6,6))
+
+    for epoch in range(2001):
+        model.train()
+        optimizer.zero_grad()
+        pred = model(X)
+        loss = criterion(pred, y)
+        loss.backward()
+        optimizer.step()
+
+        # Real-time visualization
+        if epoch % 100 == 0:
+            title = f"LayerNorm = {use_ln}, Epoch = {epoch}, Loss = {loss.item():.4f}"
+            plot_decision_boundary(model, X, y, title)
+
+    plt.show()
+
+
+# ======== Run Experiments ========
+
+print("Training WITHOUT LayerNorm...")
+train_and_visualize(use_ln=False)
+
+print("Training WITH LayerNorm...")
+train_and_visualize(use_ln=True)
+```
+
 ---
 
-必要であれば上記の追加例題も作成します。
+# 🔍 **観察ポイント**
 
-続けますか？
+| 項目       | LayerNormなし | LayerNormあり |
+| -------- | ----------- | ----------- |
+| 収束速度     | 遅い／揺れる      | 安定して速い      |
+| 勾配       | 発散しやすい      | 安定          |
+| 決定境界     | ギザギザ／局所解    | 滑らか         |
+| 学習途中の特徴量 | スケールが暴れる    | 正規化されて一本化   |
+
+__なぜ LayerNorm が効くのか？__
+
+1. 中間層の変動を抑制
+ 
+NN の中間層の特徴量は
+
+* スケールが大きく揺れる
+* (特に深くなるほど) 勾配が不安定になる
+
+
+LayerNorm は層ごとに
+* **平均を0、分散を1に正規化**
+* **学習可能な γ, β で調整**
+* **ミニバッチに依存しない**（BatchNormとの違い）
+
+---
+
+
+
+
+**「レイヤー正則化（L2正則化 / 重み減衰）」の効果が “よりハッキリ分かる”** ように、
+
+---
+
+# ✅ **差がさらに明確に見える学習デモ（PyTorch）**
+
+* **データセット：2クラス XOR（強めのノイズ付き）**
+
+* **モデル：小さな MLP（過学習しやすく、正則化の効果が見えやすい）**
+
+* **比較するもの：**
+
+  1. **正則化なし（普通の学習）**
+  2. **L2 正則化あり（weight decay）
+     → 過学習を抑え、境界が滑らかで安定しやすくなる**
+
+* **可視化するもの：**
+
+  * 決定境界の変化
+  * ロスの推移（同一グラフで比較）
+
+---
+
+# ✅ **完全コード（そのまま実行可能）**
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import matplotlib.pyplot as plt
+import numpy as np
+
+# ================================
+# 1. データセット（ノイズ大：過学習しやすい）
+# ================================
+np.random.seed(0)
+N = 400
+
+# XOR データ
+x = np.random.randn(N, 2)
+y = np.logical_xor(x[:, 0] > 0, x[:, 1] > 0).astype(int)
+
+# ノイズ追加（正則化の効果が見えやすくなる）
+x += np.random.randn(N, 2) * 0.6
+
+x_tensor = torch.tensor(x, dtype=torch.float32)
+y_tensor = torch.tensor(y, dtype=torch.long)
+
+
+# ================================
+# 2. モデル定義
+# ================================
+class MLP(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(2, 32),
+            nn.ReLU(),
+            nn.Linear(32, 32),
+            nn.ReLU(),
+            nn.Linear(32, 2)
+        )
+    def forward(self, x):
+        return self.net(x)
+
+# ================================
+# 3. 正則化あり/なしモデルを作成
+# ================================
+model_plain = MLP()
+model_l2 = MLP()
+
+criterion = nn.CrossEntropyLoss()
+
+optimizer_plain = optim.Adam(model_plain.parameters(), lr=0.01, weight_decay=0.0)
+optimizer_l2    = optim.Adam(model_l2.parameters(),    lr=0.01, weight_decay=0.05)
+
+EPOCHS = 1500
+loss_plain_list = []
+loss_l2_list = []
+
+
+# ================================
+# 4. 学習ループ
+# ================================
+for epoch in range(EPOCHS):
+
+    # --- 正則化なし ---
+    optimizer_plain.zero_grad()
+    pred_plain = model_plain(x_tensor)
+    loss_plain = criterion(pred_plain, y_tensor)
+    loss_plain.backward()
+    optimizer_plain.step()
+    loss_plain_list.append(loss_plain.item())
+
+    # --- L2 正則化あり ---
+    optimizer_l2.zero_grad()
+    pred_l2 = model_l2(x_tensor)
+    loss_l2 = criterion(pred_l2, y_tensor)
+    loss_l2.backward()
+    optimizer_l2.step()
+    loss_l2_list.append(loss_l2.item())
+
+
+# ================================
+# 5. 決定境界を描画する関数
+# ================================
+def plot_decision_boundary(model, title, subplot):
+    h = 0.02
+    xx, yy = np.meshgrid(
+        np.arange(x[:, 0].min()-1, x[:, 0].max()+1, h),
+        np.arange(x[:, 1].min()-1, x[:, 1].max()+1, h)
+    )
+    grid = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float32)
+    Z = model(grid)
+    Z = Z.argmax(dim=1).numpy().reshape(xx.shape)
+
+    plt.subplot(1, 2, subplot)
+    plt.contourf(xx, yy, Z, alpha=0.4)
+    plt.scatter(x[:, 0], x[:, 1], c=y, s=15)
+    plt.title(title)
+
+
+# ================================
+# 6. 描画
+# ================================
+plt.figure(figsize=(12,5))
+
+# --- ロスの推移 ---
+plt.subplot(1,2,1)
+plt.plot(loss_plain_list, label="No Regularization")
+plt.plot(loss_l2_list, label="L2 Regularization")
+plt.title("Loss Curve Comparison")
+plt.legend()
+
+# --- 決定境界 ---
+plt.figure(figsize=(12,5))
+plot_decision_boundary(model_plain, "No Regularization (Overfits)", 1)
+plot_decision_boundary(model_l2, "L2 Regularization (Smoother Boundary)", 2)
+
+plt.show()
+```
+
+---
+
+# ✅ **結果として見えること**
+
+### ✔ 正則化なし（weight_decay=0）
+
+* ノイズに過剰に合わせる
+* "**ギザギザした決定境界**" になる
+* ロスは初期は下がるが、途中で不安定に変動しやすい
+  → 過学習の典型
+
+### ✔ L2 正則化あり（weight_decay=0.05）
+
+* 重みが大きくなりすぎるのを防ぐ
+* **より滑らかな決定境界** を生成
+* ロス推移が滑らかで安定
+* 過学習しにくい
+
+---
+
+# 🔥 **さらに差を強調するには？**
+
+ご希望なら、以下を追加できます：
+
+* BatchNorm も入れて 3 種類で比較
+  （Plain / L2 / BN）
+* モデルをもっと深くして過学習を激しくする
+* ノイズレベルを変更する
+* 途中の重み分布を可視化する
+* 3D プロット化した境界のカーブの可視化
+
+---
+
+必要なら次はどれを追加しますか？
+
+1. **BatchNorm も含めた 3 比較版**
+2. **Dropout も含めた 4 比較版**
+3. **決定境界の変化をアニメーション表示**
+4. **重みの大きさの推移を表示**
+
+どれにしましょう？
+
+
+__例題:__ LayerNormの効果確認
+
+LayerNorm の効果を分かるようにした例題を扱います。
+
+---
+
+# ✅ 改善ポイント
+
+### **① ロス推移をリアルタイムで描画**
+
+* 左：決定境界
+* 右：ロス推移（LayerNorm あり/なしの比較）
+* 同じ図に 2 本のロス曲線を積み上げて比較しやすくする
+
+### **② LayerNorm の効果がより出やすいように調整**
+
+* 初期化を *わざと難しく*（重みを大きめにする）
+* 深めのネットワーク構造に変更
+* 学習率を少し強めにして、LN があると安定するような環境を作成
+
+---
+
+# ✅ **完全改良版コード（可視化強化＋差が分かりやすい）**
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# ======== Spiral Dataset ========
+def generate_spiral(n_points, n_classes):
+    X = np.zeros((n_points * n_classes, 2))
+    y = np.zeros(n_points * n_classes, dtype="uint8")
+
+    for class_idx in range(n_classes):
+        ix = range(n_points * class_idx, n_points * (class_idx + 1))
+        r = np.linspace(0.0, 1, n_points)
+        t = np.linspace(class_idx * 4, (class_idx + 1) * 4, n_points) + np.random.randn(n_points) * 0.2
+        X[ix] = np.c_[r * np.sin(t), r * np.cos(t)]
+        y[ix] = class_idx
+
+    return torch.tensor(X, dtype=torch.float32), torch.tensor(y)
+
+
+# ======== MLP Model Definition ========
+class MLP(nn.Module):
+    def __init__(self, use_ln=False):
+        super().__init__()
+        layers = []
+        hidden = 256
+
+        layers.append(nn.Linear(2, hidden))
+        if use_ln: layers.append(nn.LayerNorm(hidden))
+        layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(hidden, hidden))
+        if use_ln: layers.append(nn.LayerNorm(hidden))
+        layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(hidden, hidden))
+        if use_ln: layers.append(nn.LayerNorm(hidden))
+        layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(hidden, 3))
+        self.net = nn.Sequential(*layers)
+
+        # —— 重み初期化（難しくして差が出やすい設定） ——
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, mean=0, std=1.0)  # 重め
+                nn.init.zeros_(m.bias)
+
+        self.use_ln = use_ln
+
+    def forward(self, x):
+        return self.net(x)
+
+
+# ======== Decision Boundary Plot ========
+def plot_decision_boundary(ax, model, X, y, title=""):
+    model.eval()
+    x_min, x_max = X[:,0].min()-0.5, X[:,0].max()+0.5
+    y_min, y_max = X[:,1].min()-0.5, X[:,1].max()+0.5
+
+    xx, yy = np.meshgrid(
+        np.linspace(x_min, x_max, 200),
+        np.linspace(y_min, y_max, 200)
+    )
+    grid = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float32)
+    with torch.no_grad():
+        pred = model(grid).argmax(dim=1).reshape(xx.shape)
+
+    ax.clear()
+    ax.contourf(xx, yy, pred, alpha=0.35)
+    ax.scatter(X[:,0], X[:,1], c=y, s=10, cmap="rainbow")
+    ax.set_title(title)
+
+
+# ======== Training Function (returns loss history) ========
+def train_model(use_ln=False, epochs=2000):
+    X, y = generate_spiral(100, 3)
+    model = MLP(use_ln=use_ln)
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    criterion = nn.CrossEntropyLoss()
+
+    loss_history = []
+    model.train()
+
+    for epoch in range(epochs):
+        optimizer.zero_grad()
+        pred = model(X)
+        loss = criterion(pred, y)
+        loss.backward()
+        optimizer.step()
+
+        loss_history.append(loss.item())
+
+    return model, X, y, loss_history
+
+
+# ======== Combined Visualization ========
+def train_and_visualize_both():
+    epochs = 2000
+
+    # 2モデルを学習
+    print("Training WITHOUT LayerNorm...")
+    model_no_ln, X, y, loss_no_ln = train_model(use_ln=False, epochs=epochs)
+
+    print("Training WITH LayerNorm...")
+    model_ln, _, _, loss_ln = train_model(use_ln=True, epochs=epochs)
+
+    # ===== 可視化 =====
+    plt.figure(figsize=(12, 6))
+
+    # 左：決定境界比較
+    ax1 = plt.subplot(1, 2, 1)
+    plot_decision_boundary(ax1, model_no_ln, X, y, "Without LayerNorm")
+    plot_decision_boundary(ax1, model_ln, X, y, "With LayerNorm")
+    ax1.set_title("Decision Boundary Comparison")
+
+    # 右：ロス推移比較
+    ax2 = plt.subplot(1, 2, 2)
+    ax2.plot(loss_no_ln, label="No LayerNorm")
+    ax2.plot(loss_ln, label="With LayerNorm")
+    ax2.set_title("Loss Curve Comparison")
+    ax2.set_xlabel("Epoch")
+    ax2.set_ylabel("Loss")
+    ax2.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
+# ======== Run ========
+train_and_visualize_both()
+```
+
+---
+
+# 🎉 **改善された可視化のポイント**
+
+## **① ロス曲線で差が明確に**
+
+こんな感じの差が出るようになります：
+
+* **LayerNormなし**：
+
+  * 初期段階で発散気味
+  * ノイズのような動きをする
+  * 収束が遅い or 失敗しやすい
+
+* **LayerNormあり**：
+
+  * 収束が安定
+  * 学習がスムーズ
+  * ロスが早く下がる
+
+---
+
+## **② 決定境界の比較も明確**
+
+* LN なし → ノイズが多い・境界が粗い
+* LN あり → なめらかで綺麗に分類
+
+---
+
+# 必要であれば…
+
+### ☑ **BatchNorm / Dropout / WeightDecay** など
+
+→ 同じ可視化 framework で比較できるように統一化も可能です。
+
+### ☑ Jupyter でインタラクティブに操作できる UI
+
+→ スライダーで LayerNorm の有無を切り替えたりもできます。
+
+![1765076523241](image/explanation/1765076523241.png)
+
+![1765076474488](image/explanation/1765076474488.png)
+
