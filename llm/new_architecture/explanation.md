@@ -99,11 +99,9 @@ BERT-baseより小さいモデルでも同等性能を達成。
 | 学習方式         | RoBERTa-style / RTD      | 汎化性能向上                     |
 | 実装最適化       | FlashAttention           | GPUメモリ削減・高速化            |
 
-
 wikipediaでMLM
 
 ![1762664182175](image/explanation/1762664182175.png)
-
 
 以下は **RoPE を取り入れた Hybrid (Local + Global) Sparse Attention** の **実行可能な PyTorch 実装コード**です。
 特徴：
@@ -359,3 +357,25 @@ if __name__ == "__main__":
 * `scores_local` と `scores_global` を作り、同じ softmax 空間で結合 → local と global が競合して重みづけされる。
 * `full_attn` は可視化用で、ウィンドウ外は 0、global は実際の global indices にだけ値が入る。
 
+
+結果
+
+今回作成したLLMでMASK部を予測させた結果を示します。
+
+[MASK]となっている個所をMASKして、→の部分がモデルが予測した結果、()の内部が正解データです。
+
+```
+式 会 社 兵 庫 共 融 銀行 [MASK→（](()}); ) 明 [MASK→治](治) 2 [MASK→2](2) 年
+```
+
+```
+京都 支 店 ： 京 都市 下 [MASK→京](京) 区 河 原 町 松 原 ２ 丁 目 富 永 町 ３ ４ ８ 
+```
+
+```
+可能性 がある 頭 部 付 属 肢 ・ 背 板 と 関 節 肢 を [MASK→も](も) [MASK→た](た) ない 胴
+```
+
+```
+食品 関 連 事業 [MASK→者](者) [MASK→による](による) 食品 循 環 資源 の 有効 利用 を 促 進 する 
+```
