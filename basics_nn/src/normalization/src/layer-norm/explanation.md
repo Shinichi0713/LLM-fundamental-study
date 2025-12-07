@@ -424,3 +424,184 @@ LayerNormを使うと、
 | 依存関係   | Batchサイズに依存しない      |
 | モデル適性 | Transformer, RNNなどで効果的 |
 | 学習速度   | 初期段階の収束が速くなる     |
+
+
+
+
+__例題:__ バッチ正規化の効果
+
+ニューラルネットワークにおける**Batch Normalization（バッチ正規化 / BN）の効果** を確認するための例題を扱います。
+お題は**ニューラルネットワークに BatchNorm を入れた場合 / 入れない場合** を比較し、**学習の安定性**、**収束スピード**、**勾配消失の改善**を可視化します。
+
+__タスク内容__: **2次元の非線形データ（スパイラル）を分類する問題**
+
+データ側を非線形の強いデータを用いて、BatchNormの有無により学習させます。
+BatchNorm は「深いネットワーク」「活性化関数の前後」で大きな効果を発揮するため、学習のスピードに差がつくと考えられます。
+
+__可視化するポイント__
+
+この例題では次が比較できます：
+
+__1. 学習曲線（Loss の推移）__
+
+- BN あり → 滑らかに早く収束
+- BN なし → 不安定で収束が遅い
+
+__2. 決定境界（decision boundary）__
+
+- BN あり → 綺麗な境界
+- BN なし → ノイズが大きい、学習しにくい
+
+**Batch Normalization の効果がわかる完全コード（PyTorch）**
+
+> ※ 2つのモデル（BNあり / なし）を同時に学習して比較できます
+> ※ matplotlib で Loss と決定境界を可視化します
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+from torch.utils.data import DataLoader, TensorDataset
+
+# --- データ作成（わざと難しい“半月型”） ---
+X, y = make_moons(n_samples=2000, noise=0.2)
+X = torch.tensor(X, dtype=torch.float32)
+y = torch.tensor(y, dtype=torch.long)
+
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=64, shuffle=True)
+
+# --- モデル定義（BNあり / BNなし） ---
+class MLP(nn.Module):
+    def __init__(self, use_bn=False):
+        super().__init__()
+        layers = []
+        layers += [nn.Linear(2, 64)]
+        if use_bn:
+            layers += [nn.BatchNorm1d(64)]
+        layers += [nn.ReLU()]
+
+        layers += [nn.Linear(64, 64)]
+        if use_bn:
+            layers += [nn.BatchNorm1d(64)]
+        layers += [nn.ReLU()]
+
+        layers += [nn.Linear(64, 2)]
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.net(x)
+
+# --- 2つのモデル ---
+model_no_bn = MLP(use_bn=False)
+model_bn    = MLP(use_bn=True)
+
+opt1 = optim.Adam(model_no_bn.parameters(), lr=0.01)
+opt2 = optim.Adam(model_bn.parameters(), lr=0.01)
+
+criterion = nn.CrossEntropyLoss()
+
+# --- 学習 ---
+epochs = 50
+loss_no_bn_list = []
+loss_bn_list = []
+
+for epoch in range(epochs):
+    total_no_bn = 0
+    total_bn    = 0
+  
+    for batch_x, batch_y in loader:
+        # --- BNなしモデル ---
+        opt1.zero_grad()
+        preds1 = model_no_bn(batch_x)
+        loss1 = criterion(preds1, batch_y)
+        loss1.backward()
+        opt1.step()
+        total_no_bn += loss1.item()
+
+        # --- BNありモデル ---
+        opt2.zero_grad()
+        preds2 = model_bn(batch_x)
+        loss2 = criterion(preds2, batch_y)
+        loss2.backward()
+        opt2.step()
+        total_bn += loss2.item()
+
+    loss_no_bn_list.append(total_no_bn / len(loader))
+    loss_bn_list.append(total_bn / len(loader))
+
+    print(f"Epoch {epoch+1}/{epochs} | No BN Loss: {loss_no_bn_list[-1]:.4f}, BN Loss: {loss_bn_list[-1]:.4f}")
+
+# --- Loss可視化 ---
+plt.figure(figsize=(8,5))
+plt.plot(loss_no_bn_list, label="No BatchNorm")
+plt.plot(loss_bn_list, label="With BatchNorm")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Batch Normalization の効果（Loss比較）")
+plt.legend()
+plt.show()
+
+# --- 決定境界の可視化 ---
+import numpy as np
+
+def plot_decision_boundary(model, title):
+    x_min, x_max = X[:,0].min() - .5, X[:,0].max() + .5
+    y_min, y_max = X[:,1].min() - .5, X[:,1].max() + .5
+    xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
+                         np.linspace(y_min, y_max, 200))
+    grid = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float32)
+    Z = model(grid).argmax(dim=1).reshape(xx.shape)
+
+    plt.figure(figsize=(6,5))
+    plt.contourf(xx, yy, Z, alpha=0.4)
+    plt.scatter(X[:,0], X[:,1], c=y, s=10)
+    plt.title(title)
+    plt.show()
+
+plot_decision_boundary(model_no_bn, "決定境界（No BatchNorm）")
+plot_decision_boundary(model_bn, "決定境界（With BatchNorm）")
+```
+
+__出力の結果__
+
+__Loss グラフ__
+入力分布が正規化されて、勾配が安定するため以下が確認されます。
+- **BNあり → なめらかに早く下がる**
+- **BNなし → ガタガタ、不安定、収束が遅い**
+
+__決定境界（classification boundary）__
+活性化出力が適切なスケールに整えられ、深い層でも情報が伝わりやすいため、以下の効果が確認されます。
+- **BNあり → 綺麗にパターンを分離できる**
+- **BNなし → 境界が歪んだり、誤分類が多い**
+
+---
+
+# 📌 さらに簡単に解説：BatchNorm の効果まとめ
+
+| 効果               | 例題で観察できること                     |
+| ------------------ | ---------------------------------------- |
+| 勾配の安定         | Loss が急に爆発しなくなる                |
+| 収束が速い         | 同じepoch数でも BNありの方が Loss が低い |
+| 表現がうまく学べる | 決定境界が滑らかで正確になる             |
+| 過学習の軽減       | 分布のゆらぎに強くなる                   |
+
+---
+
+# 🎁 次のステップ（ご希望なら生成します）
+
+### 🔸 バッチ正規化の **内部計算（平均・分散・正規化・スケール）を NumPy で可視化**
+
+### 🔸 BatchNorm1d/2d の違いを図解
+
+### 🔸 PyTorch の中身を一行ずつ解説
+
+### 🔸 ※Dropout との比較実験も可能
+
+---
+
+必要であれば上記の追加例題も作成します。
+
+続けますか？
