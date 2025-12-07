@@ -4,7 +4,6 @@ this site exists to study LLM and technic of VLM.
 
 <img src="image/README/welcom_llm.png" alt="代替テキスト" width="700" style="display: block; margin: 0 auto;">
 
-
 ## Related Repositories
 
 Code is stored next URL:
@@ -28,11 +27,27 @@ On the other hand, I have Reinforcement-Learning repository also.
 
 ## Basic of understanding LLM
 
-the essence is described bolow page.
+the essence of basic of neuralnetwork is described below page.
+
+the description:
+
+- activate function
+- graph theorem
+- optimization
+- stability method of training
 
 <img src="image/README/climing_pinokio.png" alt="代替テキスト" width="600" style="display: block; margin: 0 auto;">
 
 [Basic of understanding LLM](https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/basics_nn/basic_readme.md)
+
+## Time Series Neural Networks
+
+Handling Sequential Data and Word Relationships
+To process textual data, it's crucial to be able to handle sequential data. Furthermore, understanding the relationships between words within a sentence is also essential.
+
+In this context, we will be focusing on neural networks designed to address these challenges.
+
+[Sequential Neural Network](https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/sequential_nn/README.md)
 
 ## LayerNorm Work
 
@@ -111,7 +126,6 @@ Each token only attends to tokens within a**fixed, adjacent window** around itse
 I implemented this using Global + Local attention.While using Local Attention only yielded the previously mentioned result (referring to limited context), incorporating Global Attention allows attention to cover the entire sequence as shown below.This method, adopted by Big Bird (Big Bird: Transformers for Longer Sequences), is an approach that achieves both high computational speed (linear, $O(n)$ complexity) and strong performance.
 
 <img src="image/README/1763586561478.png" alt="代替テキスト" width="420" style="display: block; margin: 0 auto;">
-
 
 ### attention of token toward the others
 
@@ -207,9 +221,11 @@ visualize as heat map.
 ![1760833255365](image/README/1760833255365.png)
 
 ### NewArchitecture
+
 Now thinking new architecture.
 
 Key feature is next.
+
 - PE is used RoPE.
 - Attention is Hybrid Attention.
 - Normalize is LayerNorm.
