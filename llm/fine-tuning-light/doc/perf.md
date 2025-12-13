@@ -337,3 +337,58 @@ print("Training finished. LoRA adapters saved to", OUTPUT_DIR)
 * ✅ LoRA パラメータの実験ログ & Grid-search スクリプト
 
 どれを先に出しましょう？
+
+
+## ファインチューニングの実施
+
+準備したモデルとデータでファインチューニング（微調整）を行います。計算資源が限られるColab環境で効率よく学習を行うために、以下のような工夫・設定を行います。
+
+* **LoRAの適用** : LLaMAの全パラメータを更新しようとするとメモリ不足になりがちです。そこで**LoRA (Low-Rank Adaptation)** という技術を使い、モデル内の一部重み（行列）だけを学習可能にし、それ以外は凍結します。LoRAではごく小さな追加パラメータ（低ランク行列）だけを学習するため、メモリ使用量と計算量が大幅に削減できます。UnslothではLoRAの適用も簡単に行えます。
+* **4bit量子化の活用** : 既にモデルロード時に4bit量子化を行いましたが、学習中も引き続きその効果でメモリ節約ができます。**QLoRA**と呼ばれる手法では「4bit量子化されたモデル + LoRAの組み合わせ」によりフル精度に近い性能を維持しつつ大規模モデルを低メモリで学習できます。
+* **勾配チェックポイント** : モデル学習時の一時的なメモリ使用を減らすテクニックとしてGradient Checkpointingがあります。これは順伝搬で計算した中間結果を保持せず都度再計算することでメモリ節約する手法です。
+* **バッチサイズの調整** : 一度に処理するサンプル数（バッチサイズ）はメモリに直接影響します。バッチサイズが小さくても学習自体は可能ですが、学習ステップ数（iteration数）を増やす必要がある点に留意してください。
+
+> 作れるモデルはLoRAのモデル、4bit量子化、勾配チェックポイント、バッチサイズの調整
+
+
+ファインチューニングの結果
+
+Instruction: Explain the importance of sleep in simple terms.
+Response:Sleep is an essential part of our daily routine and is vital for our overall health and well-being. It helps us to recover from physical and mental exhaustion, improves our cognitive abilities, and promotes overall health and wellness. It is important to get enough sleep every night, as it allows our bodies to rest and repair themselves, and helps us to function at our best. Without enough sleep, we can experience fatigue, irritability, and difficulty concentrating, which can have a negative impact on our daily lives.
+
+
+Instruction: What supports the U.S. economy? 
+Response: 1. The U.S. economy is supported by a diverse range of industries, including agriculture, manufacturing, technology, healthcare, and finance. 2. The government provides support through tax incentives, infrastructure investments, and other programs that encourage businesses to invest and grow. 3. The U.S. has a strong labor force, with a high level of education and training, which allows businesses to hire and retain skilled workers. 4. The U.S. has a strong financial system
+
+
+Instruction: What were the causes of the American Depression? 
+Response: 1. The Great Depression was caused by the stock market crash of 1929, which led to a severe economic downturn. 2. The Great Depression was also caused by the failure of the banking system, which led to a loss of confidence in the economy. 3. The Great Depression was also caused by the loss of jobs and the loss of income, which led to a decrease in consumer spending and a decrease in demand for goods and services. 4. The Great Depression was
+
+
+Instruction: Write code to calculate prime numbers. Input: Response: 
+
+<code>def is_prime(number):
+    if number < 2:
+        return False
+    for i in range(2, number):
+        if number % i == 0:
+            return False
+    return True
+
+def main():
+    number = int(input("Enter a number: "))
+    if is_prime(number):
+        print(f"{number} is a prime number.")
+    else:
+        print(f"{number
+
+
+
+Instruction: Summarize the GDPs of the United States, Japan, and China with a table. Input: Response: 
+
+The GDP of the United States in 2021 was $20.4 trillion, Japan was $5.1 trillion, and China was $14.6 trillion. 
+
+The GDP of the United States in 2021 was $20.4 trillion, Japan was $5.1 trillion, and China was $14.6 trillion. 
+
+The GDP of the United States in 2021 was $20.4 trillion
+
