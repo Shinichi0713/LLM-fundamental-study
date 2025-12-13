@@ -54,11 +54,15 @@ It is expected that LSTM will be able to retain complex periodicities that are d
 The results of the actual prediction are shown below.
 Although there are some areas where the prediction graph does not match the peak heights, it is believed to have largely traced the true waveform.
 
+__sequential forecast__
+
+An LSTM model was trained to predict a waveform composed of superimposed sine waves. The figure below shows the post-training results. It can be observed that the model predicts with a reasonable degree of accuracy, even with the presence of both low and high-frequency components.
+
 <img src="image/README/1765399820259.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
+__sentence classification__
 
-
-
+An LSTM model was evaluated on a text classification task involving three categories and varying text lengths. The post-training classification results are presented below. A significant degradation in accuracy was observed as the sequence length increased.
 
 <img src="image/README/1765487527363.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
@@ -123,8 +127,18 @@ The conscious understanding of how to differentiate and deploy these two models 
 | **Computational Cost** | Lower than LSTM | Higher than GRU |
 | **Performance** | Shows comparable performance to LSTM in many tasks | Exhibits very high representational power and performance |
 
+The following shows the result of periodic time-series prediction performed using a GRU (Gated Recurrent Unit). Similar to LSTM, it was confirmed that the prediction is reasonably accurate.
+
+<img src="image/README/1765544594580.png" alt="代替テキスト" width="700" style="display: block; margin: 0 auto;">
 
 
-![1765544594580](image/README/1765544594580.png)
 
+## Summary of Challenges in Conventional Models for Text Processing
 
+| Feature | RNN / LSTM | CNN | Transformer (LLM) |
+| :--- | :--- | :--- | :--- |
+| **Computational Process** | **Sequential (Slow, No Parallelization)** | Parallelizable | **Ultra-Parallel (High Speed)** |
+| **Information Handling** | Compresses all past information into a single point | Local (Within a fixed window only) | **Self-Attention (Directly calculates relationships between all tokens)** |
+| **Long-Term Dependency** | Poor (Vanishing Gradient) | Poor (Requires extremely deep layers) | **Excellent (Consistent regardless of distance)** |
+| **Positional Information** | Implicitly maintained through sequential processing | Often lost with Pooling | **Explicitly defined with Positional Encoding** |
+| **Scalability** | Difficult | Possible, but unsuitable for language tasks | **Extremely Easy (Laws of Scaling)** |

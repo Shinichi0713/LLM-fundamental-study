@@ -36,7 +36,9 @@ the description:
 - optimization
 - stability method of training
 
-<img src="image/README/climing_pinokio.png" alt="代替テキスト" width="600" style="display: block; margin: 0 auto;">
+<img src="image/README/climing_pinokio.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+The result of investigateing is showed on below link.
 
 [Basic of understanding LLM](https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/basics_nn/basic_readme.md)
 
@@ -46,6 +48,16 @@ Handling Sequential Data and Word Relationships
 To process textual data, it's crucial to be able to handle sequential data. Furthermore, understanding the relationships between words within a sentence is also essential.
 
 In this context, we will be focusing on neural networks designed to address these challenges.
+
+### Summary of Challenges in Conventional Models for Text Processing
+
+| Feature                          | RNN / LSTM                                          | CNN                                         | Transformer (LLM)                                                               |
+| :------------------------------- | :-------------------------------------------------- | :------------------------------------------ | :------------------------------------------------------------------------------ |
+| **Computational Process**  | **Sequential (Slow, No Parallelization)**     | Parallelizable                              | **Ultra-Parallel (High Speed)**                                           |
+| **Information Handling**   | Compresses all past information into a single point | Local (Within a fixed window only)          | **Self-Attention (Directly calculates relationships between all tokens)** |
+| **Long-Term Dependency**   | Poor (Vanishing Gradient)                           | Poor (Requires extremely deep layers)       | **Excellent (Consistent regardless of distance)**                         |
+| **Positional Information** | Implicitly maintained through sequential processing | Often lost with Pooling                     | **Explicitly defined with Positional Encoding**                           |
+| **Scalability**            | Difficult                                           | Possible, but unsuitable for language tasks | **Extremely Easy (Laws of Scaling)**                                      |
 
 [Sequential Neural Network](https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/sequential_nn/README.md)
 
