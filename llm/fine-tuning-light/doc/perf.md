@@ -338,7 +338,6 @@ print("Training finished. LoRA adapters saved to", OUTPUT_DIR)
 
 どれを先に出しましょう？
 
-
 ## ファインチューニングの実施
 
 準備したモデルとデータでファインチューニング（微調整）を行います。計算資源が限られるColab環境で効率よく学習を行うために、以下のような工夫・設定を行います。
@@ -351,23 +350,213 @@ print("Training finished. LoRA adapters saved to", OUTPUT_DIR)
 > 作れるモデルはLoRAのモデル、4bit量子化、勾配チェックポイント、バッチサイズの調整
 
 
-ファインチューニングの結果
+
+# ファインチューニングの結果
+
+ファインチューニングの結果モデルが「言語モデル」から「指示追従型アシスタント」へ振る舞いを明確に変えたことを示しています。
+
+これは **unsloth/gemma-2b-bnb-4bit × yahma/alpaca-cleaned** という組み合わせにおいて、極めて典型的かつ「成功している」ファインチューニング結果です。
+
+以下、何がどう変わったのかを分解して説明します。
+
+---
+
+## 1. 最も大きな変化：Instruction Following 能力の獲得
+
+### ファインチューニング前（想定される挙動）
+
+* 文の続きを予測するだけ
+* 「Instruction」「Response」という構造を理解しない
+* 入力文をそのまま繰り返す、脱線する可能性が高い
+
+### ファインチューニング後（あなたの結果）
+
+* Instruction を **命令として解釈**
+* 「質問 → 回答」という役割分離が成立
+* 出力が明確に **Response フィールド向け**になる
+
+👉 **Alpaca形式の対話プロトコルを学習した**
+
+---
+
+## 2. 出力構造が安定した（フォーマット学習）
+
+### 観測できる変化
+
+* 箇条書き（1., 2., 3.）が自然に使われる
+* 説明文の文体が安定
+* 表形式を要求されると「表を作ろうとする」
+
+これは内容理解以前に、
+
+> **「どう答えるのが正しいか」**
+
+を学習した証拠です。
+
+---
+
+## 3. 抽象度制御が可能になった
+
+例：
+
+```
+Instruction: Explain the importance of sleep in simple terms.
+```
+
+### 観測結果
+
+* 専門用語を避ける
+* 一般向けの語彙を選択
+* 長さが過剰にならない
+
+👉 **「simple terms」という条件を尊重**
+
+これはベースモデル単体では弱い能力です。
+
+---
+
+## 4. タスクスイッチ能力が発生した
+
+同一モデルが以下を切り替えています。
+
+| 指示     | 出力の性質   |
+| -------- | ------------ |
+| 説明     | 自然文       |
+| 質問     | 箇条書き     |
+| 歴史     | 因果列挙     |
+| コード   | Pythonコード |
+| 要約＋表 | 情報整理     |
+
+👉 **タスク条件付き生成**が成立
+
+これは Alpaca-cleaned の最大の効果です。
+
+---
+
+## 5. 出力の「途中切れ」から見える限界も明確
+
+一方で、いくつか重要な観察点があります。
+
+### 5.1 途中で文が切れている
+
+例：
+
+```
+4. The Great Depression was
+```
+
+```
+print(f"{number
+```
+
+### 想定される原因
+
+1. **max_new_tokens が短い**
+2. **EOSトークンの学習が不完全**
+3. **Gemma-2Bの生成持続力の限界**
+4. **QLoRA + 4bit 量子化による表現制約**
+
+👉 **「能力不足」ではなく「生成制御の問題」**
+
+---
+
+## 6. 事実性の向上ではなく「形式的妥当性」の向上
+
+GDPの例が分かりやすいです。
+
+* 同じ文を繰り返す
+* 表が作れていない
+* 数値の検証は行われていない
+
+これは
+
+> **知識が増えたわけではない**
+
+ことを示します。
+
+### 学習されたのは
+
+* 指示への従い方
+* 回答らしい書き方
+* 情報整理の「型」
+
+---
+
+## 7. 内部的に起きている変化（推定）
+
+### 重み空間レベルでは
+
+* LoRA Adapter が
+  * 出力初期トークン分布を変更
+  * 「Response:」以降の生成確率を大幅に再配分
+
+### 特に変化した層
+
+* FFN上位層
+* 出力側 attention
+* 指示文トークン周辺の表現
+
+👉 **基盤知識はほぼそのまま、出力制御のみ変更**
+
+---
+
+## 8. unsloth × alpaca-cleaned の組み合わせが効いている理由
+
+| 要素           | 効果                  |
+| -------------- | --------------------- |
+| Gemma-2B       | 十分な言語能力        |
+| 4bit量子化     | 計算資源削減          |
+| LoRA           | 知識破壊なし          |
+| Alpaca-cleaned | 高品質Instruction形式 |
+| Unsloth        | 学習の安定性・速度    |
+
+👉 **「最小コストで最大の行動変化」**
+
+---
+
+## 9. 一言でまとめると
+
+> **モデルは賢くなったのではなく、「指示に従うように調教された」**
+
+これはLLMファインチューニングの理想形のひとつです。
+
+---
+
+## 次に改善するとしたら
+
+1. `max_new_tokens` 増加
+2. EOSトークン明示
+3. 出力フォーマット制約（テンプレ）
+4. Code専用データの追加
+5. Repetition penalty 調整
+
+ここまで来ていれば、
+
+* 社内ツール
+* FAQボット
+* 教育用アシスタント
+
+には **即実用レベル**です。
+
+必要であれば
+「この出力から逆算した最適な学習設定」
+「途中切れを防ぐ具体パラメータ」
+まで落とし込みます。
+
+![1765686995784](image/perf/1765686995784.png)
 
 Instruction: Explain the importance of sleep in simple terms.
 Response:Sleep is an essential part of our daily routine and is vital for our overall health and well-being. It helps us to recover from physical and mental exhaustion, improves our cognitive abilities, and promotes overall health and wellness. It is important to get enough sleep every night, as it allows our bodies to rest and repair themselves, and helps us to function at our best. Without enough sleep, we can experience fatigue, irritability, and difficulty concentrating, which can have a negative impact on our daily lives.
 
-
-Instruction: What supports the U.S. economy? 
+Instruction: What supports the U.S. economy?
 Response: 1. The U.S. economy is supported by a diverse range of industries, including agriculture, manufacturing, technology, healthcare, and finance. 2. The government provides support through tax incentives, infrastructure investments, and other programs that encourage businesses to invest and grow. 3. The U.S. has a strong labor force, with a high level of education and training, which allows businesses to hire and retain skilled workers. 4. The U.S. has a strong financial system
 
-
-Instruction: What were the causes of the American Depression? 
+Instruction: What were the causes of the American Depression?
 Response: 1. The Great Depression was caused by the stock market crash of 1929, which led to a severe economic downturn. 2. The Great Depression was also caused by the failure of the banking system, which led to a loss of confidence in the economy. 3. The Great Depression was also caused by the loss of jobs and the loss of income, which led to a decrease in consumer spending and a decrease in demand for goods and services. 4. The Great Depression was
 
+Instruction: Write code to calculate prime numbers. Input: Response:
 
-Instruction: Write code to calculate prime numbers. Input: Response: 
-
-<code>def is_prime(number):
+`<code>`def is_prime(number):
     if number < 2:
         return False
     for i in range(2, number):
@@ -382,13 +571,10 @@ def main():
     else:
         print(f"{number
 
+Instruction: Summarize the GDPs of the United States, Japan, and China with a table. Input: Response:
 
+The GDP of the United States in 2021 was $20.4 trillion, Japan was $5.1 trillion, and China was $14.6 trillion.
 
-Instruction: Summarize the GDPs of the United States, Japan, and China with a table. Input: Response: 
-
-The GDP of the United States in 2021 was $20.4 trillion, Japan was $5.1 trillion, and China was $14.6 trillion. 
-
-The GDP of the United States in 2021 was $20.4 trillion, Japan was $5.1 trillion, and China was $14.6 trillion. 
+The GDP of the United States in 2021 was $20.4 trillion, Japan was $5.1 trillion, and China was $14.6 trillion.
 
 The GDP of the United States in 2021 was $20.4 trillion
-
