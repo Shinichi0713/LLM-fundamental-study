@@ -1,61 +1,39 @@
-# ワークフローの名前
 name: Generate and Deploy Sitemap
 
-# ワークフローが実行されるタイミング
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   generate-sitemap:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
 
     steps:
-      # ---------------------------------------------------------------
-      # 1. リポジトリのチェックアウト（変更なし）
-      # ---------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 
-          
-      # ---------------------------------------------------------------
-      # 2. サイトマップの生成と<lastmod>の挿入（修正箇所）
-      # XMLスキーマ参照を削除し、標準形式を強制します。
-      # ---------------------------------------------------------------
-      - name: Generate Sitemap with Standard XML Template
-        uses: jayanta525/sitemap-generator-action@v1
-        with:
-          base_url: https://shinichi0713.github.io/LLM-fundamental-study
-          
-          # ★★★ 修正箇所: 標準的なXMLテンプレートを使用 ★★★
-          # 以前の問題の原因と推測される xsi:schemaLocation を含めない
-          sitemap_template: |
-            <?xml version="1.0" encoding="UTF-8"?>
-            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            %URLS%
-            </urlset>
-            
-          exclude_paths: |
-            SECURITY.html,
-            404.html,
-            *.pdf
-            
-          lastmod: true
-          output_path: ./sitemap.xml
 
-      # ---------------------------------------------------------------
-      # 3. 生成されたsitemap.xmlをデプロイ（変更なし）
-      # ---------------------------------------------------------------
-      - name: Deploy Sitemap
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: main
-          publish_dir: .
-          keep_files: true
-          commit_message: "docs: Auto-generate sitemap with lastmod [skip ci]"
+      # sitemap.xml を直接生成
+      - name: Generate sitemap.xml manually
+        run: |
+          cat << 'EOF' > sitemap.xml
+          <?xml version="1.0" encoding="UTF-8"?>
+          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+              <loc>https://shinichi0713.github.io/LLM-fundamental-study/</loc>
+            </url>
+            <url>
+              <loc>https://shinichi0713.github.io/LLM-fundamental-study/attention/doc/1-query_mha.html</loc>
+            </url>
+          </urlset>
+          EOF
+
+      - name: Commit and push sitemap
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add sitemap.xml
+          git commit -m "docs: generate sitemap.xml" || echo "No changes"
+          git push
