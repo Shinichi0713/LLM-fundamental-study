@@ -299,104 +299,106 @@ class MockDataset(Dataset):
 # 4. モデルの初期化と訓練ループ
 # ====================================================================
 
-# トークナイザとデータセットの準備
-tokenizer = MockTokenizer(VOCAB_SIZE)
-train_dataset = MockDataset(num_samples=100, seq_len=SEQ_LEN, vocab_size=VOCAB_SIZE, tokenizer=tokenizer)
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-
-# GPTモデルの初期化
-gpt_model = GPT(
-    vocab_size=VOCAB_SIZE,
-    seq_len=SEQ_LEN,
-    embed_dim=EMBED_DIM,
-    num_heads=NUM_HEADS,
-    num_layers=NUM_LAYERS,
-    ffn_hidden_dim=FFN_HIDDEN_DIM,
-    use_moe=USE_MOE,
-    num_experts=NUM_EXPERTS,
-    top_k=TOP_K
-).to(device)
-
-# オプティマイザと損失関数
-optimizer = torch.optim.Adam(gpt_model.parameters(), lr=LEARNING_RATE)
-criterion = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN_ID) # PADトークンは損失計算から除外
-
-print(f"\nModel initialized with {sum(p.numel() for p in gpt_model.parameters()):,} parameters.")
-print(f"Using MoE: {USE_MOE}")
-print(f"Starting training for {EPOCHS} epochs...")
-
-for epoch in range(EPOCHS):
-    gpt_model.train()
-    total_loss = 0
-    total_moe_loss = 0
-    
-    for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{EPOCHS}"):
-        input_ids = batch["input_ids"].to(device)
-        labels = batch["labels"].to(device) # Causal LMでは input_ids がずれてラベルとなる
+def train():
         
-        optimizer.zero_grad()
+    # トークナイザとデータセットの準備
+    tokenizer = MockTokenizer(VOCAB_SIZE)
+    train_dataset = MockDataset(num_samples=100, seq_len=SEQ_LEN, vocab_size=VOCAB_SIZE, tokenizer=tokenizer)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+
+    # GPTモデルの初期化
+    gpt_model = GPT(
+        vocab_size=VOCAB_SIZE,
+        seq_len=SEQ_LEN,
+        embed_dim=EMBED_DIM,
+        num_heads=NUM_HEADS,
+        num_layers=NUM_LAYERS,
+        ffn_hidden_dim=FFN_HIDDEN_DIM,
+        use_moe=USE_MOE,
+        num_experts=NUM_EXPERTS,
+        top_k=TOP_K
+    ).to(device)
+
+    # オプティマイザと損失関数
+    optimizer = torch.optim.Adam(gpt_model.parameters(), lr=LEARNING_RATE)
+    criterion = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN_ID) # PADトークンは損失計算から除外
+
+    print(f"\nModel initialized with {sum(p.numel() for p in gpt_model.parameters()):,} parameters.")
+    print(f"Using MoE: {USE_MOE}")
+    print(f"Starting training for {EPOCHS} epochs...")
+
+    for epoch in range(EPOCHS):
+        gpt_model.train()
+        total_loss = 0
+        total_moe_loss = 0
         
-        logits, moe_aux_loss = gpt_model(input_ids)
-        
-        # 損失計算 (次単語予測):
-        # logits: (batch_size, seq_len, vocab_size) -> (batch_size * seq_len, vocab_size)
-        # labels: (batch_size, seq_len)           -> (batch_size * seq_len)
-        loss = criterion(logits[:, :-1, :].reshape(-1, VOCAB_SIZE), labels[:, 1:].reshape(-1))
+        for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{EPOCHS}"):
+            input_ids = batch["input_ids"].to(device)
+            labels = batch["labels"].to(device) # Causal LMでは input_ids がずれてラベルとなる
+            
+            optimizer.zero_grad()
+            
+            logits, moe_aux_loss = gpt_model(input_ids)
+            
+            # 損失計算 (次単語予測):
+            # logits: (batch_size, seq_len, vocab_size) -> (batch_size * seq_len, vocab_size)
+            # labels: (batch_size, seq_len)           -> (batch_size * seq_len)
+            loss = criterion(logits[:, :-1, :].reshape(-1, VOCAB_SIZE), labels[:, 1:].reshape(-1))
+            
+            if USE_MOE:
+                # MoEのロードバランシング損失を加算
+                loss += MOE_LOSS_COEF * moe_aux_loss
+                total_moe_loss += moe_aux_loss.item()
+                
+            loss.backward()
+            optimizer.step()
+            
+            total_loss += loss.item()
+
+        avg_loss = total_loss / len(train_loader)
         
         if USE_MOE:
-            # MoEのロードバランシング損失を加算
-            loss += MOE_LOSS_COEF * moe_aux_loss
-            total_moe_loss += moe_aux_loss.item()
+            avg_moe_loss = total_moe_loss / len(train_loader)
+            print(f"Epoch {epoch+1} | Avg Loss: {avg_loss:.4f} (Main+MoE) | Avg MoE Aux Loss: {avg_moe_loss:.4f}")
+        else:
+            print(f"Epoch {epoch+1} | Avg Loss: {avg_loss:.4f}")
+
+    print("\nTraining Finished!")
+
+    # ====================================================================
+    # 5. テキスト生成の例 (非常に単純な例)
+    # ====================================================================
+
+    gpt_model.eval()
+    print("\n--- Text Generation Example ---")
+
+    # シードテキスト (BOSトークンで開始)
+    seed_text_ids = [tokenizer.bos_token_id, 5, 8] # 例: "<BOS> token_5 token_8"
+    current_ids = torch.tensor([seed_text_ids], dtype=torch.long, device=device)
+
+    max_new_tokens = 5
+    generated_tokens = seed_text_ids[:]
+
+    with torch.no_grad():
+        for _ in range(max_new_tokens):
+            # モデルの入力シーケンス長に合わせてトリミング (必要に応じて)
+            input_for_model = current_ids[:, -SEQ_LEN:] # 最新のSEQ_LENトークンを使用
             
-        loss.backward()
-        optimizer.step()
-        
-        total_loss += loss.item()
-
-    avg_loss = total_loss / len(train_loader)
-    
-    if USE_MOE:
-        avg_moe_loss = total_moe_loss / len(train_loader)
-        print(f"Epoch {epoch+1} | Avg Loss: {avg_loss:.4f} (Main+MoE) | Avg MoE Aux Loss: {avg_moe_loss:.4f}")
-    else:
-        print(f"Epoch {epoch+1} | Avg Loss: {avg_loss:.4f}")
-
-print("\nTraining Finished!")
-
-# ====================================================================
-# 5. テキスト生成の例 (非常に単純な例)
-# ====================================================================
-
-gpt_model.eval()
-print("\n--- Text Generation Example ---")
-
-# シードテキスト (BOSトークンで開始)
-seed_text_ids = [tokenizer.bos_token_id, 5, 8] # 例: "<BOS> token_5 token_8"
-current_ids = torch.tensor([seed_text_ids], dtype=torch.long, device=device)
-
-max_new_tokens = 5
-generated_tokens = seed_text_ids[:]
-
-with torch.no_grad():
-    for _ in range(max_new_tokens):
-        # モデルの入力シーケンス長に合わせてトリミング (必要に応じて)
-        input_for_model = current_ids[:, -SEQ_LEN:] # 最新のSEQ_LENトークンを使用
-        
-        logits, _ = gpt_model(input_for_model)
-        
-        # 最後のトークンのlogitsを取得
-        next_token_logits = logits[:, -1, :]
-        
-        # サンプリングまたはargmaxで次のトークンを選択
-        next_token_id = torch.argmax(next_token_logits, dim=-1).item()
-        
-        if next_token_id == EOS_TOKEN_ID: # EOSトークンが出たら終了
-            break
+            logits, _ = gpt_model(input_for_model)
             
-        generated_tokens.append(next_token_id)
-        current_ids = torch.cat([current_ids, torch.tensor([[next_token_id]], device=device)], dim=-1)
+            # 最後のトークンのlogitsを取得
+            next_token_logits = logits[:, -1, :]
+            
+            # サンプリングまたはargmaxで次のトークンを選択
+            next_token_id = torch.argmax(next_token_logits, dim=-1).item()
+            
+            if next_token_id == EOS_TOKEN_ID: # EOSトークンが出たら終了
+                break
+                
+            generated_tokens.append(next_token_id)
+            current_ids = torch.cat([current_ids, torch.tensor([[next_token_id]], device=device)], dim=-1)
 
-decoded_generated_text = tokenizer.decode(generated_tokens)
-print(f"Seed: {tokenizer.decode(seed_text_ids)}")
-print(f"Generated: {decoded_generated_text}")
+    decoded_generated_text = tokenizer.decode(generated_tokens)
+    print(f"Seed: {tokenizer.decode(seed_text_ids)}")
+    print(f"Generated: {decoded_generated_text}")
 
