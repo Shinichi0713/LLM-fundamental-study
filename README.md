@@ -240,6 +240,13 @@ With a larger training corpus, we expect the model to recognize compound words l
 ['▁', 'その', 'ソ', 'フ', 'ト', 'ウ', 'ェ', 'ア', 'は', '多', 'く', 'の', 'ユ', 'ー', 'ザ', 'ー', 'から', '賛', '同', 'を', '得', 'ている', '。']
 ```
 
+### sentence distribution
+
+with using sentence bert, we can visualize sentence meaning visualization.
+below is one example.
+
+![1766270609958](image/README/1766270609958.png)
+
 ## Positional Encoding
 
 ### Absolute PE
