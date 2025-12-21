@@ -2,6 +2,8 @@
 
 this page is created to show the basic of neural network, which helps to understand neural network.
 
+<img src="image/basic_readme/1766271724282.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
 ## Graph Theorem
 
 Graph Theory provides the fundamental mathematical framework for understanding the structure and processes of neural networks (NNs).
@@ -173,8 +175,6 @@ Gradient Descent is the essential mechanism used to adjust the parameters (**wei
 
 <img src="doc/image/gradient_descent_animation.gif" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
-
-
 ## Optimization Algorithms in Neural Networks: An Overview and Evolution
 
 The optimization algorithms used in neural networks are primarily based on  **Gradient Descent (GD)** . They have evolved consistently with the goal of **overcoming the shortcomings of GD and achieving faster, more stable convergence to a better solution.**
@@ -213,7 +213,6 @@ SGD still required **manual tuning** of the learning rate (**$\alpha$**) and app
 |                      | **RMSprop**                           | **Rationale:**AdaGrad's use of a cumulative sum causes the**learning rate to shrink too aggressively toward zero**as training progresses. RMSprop solves this by using an**Exponential Moving Average (EMA)**of the squared gradients instead of the sum, mitigating the decay and enabling long-term learning on large datasets. |
 |                      | **Adam (Adaptive Moment Estimation)** | **Rationale:**Developed by combining the benefits of RMSprop's**adaptive learning rate**with Momentum's **inertia** . It is one of the most widely used algorithms today due to its**high performance and stability**across many neural network tasks.                                                                |
 
-
 ## Chronology of Optimization Algorithms
 
 The development of optimization algorithms chronologically:
@@ -227,18 +226,15 @@ The development of optimization algorithms chronologically:
 | 2012          | **RMSprop**   | Mitigates AdaGrad's**aggressive learning rate decay**             |
 | 2014          | **Adam**      | Integrates RMSprop's**Adaptivity**and Momentum's**Inertia** |
 
-
 ## Implementation and Visualization
 
 As part of my LLM learning process, I implemented several optimization algorithms in NumPy and created an animation to visually inspect their convergence properties. The implemented algorithms were  **SGD** ,  **RMSprop** , and  **Adam** .
-
 
 <img src="image/basic_readme/optimizer_animation.gif" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
 ![1764991193450](image/basic_readme/1764991193450.png)
 
 ![1764991307695](image/basic_readme/1764991307695.png)
-
 
 ## Effect of Layer Normalization on Learning Stability
 
@@ -248,13 +244,11 @@ We investigated this effect by comparing models with and without Layer Normaliza
 
 The results obtained are summarized below:
 
-
 ### 1. Speed of Convergence (Learning Speed) 🚀
 
 By suppressing the variance (fluctuation) across individual data samples, Layer Normalization enables the model to consistently grasp the underlying patterns it needs to learn.
 
 Observing the progression of the loss, it can be confirmed that the loss **converges much earlier** when Layer Normalization is present .
-
 
 ### 2. Classification Boundary (Decision Boundary) 📉
 
