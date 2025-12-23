@@ -5,3 +5,4 @@ theme: minima
 markdown: kramdown
 include:
   - _includes/head.html
+google_analytics: G-PL9DVG1M5D
