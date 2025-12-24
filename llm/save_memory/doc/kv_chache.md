@@ -5,15 +5,15 @@
 
 ### 1. 解決しようとした課題：再計算の無駄
 
-LLM（デコーダオンリーモデル）は、**「自己回帰（Autoregressive）」** という性質を持っています。これは、次の1単語を予測するために、過去のすべての単語を読み直す必要があるという仕組みです。
+LLM（デコーダオンリーモデル）は、 **「自己回帰（Autoregressive）」** という性質を持っています。これは、次の1単語を予測するために、過去のすべての単語を読み直す必要があるという仕組みです。
 
 #### KVキャッシュがない場合の問題点
 
 例えば、「私は / リンゴ / を」の後に続く言葉（食べた）を予測する場合を考えます。
 
 1. 「私は」から「リンゴ」を予測する際、**「私は」**の K（Key）と V（Value）を計算します。
-2. 「私は リンゴ」から「を」を予測する際、再び**「私は」**と**「リンゴ」**の両方の K と V を計算し直します。
-3. 「私は リンゴ を」から「食べた」を予測する際、また最初から**「私は」「リンゴ」「を」**の K と V をすべて計算し直します。
+2. 「私は リンゴ」から「を」を予測する際、再び **「私は」** と **「リンゴ」** の両方の K と V を計算し直します。
+3. 「私は リンゴ を」から「食べた」を予測する際、また最初から **「私は」「リンゴ」「を」** の K と V をすべて計算し直します。
 
 このように、文章が長くなればなるほど、**過去に一度計算したはずの K と V を何度も何度も計算し直す**ことになり、計算量が雪だるま式に増えてしまいます。これが原因で、生成が非常に遅くなってしまうのです。
 
@@ -39,7 +39,7 @@ KVキャッシュは、この **「二度手間」を解消するメモ帳** の
 
 ### 4. 新たな課題：メモリ（VRAM）の圧迫
 
-KVキャッシュによって「計算速度」の課題は解決されましたが、代わりに従うのが**「メモリ消費量」**という課題です。
+KVキャッシュによって「計算速度」の課題は解決されましたが、代わりに従うのが **「メモリ消費量」** という課題です。
 
 * **VRAMを大量に喰う**: 過去の情報をすべてメモリに載せ続ける必要があるため、長い文章（ロングコンテキスト）を扱うほど、GPUのメモリを圧迫します。
 * **共有化技術への繋がり**: この「メモリが足りない！」という問題を解決するために、最初にお話しした **MQA** や **GQA**（KeyとValueの数を減らしてキャッシュを節約する技術）が誕生したのです。
@@ -107,86 +107,125 @@ KVキャッシュを自作モデルやPyTorchで実装する場合、主な変�
 
 通常のAttentionに、過去の  を受け取り、新しい  を返す機能を追加します。
 
+
+コード中のここがキャッシュを利用している個所です。
+
+```python
+if kv_cache is not None:
+    # 過去 KV と結合
+    k = torch.cat([kv_cache["k"], k], dim=2)
+    v = torch.cat([kv_cache["v"], v], dim=2)
+```
+
+
 ```python
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class CausalSelfAttentionWithCache(nn.Module):
-    def __init__(self, d_model, n_head):
+class SelfAttentionWithKVCache(nn.Module):
+    def __init__(self, embed_dim, num_heads):
         super().__init__()
-        self.n_head = n_head
-        self.qkv_proj = nn.Linear(d_model, 3 * d_model)
-        self.out_proj = nn.Linear(d_model, d_model)
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.head_dim = embed_dim // num_heads
 
-    def forward(self, x, past_key_value=None):
-        # x: [batch, 1, d_model]  (推論時は通常、最新の1トークンのみ入力)
-        batch, seq_len, d_model = x.shape
-        head_dim = d_model // self.n_head
+        assert self.head_dim * num_heads == embed_dim
 
-        # 1. Q, K, V の計算
-        q, k, v = self.qkv_proj(x).chunk(3, dim=-1)
-        
-        # [batch, n_head, seq_len, head_dim] に変換
-        q = q.view(batch, seq_len, self.n_head, head_dim).transpose(1, 2)
-        k = k.view(batch, seq_len, self.n_head, head_dim).transpose(1, 2)
-        v = v.view(batch, seq_len, self.n_head, head_dim).transpose(1, 2)
+        self.q_proj = nn.Linear(embed_dim, embed_dim)
+        self.k_proj = nn.Linear(embed_dim, embed_dim)
+        self.v_proj = nn.Linear(embed_dim, embed_dim)
+        self.out_proj = nn.Linear(embed_dim, embed_dim)
 
-        # 2. KVキャッシュの適用
-        if past_key_value is not None:
-            prev_k, prev_v = past_key_value
-            # 過去のK, Vと現在のK, Vを結合 (seq_len方向に結合)
-            k = torch.cat([prev_k, k], dim=2)
-            v = torch.cat([prev_v, v], dim=2)
-        
-        # 今回のステップのK, Vを保存用として出力
-        present_key_value = (k, v)
+    def forward(self, x, kv_cache=None):
+        """
+        x: (B, T, D)  ※ 推論時は T=1
+        kv_cache: dict or None
+          {
+            "k": (B, H, T_cache, Hd),
+            "v": (B, H, T_cache, Hd)
+          }
+        """
 
-        # 3. Attention計算 (Qは最新の1つ、K, Vは過去すべて)
-        # q: [b, h, 1, d], k: [b, h, total_seq, d]
-        attn_weights = torch.matmul(q, k.transpose(-2, -1)) / (head_dim ** 0.5)
-        attn_probs = F.softmax(attn_weights, dim=-1)
-        
-        out = torch.matmul(attn_probs, v)
-        out = out.transpose(1, 2).contiguous().view(batch, seq_len, d_model)
-        
-        return self.out_proj(out), present_key_value
+        B, T, D = x.shape
 
+        # QKV projection
+        q = self.q_proj(x)
+        k = self.k_proj(x)
+        v = self.v_proj(x)
+
+        # reshape -> (B, H, T, Hd)
+        q = q.view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
+        k = k.view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
+        v = v.view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
+
+        # === KV Cache logic ===
+        if kv_cache is not None:
+            # 過去 KV と結合
+            k = torch.cat([kv_cache["k"], k], dim=2)
+            v = torch.cat([kv_cache["v"], v], dim=2)
+
+        # 更新された KV を保存
+        new_kv_cache = {
+            "k": k.detach(),
+            "v": v.detach()
+        }
+
+        # Attention
+        attn_scores = torch.matmul(q, k.transpose(-2, -1))
+        attn_scores /= self.head_dim ** 0.5
+
+        attn_weights = F.softmax(attn_scores, dim=-1)
+
+        context = torch.matmul(attn_weights, v)
+        context = context.transpose(1, 2).contiguous()
+        context = context.view(B, T, D)
+
+        out = self.out_proj(context)
+
+        return out, new_kv_cache
 ```
 
 
 ### 2. 推論ループでの実装
 
-モデル全体で各レイヤーのキャッシュを管理する必要があります。
+実際にダミーの入力を使って実際に計算させると以下のようになります。
 
 ```python
-def generate_with_cache(model, tokenizer, prompt, max_new_tokens=20):
-    input_ids = tokenizer.encode(prompt, return_tensors="pt")
-    
-    # 全レイヤー分のキャッシュを保持するリスト (最初はNone)
-    past_key_values = None
-    
-    generated_ids = input_ids
-    next_token_id = input_ids
+torch.manual_seed(0)
 
-    for _ in range(max_new_tokens):
-        # モデルのforwardにキャッシュを渡す
-        # 最初のステップ以外は、最新の1トークン(next_token_id)だけ入力すれば良い！
-        outputs = model(next_token_id, past_key_values=past_key_values)
-        
-        logits = outputs.logits  # [batch, 1, vocab_size]
-        past_key_values = outputs.past_key_values # 更新されたキャッシュを受け取る
-        
-        # 次のトークンを選択
-        next_token_id = torch.argmax(logits[:, -1, :], dim=-1).unsqueeze(-1)
-        
-        generated_ids = torch.cat([generated_ids, next_token_id], dim=-1)
-        
-        if next_token_id == tokenizer.eos_token_id:
-            break
-            
-    return tokenizer.decode(generated_ids[0])
+embed_dim = 32
+num_heads = 4
 
+attn = SelfAttentionWithKVCache(embed_dim, num_heads)
+
+# 初期 KV キャッシュ
+kv_cache = None
+
+# 擬似的に 5 トークン逐次生成
+for step in range(5):
+    x = torch.randn(1, 1, embed_dim)  # 1 token input
+
+    out, kv_cache = attn(x, kv_cache)
+
+    print(f"Step {step}")
+    print("Output shape:", out.shape)
+    print("KV cache K shape:", kv_cache["k"].shape)
+    print()
+
+```
+
+出力イメージはこの通りです。
+
+```
+Step 0
+KV cache K: (1, 4, 1, 8)
+
+Step 1
+KV cache K: (1, 4, 2, 8)
+
+Step 2
+KV cache K: (1, 4, 3, 8)
 ```
 
 
@@ -198,7 +237,7 @@ KVキャッシュを使う最大のメリットは、2ステップ目以降の�
 
 #### ② 位置エンコーディング（RoPEなど）の扱い
 
-位置エンコーディング（Rotary Positional Embeddings）を使用している場合、**「今のトークンが全体の何番目か」**という絶対的な位置情報を正しく渡す必要があります。
+位置エンコーディング（Rotary Positional Embeddings）を使用している場合、 **「今のトークンが全体の何番目か」** という絶対的な位置情報を正しく渡す必要があります。
 
 * キャッシュを使う場合、`input_ids` は1つですが、その位置インデックス（`position_ids`）は `5` や `10` といった進んだ値にする必要があります。
 
