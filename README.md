@@ -211,6 +211,37 @@ I implemented this using Global + Local attention.While using Local Attention on
 
 ![1761463514970](image/README/1761463514970.png)
 
+### Flash Attention
+
+Tiling: It breaks the large Attention matrix into small blocks (tiles) that fit into the SRAM. It processes these blocks one by one, avoiding the need to store a massive $N \times N$ matrix in the VRAM.Online Softmax: It uses the statistics (M and L we discussed earlier) to calculate Softmax incrementally. This allows the algorithm to combine results from different tiles accurately without seeing the whole row at once.Recomputation: During the backward pass (training), it doesn't store the large attention matrix. Instead, it re-calculates it on the fly. Surprisingly, re-calculating is faster than reading the data back from the slow HBM.
+
+1. The Memory-Saving Trick
+
+Avoiding $O(N^2)$ MatricesIn standard Attention mechanisms, executing torch.matmul(Q, K.T) immediately allocates a massive amount of memory to store the score matrix. For a sequence length $N$, this requires an $N \times N$ matrix. As $N$ grows (e.g., to 100k tokens), this quadratic memory requirement quickly exceeds the capacity of even the most powerful GPUs.
+
+2. Online Softmax: The "Rescaling" Strategy
+
+A standard Softmax requires the "sum of all elements" for the denominator. However, with tiling, the model cannot see the entire row at once.
+
+The Strategy: This implementation uses a mathematical "correction" technique. It calculates a "provisional" Softmax based on the maximum value found in the current local block. If a larger maximum value appears in a subsequent block, the algorithm uses a scaling factor (alpha) to exponentially downscale the previous results. This allows the blocks to be merged seamlessly as if the entire row had been calculated at once.
+
+3. Reordering of Computations (Kernel Fusion)
+
+The standard sequence is: "Calculate all Softmax scores for the entire row, then multiply by $V$." This requires writing the large $N \times N$ matrix to the High Bandwidth Memory (HBM) and then reading it back again.
+
+- The Flash Approach: Flash Attention changes the order to interleave the Softmax calculation and the multiplication with $V$ within the same block.
+- The Result: By fusing these operations, the intermediate attention scores never need to be written to the slow HBM. Everything stays within the ultra-fast SRAM (the GPU's internal cache), drastically reducing the "Memory Wall" bottleneck.
+
+| Feature | Standard Attention | Flash Attention |
+| --- | --- | --- |
+| **Memory Complexity** | Quadratic  | **Linear ** |
+| **HBM Access** | High (Reads/Writes  matrix) | **Low (Reads/Writes only final output)** |
+| **Softmax Calculation** | One-shot (requires full row) | **Online (block-by-block with rescaling)** |
+| **Main Bottleneck** | Memory Capacity (VRAM) | **Compute Bound (ALU utilization)** |
+
+![1766788709446](image/README/1766788709446.png)
+
+
 ## Tokenizer
 
 In this experiment, we used **SentencePiece** to train a tokenizer for Japanese text segmentation using the  **Livedoor News Corpus** .

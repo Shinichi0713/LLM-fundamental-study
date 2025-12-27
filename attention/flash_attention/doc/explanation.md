@@ -205,3 +205,92 @@ def _attn_fwd_kernel(Q, K, V, L, M, Out, ...):
 まとめ：実装の3本柱メモリ管理: HBMを無視し、SRAM（Shared Memory）をキャッシュとして使い倒す。
 
 数学の工夫: オンラインSoftmaxで「後から補正可能」な計算順序にする。カーネル最適化: CUDAやTritonで、メモリアクセスと演算の並列化（パイプライン化）を極限まで高める。
+
+## M, L
+実装コードに出てきた **`M`** と **`L`** は、Flash Attention の核心である**「オンラインSoftmax」を実現するための統計量**です。
+
+一言で言うと、**「分割して計算している最中の、暫定的な最大値（M）と分母の和（L）」**を記録しているメモ帳のようなものです。
+
+---
+
+### 1. `M` (Max) : 各行の最大スコア
+
+**役割：数値の安定化（オーバーフロー防止）**
+
+Softmaxの計算では  を計算しますが、 が大きいと計算機が扱えないほど巨大な数（無限大）になってしまいます。これを防ぐために、通常は「その行の最大値 」を引き算して  として計算します。
+
+* **課題**: ブロックごとに分割して計算しているため、行全体の本当の最大値が最初は分かりません。
+* **解決策**: `M[i]` に「これまでに見たブロックの中での最大値」を保存しておきます。新しいブロックを計算して、もしもっと大きい値が出てきたら、その都度 `M[i]` を更新します。
+
+### 2. `L` (Sum) : 各行の指数関数の和
+
+**役割：Softmaxの分母（正規化）の蓄積**
+
+Softmaxの公式は  です。この分母にあたる「合計値」を `L` に溜めていきます。
+
+* **課題**: 最大値 `M` が更新されると、過去に計算して `L` に足し合わせた  の値が、新しい最大値  と整合しなくなります。
+* **解決策**: 最大値が更新されるたびに、以前の `L` に修正係数（）を掛けて、新しいスケールに「縮小」してから新しい値を加算します。
+
+---
+
+### 数学的なイメージ
+
+ある行の計算が  ステップ目（ブロック）まで終わった状態を考えてみましょう。
+
+最後に、すべてのブロックを回しきった後の出力  を  で割ることで、**「一度も巨大な  行列を作ることなく、正確な全体Softmaxを適用した結果」**が得られる仕組みです。
+
+---
+
+### まとめ
+
+* **`M` (Max)**: 「これまでの最大値はいくつだったか？」を覚えている。
+* **`L` (Line/Sum)**: 「Softmaxの分母（合計）は今いくつ積み上がっているか？」を覚えている。
+
+この2つがあるおかげで、巨大なメモリを使わずに、細切れの計算結果を正しく合体させることができます。
+
+**この「MとLを使った補正計算」の具体的な数値の変化を、簡単な例（例えば [1, 5] と [2, 4] の2ブロックに分けた場合など）でシミュレーションしてみますか？**
+
+
+Here is the English explanation of why the Flash Attention implementation is both "Fast" and "Memory-Efficient," broken down into the three core technical pillars.
+
+---
+
+## Implementation Deep Dive: Why is Flash Attention Fast and Memory-Efficient?
+
+### 1. The Memory-Saving Trick: Avoiding  Matrices
+
+In standard Attention mechanisms, executing `torch.matmul(Q, K.T)` immediately allocates a massive amount of memory to store the score matrix. For a sequence length , this requires an  matrix. As  grows (e.g., to 100k tokens), this quadratic memory requirement quickly exceeds the capacity of even the most powerful GPUs.
+
+* **The Flash Approach**: In the provided code,  only occupies `block_size × block_size` (e.g.,  elements). Since these small blocks are processed one by one and released after each iteration, the overall memory consumption scales linearly —  — instead of quadratically — .
+
+---
+
+### 2. Online Softmax: The "Rescaling" Strategy
+
+A standard Softmax requires the "sum of all elements" for the denominator. However, with tiling, the model cannot see the entire row at once.
+
+* **The Strategy**: This implementation uses a mathematical "correction" technique. It calculates a "provisional" Softmax based on the maximum value found in the current local block. If a larger maximum value appears in a subsequent block, the algorithm uses a scaling factor (**`alpha`**) to exponentially downscale the previous results. This allows the blocks to be merged seamlessly as if the entire row had been calculated at once.
+
+---
+
+### 3. Reordering of Computations (Kernel Fusion)
+
+The standard sequence is: "Calculate all Softmax scores for the entire row, then multiply by ." This requires writing the large  matrix to the High Bandwidth Memory (HBM) and then reading it back again.
+
+* **The Flash Approach**: Flash Attention changes the order to **interleave** the Softmax calculation and the multiplication with  within the same block.
+* **The Result**: By fusing these operations, the intermediate attention scores never need to be written to the slow HBM. Everything stays within the ultra-fast **SRAM** (the GPU's internal cache), drastically reducing the "Memory Wall" bottleneck.
+
+---
+
+### Summary Comparison
+
+| Feature | Standard Attention | Flash Attention |
+| --- | --- | --- |
+| **Memory Complexity** | Quadratic  | **Linear ** |
+| **HBM Access** | High (Reads/Writes  matrix) | **Low (Reads/Writes only final output)** |
+| **Softmax Calculation** | One-shot (requires full row) | **Online (block-by-block with rescaling)** |
+| **Main Bottleneck** | Memory Capacity (VRAM) | **Compute Bound (ALU utilization)** |
+
+---
+
+**Would you like me to explain how the "Backward Pass" (Gradient Calculation) works in Flash Attention, where the model saves even more memory by recomputing the Softmax values instead of storing them?**
