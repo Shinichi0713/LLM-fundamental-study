@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>1&period; &#x5b9f;&#x9a13;&#x8a2d;&#x8a08;&#x65b9;&#x91dd;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <p>今回はMoEについて有無による性能の差をなんとか知ることが出来ないかと考えました。</p>
+<p>以下の実験で性能を確認していきます。</p>
+<h2 id="1-実験設計方針">1. 実験設計方針</h2>
+<p>実験を始める前にMoEの優位性が出る条件について整理します。</p>
+<ol>
+<li>
+<p><strong>入力分布が明確に多峰性（heterogeneous）</strong></p>
+</li>
+<li>
+<p><strong>サブタスク間で必要な内部表現・推論様式が大きく異なる</strong></p>
+</li>
+<li>
+<p><strong>1サンプルあたりでは単純だが、全体としては混在している</strong></p>
+</li>
+<li>
+<p>Denseモデルでは</p>
+<ul>
+<li>パラメータ共有による<strong>表現干渉（interference）</strong></li>
+<li>容量不足 or 勾配競合
+が発生する</li>
+</ul>
+</li>
+</ol>
+<p>→ MoEは「<strong>条件付き計算＋専門化</strong>」によってこれを回避できます。</p>
+<p>ということで問題の範囲を多様にして通常のDenseモデルとの性能差を確認していこうと思います。</p>
+<h2 id="2-例題推論様式が異なる数理論理言語混在qa">2. 例題①：推論様式が異なる数理・論理・言語混在QA</h2>
+<p>次にモデルに解かせる問題を考えます。</p>
+<h3 id="問題設定">問題設定</h3>
+<p>以下の4タイプの問題が<strong>ランダムに混在</strong>して出題されるようにします。
+これでモデルにとっては異なる問題が出題されるという状況を作り出します。</p>
+<table>
+<thead>
+<tr>
+<th>タイプ</th>
+<th>内容</th>
+<th>必要能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>逐次的な数値計算</td>
+<td>算術・状態更新</td>
+</tr>
+<tr>
+<td>B</td>
+<td>論理パズル</td>
+<td>記号推論</td>
+</tr>
+<tr>
+<td>C</td>
+<td>プログラム理解</td>
+<td>構文・制御フロー</td>
+</tr>
+<tr>
+<td>D</td>
+<td>自然言語読解</td>
+<td>意味表現</td>
+</tr>
+</tbody>
+</table>
+<h3 id="サンプル問題">サンプル問題</h3>
+<h4 id="a-数値状態推論">A: 数値状態推論</h4>
+<pre><code>x=3から開始する。
+以下を順に実行せよ。
+1. xを2倍する
+2. xに5を足す
+3. xを3で割った余りを求める
+最終結果は？
+</code></pre>
+<h4 id="b-論理推論">B: 論理推論</h4>
+<pre><code>AはBより背が高い。
+CはAより背が低い。
+DはBより背が高い。
+最も背が高い可能性があるのは誰か？
+</code></pre>
+<h4 id="c-コード理解">C: コード理解</h4>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">f</span>(<span class="hljs-params">x</span>):
+    y = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(x):
+        <span class="hljs-keyword">if</span> i % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>:
+            y += i
+    <span class="hljs-keyword">return</span> y
+
+f(<span class="hljs-number">6</span>)の戻り値は？
+</code></pre>
+<h4 id="d-言語読解">D: 言語読解</h4>
+<pre><code>太郎は花子より年上である。
+花子は次郎より年下である。
+この情報から必ず言えることは何か？
+</code></pre>
+<h3 id="なぜmoeが有利か">なぜMoEが有利か</h3>
+<ul>
+<li>
+<p><strong>Denseモデル</strong></p>
+<ul>
+<li>1つの内部表現で
+数値計算 / 論理 / 構文 / 意味
+をすべて処理 → 勾配干渉</li>
+</ul>
+</li>
+<li>
+<p><strong>MoEモデル</strong></p>
+<ul>
+<li>Expert 1: 算術・状態遷移</li>
+<li>Expert 2: 論理関係</li>
+<li>Expert 3: コード・制御構造</li>
+<li>Expert 4: 言語意味</li>
+<li>Routerが入力特徴（token分布・構文）で分岐</li>
+</ul>
+</li>
+</ul>
+<p>MoEモデルは問題によって対応を変えることで状況に応じた回答力がつくと期待されます。
+結果、<strong>全パラメータ数を揃えても、MoEの方が正答率が高くなる</strong>のではと想定されます。</p>
+<h2 id="3-例題タスク切替を伴う逐次入力moeが最も差を出しやすい">3. 例題②：タスク切替を伴う逐次入力（MoEが最も差を出しやすい）</h2>
+<h3 id="問題設定-1">問題設定</h3>
+<p>1つの入力シーケンス内で<strong>タスクが切り替わる</strong>。</p>
+<pre><code>Q1: 17 + 24 はいくつか？
+Q2: 以下の文の論理的誤りを指摘せよ。
+「すべての鳥は飛べる。ペンギンは鳥である。よってペンギンは飛べる。」
+Q3: 次のコードの出力は？
+print(sum([i for i in range(10) if i%3==0]))
+</code></pre>
+<h3 id="評価方法">評価方法</h3>
+<ul>
+<li><strong>全問正解率</strong></li>
+<li><strong>後半問題での精度劣化</strong></li>
+</ul>
+<h2 id="4-実験コードの実装">4. 実験コードの実装</h2>
+<p>ここまで考えた構成で実装していきます。
+モデルのラッパーとしてpytorch_lightning、評価はtensor boardを使います。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset, DataLoader
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
+<span class="hljs-keyword">import</span> pytorch_lightning <span class="hljs-keyword">as</span> pl
+<span class="hljs-keyword">from</span> pytorch_lightning.loggers <span class="hljs-keyword">import</span> TensorBoardLogger
+
+TASKS = [<span class="hljs-string">&quot;arith&quot;</span>, <span class="hljs-string">&quot;logic&quot;</span>, <span class="hljs-string">&quot;code&quot;</span>, <span class="hljs-string">&quot;nl&quot;</span>]
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleTokenizer</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        chars = <span class="hljs-built_in">list</span>(<span class="hljs-string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+=?., &quot;</span>)
+        self.pad_token = <span class="hljs-string">&quot;&lt;pad&gt;&quot;</span>
+        self.unk_token = <span class="hljs-string">&quot;&lt;unk&gt;&quot;</span>
+
+        self.vocab = [self.pad_token, self.unk_token] + chars
+        self.stoi = {c: i <span class="hljs-keyword">for</span> i, c <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(self.vocab)}
+        self.itos = {i: c <span class="hljs-keyword">for</span> c, i <span class="hljs-keyword">in</span> self.stoi.items()}
+
+<span class="hljs-meta">    @property</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">vocab_size</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.vocab)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, text, max_len</span>):
+        ids = [self.stoi.get(c, self.stoi[self.unk_token]) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> text]
+        ids = ids[:max_len]
+        pad_len = max_len - <span class="hljs-built_in">len</span>(ids)
+        ids += [self.stoi[self.pad_token]] * pad_len
+        <span class="hljs-keyword">return</span> ids
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decode</span>(<span class="hljs-params">self, ids</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>.join(self.itos[i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> ids <span class="hljs-keyword">if</span> i != self.stoi[self.pad_token])
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MixedTaskDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, n_samples=<span class="hljs-number">10000</span>, vocab=<span class="hljs-literal">None</span>, max_len=<span class="hljs-number">64</span></span>):
+        self.n = n_samples
+        self.vocab = vocab
+        self.max_len = max_len
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> self.n
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_arith</span>(<span class="hljs-params">self</span>):
+        x = random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>)
+        y = random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>)
+        q = <span class="hljs-string">f&quot;<span class="hljs-subst">{x}</span> + <span class="hljs-subst">{y}</span> = ?&quot;</span>
+        a = <span class="hljs-built_in">str</span>(x + y)
+        <span class="hljs-keyword">return</span> q, a
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_logic</span>(<span class="hljs-params">self</span>):
+        q = <span class="hljs-string">&quot;All A are B. C is A. Is C B?&quot;</span>
+        a = <span class="hljs-string">&quot;Yes&quot;</span>
+        <span class="hljs-keyword">return</span> q, a
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_code</span>(<span class="hljs-params">self</span>):
+        q = <span class="hljs-string">&quot;What is sum of even numbers less than 6?&quot;</span>
+        a = <span class="hljs-string">&quot;6&quot;</span>
+        <span class="hljs-keyword">return</span> q, a
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_nl</span>(<span class="hljs-params">self</span>):
+        q = <span class="hljs-string">&quot;Taro is older than Hanako. Who is older?&quot;</span>
+        a = <span class="hljs-string">&quot;Taro&quot;</span>
+        <span class="hljs-keyword">return</span> q, a
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, idx</span>):
+        task = random.choice(TASKS)
+        <span class="hljs-keyword">if</span> task == <span class="hljs-string">&quot;arith&quot;</span>:
+            q, a = self._arith()
+        <span class="hljs-keyword">elif</span> task == <span class="hljs-string">&quot;logic&quot;</span>:
+            q, a = self._logic()
+        <span class="hljs-keyword">elif</span> task == <span class="hljs-string">&quot;code&quot;</span>:
+            q, a = self._code()
+        <span class="hljs-keyword">else</span>:
+            q, a = self._nl()
+
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-string">&quot;input&quot;</span>: q,
+            <span class="hljs-string">&quot;target&quot;</span>: a,
+            <span class="hljs-string">&quot;task&quot;</span>: task
+        }
+
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MoE</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, d_model, d_hidden, n_experts=<span class="hljs-number">4</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.n_experts = n_experts
+
+        self.router = nn.Linear(d_model, n_experts)
+
+        self.experts = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(d_model, d_hidden),
+                nn.ReLU(),
+                nn.Linear(d_hidden, d_model)
+            )
+            <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n_experts)
+        ])
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        B, T, D = x.shape
+
+        logits = self.router(x)                 <span class="hljs-comment"># [B, T, E]</span>
+        probs = F.softmax(logits, dim=-<span class="hljs-number">1</span>)
+
+        expert_idx = probs.argmax(dim=-<span class="hljs-number">1</span>)       <span class="hljs-comment"># [B, T]</span>
+
+        out = torch.zeros_like(x)
+
+        <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(self.n_experts):
+            mask = expert_idx == e
+            <span class="hljs-keyword">if</span> mask.<span class="hljs-built_in">any</span>():
+                out[mask] = self.experts[e](x[mask])
+
+        <span class="hljs-keyword">return</span> out, probs, expert_idx
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TransformerBlock</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, d_model, d_hidden, use_moe=<span class="hljs-literal">False</span>, n_experts=<span class="hljs-number">4</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.use_moe = use_moe
+
+        self.attn = nn.MultiheadAttention(
+            d_model, num_heads=<span class="hljs-number">4</span>, batch_first=<span class="hljs-literal">True</span>
+        )
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+
+        <span class="hljs-keyword">if</span> use_moe:
+            self.ffn = MoE(d_model, d_hidden, n_experts)
+        <span class="hljs-keyword">else</span>:
+            self.ffn = <span class="hljs-literal">None</span>
+            self.dense_ffn = nn.Sequential(
+                nn.Linear(d_model, d_hidden),
+                nn.ReLU(),
+                nn.Linear(d_hidden, d_model)
+            )
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        attn_out, _ = self.attn(x, x, x)
+        x = self.norm1(x + attn_out)
+
+        <span class="hljs-keyword">if</span> self.use_moe:
+            ffn_out, router_probs, expert_idx = self.ffn(x)
+        <span class="hljs-keyword">else</span>:
+            ffn_out = self.dense_ffn(x)
+            router_probs, expert_idx = <span class="hljs-literal">None</span>, <span class="hljs-literal">None</span>
+
+        x = self.norm2(x + ffn_out)
+        <span class="hljs-keyword">return</span> x, router_probs, expert_idx
+
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">LitModel</span>(pl.LightningModule):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, vocab_size=<span class="hljs-number">128</span>, d_model=<span class="hljs-number">128</span>, use_moe=<span class="hljs-literal">False</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.save_hyperparameters()
+
+        self.embed = nn.Embedding(vocab_size, d_model)
+        self.block = TransformerBlock(
+            d_model=d_model,
+            d_hidden=<span class="hljs-number">256</span>,
+            use_moe=use_moe,
+            n_experts=<span class="hljs-number">4</span>
+        )
+        self.head = nn.Linear(d_model, vocab_size)
+
+        <span class="hljs-comment"># ★ expert_idx 保存用</span>
+        self.expert_idx_buffer = []
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        x = self.embed(x)
+        x, router_probs, expert_idx = self.block(x)
+        logits = self.head(x[:, -<span class="hljs-number">1</span>])
+        <span class="hljs-keyword">return</span> logits, router_probs, expert_idx
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">training_step</span>(<span class="hljs-params">self, batch, batch_idx</span>):
+        x = batch[<span class="hljs-string">&quot;input_ids&quot;</span>]
+        y = batch[<span class="hljs-string">&quot;labels&quot;</span>]
+
+        logits, router_probs, expert_idx = self(x)
+        loss = F.cross_entropy(logits, y)
+
+        <span class="hljs-keyword">if</span> router_probs <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            entropy = -(router_probs * torch.log(router_probs + <span class="hljs-number">1e-9</span>)).<span class="hljs-built_in">sum</span>(-<span class="hljs-number">1</span>).mean()
+            self.log(<span class="hljs-string">&quot;router_entropy&quot;</span>, entropy)
+
+        self.log(<span class="hljs-string">&quot;loss&quot;</span>, loss)
+        <span class="hljs-keyword">return</span> loss
+
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">configure_optimizers</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> torch.optim.AdamW(self.parameters(), lr=<span class="hljs-number">3e-4</span>)
+
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">validation_step</span>(<span class="hljs-params">self, batch, batch_idx</span>):
+        x = batch[<span class="hljs-string">&quot;input_ids&quot;</span>]
+        y = batch[<span class="hljs-string">&quot;labels&quot;</span>]
+
+        logits, router_probs, expert_idx = self(x)
+        loss = F.cross_entropy(logits, y)
+
+        <span class="hljs-comment"># MoE のときのみ収集</span>
+        <span class="hljs-keyword">if</span> expert_idx <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            <span class="hljs-comment"># [B, T] → flatten</span>
+            self.expert_idx_buffer.append(
+                expert_idx.detach().flatten().cpu()
+            )
+
+        self.log(<span class="hljs-string">&quot;val_loss&quot;</span>, loss, prog_bar=<span class="hljs-literal">True</span>)
+
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_validation_epoch_end</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(self.expert_idx_buffer) == <span class="hljs-number">0</span>:
+            <span class="hljs-keyword">return</span>
+
+        expert_idx_all = torch.cat(self.expert_idx_buffer)  <span class="hljs-comment"># [N_tokens]</span>
+
+        <span class="hljs-comment"># TensorBoard Histogram</span>
+        self.logger.experiment.add_histogram(
+            tag=<span class="hljs-string">&quot;MoE/expert_idx&quot;</span>,
+            values=expert_idx_all,
+            global_step=self.current_epoch
+        )
+
+        <span class="hljs-comment"># バッファクリア</span>
+        self.expert_idx_buffer.clear()
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MixedTaskDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, tokenizer, n_samples=<span class="hljs-number">10000</span>, max_len=<span class="hljs-number">64</span></span>):
+        self.tokenizer = tokenizer
+        self.n = n_samples
+        self.max_len = max_len
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> self.n
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_arith</span>(<span class="hljs-params">self</span>):
+        x = random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">9</span>)
+        y = random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">9</span>)
+        q = <span class="hljs-string">f&quot;<span class="hljs-subst">{x}</span> + <span class="hljs-subst">{y}</span> = ?&quot;</span>
+        a = <span class="hljs-built_in">str</span>(x + y)
+        <span class="hljs-keyword">return</span> q, a, <span class="hljs-string">&quot;arith&quot;</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_logic</span>(<span class="hljs-params">self</span>):
+        q = <span class="hljs-string">&quot;All A are B. C is A. Is C B?&quot;</span>
+        a = <span class="hljs-string">&quot;Yes&quot;</span>
+        <span class="hljs-keyword">return</span> q, a, <span class="hljs-string">&quot;logic&quot;</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_code</span>(<span class="hljs-params">self</span>):
+        q = <span class="hljs-string">&quot;What is sum of even numbers less than 6?&quot;</span>
+        a = <span class="hljs-string">&quot;6&quot;</span>
+        <span class="hljs-keyword">return</span> q, a, <span class="hljs-string">&quot;code&quot;</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_nl</span>(<span class="hljs-params">self</span>):
+        q = <span class="hljs-string">&quot;Taro is older than Hanako. Who is older?&quot;</span>
+        a = <span class="hljs-string">&quot;Taro&quot;</span>
+        <span class="hljs-keyword">return</span> q, a, <span class="hljs-string">&quot;nl&quot;</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, idx</span>):
+        task = random.choice(TASKS)
+
+        <span class="hljs-keyword">if</span> task == <span class="hljs-string">&quot;arith&quot;</span>:
+            q, a, task = self._arith()
+        <span class="hljs-keyword">elif</span> task == <span class="hljs-string">&quot;logic&quot;</span>:
+            q, a, task = self._logic()
+        <span class="hljs-keyword">elif</span> task == <span class="hljs-string">&quot;code&quot;</span>:
+            q, a, task = self._code()
+        <span class="hljs-keyword">else</span>:
+            q, a, task = self._nl()
+
+        input_ids = self.tokenizer.encode(q, self.max_len)
+        label_ids = self.tokenizer.encode(a, max_len=<span class="hljs-number">8</span>)
+
+        <span class="hljs-comment"># 次トークン予測ではなく分類扱い（最後の1文字）</span>
+        label = label_ids[<span class="hljs-number">0</span>]
+
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-string">&quot;input_ids&quot;</span>: input_ids,
+            <span class="hljs-string">&quot;label&quot;</span>: label,
+            <span class="hljs-string">&quot;task&quot;</span>: task
+        }
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">collate_fn</span>(<span class="hljs-params">batch</span>):
+    input_ids = torch.tensor([b[<span class="hljs-string">&quot;input_ids&quot;</span>] <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> batch], dtype=torch.long)
+    labels = torch.tensor([b[<span class="hljs-string">&quot;label&quot;</span>] <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> batch], dtype=torch.long)
+    tasks = [b[<span class="hljs-string">&quot;task&quot;</span>] <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> batch]
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">&quot;input_ids&quot;</span>: input_ids,
+        <span class="hljs-string">&quot;labels&quot;</span>: labels,
+        <span class="hljs-string">&quot;task&quot;</span>: tasks
+    }
+
+
+tokenizer = SimpleTokenizer()
+
+train_dataset = MixedTaskDataset(
+    tokenizer=tokenizer,
+    n_samples=<span class="hljs-number">20000</span>,
+    max_len=<span class="hljs-number">64</span>
+)
+
+train_loader = DataLoader(
+    train_dataset,
+    batch_size=<span class="hljs-number">32</span>,
+    shuffle=<span class="hljs-literal">True</span>,
+    num_workers=<span class="hljs-number">4</span>,
+    collate_fn=collate_fn,
+    pin_memory=<span class="hljs-literal">True</span>
+)
+
+val_dataset = MixedTaskDataset(
+    tokenizer=tokenizer,
+    n_samples=<span class="hljs-number">2000</span>,
+    max_len=<span class="hljs-number">64</span>
+)
+
+val_loader = DataLoader(
+    val_dataset,
+    batch_size=<span class="hljs-number">32</span>,
+    shuffle=<span class="hljs-literal">False</span>,
+    collate_fn=collate_fn
+)
+
+dense_model = LitModel(
+    vocab_size=tokenizer.vocab_size,
+    d_model=<span class="hljs-number">128</span>,
+    use_moe=<span class="hljs-literal">False</span>
+)
+moe_model = LitModel(
+    vocab_size=tokenizer.vocab_size,
+    d_model=<span class="hljs-number">128</span>,
+    use_moe=<span class="hljs-literal">True</span>
+)
+
+dense_logger = TensorBoardLogger(
+    save_dir=<span class="hljs-string">&quot;/content/tb_logs&quot;</span>,
+    name=<span class="hljs-string">&quot;dense&quot;</span>
+)
+moe_logger = TensorBoardLogger(
+    save_dir=<span class="hljs-string">&quot;/content/tb_logs&quot;</span>,
+    name=<span class="hljs-string">&quot;moe&quot;</span>
+)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">make_trainer</span>(<span class="hljs-params">logger</span>):
+    <span class="hljs-keyword">return</span> pl.Trainer(
+        max_epochs=<span class="hljs-number">5</span>,
+        accelerator=<span class="hljs-string">&quot;gpu&quot;</span>,
+        devices=<span class="hljs-number">1</span>,
+        logger=logger,
+        log_every_n_steps=<span class="hljs-number">50</span>
+    )
+
+<span class="hljs-comment"># Dense</span>
+dense_trainer = make_trainer(dense_logger)
+dense_trainer.fit(dense_model, train_loader, val_loader)
+
+<span class="hljs-comment"># MoE</span>
+moe_trainer = make_trainer(moe_logger)
+moe_trainer.fit(moe_model, train_loader, val_loader)
+</code></pre>
+<p><strong>結果</strong></p>
+<p>学習ロスと検証ロスの推移を比較します。
+縦軸がロス値、横軸は学習のエポック数です。</p>
+<p>結果、MoEの方が早く収束することが確認されました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\moe\doc\image\experiment_1\1766880278379.png" alt="1766880278379"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\moe\doc\image\experiment_1\1766880252534.png" alt="1766880252534"></p>
+<p>肝心の正解率ですが。</p>
+<p>両手法とも1.0=全問正解。。。
+少し問題が簡単だったかもしれません。。。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\moe\doc\image\experiment_1\1766880421808.png" alt="1766880421808"></p>
+<p>見たかった後半の精度劣化も確認できませんでした。。。</p>
+<p>次回は少し難しい問題で実験します。</p>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+            
+            
+        </body>
+        </html>
