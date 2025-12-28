@@ -90,7 +90,9 @@ Visualize the distribution of output changed by learning.
 ![layer_norm](image/README/layernorm_training.gif)
 
 ## Attention Mechanizm
+
 ### meaning
+
 The **Q (Query)**, **K (Key)**, and **V (Value)** in the Attention mechanism are often compared to **"searching in a library"** or **"searching for a video on YouTube."**
 This system is designed to efficiently extract "the most contextually relevant information" from a vast amount of data. Here is a beginner-friendly breakdown of each role.
 
@@ -101,34 +103,30 @@ Imagine you are looking for a video on YouTube:
 * **Query (Q): "The keywords you just typed into the search bar."**
 * *Example:* "How to cook delicious curry."
 * *Role:* This is exactly what you "want to know" or "are looking for" right now.
-
-
 * **Key (K): "The titles and tags of the videos."**
 * *Example:* "Ultimate Curry from Spices," "Quick 5-Minute Curry Recipe."
 * *Role:* These are the "labels or indices" used to match against the Query. They are used to measure how well a video matches your Query.
-
-
 * **Value (V): "The video file itself (the content)."**
 * *Role:* This is the "actual information" you want to obtain in the end.
-
 
 __2. How it Works within LLM Calculations__
 
 In actual implementation code, these three components are processed through the following steps:
 
 1. **Measuring Similarity between Q and K (Score Calculation)**
-The system calculates how deeply the "current word (Q)" is related to the surrounding "words (K)."
+   The system calculates how deeply the "current word (Q)" is related to the surrounding "words (K)."
+
 * *Example:* For the word "I (Q)," which of the surrounding words—"school," "to," or "go"—is the most important?
 
-
 2. **Determining the Weights (Attention Degrees)**
-A higher score (weight) is assigned to the words where Q and K have high compatibility.
+   A higher score (weight) is assigned to the words where Q and K have high compatibility.
 3. **Gathering V using Weighted Averaging**
-The system collects more "information (V)" from words that have high weights.
+   The system collects more "information (V)" from words that have high weights.
+
 * *Result:* The vector for the word "I" is strongly mixed with the information of the action "go."
 
-
 ### Caluculation Method
+
 By taking the inner product between each Query and Key, we compute the relevance scores:
 
 $$
@@ -198,7 +196,6 @@ I implemented this using Global + Local attention.While using Local Attention on
 
 <img src="image/README/1766232943951.png" alt="代替テキスト" width="420" style="display: block; margin: 0 auto;">
 
-
 ### attention of token toward the others
 
 * The **i-th row** of the attention matrix shows  *“when the query is token i, which keys (tokens) it pays attention to (assigns weight to)”* .
@@ -232,15 +229,14 @@ The standard sequence is: "Calculate all Softmax scores for the entire row, then
 - The Flash Approach: Flash Attention changes the order to interleave the Softmax calculation and the multiplication with $V$ within the same block.
 - The Result: By fusing these operations, the intermediate attention scores never need to be written to the slow HBM. Everything stays within the ultra-fast SRAM (the GPU's internal cache), drastically reducing the "Memory Wall" bottleneck.
 
-| Feature | Standard Attention | Flash Attention |
-| --- | --- | --- |
-| **Memory Complexity** | Quadratic  | **Linear ** |
-| **HBM Access** | High (Reads/Writes  matrix) | **Low (Reads/Writes only final output)** |
+| Feature                       | Standard Attention           | Flash Attention                                  |
+| ----------------------------- | ---------------------------- | ------------------------------------------------ |
+| **Memory Complexity**   | Quadratic                    | **Linear **                                      |
+| **HBM Access**          | High (Reads/Writes  matrix)  | **Low (Reads/Writes only final output)**   |
 | **Softmax Calculation** | One-shot (requires full row) | **Online (block-by-block with rescaling)** |
-| **Main Bottleneck** | Memory Capacity (VRAM) | **Compute Bound (ALU utilization)** |
+| **Main Bottleneck**     | Memory Capacity (VRAM)       | **Compute Bound (ALU utilization)**        |
 
 ![1766788709446](image/README/1766788709446.png)
-
 
 ## Tokenizer
 
@@ -377,6 +373,14 @@ PEFT:
 
 LLM-learning:
 [efficiently train llm](https://shinichi0713.github.io/LLM-fundamental-study/docs/13-LLM-learning)
+
+## AI tools
+The following section covers key metrics and essential tools for efficient AI development.
+
+<img src="image/README/1766892353438.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+[AI tools](https://shinichi0713.github.io/LLM-fundamental-study/evaluate_method)
+
 
 ## reference site
 
