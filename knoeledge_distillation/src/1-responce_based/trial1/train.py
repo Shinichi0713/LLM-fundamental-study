@@ -70,5 +70,20 @@ def evaluate_model(model, loader, device):
             correct += predicted.eq(labels).sum().item()
     return 100. * correct / total
 
+
+
 # 実行
 train_knowledge_distillation(teacher_model, student_model, train_loader, test_loader)
+
+# --- モデルの保存 ---
+# 保存先のパスを指定
+TEACHER_SAVE_PATH = "teacher_resnet18_cifar10.pth"
+STUDENT_SAVE_PATH = "student_custom_cnn_distilled.pth"
+
+# 教師モデルの保存（既に学習済みですが、セットで管理するために保存します）
+torch.save(teacher_model.state_dict(), TEACHER_SAVE_PATH)
+print(f"Teacher model saved to {TEACHER_SAVE_PATH}")
+
+# 蒸留された生徒モデルの保存
+torch.save(student_model.state_dict(), STUDENT_SAVE_PATH)
+print(f"Distilled Student model saved to {STUDENT_SAVE_PATH}")
