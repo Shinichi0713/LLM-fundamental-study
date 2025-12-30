@@ -1,46 +1,51 @@
 import torch
-from torch.optim import AdamW
+from tqdm import tqdm
 
+# デバイスの設定（GPUが使えればGPU、なければCPU）
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# --- モデルの準備 (前述のクラスを利用) ---
-# teacher, student は定義済みと仮定
-trainer = FeatureDistillationTrainer(
-    teacher_model=teacher, 
-    student_model=student, 
-    teacher_dim=768, 
-    student_dim=256
-).to(device)
+# モデルをデバイスに移動
+teacher.to(device)
+trainer.to(device) # FeatureDistillationTrainerの中にstudentとregressorが含まれています
 
-# 生徒モデルの全パラメータと、次元変換用のregressorを最適化対象にする
-optimizer = AdamW(
-    list(trainer.student.parameters()) + list(trainer.regressor.parameters()), 
-    lr=5e-5
-)
+# 教師モデルは常にevalモード（重み固定）
+teacher.eval()
 
-# --- 学習ループ ---
-trainer.student.train()
-num_epochs = 3
-
-for epoch in range(num_epochs):
+# 学習用ループの例
+def train_one_epoch(trainer, train_loader, optimizer, device):
+    trainer.train() # 生徒モデルとregressorを訓練モードに
     total_loss = 0
-    for step, batch in enumerate(train_dataloader):
-        # バッチをGPU/CPUへ転送
-        input_ids = batch["input_ids"].to(device)
-        attention_mask = batch["attention_mask"].to(device)
-        
-        # 1. 順伝播と蒸留損失の計算
-        loss = trainer(input_ids, attention_mask=attention_mask)
-        
-        # 2. 逆伝播
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        
-        total_loss += loss.item()
-        
-        if step % 50 == 0:
-            print(f"Epoch {epoch}, Step {step}, Loss: {loss.item():.4f}")
 
-    avg_loss = total_loss / len(train_dataloader)
-    print(f"Average Loss for Epoch {epoch}: {avg_loss:.4f}")
+    # tqdmで進捗を表示
+    pbar = tqdm(train_loader, desc="Training")
+    
+    for batch in pbar:
+        # 1. データの準備（DataLoaderから取得）
+        # batchが辞書形式（{'input_ids': ..., 'attention_mask': ...}）を想定
+        input_ids = batch['input_ids'].to(device)
+        attention_mask = batch['attention_mask'].to(device) if 'attention_mask' in batch else None
+
+        # 2. 勾配の初期化
+        optimizer.zero_grad()
+
+        # 3. 順伝播（Forward）
+        # FeatureDistillationTrainerのforwardを呼び出し、蒸留損失（MSE）を計算
+        loss = trainer(input_ids, attention_mask=attention_mask)
+
+        # 4. 逆伝播（Backward）
+        loss.backward()
+
+        # 5. パラメータ更新
+        optimizer.step()
+
+        # 統計情報の更新
+        total_loss += loss.item()
+        pbar.set_postfix({"loss": loss.item()})
+
+    avg_loss = total_loss / len(train_loader)
+    return avg_loss
+
+# --- 実行例 ---
+# 注意: train_loader は事前に作成されている必要があります（Dataset/DataLoader）
+# avg_loss = train_one_epoch(trainer, train_loader, optimizer, device)
+# print(f"Average Distillation Loss: {avg_loss:.4f}")
