@@ -49,3 +49,31 @@ def train_one_epoch(trainer, train_loader, optimizer, device):
 # 注意: train_loader は事前に作成されている必要があります（Dataset/DataLoader）
 # avg_loss = train_one_epoch(trainer, train_loader, optimizer, device)
 # print(f"Average Distillation Loss: {avg_loss:.4f}")
+
+import os
+
+# 1. 保存用ディレクトリの作成
+save_dir = "saved_models/distilled_student"
+os.makedirs(save_dir, exist_ok=True)
+
+# 2. 保存用パスの設定
+student_path = os.path.join(save_dir, "student_model.pth")
+regressor_path = os.path.join(save_dir, "regressor.pth")
+full_trainer_path = os.path.join(save_dir, "full_trainer_checkpoint.pth")
+
+# --- パターンA: 個別に保存（おすすめ） ---
+# 生徒モデルのみを別のタスク（分類や検索）に転用しやすくなります
+torch.save(trainer.student.state_dict(), student_path)
+torch.save(trainer.regressor.state_dict(), regressor_path)
+
+# --- パターンB: 学習の「中断・再開」用に保存 ---
+# optimizerやepoch数も含めて保存することで、後から学習を再開できます
+# checkpoint = {
+#     'epoch': num_epochs,
+#     'model_state_dict': trainer.state_dict(),
+#     'optimizer_state_dict': optimizer.state_dict(),
+#     'loss': avg_loss,
+# }
+# torch.save(checkpoint, full_trainer_path)
+
+print(f"モデルの保存が完了しました：\n- {student_path}\n- {regressor_path}")
