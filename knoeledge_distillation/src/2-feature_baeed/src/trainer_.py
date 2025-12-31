@@ -12,37 +12,35 @@ trainer.to(device) # FeatureDistillationTrainerの中にstudentとregressorが�
 teacher.eval()
 
 # 学習用ループの例
-def train_one_epoch(trainer, train_loader, optimizer, device):
+def train_one_epoch(trainer, train_dataloader, optimizer, device):
     trainer.train() # 生徒モデルとregressorを訓練モードに
     total_loss = 0
-
     # tqdmで進捗を表示
-    pbar = tqdm(train_loader, desc="Training")
-    
-    for batch in pbar:
-        # 1. データの準備（DataLoaderから取得）
-        # batchが辞書形式（{'input_ids': ..., 'attention_mask': ...}）を想定
-        input_ids = batch['input_ids'].to(device)
-        attention_mask = batch['attention_mask'].to(device) if 'attention_mask' in batch else None
+    num_epochs = 3
 
-        # 2. 勾配の初期化
-        optimizer.zero_grad()
+    for epoch in range(num_epochs):
+        total_loss = 0
+        for step, batch in enumerate(train_dataloader):
+            input_ids = batch["input_ids"].to(device)
+            attention_mask = batch["attention_mask"].to(device)
+            labels = batch["labels"].to(device) # MLMの正解ラベル
+            
+            # 順伝播（labelsを渡すことで、内部でMLM損失も計算される）
+            loss = trainer(input_ids, attention_mask=attention_mask, labels=labels)
+            
+            # 逆伝播
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            
+            total_loss += loss.item()
+            
+            if step % 50 == 0:
+                print(f"Epoch {epoch}, Step {step}, Loss: {loss.item():.4f}")
 
-        # 3. 順伝播（Forward）
-        # FeatureDistillationTrainerのforwardを呼び出し、蒸留損失（MSE）を計算
-        loss = trainer(input_ids, attention_mask=attention_mask)
+        print(f"Average Loss for Epoch {epoch}: {total_loss / len(train_dataloader):.4f}")
 
-        # 4. 逆伝播（Backward）
-        loss.backward()
-
-        # 5. パラメータ更新
-        optimizer.step()
-
-        # 統計情報の更新
-        total_loss += loss.item()
-        pbar.set_postfix({"loss": loss.item()})
-
-    avg_loss = total_loss / len(train_loader)
+    avg_loss = total_loss / len(train_dataloader)
     return avg_loss
 
 # --- 実行例 ---
