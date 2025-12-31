@@ -2,38 +2,51 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class FeatureDistillationTrainer(nn.Module):
     def __init__(self, teacher_model, student_model, teacher_dim, student_dim):
         super().__init__()
         self.teacher = teacher_model
         self.student = student_model
         
-        # 教師を推論モードに（重み固定）
+        # 教師モデルの固定
         self.teacher.eval()
         for param in self.teacher.parameters():
             param.requires_grad = False
-            
-        # 次元の不一致を埋めるための線形変換 (Student -> Teacherの次元へ)
-        # これにより、Studentの中間出力をTeacherのサイズに合わせて比較可能にする
+
+        # Student -> Teacher の次元変換
         self.regressor = nn.Linear(student_dim, teacher_dim)
         
-        self.criterion = nn.MSELoss()
+        # 2つの損失関数
+        self.criterion_distill = nn.MSELoss()
+        self.criterion_mlm = nn.CrossEntropyLoss() # ignore_index=-100 がデフォルト
 
-    def forward(self, input_ids, attention_mask=None):
-        # 1. Teacherの中間層出力を取得
+    def forward(self, input_ids, attention_mask=None, labels=None):
+        # 1. Teacherの隠れ層取得
         with torch.no_grad():
-            # 本来は特定の層を抽出しますが、ここでは最終層の前の出力を想定
-            teacher_hidden = self.teacher(input_ids, attention_mask=attention_mask).hidden_states[-1]
-        
-        # 2. Studentの中間層出力を取得
-        student_outputs = self.student(input_ids, attention_mask=attention_mask)
-        student_hidden = student_outputs.hidden_states[-1]
-        
-        # 3. Studentの次元をTeacherに合わせる
-        projected_student_hidden = self.regressor(student_hidden)
-        
-        # 4. 特徴量のMSE損失を計算
-        distill_loss = self.criterion(projected_student_hidden, teacher_hidden)
+            teacher_out = self.teacher(input_ids, attention_mask=attention_mask)
+            teacher_hidden = teacher_out.hidden_states[-1]
+
+        # 2. Studentの順伝播（隠れ層とロジットの両方を取得）
+        student_out = self.student(input_ids, attention_mask=attention_mask)
+        student_hidden = student_out.last_hidden_state
+        logits = student_out.logits
+
+        # 3. 特徴量蒸留損失 (MSE)
+        projected_hidden = self.regressor(student_hidden)
+        distill_loss = self.criterion_distill(projected_hidden, teacher_hidden)
+
+        # 4. MLM損失 (Cross Entropy)
+        # labelsが提供されている場合のみ計算
+        if labels is not None:
+            # logits: [batch_size, seq_len, vocab_size] -> [N, vocab_size]
+            # labels: [batch_size, seq_len] -> [N]
+            mlm_loss = self.criterion_mlm(logits.view(-1, logits.size(-1)), labels.view(-1))
+            
+            # 合計損失 (重み付けを調整可能。ここでは 1:1)
+            # 特徴量のスケールが小さい場合は、distill_loss に大きな係数（例: 100）をかけることもあります
+            total_loss = distill_loss + mlm_loss
+            return total_loss
         
         return distill_loss
 
