@@ -2,42 +2,40 @@ import torch
 import torch.nn as nn
 from transformers import BertModel, BertConfig
 
+
 class CustomSmallEncoder(nn.Module):
     def __init__(self, dim=256, vocab_size=30522, n_layers=4, n_heads=8):
         super().__init__()
+        self.dim = dim # trainerで使うため保存
         self.embedding = nn.Embedding(vocab_size, dim)
-        
-        # Transformerのレイヤー（ここでは標準的なものを簡略化して実装）
-        # 本来ここにRoPEやSparse Attentionのロジックを組み込みます
         self.layers = nn.ModuleList([
             nn.TransformerEncoderLayer(
-                d_model=dim, 
-                nhead=n_heads, 
-                dim_feedforward=dim*4,
-                batch_first=True
+                d_model=dim, nhead=n_heads, dim_feedforward=dim*4, batch_first=True
             ) for _ in range(n_layers)
         ])
-        
         self.norm = nn.LayerNorm(dim)
+
+        # --- 追加: MLM用出力層 ---
+        self.mlm_head = nn.Linear(dim, vocab_size)
 
     def forward(self, input_ids, attention_mask=None, output_hidden_states=True):
         all_hidden_states = []
         x = self.embedding(input_ids)
-        
         for layer in self.layers:
             x = layer(x)
             if output_hidden_states:
                 all_hidden_states.append(x)
-        
         x = self.norm(x)
-        
-        # Hugging Faceの出力形式に似たオブジェクトを模倣して返すと蒸留コードが使いやすいです
+
+        # --- 追加: ロジットの計算 ---
+        logits = self.mlm_head(x)
+
         class Output:
             pass
         out = Output()
         out.last_hidden_state = x
         out.hidden_states = all_hidden_states if output_hidden_states else None
-        
+        out.logits = logits # これを返すことで評価可能になる
         return out
     
 # --- 教師モデル（既存のBERT） ---
