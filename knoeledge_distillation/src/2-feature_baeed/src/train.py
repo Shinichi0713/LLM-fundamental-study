@@ -1,58 +1,77 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from tqdm import tqdm
 
+# デバイスの設定（GPUが使えればGPU、なければCPU）
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-class FeatureDistillationTrainer(nn.Module):
-    def __init__(self, teacher_model, student_model, teacher_dim, student_dim):
-        super().__init__()
-        self.teacher = teacher_model
-        self.student = student_model
-        
-        # 教師モデルの固定
-        self.teacher.eval()
-        for param in self.teacher.parameters():
-            param.requires_grad = False
+# モデルをデバイスに移動
+teacher.to(device)
+trainer.to(device) # FeatureDistillationTrainerの中にstudentとregressorが含まれています
 
-        # Student -> Teacher の次元変換
-        self.regressor = nn.Linear(student_dim, teacher_dim)
-        
-        # 2つの損失関数
-        self.criterion_distill = nn.MSELoss()
-        self.criterion_mlm = nn.CrossEntropyLoss() # ignore_index=-100 がデフォルト
+# 教師モデルは常にevalモード（重み固定）
+teacher.eval()
 
-    def forward(self, input_ids, attention_mask=None, labels=None):
-        # 1. Teacherの隠れ層取得
-        with torch.no_grad():
-            teacher_out = self.teacher(input_ids, attention_mask=attention_mask)
-            teacher_hidden = teacher_out.hidden_states[-1]
+# 学習用ループの例
+def train_one_epoch(trainer, train_dataloader, optimizer, device):
+    trainer.train() # 生徒モデルとregressorを訓練モードに
+    total_loss = 0
+    # tqdmで進捗を表示
+    num_epochs = 3
 
-        # 2. Studentの順伝播（隠れ層とロジットの両方を取得）
-        student_out = self.student(input_ids, attention_mask=attention_mask)
-        student_hidden = student_out.last_hidden_state
-        logits = student_out.logits
-
-        # 3. 特徴量蒸留損失 (MSE)
-        projected_hidden = self.regressor(student_hidden)
-        distill_loss = self.criterion_distill(projected_hidden, teacher_hidden)
-
-        # 4. MLM損失 (Cross Entropy)
-        # labelsが提供されている場合のみ計算
-        if labels is not None:
-            # logits: [batch_size, seq_len, vocab_size] -> [N, vocab_size]
-            # labels: [batch_size, seq_len] -> [N]
-            mlm_loss = self.criterion_mlm(logits.view(-1, logits.size(-1)), labels.view(-1))
+    for epoch in range(num_epochs):
+        total_loss = 0
+        for step, batch in enumerate(train_dataloader):
+            input_ids = batch["input_ids"].to(device)
+            attention_mask = batch["attention_mask"].to(device)
+            labels = batch["labels"].to(device) # MLMの正解ラベル
             
-            # 合計損失 (重み付けを調整可能。ここでは 1:1)
-            # 特徴量のスケールが小さい場合は、distill_loss に大きな係数（例: 100）をかけることもあります
-            total_loss = distill_loss + mlm_loss
-            return total_loss
-        
-        return distill_loss
+            # 順伝播（labelsを渡すことで、内部でMLM損失も計算される）
+            loss = trainer(input_ids, attention_mask=attention_mask, labels=labels)
+            
+            # 逆伝播
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            
+            total_loss += loss.item()
+            
+            if step % 50 == 0:
+                print(f"Epoch {epoch}, Step {step}, Loss: {loss.item():.4f}")
 
-# --- 使用イメージ ---
-# teacher = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
-# student = CustomSmallEncoder(dim=256, ...) # あなたが作成中のSparse RoPEモデルなど
-# trainer = FeatureDistillationTrainer(teacher, student, teacher_dim=768, student_dim=256)
+        print(f"Average Loss for Epoch {epoch}: {total_loss / len(train_dataloader):.4f}")
 
-# optimizer = torch.optim.Adam(list(student.parameters()) + list(trainer.regressor.parameters()), lr=1e-4)
+    avg_loss = total_loss / len(train_dataloader)
+    return avg_loss
+
+# --- 実行例 ---
+# 注意: train_loader は事前に作成されている必要があります（Dataset/DataLoader）
+# avg_loss = train_one_epoch(trainer, train_loader, optimizer, device)
+# print(f"Average Distillation Loss: {avg_loss:.4f}")
+
+import os
+
+# 1. 保存用ディレクトリの作成
+save_dir = "saved_models/distilled_student"
+os.makedirs(save_dir, exist_ok=True)
+
+# 2. 保存用パスの設定
+student_path = os.path.join(save_dir, "student_model.pth")
+regressor_path = os.path.join(save_dir, "regressor.pth")
+full_trainer_path = os.path.join(save_dir, "full_trainer_checkpoint.pth")
+
+# --- パターンA: 個別に保存（おすすめ） ---
+# 生徒モデルのみを別のタスク（分類や検索）に転用しやすくなります
+torch.save(trainer.student.state_dict(), student_path)
+torch.save(trainer.regressor.state_dict(), regressor_path)
+
+# --- パターンB: 学習の「中断・再開」用に保存 ---
+# optimizerやepoch数も含めて保存することで、後から学習を再開できます
+# checkpoint = {
+#     'epoch': num_epochs,
+#     'model_state_dict': trainer.state_dict(),
+#     'optimizer_state_dict': optimizer.state_dict(),
+#     'loss': avg_loss,
+# }
+# torch.save(checkpoint, full_trainer_path)
+
+print(f"モデルの保存が完了しました：\n- {student_path}\n- {regressor_path}")
