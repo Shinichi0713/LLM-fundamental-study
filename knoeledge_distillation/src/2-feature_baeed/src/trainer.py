@@ -4,55 +4,110 @@ import torch.nn.functional as F
 
 
 class FeatureDistillationTrainer(nn.Module):
-    def __init__(self, teacher_model, student_model, teacher_dim, student_dim):
+    def __init__(
+        self,
+        teacher,
+        student,
+        temperature=4.0,
+        alpha_kd=0.5,
+        alpha_hidden=1.0
+    ):
         super().__init__()
-        self.teacher = teacher_model
-        self.student = student_model
-        
-        # 教師モデルの固定
-        self.teacher.eval()
-        for param in self.teacher.parameters():
-            param.requires_grad = False
+        self.teacher = teacher.eval()
+        self.student = student
 
-        # Student -> Teacher の次元変換
-        self.regressor = nn.Linear(student_dim, teacher_dim)
-        
-        # 2つの損失関数
-        self.criterion_distill = nn.MSELoss()
-        self.criterion_mlm = nn.CrossEntropyLoss() # ignore_index=-100 がデフォルト
+        self.T = temperature
+        self.alpha_kd = alpha_kd
+        self.alpha_hidden = alpha_hidden
 
-    def forward(self, input_ids, attention_mask=None, labels=None):
-        # 1. Teacherの隠れ層取得
+        # 教師 → 学生 次元射影
+        self.proj = nn.Linear(
+            teacher.config.hidden_size,
+            student.dim
+        )
+
+        for p in self.teacher.parameters():
+            p.requires_grad = False
+
+    def forward(self, batch):
+        input_ids = batch["input_ids"]
+        attention_mask = batch["attention_mask"]
+        labels = batch["labels"]
+
+        # ---- 教師 ----
         with torch.no_grad():
-            teacher_out = self.teacher(input_ids, attention_mask=attention_mask)
-            teacher_hidden = teacher_out.hidden_states[-1]
+            t_out = self.teacher(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                output_hidden_states=True
+            )
 
-        # 2. Studentの順伝播（隠れ層とロジットの両方を取得）
-        student_out = self.student(input_ids, attention_mask=attention_mask)
-        student_hidden = student_out.last_hidden_state
-        logits = student_out.logits
+        # ---- 学生 ----
+        s_out = self.student(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            output_hidden_states=True
+        )
 
-        # 3. 特徴量蒸留損失 (MSE)
-        projected_hidden = self.regressor(student_hidden)
-        distill_loss = self.criterion_distill(projected_hidden, teacher_hidden)
+        # ======================
+        # 1. Hard MLM loss
+        # ======================
+        loss_mlm = F.cross_entropy(
+            s_out["logits"].view(-1, s_out["logits"].size(-1)),
+            labels.view(-1),
+            ignore_index=-100
+        )
 
-        # 4. MLM損失 (Cross Entropy)
-        # labelsが提供されている場合のみ計算
-        if labels is not None:
-            # logits: [batch_size, seq_len, vocab_size] -> [N, vocab_size]
-            # labels: [batch_size, seq_len] -> [N]
-            mlm_loss = self.criterion_mlm(logits.view(-1, logits.size(-1)), labels.view(-1))
-            
-            # 合計損失 (重み付けを調整可能。ここでは 1:1)
-            # 特徴量のスケールが小さい場合は、distill_loss に大きな係数（例: 100）をかけることもあります
-            total_loss = distill_loss + mlm_loss
-            return total_loss
-        
-        return distill_loss
+        # ======================
+        # 2. Logits KD loss
+        # ======================
+        T = self.T
+        kd_loss = F.kl_div(
+            F.log_softmax(s_out["logits"] / T, dim=-1),
+            F.softmax(t_out.logits / T, dim=-1),
+            reduction="batchmean"
+        ) * (T * T)
+
+        # ======================
+        # 3. Hidden state loss
+        # ======================
+        loss_hidden = 0.0
+
+        t_hiddens = t_out.hidden_states[1:]  # embedding除外
+        s_hiddens = s_out["hidden_states"]
+
+        # 教師層を間引いて対応
+        step = len(t_hiddens) // len(s_hiddens)
+
+        for i, s_h in enumerate(s_hiddens):
+            t_h = t_hiddens[i * step]
+            t_h = self.proj(t_h.detach())
+            loss_hidden += F.mse_loss(s_h, t_h)
+
+        loss_hidden /= len(s_hiddens)
+
+        # ======================
+        # Total loss
+        # ======================
+        total_loss = (
+            (1 - self.alpha_kd) * loss_mlm
+            + self.alpha_kd * kd_loss
+            + self.alpha_hidden * loss_hidden
+        )
+
+        return {
+            "loss": total_loss,
+            "loss_mlm": loss_mlm.detach(),
+            "loss_kd": kd_loss.detach(),
+            "loss_hidden": loss_hidden.detach()
+        }
+
 
 # --- 使用イメージ ---
-# teacher = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
-# student = CustomSmallEncoder(dim=256, ...) # あなたが作成中のSparse RoPEモデルなど
-# trainer = FeatureDistillationTrainer(teacher, student, teacher_dim=768, student_dim=256)
+trainer = FeatureDistillationTrainer(teacher, student, teacher_dim=768, student_dim=256)
 
-# optimizer = torch.optim.Adam(list(student.parameters()) + list(trainer.regressor.parameters()), lr=1e-4)
+optimizer = torch.optim.AdamW(
+    trainer.student.parameters(),
+    lr=3e-4,
+    weight_decay=0.01
+)
