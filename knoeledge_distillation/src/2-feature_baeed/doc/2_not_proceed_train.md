@@ -2,11 +2,13 @@
 BERTを小さいTransformer(以下生徒モデル)をMLMで知識蒸留しようとしましたが、学習後おもうような結果が得られませんでした。
 原因について分析、改善後の結果について説明します。
 
-## 1. 蒸留損失設計の問題
+## 原因と考えたこと
+
+### 1. 蒸留損失設計の問題
 変更前の生徒モデルはMLMの出力で損失をとってました。
 これが良くなかったようです。
 
-### (1) MLM × 知識蒸留は「そもそも難しい」
+#### MLM × 知識蒸留は「そもそも難しい」
 
 BERT の MLM 出力分布は：
 
@@ -42,7 +44,7 @@ loss = alpha * kd_loss + (1-alpha) * mlm_ce_loss
 ```
 
 
-## 2. 蒸留対象の不適切さ（logits だけ見ている）
+### 2. 蒸留対象の不適切さ（logits だけ見ている）
 1項と同じことかもしれませんが、MLMのlogits(AIモデルが出力するスコア)のみで評価してました。
 エンコーダモデルの知見があるのは中間層の中です。
 中間層こそ、知識蒸留でまねると良い場所でした。
@@ -73,7 +75,7 @@ for s_h, t_h in zip(student.hidden_states, teacher.hidden_states_selected):
 
 ※ 次章参照
 
-## 3. 教師と学生の次元不整合
+### 3. 教師と学生の次元不整合
 上記の中間層の埋め込み表現で差をとろうとしても中間層のサイズが揃ってないと差をとれません。
 中間層のサイズを揃える必要があります。
 
@@ -137,7 +139,7 @@ loss += mse(student_hidden, t_h_proj)
 >3. **インターフェースの調整**: 前の層の出力が768で、次の層の入力が256である必要がある場合、その「橋渡し（コネクタ）」として機能します。
 
 
-## 4. Embedding / MLM head の weight tying をしていない
+### 4. Embedding / MLM head の weight tying をしていない
 結構致命的でしたが、MLM headは同じものであるべきでした。。。
 よく考えれば、学習して勝手に同じようになる、というように考えるべき箇所ではありませんでした。
 
@@ -165,6 +167,67 @@ __修正__
 
 ```python
 self.mlm_head.weight = self.embedding.weight
+```
+
+
+## 修正の結果
+
+検証用のデータセットでMLMを行ってみました。
+以下の文章の適当な部分を[MASK]にリプレースして予測させ、top-1(予測第一位)が当たってるかを評価させています。
+うーん。。。
+未だ予測できていない。。。
+
+theやand、:などの頻繁に出てくる言葉をかろうじて予測しているという程度。。。
+
+中間層と出力を合わせた知識蒸留をしてもダメ、という結果でした。
+
+```bash
+Sample 1:
+Input context: " trials and tri @ - @ions " is the 104th of the american science fiction television series star trek : deep space nine, the sixth of the fifth season. it written as a tribute to the original series of star trek, in the 30th anniversary of circle show ; sister series voyager produced a episode, " flashback ". the idea the episode was suggested by rene echevarria, sh ronald d. suggested the link to " spontaneous trouble with tribbles ". the were credited for work on the teleplay, with the story credit going to ira steven
+  - [MASK] at pos 5: True='##bble', Pred=',' ✗
+  - [MASK] at pos 9: True='at', Pred=',' ✗
+  - [MASK] at pos 16: True='episode', Pred=',' ✗
+  - [MASK] at pos 26: True=':', Pred=':' ✓
+  - [MASK] at pos 33: True='episode', Pred=',' ✗
+  - [MASK] at pos 40: True='was', Pred=',' ✗
+  - [MASK] at pos 57: True='year', Pred=',' ✗
+  - [MASK] at pos 59: True='the', Pred='the' ✓
+  - [MASK] at pos 65: True='produced', Pred='.' ✗
+  - [MASK] at pos 67: True='similar', Pred=',' ✗
+  - [MASK] at pos 76: True='for', Pred=',' ✗
+  - [MASK] at pos 88: True='and', Pred='.' ✗
+  - [MASK] at pos 92: True='moore', Pred=',' ✗
+  - [MASK] at pos 98: True='the', Pred=',' ✗
+  - [MASK] at pos 107: True='pair', Pred=',' ✗
+  - [MASK] at pos 111: True='their', Pred=',' ✗
+
+Sample 2:
+Input context: the director the film is not known, but two possible exist. barry o neil the stage name of thomas j. mccarthy, who would many important thanr pictures, including its two @ - @ reeler, romeo and juliet lloyd b. carleton stage name tun carleton b., a director would stay with thehouser company until to the biograph company by the of 1910. confusion between the directing credits stems from the industry practice of not crediting the film even in studio news. q david bowers says the attri
+  - [MASK] at pos 3: True='of', Pred=',' ✗
+  - [MASK] at pos 13: True='##s', Pred=',' ✗
+  - [MASK] at pos 15: True='.', Pred='.' ✓
+  - [MASK] at pos 18: True=''', Pred=',' ✗
+  - [MASK] at pos 20: True='was', Pred=',' ✗
+  - [MASK] at pos 32: True='direct', Pred=',' ✗
+  - [MASK] at pos 36: True='##house', Pred=',' ✗
+  - [MASK] at pos 42: True='first', Pred=',' ✗
+  - [MASK] at pos 49: True=',', Pred=',' ✓
+  - [MASK] at pos 51: True='and', Pred='and' ✓
+  - [MASK] at pos 53: True='.', Pred=',' ✗
+  - [MASK] at pos 58: True='was', Pred=',' ✗
+  - [MASK] at pos 59: True='the', Pred=',' ✗
+  - [MASK] at pos 62: True='of', Pred=',' ✗
+  - [MASK] at pos 66: True='little', Pred=',' ✗
+  - [MASK] at pos 70: True='who', Pred=',' ✗
+  - [MASK] at pos 75: True='than', Pred=',' ✗
+  - [MASK] at pos 80: True='moving', Pred=',' ✗
+  - [MASK] at pos 88: True='summer', Pred=',' ✗
+  - [MASK] at pos 92: True='the', Pred=',' ✗
+  - [MASK] at pos 109: True='directors', Pred=',' ✗
+  - [MASK] at pos 110: True=',', Pred=',' ✓
+  - [MASK] at pos 115: True='releases', Pred=',' ✗
+  - [MASK] at pos 118: True='.', Pred=',' ✗
+  - [MASK] at pos 123: True='that', Pred=',' ✗
 ```
 
 
