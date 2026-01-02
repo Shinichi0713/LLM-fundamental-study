@@ -14,6 +14,13 @@ On the other hand, I have Reinforcement-Learning repository also.
 
 [Shinichi0713/Reinforce-Learning-Study](https://github.com/Shinichi0713/Reinforce-Learning-Study)
 
+## My Work
+The author is currently authoring a comprehensive book on LLMs. It is designed to guide readers through the process of building an LLM from the ground up, enabling them to master the underlying technologies of today's language models. This is a must-read for anyone serious about learning the inner workings of LLMs.
+
+<img src="image/README/1767397068346.png" alt="The Logic of LLMs" width="700" style="display: block; margin: 0 auto;">
+
+[大規模言語モデルが言葉を紡ぐ理屈読本: Pythonで動かして体験して学ぶ](https://www.amazon.co.jp/dp/B0GD96KJWG)
+
 ## site map
 
 1. Roadmap of LLM
@@ -375,12 +382,12 @@ LLM-learning:
 [efficiently train llm](https://shinichi0713.github.io/LLM-fundamental-study/docs/13-LLM-learning)
 
 ## AI tools
+
 The following section covers key metrics and essential tools for efficient AI development.
 
 <img src="image/README/1766892353438.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
 [AI tools](https://shinichi0713.github.io/LLM-fundamental-study/evaluate_method)
-
 
 ## reference site
 
