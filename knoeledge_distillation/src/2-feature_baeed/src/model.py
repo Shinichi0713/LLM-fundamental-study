@@ -1,59 +1,126 @@
 import torch
 import torch.nn as nn
-from transformers import BertModel, BertConfig
+import torch.nn.functional as F
+import os
+from transformers import BertForMaskedLM
 
 
-class CustomSmallEncoder(nn.Module):
-    def __init__(self, dim=256, vocab_size=30522, n_layers=4, n_heads=8):
+class FeatureDistillationTrainer(nn.Module):
+    def __init__(
+        self,
+        teacher,
+        student,
+        temperature=4.0,
+        alpha_kd=0.5,
+        alpha_hidden=1.0
+    ):
         super().__init__()
-        self.dim = dim # trainerで使うため保存
-        self.embedding = nn.Embedding(vocab_size, dim)
-        self.layers = nn.ModuleList([
-            nn.TransformerEncoderLayer(
-                d_model=dim, nhead=n_heads, dim_feedforward=dim*4, batch_first=True
-            ) for _ in range(n_layers)
-        ])
-        self.norm = nn.LayerNorm(dim)
+        self.teacher = teacher.eval()
+        self.student = student
 
-        # --- 追加: MLM用出力層 ---
-        self.mlm_head = nn.Linear(dim, vocab_size)
+        self.T = temperature
+        self.alpha_kd = alpha_kd
+        self.alpha_hidden = alpha_hidden
 
-    def forward(self, input_ids, attention_mask=None, output_hidden_states=True):
-        all_hidden_states = []
-        x = self.embedding(input_ids)
-        for layer in self.layers:
-            x = layer(x)
-            if output_hidden_states:
-                all_hidden_states.append(x)
-        x = self.norm(x)
+        # 教師 → 学生 次元射影
+        self.proj = nn.Linear(
+            teacher.config.hidden_size,
+            student.dim
+        )
 
-        # --- 追加: ロジットの計算 ---
-        logits = self.mlm_head(x)
+        for p in self.teacher.parameters():
+            p.requires_grad = False
 
-        class Output:
-            pass
-        out = Output()
-        out.last_hidden_state = x
-        out.hidden_states = all_hidden_states if output_hidden_states else None
-        out.logits = logits # これを返すことで評価可能になる
-        return out
-    
-# --- 教師モデル（既存のBERT） ---
-# 語彙サイズはBERT標準の30522、次元は768
-teacher = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
+    def forward(self, batch):
+        input_ids = batch["input_ids"]
+        attention_mask = batch["attention_mask"]
+        labels = batch["labels"]
 
-# --- 生徒モデル（あなたのカスタムモデル） ---
-# 教師と同じ語彙サイズを指定し、次元は軽量な256に設定
-student = CustomSmallEncoder(
-    dim=256, 
-    vocab_size=teacher.config.vocab_size, 
-    n_layers=6
+        # ---- 教師 ----
+        with torch.no_grad():
+            t_out = self.teacher(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                output_hidden_states=True
+            )
+
+        # ---- 学生 ----
+        s_out = self.student(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            output_hidden_states=True
+        )
+
+        # ======================
+        # 1. Hard MLM loss
+        # ======================
+        loss_mlm = F.cross_entropy(
+            s_out["logits"].view(-1, s_out["logits"].size(-1)),
+            labels.view(-1),
+            ignore_index=-100
+        )
+
+        # ======================
+        # 2. Logits KD loss
+        # ======================
+        T = self.T
+        kd_loss = F.kl_div(
+            F.log_softmax(s_out["logits"] / T, dim=-1),
+            F.softmax(t_out.logits / T, dim=-1),
+            reduction="batchmean"
+        ) * (T * T)
+
+        # ======================
+        # 3. Hidden state loss
+        # ======================
+        loss_hidden = 0.0
+
+        t_hiddens = t_out.hidden_states[1:]  # embedding除外
+        s_hiddens = s_out["hidden_states"]
+
+        # 教師層を間引いて対応
+        step = len(t_hiddens) // len(s_hiddens)
+
+        for i, s_h in enumerate(s_hiddens):
+            t_h = t_hiddens[i * step]
+            t_h = self.proj(t_h.detach())
+            loss_hidden += F.mse_loss(s_h, t_h)
+
+        loss_hidden /= len(s_hiddens)
+
+        # ======================
+        # Total loss
+        # ======================
+        total_loss = (
+            (1 - self.alpha_kd) * loss_mlm
+            + self.alpha_kd * kd_loss
+            + self.alpha_hidden * loss_hidden
+        )
+
+        return {
+            "loss": total_loss,
+            "loss_mlm": loss_mlm.detach(),
+            "loss_kd": kd_loss.detach(),
+            "loss_hidden": loss_hidden.detach()
+        }
+
+# --- 使用イメージ ---
+teacher = BertForMaskedLM.from_pretrained(
+    "bert-base-uncased"
 )
+# またはすべてキーワード引数にする
+student = CustomSmallEncoder(dim=256, vocab_size=32000)
 
-# --- 動作確認 ---
-sample_input = torch.randint(0, 30522, (1, 128)) # Batch=1, SeqLen=128
-t_out = teacher(sample_input)
-s_out = student(sample_input)
+# 重みを読み込む
+# save_dir = "/content"
+# os.makedirs(save_dir, exist_ok=True)
+# student_path = os.path.join(save_dir, "student_model.pth")
+# regressor_path = os.path.join(save_dir, "regressor.pth")
 
-print(f"Teacher hidden state shape: {t_out.hidden_states[-1].shape}") # [1, 128, 768]
-print(f"Student hidden state shape: {s_out.hidden_states[-1].shape}") # [1, 128, 256]
+trainer = FeatureDistillationTrainer(teacher, student)
+
+optimizer = torch.optim.AdamW(
+    trainer.student.parameters(),
+    lr=3e-4,
+    weight_decay=0.01
+)
