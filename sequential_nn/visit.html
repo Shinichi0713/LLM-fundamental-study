@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Tone.js Auto Player</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f4f8; }
+        #play-button { padding: 20px 40px; font-size: 24px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        #play-button:hover { transform: scale(1.05); background-color: #45a049; }
+        #status { margin-top: 20px; color: #666; }
+    </style>
+</head>
+<body>
+
+    <h1>Interactive Music Page</h1>
+    <button id="play-button">Click to Start Music</button>
+    <p id="status">※ブラウザの制限により、クリック後に再生が始まります</p>
+
+    <script>
+        const button = document.getElementById('play-button');
+        const statusText = document.getElementById('status');
+
+        // 1. シンセサイザーの設定（少し柔らかい音にする）
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synth.set({
+            oscillator: { type: "triangle" },
+            envelope: { attack: 0.1, release: 1 }
+        });
+
+        // 2. メロディの定義 (音名とタイミング)
+        const melody = [
+            { time: "0:0", note: "C4", duration: "4n" },
+            { time: "0:1", note: "C4", duration: "4n" },
+            { time: "0:2", note: "G4", duration: "4n" },
+            { time: "0:3", note: "G4", duration: "4n" },
+            { time: "1:0", note: "A4", duration: "4n" },
+            { time: "1:1", note: "A4", duration: "4n" },
+            { time: "1:2", note: "G4", duration: "2n" },
+        ];
+
+        // 3. 再生処理
+        button.addEventListener('click', async () => {
+            // オーディオコンテキストを開始（これが必須）
+            await Tone.start();
+            
+            // ボタンを無効化
+            button.disabled = true;
+            button.innerText = "Playing...";
+            statusText.innerText = "再生中... 音量にご注意ください";
+
+            // Part（シーケンサー）を作成してループ再生
+            const part = new Tone.Part((time, value) => {
+                synth.triggerAttackRelease(value.note, value.duration, time);
+            }, melody).start(0);
+
+            part.loop = true;
+            part.loopEnd = "2:0";
+
+            // 演奏開始
+            Tone.Transport.start();
+        });
+    </script>
+</body>
+</html>
