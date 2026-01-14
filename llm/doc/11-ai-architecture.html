@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 引用内の最後の要素（出典元など）の余白調整 */
+blockquote p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>近年のAIバブルはLLMの他に、LLMを高速に動作させることが出来るAI専用の半導体の存在があります。
+LLMの進化と同様、計算基盤となるAI専用の半導体も進化が進んでいます。
+今回はAI専用半導体について説明を行います。</p>
+<h2 id="概要">概要</h2>
+<p>AI半導体における「アーキテクチャ」とは、ソフトウェア（AIモデル）が要求する膨大な計算を、　<strong>「いかに効率よく、物理的な電子回路の配置（レイアウト）に落とし込むか」</strong>　という設計の仕組みそのものを指します。
+AI半導体のアーキテクチャは、一般的なCPU（中央演算処理装置）とは根本的に異なる思想で設計されています。一言で言えば、 <strong>「巨大なデータの塊を、単純な計算（掛け算と足し算）で、超並列に処理すること」</strong> に特化した構造です。</p>
+<p>主要なアーキテクチャの特徴を4つのポイントで解説します。</p>
+<h3 id="1-行列演算に特化した演算ユニットtensor-coreなど">1. 「行列演算」に特化した演算ユニット（Tensor Coreなど）</h3>
+<p>AI（特にディープラーニング）の計算の大部分は、重みと入力データの　<strong>「積和演算（MAC: Multiply-Accumulate）」</strong>　です。
+従来のCPUが1つずつ計算を行うのに対し、AI半導体は「行列（テンソル）」を丸ごと一度に計算できる専用回路を持っています。</p>
+<ul>
+<li><strong>シストリック・アレイ (Systolic Array):</strong> GoogleのTPUなどで採用されている構造。演算器が網の目のように並び、データが波のように隣の演算器へ伝播しながら計算が進むため、メモリへのアクセス回数を劇的に減らせます。</li>
+</ul>
+<h3 id="2-超並列処理massive-parallelism">2. 超並列処理（Massive Parallelism）</h3>
+<p>CPUは数個〜数十個の高性能なコアを持ち、複雑な命令を高速に処理しますが、AI半導体は　<strong>「小さくて単純な演算器」を数千〜数万個</strong>　並べます。</p>
+<ul>
+<li><strong>GPU (Graphics Processing Unit):</strong> もともと画像処理（ピクセル計算）用に開発された並列構造が、AIの行列演算と相性が良く、現在の主流となっています。</li>
+<li><strong>NPU (Neural Processing Unit):</strong> AI計算だけに特化し、不要な機能を削ぎ落とすことで電力効率を極限まで高めたものです。</li>
+</ul>
+<h3 id="3-メモリ帯域の極大化hbmの採用">3. メモリ帯域の極大化（HBMの採用）</h3>
+<p>AIの計算では、膨大な「重みデータ」をメモリから演算器へ絶えず送り込む必要があります。計算速度が速すぎるとメモリからの供給が追いつかない「メモリの壁」にぶつかるため、特殊なメモリ接続技術が使われます。</p>
+<ul>
+<li><strong>HBM (High Bandwidth Memory):</strong> メモリチップを垂直に積み上げ、シリコン貫通電極（TSV）で演算チップと直結することで、従来のDRAMとは比較にならないほどのデータ転送速度を実現します。</li>
+</ul>
+<h3 id="4-低精度演算の活用quantization">4. 低精度演算の活用（Quantization）</h3>
+<p>科学シミュレーションなどでは高い精度（64bit浮動小数点など）が必要ですが、AIの推論や学習では、精度を少し落としても結果に大きな影響が出ないことがわかっています。</p>
+<ul>
+<li><strong>FP16 / BF16 / INT8:</strong> 精度を16bitや8bitに下げることで、一度に送れるデータ量を増やし、演算速度を数倍〜数十倍に加速させます。最新のチップでは、さらに低いFP4（4bit）などもサポートされています。</li>
+</ul>
+<h3 id="主要なaiアーキテクチャの例">主要なAIアーキテクチャの例</h3>
+<table>
+<thead>
+<tr>
+<th>アーキテクチャ</th>
+<th>開発元</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hopper (H100/H200)</strong></td>
+<td>NVIDIA</td>
+<td>GPUベースの王道。Transformerエンジンを搭載し圧倒的なシェア。</td>
+</tr>
+<tr>
+<td><strong>TPU (Tensor Processing Unit)</strong></td>
+<td>Google</td>
+<td>行列演算に特化したシストリック・アレイの先駆け。</td>
+</tr>
+<tr>
+<td><strong>Cerebras Wafer-Scale Engine</strong></td>
+<td>Cerebras</td>
+<td>巨大なウェハ全体を1つのチップにする超巨大アーキテクチャ。</td>
+</tr>
+<tr>
+<td><strong>NPU (Apple Aシリーズなど)</strong></td>
+<td>Apple等</td>
+<td>スマホ等で写真処理や音声認識を低電力で行う推論特化型。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cpuとの違い">CPUとの違い</h2>
+<p>AIアーキテクチャを「回路レベル」で一般的なCPUと比較すると、その設計思想は <strong>「命令実行の柔軟性」を捨てて「データのスループット（処理量）」に全振りしている</strong> という点に集約されます。</p>
+<p>具体的には、以下の4つの回路的特徴が顕著です。</p>
+<h3 id="1-制御回路control-unitの簡略化">1. 制御回路（Control Unit）の簡略化</h3>
+<p>CPUは、次にどの命令を実行するかを判断する「条件分岐」や、実行順序を入れ替えて効率化する「アウトオブオーダー実行」など、非常に複雑な制御回路を持っています。</p>
+<ul>
+<li><strong>CPU:</strong> 全体の面積の多くを制御回路やキャッシュが占め、演算器（ALU）はわずかです。</li>
+<li><strong>AI半導体:</strong> 制御回路を最小限にし、その分空いたスペースに数千個の演算器を敷き詰めます。</li>
+</ul>
+<blockquote>
+<p>**「複雑なことはせず、同じ単純作業を全員で一斉にやる」**という、工場のような構造です。</p>
+</blockquote>
+<h3 id="2-積和演算macの極大化">2. 積和演算（MAC）の極大化</h3>
+<p>AI回路の心臓部は、 <strong>「積和演算（Multiply-Accumulate: MAC）」</strong> 回路です。 という計算を1サイクルで行うユニットが格子状に並んでいます。</p>
+<ul>
+<li><strong>シストリック・アレイ:</strong> CPUのように「命令」を各演算器に配るのではなく、データを隣の演算器へバケツリレーのように流します。これにより、信号を遠くまで飛ばすための「配線電力」を削減し、高効率な行列演算を実現しています。</li>
+</ul>
+<h3 id="3-メモリ配置near-memory-computing">3. メモリ配置（Near-Memory Computing）</h3>
+<p>CPUは、低速なメインメモリ（DRAM）からデータを取ってくる際の遅延を隠すために、巨大な「キャッシュメモリ（L1/L2/L3）」を持っています。
+対してAI回路では、 <strong>「メモリの壁」</strong> を打破するために、演算器のすぐ隣に小さなメモリを大量に配置します。</p>
+<ul>
+<li><strong>SRAMの多用:</strong> 演算器のすぐそばに「ウェイト（重み）」を保持するための専用SRAM（スクラッチパッドメモリ）を配置し、外部へのデータ通信を最小化します。</li>
+<li><strong>HBMとの直結:</strong> チップと同じパッケージ内にメモリを封入し、数千本の配線で直結します。</li>
+</ul>
+<h3 id="4-精度ビット幅の柔軟な削減">4. 精度（ビット幅）の柔軟な削減</h3>
+<p>CPUは通常、32bitや64bitの「高い精度」で計算することを前提として回路が組まれています。
+AI回路は、精度を落としても結果が変わらないという特性を利用し、 <strong>「低いビット幅」</strong> で動くように最適化されています。</p>
+<ul>
+<li><strong>INT8やFP4の採用:</strong> 64bitの演算器1つ分の面積があれば、8bitの演算器を8つ以上作れます。これにより、同じチップ面積でも演算能力（TOPS）を劇的に向上させています。</li>
+</ul>
+<h3 id="比較まとめ">比較まとめ</h3>
+<p>述べたCPUとの違いをまとめるとこんな感じとなります。
+データの塊をまとめて処理することに長けているのがGPUの特徴です。
+CPUは中央集中制御としての役割が得意ですが、データの塊を処理するという意味ではGPUの方が得意ということになります。</p>
+<table>
+<thead>
+<tr>
+<th>特徴</th>
+<th>一般的なCPU</th>
+<th>AI半導体 (NPU/GPU)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>演算器の数</strong></td>
+<td>数十個（高性能）</td>
+<td>数千〜数万個（単純）</td>
+</tr>
+<tr>
+<td><strong>制御回路</strong></td>
+<td>巨大（複雑な処理が得意）</td>
+<td>最小（並列処理が得意）</td>
+</tr>
+<tr>
+<td><strong>データ移動</strong></td>
+<td>キャッシュ階層で遅延防止</td>
+<td>演算器の隣にメモリを配置</td>
+</tr>
+<tr>
+<td><strong>得意な計算</strong></td>
+<td>スカラー演算（1つずつ）</td>
+<td>テンソル演算（行列まとめて）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="gpuが抱える課題">GPUが抱える課題</h2>
+<p>現在のAIブームの主役であるGPUですが、もともと「グラフィックス（画像描写）」のために設計されたアーキテクチャであるため、最新の巨大なAIモデル（LLMなど）を動かす上ではいくつかの深刻な限界・課題に直面しています。</p>
+<h3 id="1-メモリの壁memory-wallと帯域不足">1. 「メモリの壁（Memory Wall）」と帯域不足</h3>
+<p>GPUの演算速度は飛躍的に向上しましたが、メモリからデータを読み書きするスピードがそれに追いついていません。</p>
+<ul>
+<li><strong>課題:</strong> 演算器（演算コア）が計算を終えても、次のデータが届くまで「待ちぼうけ」の状態になります。</li>
+<li><strong>現状:</strong> これを解決するためにHBM（高帯域幅メモリ）を搭載していますが、HBMは非常に高価で、製造工程も複雑なため、供給不足の主因となっています。</li>
+</ul>
+<h3 id="2-膨大な消費電力と熱密度">2. 膨大な消費電力と熱密度</h3>
+<p>GPUは数千のコアをフル稼働させるため、1枚で数百ワット（最新のH100などは700W以上）の電力を消費します。</p>
+<ul>
+<li><strong>課題:</strong></li>
+<li><strong>冷却コスト:</strong> データセンターでは、サーバーを冷やすための電気代が計算用の電気代に匹敵するほど膨らんでいます。</li>
+<li><strong>電力網への負荷:</strong> 巨大なAIクラスタは、小さな町一つ分に相当する電力を消費するため、環境負荷が問題視されています。</li>
+</ul>
+<h3 id="3-汎用性のトレードオフ無駄な回路">3. 汎用性のトレードオフ（無駄な回路）</h3>
+<p>GPUはデータの計算にウェイトを置いているとは言え、「何でもできる（汎用的）」であることが強みです。しかし、AIの計算だけを考えた場合、不要な回路も多く含まれています。</p>
+<ul>
+<li><strong>課題:</strong> グラフィックス処理用のロジックや、複雑な命令セットを維持するための回路がチップ面積を占有しています。</li>
+<li><strong>解決策としてのNPU:</strong> そのため、特定のAIモデル（Transformerなど）の計算だけに特化し、不要な機能を削ぎ落とした「NPU（Neural Processing Unit）」や「ASIC（専用IC）」に効率で負け始めています。</li>
+</ul>
+<h3 id="4-スケーラビリティと通信のオーバーヘッド">4. スケーラビリティと通信のオーバーヘッド</h3>
+<p>一つのGPUに載るメモリ量には限界があるため、巨大なAIは数千枚のGPUを繋いで計算します。</p>
+<ul>
+<li><strong>課題:</strong> GPU同士を通信させる際、チップ内の計算速度に比べてチップ間の通信速度が格段に遅いため、通信待ちが発生します。</li>
+<li><strong>現状:</strong> NVIDIAのNVLinkのように、GPU間を超高速で結ぶ専用の「道路（インターコネクト）」の開発に莫大なコストがかかっています。</li>
+</ul>
+<h2 id="技術動向">技術動向</h2>
+<p>GPUが抱える「メモリの壁」「電力」「通信」といった課題を解決するために、現在の半導体業界は新しいアプローチへ大きく舵を切っています。</p>
+<p>主な技術動向は、以下の4つのテーマで進んでいます。</p>
+<h3 id="1-データの移動を極限まで減らす技術近傍内蔵演算">1. 「データの移動」を極限まで減らす技術（近傍・内蔵演算）</h3>
+<p>データの移動が最も電力を消費し、時間を奪うため、 <strong>「メモリの近く、あるいはメモリの中で計算する」</strong> という発想です。</p>
+<ul>
+<li><strong>PIM (Processing-in-Memory):</strong> メモリチップの内部に演算回路を埋め込む技術です。データをチップの外に出さずに計算を完結させるため、電力消費を従来の1/10以下に抑えられる可能性があります。</li>
+<li><strong>CXL (Compute Express Link):</strong> CPU、GPU、メモリを高速かつ低遅延で「一つの巨大なメモリプール」として繋ぐ新しい規格です。GPUごとのメモリ容量の制限を論理的に取り払おうとしています。</li>
+</ul>
+<h3 id="2-チップの巨大化の限界を超える技術チップレット">2. 「チップの巨大化」の限界を超える技術（チップレット）</h3>
+<p>一つの巨大なチップを作るのは製造コストが高く、不良品も出やすいため、 <strong>「小さなチップを繋ぎ合わせる」</strong> 手法が主流になっています。</p>
+<ul>
+<li><strong>チップレット (Chiplet) アーキテクチャ:</strong> 演算、メモリ、通信などの機能を別々の小さなチップとして製造し、パズルのように組み合わせます。AMDやIntel、最新のNVIDIA Blackwellなどで採用されています。</li>
+<li><strong>2.5D / 3D パッケージング:</strong> チップを平面ではなく「垂直」に積み上げる技術です。配線距離をミリ単位からミクロン単位に短縮し、通信速度を劇的に向上させます。</li>
+</ul>
+<h3 id="3-汎用性から専用化へのシフトdsa">3. 「汎用性」から「専用化」へのシフト（DSA）</h3>
+<p>GPUは何でもできますが、AIには「無駄」が多い。そこで、特定の計算パターン（例：Transformer）だけに特化した <strong>DSA (Domain-Specific Architecture)</strong> の開発が加速しています。</p>
+<ul>
+<li><strong>ハイパースケーラーの自社製チップ:</strong> Google (TPU)、Amazon (Trainium)、Meta (MTIA) など、自社のAIサービスに特化した専用チップを開発し、GPUよりも圧倒的な電力効率を実現しています。</li>
+<li><strong>FPGAの活用:</strong> ソフトウェア側（AIモデル）の進化は非常に速いため、ハードウェア回路を後から書き換えられるFPGAを使って、その時々の最新アルゴリズムに最適化したアクセラレータを作る動きも根強いです。</li>
+</ul>
+<h3 id="4-計算精度の革命低精度演算">4. 「計算精度」の革命（低精度演算）</h3>
+<p>32bitや16bitといった従来の計算精度をさらに落とし、 <strong>「賢さを維持しつつ計算量を減らす」</strong> アプローチです。</p>
+<ul>
+<li><strong>FP4 / MX-format:</strong> 最新のGPUアーキテクチャでは「4bit」での計算をサポートし始めています。ビット数を半分にすれば、同じ回路面積で2倍の計算ができ、メモリ帯域の負荷も半分になります。</li>
+<li><strong>対数演算やスパース性（間引き）:</strong> ほとんどが「0」であるニューラルネットワークの特性を利用し、0の計算を最初からスキップする回路レベルの最適化が進んでいます。</li>
+</ul>
+<h2 id="展望">展望</h2>
+<p>普段の仕事でもGPU使っているときに課題が目に付くようになってきた気がします。
+多くの気になる点は、兎に角LLMが乗らない、電力凄すぎて用途が合わないということです。
+おおよそ上記で述べた課題に乗ってくるようなことです。</p>
+<p>現状は改善策となるようなソリューションが出てくる過渡期という感じがします。
+GPUを抱えるNvidiaが一強でしたが、変化は出てくると思います。</p>
+<p>そして、今後のAIの普及には半導体の設計技術と、半導体の製造技術の底上げが必要ということは揺るがない事実と思います。</p>
+
+            
+<div class="footer-subscription-area" style="margin-top: 40px; padding: 20px; border-top: 1px solid #eee;">
+  <h2>最後に</h2>
+  <p>記事を最後まで読んでくださってありがとうございます。<br>
+  記事の内容を読んで頑張れと思っていただいた読者様、是非、読者になって今後も応援してください。</p>
+  
+  <div style="margin-top: 20px;">
+    <a href="https://blog.hatena.ne.jp/あなたのID/あなたのブログURL/subscribe" class="btn-subscribe">
+      読者になる
+    </a>
+  </div>
+</div>
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+        </body>
+        </html>

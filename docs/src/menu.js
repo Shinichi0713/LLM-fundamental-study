@@ -117,17 +117,34 @@ blockquote::before {
     line-height: 1;
 }
 
-/* 引用内の最後の要素（出典元など）の余白調整 */
-blockquote p {
-    margin: 0;
-    line-height: 1.6;
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
 
 <nav>
         <h3>目次</h3>
         <ul id="toc"></ul> 
 </nav>
+
+
+
+<h2>最後に</h2>
+<p>記事を最後まで読んでくださってありがとうございます。<br />記事の内容を読んで頑張れと思っていただいた読者様、是非、読者になって今後も応援してください。</p>
+<iframe src="https://blog.hatena.ne.jp/yoshishinnze/yoshishinnze.hatenablog.com/subscribe/iframe" allowtransparency="true" frameborder="0" scrolling="no" width="150" height="28"></iframe>
+
 
 <script>
 const toc = document.getElementById('toc');
@@ -161,3 +178,4 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 </script>
+
