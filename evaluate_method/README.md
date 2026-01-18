@@ -210,7 +210,13 @@ Analyzes GPU and memory usage efficiency in detail.
 
 * **Capabilities:** Identify bottlenecks, such as whether the GPU is idling due to slow data loading (DataLoader).
 
----
+## How to monitor NN
+
+To monitor neural network training effectively, analyzing the distribution of parameters like weights and gradients is crucial for diagnosing "black box" behavior. By using tools like TensorBoard to visualize histograms, developers can detect critical issues such as vanishing or exploding gradients and identify whether the model is healthily adapting to data. Healthy training typically shows a rigid initial distribution evolving into a smooth normal distribution, whereas abnormal shapes signal the need for adjustments in learning rates or initialization. Ultimately, parameter analysis provides the necessary transparency to ensure that a model is not only learning efficiently but also building a reliable logical foundation.
+
+![1768653356161](image/README/1768653356161.png)
+
+
 
 ### Summary: Which Feature to Use
 

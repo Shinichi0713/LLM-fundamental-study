@@ -1,0 +1,430 @@
+<!DOCTYPE html><html><head>
+      <title>explanation</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\yoshinaga\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.20\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+      <div class="crossnote markdown-preview  ">
+      
+<p>1/3にVLMの手法でBlip-2に採用されている手法 <a href="https://yoshishinnze.hatenablog.com/entry/2026/01/03/100210"><strong>Q-Former</strong></a> について説明しました。<br>
+Q-FormerがVLMとして、画像の情報を上手に抽出できる理由にフォーカスをあてて説明しました。<br>
+ですが、その際は内部構造の実装法には触れていませんでした。</p>
+<p>今回は改めて内部構造の実装法について扱っていきたいと思います。</p>
+<h2 id="q-formerの構成">Q-Formerの構成 </h2>
+<p>前回のおさらいを兼ねて、Q-Formerの構成を簡単に説明します。</p>
+<h3 id="1-学習可能なクエリ-learnable-queries">1. 学習可能なクエリ (Learnable Queries) </h3>
+<p>Q-Formerの最大の特徴は、入力として「固定された32個（モデルにより数は異なる）の特別なベクトル」を持つことです。</p>
+<ul>
+<li><strong>技術の役割:</strong> これらは最初はランダムな値ですが、学習が進むにつれて「画像の形に注目せよ」「画像の色を抽出せよ」といった <strong>「情報の抽出ルール」</strong> を学習します。</li>
+<li><strong>メリット:</strong> 画像エンコーダから出力される数千個のパッチ（断片データ）をそのままLLMに投げると情報が多すぎますが、この「クエリ」が重要なエッセンスだけを吸い上げることで、情報の密度を飛躍的に高めます。</li>
+</ul>
+<h3 id="2-クロスアテンション-cross-attention">2. クロス・アテンション (Cross-Attention) </h3>
+<p>クエリが画像情報を実際に「吸い上げる」ための計算メカニズムです。</p>
+<ul>
+<li><strong>技術の仕組み:</strong> クエリを「検索条件（Query）」、画像エンコーダの出力を「検索対象のデータベース（Key &amp; Value）」として照合します。</li>
+<li><strong>メリット:</strong> これにより、クエリが画像の中の「どこに注目すべきか」を柔軟に決定できます。例えば、テキストで「色」について問われていれば、画像内の色に関する特徴に強い重み（アテンション）を置くことができます。</li>
+</ul>
+<h3 id="3-多目的二重トランスフォーマー構造-dual-purpose-transformer">3. 多目的・二重トランスフォーマー構造 (Dual-purpose Transformer) </h3>
+<p>Q-Formerは、内部のアテンション計算（Self-Attention）において、画像由来のクエリと、テキスト入力を<strong>同じ層で同時に処理</strong>できる構造を持っています。</p>
+<ul>
+<li><strong>技術の仕組み:</strong> <strong>アテンション・マスク</strong>を切り替えることで、1つのモデルで3つのタスクを同時に学習します。</li>
+</ul>
+<ol>
+<li><strong>ITC (Image-Text Contrastive Learning):</strong> 画像とテキストが似ているか判定。</li>
+<li><strong>ITG (Image-grounded Text Generation):</strong> 画像を見て文字を書く。</li>
+<li><strong>ITM (Image-Text Matching):</strong> 画像とテキストのペアが正しいか細かくチェック。</li>
+</ol>
+<ul>
+<li><strong>メリット:</strong> 「画像」と「言語」が全く同じネットワークで処理されるため、両者の概念的な境界が消え、LLMが理解しやすい「言語に近い画像表現」が作られます。</li>
+</ul>
+<h3 id="モデル処理のイメージ">モデル処理のイメージ </h3>
+<p>絵で見てみると尚、わかりやすいと思います。</p>
+<img src="image/explanation/1768618244495.png" alt="Q-Former form" width="850" style="display: block; margin: 0 auto;">
+<p>Q-Formerは大きく3パートで構成されます。</p>
+<ol>
+<li>Query Token Embeddings</li>
+<li>Self-Attention Block</li>
+<li>Cross-Attention Block (to Vision Encoder)</li>
+</ol>
+<p><strong>1. Query Tokens</strong></p>
+<p>絵の右下にある"Learned Queries"の部分です。<br>
+動作のポイントは以下です。</p>
+<ul>
+<li>位置依存ではない</li>
+<li>画像コンテンツ依存で更新</li>
+<li>非テキストだが後段でLLMに渡す形に射影可能</li>
+</ul>
+<p>この要素によって、画像エンコーダより取得した視覚情報より、重要なエッセンスを抽出することが出来るようになります。</p>
+<p>一旦以下のようにQと置きます。</p>
+<pre data-role="codeBlock" data-info="mathematica" class="language-mathematica mathematica"><code>Q <span class="token operator">=</span> <span class="token punctuation">{</span>q1<span class="token punctuation">,</span> q2<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">,</span> qQ<span class="token punctuation">}</span>   with Q typically in <span class="token punctuation">[</span><span class="token number">16</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">]</span>
+</code></pre><p><strong>2. Self-Attention Block</strong></p>
+<p>1で入力されたクエリ自身がアテンション機構を通して情報交換されます。</p>
+<p>QがSelfAttnに通されるので以下のように表現出来ます。</p>
+<pre data-role="codeBlock" data-info="mathematica" class="language-mathematica mathematica"><code>Q' <span class="token operator">=</span> SelfAttn<span class="token punctuation">(</span>Q<span class="token punctuation">)</span>
+</code></pre><p>この処理で想定される効果は次の通りです。</p>
+<ul>
+<li>Query間で冗長性除去</li>
+<li>様々な視覚概念を分担</li>
+<li>後段Cross-Attentionの情報要求を整形</li>
+</ul>
+<p><strong>3. Cross-Attention Block (to Vision Encoder)</strong></p>
+<p>CrossAttentionは:</p>
+<ul>
+<li>Query: 情報要求（何を見るか）</li>
+<li>Key/Value: 画像特徴（何が存在するか）</li>
+</ul>
+<p>という役割分担になっています。</p>
+<p>ViTに全ての情報保持を委譲し、Q-Formerが選択的に抽出する構図になります。</p>
+<pre data-role="codeBlock" data-info="mathematica" class="language-mathematica mathematica"><code>V <span class="token operator">=</span> VisionEncoder<span class="token punctuation">(</span>image<span class="token punctuation">)</span>
+K<span class="token punctuation">,</span> V <span class="token operator">=</span> proj<span class="token punctuation">(</span>V<span class="token punctuation">)</span>
+
+Q'' <span class="token operator">=</span> CrossAttention<span class="token punctuation">(</span>Q'<span class="token punctuation">,</span> K<span class="token punctuation">,</span> V<span class="token punctuation">)</span>
+</code></pre><p>この一連の処理により、テキストに比べて情報密度が低い画像情報より、エッセンスを抜き出します。</p>
+<p>結果、LLMに不要な低レベルの視覚情報ではなく、画像の本質となる意味を届けることが出来るようになります。</p>
+<p><strong>2と3の補足</strong></p>
+<p>実際にはSelf-AttentionとCross-Attentionは交互に積層されることになります。</p>
+<p>ですので、実際のモデルは以下の処理がされています。</p>
+<pre data-role="codeBlock" data-info="mathematica" class="language-mathematica mathematica"><code>for L in layers<span class="token punctuation">:</span>
+    Q <span class="token operator">=</span> SelfAttention<span class="token punctuation">(</span>Q<span class="token punctuation">)</span>
+    Q <span class="token operator">=</span> CrossAttention<span class="token punctuation">(</span>Q<span class="token punctuation">,</span> V<span class="token punctuation">)</span>
+</code></pre><h3 id="一連の処理による結果">一連の処理による結果 </h3>
+<p>Q-Formerが登場する前は、画像とLLMを単純に線形層（1層のニューラルネット）で繋ぐだけの手法が主流でした。しかし、それだけでは情報の整理が不十分でした。</p>
+<p>Q-Formerは、 <strong>「トランスフォーマーを使って、画像から言語的な意味を抽出する」</strong> というプロセスを挟むことで、巨大なLLMを効率的、かつ賢く「目」を持たせることにつながりました。</p>
+<h2 id="実際のモデル構築">実際のモデル構築 </h2>
+<p>先程説明した処理フローを整理すると次の通りです。</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>image
+  ↓
+Vision Encoder (ViT)
+  ↓    (K,V)
+Q (learnable)
+  ↓
+Q-Former (SelfAttn + CrossAttn stack)
+  ↓
+Projected tokens
+  ↓
+Flan-T5 (Decoder)
+  ↓
+Caption text
+</code></pre><p>実装コードを以下のレポジトリに保存しました。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/vlm/src/q_former">q-former</a></p>
+<p>使うLLMはT-Flan。vision-encoderはViTを用います。</p>
+<p>動作にあたり説明です。</p>
+<p><strong>1. 関係ライブラリのインストール</strong></p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>!pip install transformers accelerate timm einops
+</code></pre><p><strong>2. q-former</strong></p>
+<p>レポジトリの"<a href="http://q-former.py">q-former.py</a>"の内容をコーディング下さい。</p>
+<p><strong>3. モデルの構築</strong></p>
+<p>レポジトリの"<a href="http://model.py">model.py</a>"の内容をコーディング下さい。</p>
+<p><strong>4. 動作</strong></p>
+<p>レポジトリの"<a href="http://predict.py">predict.py</a>"の内容をコーディング下さい。</p>
+<p>※predict.pyのurlは適切なurlに変更ください。</p>
+<p>今回はモデルの実装の一連をしました。<br>
+q-formerは未だLLMとViTに合わせたチューニングをしていないので、あまり良い出力は、現段階では得られないはずです。</p>
+<h2 id="q-formerを採用した手法">Q-Formerを採用した手法 </h2>
+<p>補足情報としてQ-Formerを採用したVLMについて説明します。</p>
+<p>Q-Formerは、2023年にSalesforceが発表した<strong>BLIP-2</strong>で初めて導入され、その圧倒的な効率の良さから、その後多くの有名なマルチモーダルモデル（VLM）に採用されました。</p>
+<p>代表的なモデルとその特徴を整理して紹介します。</p>
+<h3 id="1-blip-2-the-pioneer">1. BLIP-2 (The Pioneer) </h3>
+<p>Q-Formerを世に知らしめた最初のモデルです。</p>
+<ul>
+<li><strong>特徴:</strong> 巨大なLLM（OPTやFlan-T5）と、画像エンコーダ（CLIP ViT）をQ-Formerだけで接続しました。</li>
+<li><strong>役割:</strong> LLMを完全に固定（フリーズ）したまま、Q-Formerだけを学習させることで、当時世界最高水準の性能を極めて低い計算コストで実現しました。</li>
+</ul>
+<h3 id="2-instructblip">2. InstructBLIP </h3>
+<p>BLIP-2をさらに進化させ、「指示（命令）」に従う能力を高めたモデルです。</p>
+<ul>
+<li><strong>特徴:</strong> ユーザーからの「指示テキスト」をQ-Formerのクエリと一緒に入力します。</li>
+<li><strong>役割:</strong> 指示の内容に応じて、Q-Formerが画像から抽出する情報を動的に変えます（例：「色について教えて」と言われたら、色の情報を重点的に抽出する）。</li>
+<li><strong>用途:</strong> 高度な画像対話、推論。</li>
+</ul>
+<h3 id="3-minigpt-4">3. MiniGPT-4 </h3>
+<p>VicunaというLLMとBLIP-2のビジョン部分を組み合わせた、初期の対話型マルチモーダルAIの代表格です。</p>
+<ul>
+<li><strong>特徴:</strong> BLIP-2のQ-Formerと、強力なオープンソースLLMを統合しました。</li>
+<li><strong>用途:</strong> 画像に基づいた詩の作成、ウェブサイトのコード生成など。</li>
+</ul>
+<h3 id="4-video-llava--video-chatgpt-動画対応モデル">4. Video-LLaVA / Video-ChatGPT (動画対応モデル) </h3>
+<p>静止画だけでなく、**動画（ビデオ）**を理解するモデルにもQ-Former（またはその派生技術）が使われています。</p>
+<ul>
+<li><strong>特徴:</strong> 動画はフレーム数が多いため、情報量が膨大になります。</li>
+<li><strong>役割:</strong> Q-Formerが複数のフレームにまたがる情報を「数トークン」に凝縮することで、LLMが長い動画の文脈を処理できるようにしています。</li>
+</ul>
+<h3 id="5-各種ドメイン特化モデル-医療科学">5. 各種ドメイン特化モデル (医療・科学) </h3>
+<p>特定の専門分野向けにカスタマイズされたモデルでも採用例が多いです。</p>
+<ul>
+<li><strong>例:</strong> <strong>Med-BLIP</strong>（医療画像診断補助）など。</li>
+<li><strong>理由:</strong> 専門的な画像（レントゲン等）から、診断に必要な「言語化すべき特徴」だけを抽出するのに、Q-Formerのフィルタリング能力が非常に適しているためです。</li>
+</ul>
+<h3 id="なぜこれほど多くのモデルで使われるのか採用の決め手">なぜこれほど多くのモデルで使われるのか？（採用の決め手） </h3>
+<p>多くの研究者がQ-Formerを採用する理由は、一言で言えば <strong>「コスパと精度のバランス」</strong> です。</p>
+<table>
+<thead>
+<tr>
+<th>理由</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>情報の集約力</strong></td>
+<td>どんなに情報量が多い画像/動画でも、固定数（32個など）のトークンに圧縮できる。</td>
+</tr>
+<tr>
+<td><strong>学習の軽さ</strong></td>
+<td>数十億、数千億パラメータのLLMをいじる必要がなく、Q-Former（約1.8億パラメータ）だけを訓練すれば良い。</td>
+</tr>
+<tr>
+<td><strong>プラグイン的性質</strong></td>
+<td>お気に入りの「最強の目（ViT）」と「最強の脳（Llama 3等）」を後付けで合体させることができる。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="結論">結論 </h2>
+<p>今回はVLMで効果的に視覚情報をLLMに渡す手法であるQ-Formerを扱いました。<br>
+この手法の良い点はLLMには一切手を付けず、かつ、LLMに合わせた視覚情報の抽出を出来るようになるということにあります。</p>
+<p>また、得られる視覚情報も、単純な全結合では得られないような恣意を持ったものとなるため、より、LLMの性能を引き出すことが可能となります。</p>
+<p>実装にあたり疑問あれば、コメント頂ければと思います。</p>
+
+      </div>
+      
+      
+    
+    
+
+<h2>最後に</h2>
+<p>記事を最後まで読んでくださってありがとうございます。<br />記事の内容を読んで頑張れと思っていただいた読者様、是非、読者になって今後も応援してください。</p>
+<iframe src="https://blog.hatena.ne.jp/yoshishinnze/yoshishinnze.hatenablog.com/subscribe/iframe" allowtransparency="true" frameborder="0" scrolling="no" width="150" height="28"></iframe>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+
+<h2>最後に</h2>
+<p>記事を最後まで読んでくださってありがとうございます。<br />記事の内容を読んで頑張れと思っていただいた読者様、是非、読者になって今後も応援してください。</p>
+<iframe src="https://blog.hatena.ne.jp/yoshishinnze/yoshishinnze.hatenablog.com/subscribe/iframe" allowtransparency="true" frameborder="0" scrolling="no" width="150" height="28"></iframe>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+    
+  
+    </body></html>

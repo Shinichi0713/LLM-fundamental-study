@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30d1;&#x30e9;&#x30e1;&#x30fc;&#x30bf;&#x306e;&#x5206;&#x5e03;&#x3092;&#x78ba;&#x8a8d;&#x3059;&#x308b;&#x3079;&#x304d;&#x30bf;&#x30a4;&#x30df;&#x30f3;&#x30b0;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <p>ニューラルネットワークを構築して学習した際に、学習がうまくいっているかを確認したいということがあります。</p>
+<p>そんな際にニューラルネットワークのパラメータの分布を確認することが有効な場合があります。</p>
+<p>今回は、ニューラルネットワークのパラメータの分布確認にまつわる話をします。</p>
+<h2 id="パラメータの分布を確認するべきタイミング">パラメータの分布を確認するべきタイミング</h2>
+<p>ニューラルネットワークのパラメータ（重みやバイアス）を確認すべきタイミングは、主に <strong>「開発の初期」「学習中の異常検知」「モデルの信頼性検証」</strong> の3つのフェーズに分けられます。</p>
+<p>具体的な場面とその目的を整理しました。</p>
+<h3 id="1-学習がうまくいかない時デバッグ">1. 学習がうまくいかない時（デバッグ）</h3>
+<p>これが最も頻繁にパラメータを確認すべきタイミングです。</p>
+<ul>
+<li><strong>損失（Loss）が減らない、または不安定:</strong> 特定のレイヤーで「勾配消失（重みが0に張り付く）」や「勾配爆発（重みが巨大化する）」が起きていないかを確認します。</li>
+<li><strong>精度が頭打ち（アンダーフィッティング）:</strong> パラメータが全く更新されていない「死んだニューロン」が存在しないかを確認し、学習率や初期化手法を見直す判断材料にします。</li>
+</ul>
+<h3 id="2-学習中の健康診断">2. 学習中の「健康診断」</h3>
+<p>モデルが健全に成長しているかを定期的にチェックします。</p>
+<ul>
+<li><strong>過学習（オーバーフィッティング）の予兆:</strong> 特定の重みだけが異常に大きくなっている場合、そのモデルは一部の特徴に依存しすぎて汎用性を失いつつあるサインです。</li>
+<li><strong>初期化の確認:</strong> 学習開始直後の1エポック目で、重みの分布が偏りすぎていないかを確認します。ここでの不備は、後の長い学習時間を無駄にする可能性があります。</li>
+</ul>
+<h3 id="3-モデルを説明する必要がある時">3. モデルを「説明」する必要がある時</h3>
+<p>実務でAIを導入する際、「なぜこの結果になったのか」を問われる場面です。</p>
+<ul>
+<li><strong>判断根拠の特定:</strong> どのパラメータが特定の入力（例：画像内の特定のピクセル）に強く反応しているかを調べることで、AIの「注目点」を説明できます。</li>
+<li><strong>専門ドメインでの検証:</strong> 医療や工業検査など、失敗が許されない分野では、モデルが「ノイズ」ではなく「正しい特徴」に基づいて学習しているかを確認するためにパラメータを解析します。</li>
+</ul>
+<h2 id="パラメータ解析の手順">パラメータ解析の手順</h2>
+<p>ニューラルネットワークのパラメータ解析は、<strong>「統計的な全体像の把握」</strong>　から始め、必要に応じて <strong>「特定の入力に対する反応（局所的な解析）」</strong> へと深掘りしていくのが定石です。</p>
+<p>具体的な手段を、3つのステップで解説します。</p>
+<h3 id="1-統計的解析マクロな視点">1. 統計的解析（マクロな視点）</h3>
+<p>モデル全体の「健康状態」を診断するステップです。個々の数値ではなく、数百万〜数億あるパラメータの <strong>分布（ヒストグラム）</strong> を見ます。</p>
+<ul>
+<li>
+<p><strong>手段:</strong> <strong>TensorBoard</strong> や <strong>Weights &amp; Biases (W&amp;B)</strong> を使用。</p>
+</li>
+<li>
+<p><strong>解析内容:</strong> * <strong>重みの分布:</strong> 重みが正規分布に近い形をしているか。</p>
+</li>
+<li>
+<p><strong>勾配の大きさ:</strong> 学習が進むにつれて勾配が極端に小さく（消失）なったり、大きく（爆発）なったりしていないか。</p>
+</li>
+<li>
+<p><strong>目的:</strong> 学習率が適切か、初期化手法が正しいかを判断します。</p>
+</li>
+</ul>
+<h3 id="2-重みの可視化構造的な視点">2. 重みの可視化（構造的な視点）</h3>
+<p>パラメータが「具体的に何を表現しているか」を視覚的に理解するステップです。</p>
+<ul>
+<li>
+<p><strong>手段:</strong> * <strong>第一層の可視化:</strong> 入力に近い層の重みを画像としてプロットします（CNNなら2Dフィルタとして）。</p>
+</li>
+<li>
+<p><strong>低次元投影:</strong> 重みが高次元すぎるため、<strong>t-SNE</strong> や <strong>UMAP</strong> を使って2次元・3次元に圧縮して可視化します。</p>
+</li>
+<li>
+<p><strong>解析内容:</strong> 「似た意味を持つパラメータがクラスター（塊）を作っているか」を確認します。</p>
+</li>
+<li>
+<p><strong>目的:</strong> モデルが画像の「エッジ」や「色」、言葉の「意味的近さ」を正しく捉えているかを確認します。</p>
+</li>
+</ul>
+<h3 id="3-メカニスティックインタープリタビリティミクロな視点">3. メカニスティック・インタープリタビリティ（ミクロな視点）</h3>
+<p>特定の判断に対して、どのパラメータがどう動いたかを精密に調査する最新の手法です。</p>
+<ul>
+<li>
+<p><strong>手段:</strong> <strong>TransformerLens</strong> や <strong>Captum</strong> などのライブラリを使用。</p>
+</li>
+<li>
+<p><strong>手法の例:</strong></p>
+</li>
+<li>
+<p><strong>Integrated Gradients:</strong> 出力結果に対して、どの入力要素が最も寄与したかを逆伝播を使って計算します。</p>
+</li>
+<li>
+<p><strong>Ablation (切除):</strong> 特定のニューロンをわざと「ゼロ」にして推論させ、精度がどう落ちるかを見ます。</p>
+</li>
+<li>
+<p><strong>目的:</strong> AIの「判断の根拠」を人間が納得できる形で説明（XAI）します。</p>
+</li>
+</ul>
+<h2 id="実験">実験</h2>
+<p>今回はTensor Boardというライブラリを使って、ニューラルネットワークのパラメータの分布を追って、学習が進んでいるかの確認をしてみようと思います。</p>
+<h3 id="実験でしていること">実験でしていること</h3>
+<p>先ほど提供したコードは、 <strong>「真っさらな状態のパラメータが、学習データに適応して『知識』を獲得していく過程」</strong> をTensorBoardで観察するためのものです。</p>
+<p>具体的に何が起きているのか、3つのポイントで解説します。</p>
+<h3 id="1-不自然な初期化による開始状態の設定">1. 「不自然な初期化」による開始状態の設定</h3>
+<p>通常、ニューラルネットワークの重みはランダムな小さな値（例：-0.1〜0.1など）でバラバラに初期化されます。しかし、このコードではあえて極端なことをしています。</p>
+<pre><code class="language-python">nn.init.constant_(self.fc1.weight, <span class="hljs-number">1.0</span>) 
+
+</code></pre>
+<ul>
+<li><strong>何をしているか</strong>: 100個あるすべての重みを、全く同じ「1.0」という値に固定しました。</li>
+<li><strong>TensorBoardでの見え方</strong>: グラフ（ヒストグラム）の開始時点では、多様性がゼロなので、<strong>1.0の地点に1本の細くて高い棒</strong>の分布しかありません。</li>
+</ul>
+<h3 id="2-学習による個性の獲得分布の拡散">2. 学習による「個性の獲得」（分布の拡散）</h3>
+<p>モデルに <code>y = sum(x)</code> という計算（入力された10個の数字を全部足す）を覚えさせようとします。</p>
+<ul>
+<li><strong>何が起きるか</strong>: 1.0で揃っていた重みたちが、誤差を減らすために「私は0.8になったほうがいい」「僕は1.2になるべきだ」と、それぞれ異なる値へ更新され始めます。</li>
+<li><strong>TensorBoardでの見え方</strong>: 時間の経過（Epoch）とともに、1本の棒だった分布が左右に広がり、 <strong>正規分布に近い形</strong> に変化していきます。</li>
+</ul>
+<h3 id="3-パラメータの健康診断としての記録">3. パラメータの「健康診断」としての記録</h3>
+<p>ループの中で、毎ステップごとに重みの状態をTensorBoardを通じて記録を取ります。</p>
+<pre><code class="language-python"><span class="hljs-keyword">for</span> name, param <span class="hljs-keyword">in</span> model.named_parameters():
+    writer.add_histogram(name, param, epoch) <span class="hljs-comment"># 重みの分布</span>
+    <span class="hljs-keyword">if</span> param.grad <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+        writer.add_histogram(<span class="hljs-string">f&quot;<span class="hljs-subst">{name}</span>.grad&quot;</span>, param.grad, epoch) <span class="hljs-comment"># 勾配の分布</span>
+</code></pre>
+<ul>
+<li><strong>重みのヒストグラム</strong>: モデルがどの程度の「値の範囲」を使って知識を表現しているかが見えます。</li>
+<li><strong>勾配（grad）のヒストグラム</strong>: パラメータがどのくらいの「勢い」で変化しているかが見えます。もし勾配の分布がすべて0に張り付いていたら、それは「モデルが学習を放棄した（勾配消失）」ことを意味します。</li>
+</ul>
+<h3 id="この実験で学べること">この実験で学べること</h3>
+<p>このコードを動かすと、 <strong>「AIの学習とは、画一的だったパラメータが、データという外部刺激を受けて、適切にバラけていくプロセスである」</strong> ということが視覚的に理解できます。</p>
+<p>もし分布が全く動かなければ「学習率が小さすぎる」、分布が無限に右側に広がっていけば「学習率が大きすぎて暴走している」という判断ができるようになります。</p>
+<h3 id="実験の手順">実験の手順</h3>
+<ol>
+<li>ネットワークの構築・学習</li>
+</ol>
+<p>google colab上で以下のコードを実行してください。
+コードによりモデル構築、学習が行われます。</p>
+<p>また、モデルのネットワークパラメータは先ほど説明した極端な状態から開始します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">import</span> torch.optim <span class="hljs-keyword">as</span> optim
+<span class="hljs-keyword">from</span> torch.utils.tensorboard <span class="hljs-keyword">import</span> SummaryWriter
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+
+<span class="hljs-comment"># 1. ログの保存先を指定</span>
+writer = SummaryWriter(<span class="hljs-string">&#x27;runs/parameter_experiment&#x27;</span>)
+
+<span class="hljs-comment"># 2. シンプルなモデルを定義</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleNet</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-built_in">super</span>(SimpleNet, self).__init__()
+        self.fc1 = nn.Linear(<span class="hljs-number">10</span>, <span class="hljs-number">100</span>)
+        self.fc2 = nn.Linear(<span class="hljs-number">100</span>, <span class="hljs-number">1</span>)
+        
+        <span class="hljs-comment"># 【実験ポイント】あえて重みを大きな値で初期化してみる</span>
+        <span class="hljs-comment"># これにより、学習が進むにつれて分布が「縮小」していく様子が見えます</span>
+        nn.init.constant_(self.fc1.weight, <span class="hljs-number">1.0</span>) 
+        nn.init.constant_(self.fc2.weight, <span class="hljs-number">1.0</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        x = torch.relu(self.fc1(x))
+        <span class="hljs-keyword">return</span> self.fc2(x)
+
+model = SimpleNet()
+optimizer = optim.SGD(model.parameters(), lr=<span class="hljs-number">0.01</span>)
+criterion = nn.MSELoss()
+
+<span class="hljs-comment"># 3. ダミーデータでの学習ループ</span>
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>):
+    <span class="hljs-comment"># ダミーの入力と正解（y = sum(x) のような単純なタスク）</span>
+    inputs = torch.randn(<span class="hljs-number">64</span>, <span class="hljs-number">10</span>)
+    targets = torch.<span class="hljs-built_in">sum</span>(inputs, dim=<span class="hljs-number">1</span>, keepdim=<span class="hljs-literal">True</span>)
+
+    optimizer.zero_grad()
+    outputs = model(inputs)
+    loss = criterion(outputs, targets)
+    loss.backward()
+    optimizer.step()
+
+    <span class="hljs-comment"># --- パラメータをTensorBoardに記録 ---</span>
+    <span class="hljs-keyword">for</span> name, param <span class="hljs-keyword">in</span> model.named_parameters():
+        <span class="hljs-comment"># ヒストグラムを記録（これがTensorBoardで見れる！）</span>
+        writer.add_histogram(name, param, epoch)
+        <span class="hljs-comment"># 勾配の分布も記録（消失/爆発のチェックに便利）</span>
+        <span class="hljs-keyword">if</span> param.grad <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            writer.add_histogram(<span class="hljs-string">f&quot;<span class="hljs-subst">{name}</span>.grad&quot;</span>, param.grad, epoch)
+
+    <span class="hljs-keyword">if</span> epoch % <span class="hljs-number">10</span> == <span class="hljs-number">0</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch <span class="hljs-subst">{epoch}</span>, Loss: <span class="hljs-subst">{loss.item():<span class="hljs-number">.4</span>f}</span>&quot;</span>)
+
+writer.close()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;学習完了。TensorBoardを起動して確認してください。&quot;</span>)
+</code></pre>
+<ol start="2">
+<li>TensorBoardの起動</li>
+</ol>
+<pre><code class="language-bash">%load_ext tensorboard
+%tensorboard --logdir runs
+</code></pre>
+<ol start="3">
+<li>結果の確認</li>
+</ol>
+<p>ここまで実行すると以下のような画面が表示されます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\evaluate_method\tensor_board\src\attention_distribution\image\meaning_parameter_dist\1768651285680.png" alt="1768651285680"></p>
+<p>タブ&quot;TimeSeriese&quot;を選択してください。</p>
+<p>以下のようなヒストグラムが表示されます。</p>
+<p>奥行から手前に対して、学習初期→学習最後までのパラメータの分布を示しています。</p>
+<p>以下の絵ではfc1のレイヤのパラメータが手前に行くにつれてなだらかになっていく様子が確認出来ます。</p>
+<p>学習と同時に、推論により良い状態は、なだらかな状態だというように推移してきたことになります。</p>
+<p>因みに、先程の結果は、以下に挙げる異常のサイン①～③までには該当せず、学習データに対して、目立った異常はなかったとみてよさそうです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\evaluate_method\tensor_board\src\attention_distribution\image\meaning_parameter_dist\1768652174210.png" alt="1768652174210"></p>
+<h3 id="学習がうまく進まなかった場合のサイン">学習がうまく進まなかった場合のサイン</h3>
+<p>ヒストグラムから分かる「3つの異常サイン」
+パラメータの解析において、特に注意して見るべき形状が以下の3つです。</p>
+<p><strong>① 勾配消失（Vanishing Gradient）</strong></p>
+<p>見た目: 山がどんどん尖っていき、最終的に「0」の地点で細い1本の棒のようになる。</p>
+<p>意味: 重みが更新されず、モデルが何も学んでいない状態です。</p>
+<p><strong>② 勾配爆発（Exploding Gradient）</strong></p>
+<p>見た目: 山がどんどん横に広がっていき、グラフの端（最大値/最小値）へ突き抜けていく。</p>
+<p>意味: 数値が大きくなりすぎて計算が破綻しています。学習率を即座に下げる必要があります。</p>
+<p><strong>③ 飽和（Saturation）</strong></p>
+<p>見た目: 山が「-1.0」と「1.0」の2箇所に分かれて固まってしまう（双峰型）。</p>
+<p>意味: SigmoidやTanhなどの活性化関数を使っている場合、値が端に張り付いて学習が止まっている可能性があります。</p>
+<p>ということで分布により今回のデータによる学習におかしな点がなかったかというこを確認できるようになります。</p>
+<h2 id="所感">所感</h2>
+<p>ニューラルネットワークは内部の処理が非常にわかりづらく、ブラックボックスと言われます。</p>
+<p>ですが、使う側からすると、よくわからないが使っているということは不安です。</p>
+<p>ですので、作ったニューラルネットワークがうまくいっていそうか、何か変な点がないかを確認したいと思います。</p>
+<p>その変な点がないかを確認する方法の一つが今回説明したニューラルネットワークのパラメータの分布を解析するということになります。</p>
+<p>是非ご活用下さい。</p>
+
+            
+            
+        </body>
+        </html>

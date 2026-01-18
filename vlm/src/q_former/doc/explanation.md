@@ -6,8 +6,6 @@ Q-FormerがVLMとして、画像の情報を上手に抽出できる理由にフ
 今回は改めて内部構造の実装法について扱っていきたいと思います。
 
 
-
-
 ## Q-Formerの構成
 前回のおさらいを兼ねて、Q-Formerの構成を簡単に説明します。
 
@@ -43,7 +41,7 @@ Q-Formerは、内部のアテンション計算（Self-Attention）において�
 絵で見てみると尚、わかりやすいと思います。
 
 
-<img src="image/explanation/1768618244495.png" alt="Q-Former form" width="700" style="display: block; margin: 0 auto;">
+<img src="image/explanation/1768618244495.png" alt="Q-Former form" width="850" style="display: block; margin: 0 auto;">
 
 
 Q-Formerは大きく3パートで構成されます。
@@ -51,7 +49,7 @@ Q-Formerは大きく3パートで構成されます。
 2. Self-Attention Block
 3. Cross-Attention Block (to Vision Encoder)
 
-1. Query Tokens
+__1. Query Tokens__
 
 絵の右下にある"Learned Queries"の部分です。
 動作のポイントは以下です。
@@ -68,7 +66,7 @@ Q-Formerは大きく3パートで構成されます。
 Q = {q1, q2, ..., qQ}   with Q typically in [16, 64]
 ```
 
-2. Self-Attention Block
+__2. Self-Attention Block__
 
 1で入力されたクエリ自身がアテンション機構を通して情報交換されます。
 
@@ -84,7 +82,7 @@ Q' = SelfAttn(Q)
 - 様々な視覚概念を分担
 - 後段Cross-Attentionの情報要求を整形
 
-3. Cross-Attention Block (to Vision Encoder)
+__3. Cross-Attention Block (to Vision Encoder)__
 
 CrossAttentionは:
 
@@ -144,6 +142,37 @@ Flan-T5 (Decoder)
 Caption text
 ```
 
+実装コードを以下のレポジトリに保存しました。
+
+[q-former](https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/vlm/src/q_former)
+
+使うLLMはT-Flan。vision-encoderはViTを用います。
+
+動作にあたり説明です。
+
+__1. 関係ライブラリのインストール__
+
+```
+!pip install transformers accelerate timm einops
+```
+
+__2. q-former__
+
+レポジトリの"q-former.py"の内容をコーディング下さい。
+
+__3. モデルの構築__
+
+レポジトリの"model.py"の内容をコーディング下さい。
+
+__4. 動作__
+
+レポジトリの"predict.py"の内容をコーディング下さい。
+
+※predict.pyのurlは適切なurlに変更ください。
+
+今回はモデルの実装の一連をしました。
+q-formerは未だLLMとViTに合わせたチューニングをしていないので、あまり良い出力は、現段階では得られないはずです。
+
 
 ## Q-Formerを採用した手法
 補足情報としてQ-Formerを採用したVLMについて説明します。
@@ -200,5 +229,12 @@ VicunaというLLMとBLIP-2のビジョン部分を組み合わせた、初期�
 | **学習の軽さ** | 数十億、数千億パラメータのLLMをいじる必要がなく、Q-Former（約1.8億パラメータ）だけを訓練すれば良い。 |
 | **プラグイン的性質** | お気に入りの「最強の目（ViT）」と「最強の脳（Llama 3等）」を後付けで合体させることができる。 |
 
+## 結論
 
+今回はVLMで効果的に視覚情報をLLMに渡す手法であるQ-Formerを扱いました。
+この手法の良い点はLLMには一切手を付けず、かつ、LLMに合わせた視覚情報の抽出を出来るようになるということにあります。
+
+また、得られる視覚情報も、単純な全結合では得られないような恣意を持ったものとなるため、より、LLMの性能を引き出すことが可能となります。
+
+実装にあたり疑問あれば、コメント頂ければと思います。
 
