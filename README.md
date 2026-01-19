@@ -407,3 +407,10 @@ https://www.youtube.com/watch?v=NatwshCTe_4
 
 at first, check the vesion respondance.
 https://pytorch.org/get-started/locally/
+
+
+## blog
+
+I publish technical articles focused on LLM related technics on my blog. Feel free to visit and have a read.
+
+https://yoshishinnze.hatenablog.com/
