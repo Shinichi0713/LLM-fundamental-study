@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8a55;&#x4fa1;&#x624b;&#x6cd5;&#x306e;&#x4e00;&#x89a7;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <p>VLM（視覚言語モデル）の評価手法について、概要・メリット・デメリットを一覧でまとめました。
+その上で、気になるパイプライン化＝オートメーション化されているかについても確認しました。</p>
+<h2 id="評価手法の一覧">評価手法の一覧</h2>
+<h3 id="1-生成品質とタスク精度性能の基礎体力">1. 生成品質とタスク精度（性能の基礎体力）</h3>
+<p>モデルが画像の内容をどの程度正確に言語化し、指示通りに回答できているかを測定します。</p>
+<table>
+<thead>
+<tr>
+<th>評価手法</th>
+<th>概要</th>
+<th>メリット</th>
+<th>デメリット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>BLEU / METEOR</strong></td>
+<td>生成文と正解文の単語の一致率を測定する古典的指標。</td>
+<td>高速かつ低コスト。実装が容易。</td>
+<td>意味の同一性や文脈の豊かさを評価できない。</td>
+</tr>
+<tr>
+<td><strong>CIDEr</strong></td>
+<td>画像キャプション用に特化し、複数の参照文との「合意度」を重視。</td>
+<td>人間の感覚（重要単語の選択）に比較的近い。</td>
+<td>依然として表面的な単語の一致に依存する。</td>
+</tr>
+<tr>
+<td><strong>VQA (Accuracy)</strong></td>
+<td>画像に対する質問への正解率を測定。</td>
+<td>認識能力を客観的・定量的に評価できる。</td>
+<td>選択肢式の場合、運による正解（guess）が含まれる。</td>
+</tr>
+<tr>
+<td><strong>DatBench (2026)</strong></td>
+<td><strong>最新指標。</strong> 既存のノイズを除去し、視覚情報が必須な問題のみを厳選。</td>
+<td>従来の13倍高速。偽の正解（画像を見ずに回答）を排除。</td>
+<td>厳格すぎて、旧モデルではスコアが極端に低くなる。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-総合能力と文脈理解ベンチマーク">2. 総合能力と文脈理解（ベンチマーク）</h3>
+<p>多様なカテゴリ（認識、推論、OCR、文化など）を横断し、モデルの「総合偏差値」を算出します。</p>
+<table>
+<thead>
+<tr>
+<th>評価手法</th>
+<th>概要</th>
+<th>メリット</th>
+<th>デメリット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MME / MMBench</strong></td>
+<td>物体認識、計算、論理推論など多角的な能力を網羅。</td>
+<td>モデルの得意・不得意をレーダーチャートで把握可能。</td>
+<td>データセットが有名になりすぎて、学習データに含まれる汚染（Contamination）のリスクがある。</td>
+</tr>
+<tr>
+<td><strong>Japanese Heron / llm-jp-eval</strong></td>
+<td>日本の文化、習慣、特定の語彙に特化した評価。</td>
+<td>日本国内のビジネスやサービスへの適応力を測れる。</td>
+<td>グローバルなモデルとの比較が難しい。</td>
+</tr>
+<tr>
+<td><strong>SEED-Bench</strong></td>
+<td>画像と<strong>動画</strong>の両方を評価。</td>
+<td>時間的な変化（動き）の理解度を測定できる唯一の標準。</td>
+<td>評価に非常に時間がかかり、計算リソースを消費する。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-モデル人間による高次評価質的評価">3. モデル・人間による高次評価（質的評価）</h3>
+<p>数値化しにくい「自然さ」「論理の妥当性」を、より高度な知性（AIまたは人間）が判定します。</p>
+<table>
+<thead>
+<tr>
+<th>評価手法</th>
+<th>概要</th>
+<th>メリット</th>
+<th>デメリット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>VLM as a Judge</strong></td>
+<td>GPT-4o等の最強モデルを「試験官」にして採点させる。</td>
+<td>人間に近い柔軟な評価が可能。推論過程を評価できる。</td>
+<td>審判役のモデル自体にバイアスがある。APIコストが高い。</td>
+</tr>
+<tr>
+<td><strong>Elo Rating</strong></td>
+<td>2つのモデルの出力を人間に比較させ、強さをランク付け。</td>
+<td>ユーザーが「どちらを好むか」という実感を数値化できる。</td>
+<td>評価に時間がかかる。主観によるバラつきが生じる。</td>
+</tr>
+</tbody>
+</table>
+<p>VLM as a Judgeは以下のようにプロトコル化されています。</p>
+<p><a href="https://www.emergentmind.com/topics/vlm-as-a-judge-evaluation-protocol">https://www.emergentmind.com/topics/vlm-as-a-judge-evaluation-protocol</a></p>
+<h3 id="4-信頼性と堅牢性リスク管理">4. 信頼性と堅牢性（リスク管理）</h3>
+<p>モデルが嘘をつかないか、攻撃や環境変化に耐えられるかを厳格にテストします。</p>
+<table>
+<thead>
+<tr>
+<th>評価手法</th>
+<th>概要</th>
+<th>メリット</th>
+<th>デメリット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>POPE</strong></td>
+<td>画像にないものを「ある」と言い張る「幻覚」の発生率。</td>
+<td>嘘をつきやすいモデルを特定し、安全性を担保できる。</td>
+<td>物体の存在確認に特化しており、高度な推論の嘘は見抜きにくい。</td>
+</tr>
+<tr>
+<td><strong>CROSS (2025-26)</strong></td>
+<td><strong>最新指標。</strong> 多国籍の文化規範やタブーの理解度を測定。</td>
+<td>異文化圏での不適切な発言（シンボリック・ハーム）を防げる。</td>
+<td>「正しさ」の定義が文化によって異なり、評価が複雑。</td>
+</tr>
+<tr>
+<td><strong>耐性・一貫性テスト</strong></td>
+<td>画像のノイズや回転、質問の言い換えによる影響を確認。</td>
+<td>現場投入時の「予期せぬ誤動作」を事前に防止できる。</td>
+<td>テストケースの作成に専門的な知識が必要。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-実運用システム評価デプロイメント">5. 実運用・システム評価（デプロイメント）</h3>
+<p>実際のアプリケーションやワークフローに組み込んだ際の実行性能を測定します。</p>
+<table>
+<thead>
+<tr>
+<th>評価手法</th>
+<th>概要</th>
+<th>メリット</th>
+<th>デメリット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RAGAS</strong></td>
+<td>検索（RAG）を組み合わせた際の、根拠に基づいた回答精度。</td>
+<td>外部知識を正しく参照できているか「ハルシネーション」を細分化。</td>
+<td>RAG構成（検索アルゴリズム）に依存するため、モデル単体の実力が見えにくい。</td>
+</tr>
+<tr>
+<td><strong>Arize AI / Langfuse</strong></td>
+<td>本番稼働中のモデルの挙動をリアルタイム監視。</td>
+<td>精度の低下（ドリフト）やコスト、異常値を即座に発見。</td>
+<td>導入・運用コストがかかる。大量のログ保存が必要。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="どう使い分けるべきか">どう使い分けるべきか？</h3>
+<p>モデル構築初期から、利用者に公開する際、そして、利用者のログを取得後以降のフェーズで別れると良いと考えています。
+(ただ精度が良ければ良いフェーズから、仕事をきちんとしているかの評価を行うと良いという観点からです)</p>
+<ul>
+<li><strong>開発中:</strong> <strong>DatBench</strong> や <strong>MME</strong> で効率的に性能を底上げする。</li>
+<li><strong>リリース前:</strong> <strong>POPE</strong> や <strong>CROSS</strong> で「嘘」と「失礼」がないか厳格にチェック。</li>
+<li><strong>運用開始後:</strong> <strong>Langfuse</strong> や <strong>RAGAS</strong> で実際のユーザー対話の質を監視。</li>
+</ul>
+<h2 id="評価のオートメーション化">評価のオートメーション化</h2>
+<p>調べてみた限り、2026年現在、モデルを入力するだけで「ベンチマークの実行」から「AIによる回答の採点」までを<strong>ワンストップで自動化するツールやフレームワーク</strong>が相当数あります。</p>
+<p>「モデルファイルを指定するだけで、標準的な指標（MME, MMBenchなど）を一括で算出したい」というニーズに応える主要なツールを3つ紹介します。</p>
+<h3 id="1-vlmevalkitオープンソース最強の自動評価キット">1. VLMEvalKit（オープンソース・最強の自動評価キット）</h3>
+<p>現在、VLM開発者の間で最も広く使われている「自動評価の決定版」です。</p>
+<ul>
+<li>
+<p><strong>できること:</strong> * モデル（Hugging Face形式やAPIなど）を指定するだけで、<strong>80種類以上のベンチマーク</strong>を一気に実行。</p>
+</li>
+<li>
+<p>推論（モデルの回答生成）から、回答の抽出、正解判定（Exact MatchやLLM-as-a-judge）までを1コマンドで完結。</p>
+</li>
+<li>
+<p><strong>メリット:</strong> コマンド一つで実行できるため、評価コードを自作する必要がありません。</p>
+</li>
+<li>
+<p><strong>URL:</strong> <a href="https://github.com/open-compass/VLMEvalKit">GitHub - open-compass/VLMEvalKit</a></p>
+</li>
+</ul>
+<h3 id="2-lmms-evalマルチモーダル特化の評価スイート">2. lmms-eval（マルチモーダル特化の評価スイート）</h3>
+<p>テキストLLMで有名な「lm-evaluation-harness」のマルチモーダル版です。</p>
+<ul>
+<li>
+<p><strong>できること:</strong> * 静止画だけでなく、**動画（Video）や音声（Audio）**の評価も自動化。</p>
+</li>
+<li>
+<p><code>vLLM</code> や <code>SGLang</code> などの高速推論エンジンをサポートしており、巨大なモデル（LLaVA-Next-72Bなど）の自動評価もスムーズ。</p>
+</li>
+<li>
+<p><strong>メリット:</strong> 高解像度モデルや、最新の「LLaMA-3.2-Vision」などの最新アーキテクチャへの対応が非常に早いです。</p>
+</li>
+<li>
+<p><strong>URL:</strong> <a href="https://github.com/EvolvingLMMs-Lab/lmms-eval">GitHub - EvolvingLMMs-Lab/lmms-eval</a></p>
+</li>
+</ul>
+<h3 id="3-deepeval--arize-phoenixユニットテスト監視型">3. DeepEval / Arize Phoenix（ユニットテスト・監視型）</h3>
+<p>開発中のモデルに対して「単体テスト」のように自動評価を組み込むためのツールです。</p>
+<ul>
+<li>
+<p><strong>できること:</strong> * 自作の「テストセット（画像と質問のペア）」に対して、モデルがハルシネーション（嘘）をついていないかを<strong>自動で定量的（G-Eval等）に評価</strong>。</p>
+</li>
+<li>
+<p>CI/CD（開発工程）に組み込んで、モデルを更新するたびに自動で精度チェックを走らせる。</p>
+</li>
+<li>
+<p><strong>メリット:</strong> ベンチマークスコアだけでなく、「自社の業務データで正しく動くか」を自動監視するのに適しています。</p>
+</li>
+</ul>
+<h3 id="実装イメージvlmevalkitの場合">実装イメージ（VLMEvalKitの場合）</h3>
+<p>例えば、自作のVLMを評価したい場合、以下のようなシンプルなコマンドだけで結果（Excelやグラフ）が出力されます。</p>
+<pre><code class="language-bash"><span class="hljs-comment"># LLaVAモデルをMMEベンチマークで自動評価する例</span>
+python run.py --data MME --model llava_v1.5_7b --verbose
+
+</code></pre>
+<p>ということで、手動で質問を入力して回答を確認する「バイブスチェック（感覚的な確認）」を卒業し、**「今回の変更でMMEの推論スコアが5%上がった」**という客観的な議論ができるようになります。</p>
+<h2 id="所感">所感</h2>
+<p>VLMの評価手法について手法一覧、自動化の手法について調べてみました。
+VLMのモデルを構築前に、用途にあった評価指標の選定、評価のオートメーション化でご参考になれば幸いです。</p>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+            
+        </body>
+        </html>
