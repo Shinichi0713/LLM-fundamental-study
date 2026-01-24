@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>マルチモーダル学習は、画像、テキスト、音声など、異なる種類のデータ（モダリティ）を統合して処理する手法です。
+現在のVLM（視覚言語モデル）の隆盛はこの分野の進化によるものです。</p>
+<p>今回はそんなVLMの概要、構成について説明します。</p>
+<h2 id="概要">概要</h2>
+<h3 id="1-統合のタイミングいつ混ぜるか">1. 統合のタイミング（いつ混ぜるか）</h3>
+<p>データがモデルを通過するどの段階で融合させるかによって、大きく3つに分類されます。</p>
+<ul>
+<li><strong>初期融合 (Early Fusion):</strong></li>
+</ul>
+<p>入力段階でデータを結合します。例えば、画像のピクセルデータとテキストのベクトルを単純につなげて1つの巨大なベクトルとして入力します。相関を直接学べますが、データの性質が違いすぎると学習が困難です。</p>
+<ul>
+<li><strong>中間融合 (Intermediate Fusion):</strong></li>
+</ul>
+<p>画像はCNNやViT、テキストはBERTなどの「専用の目や耳（エンコーダ）」で一度処理し、その途中の特徴量同士をTransformerなどで混ぜ合わせる手法です。<strong>現在の主流</strong>（BLIP-2やLLaVAなど）です。</p>
+<ul>
+<li><strong>後期融合 (Late Fusion):</strong></li>
+</ul>
+<p>それぞれのモダリティで個別に予測を出し、最後にその結果を多数決や平均で統合します。実装は簡単ですが、データの深い関係性を捉えるのは苦手です。</p>
+<h3 id="2-統合のアプローチどう混ぜるか">2. 統合のアプローチ（どう混ぜるか）</h3>
+<p>具体的にどうやって異なる空間のデータを結びつけるか、代表的な手法です。</p>
+<ul>
+<li><strong>対照学習 (Contrastive Learning):</strong>
+画像とそれに対応するテキストのペアを「近く」、関係ないペアを「遠く」配置するように学習します。代表例は<strong>CLIP</strong>です。</li>
+<li><strong>生成ベース (Generative Approach):</strong>
+画像を入力として、それに対応するテキストをLLMに生成させます。Q-FormerなどのConnector（橋渡し役）を用いて、画像の情報をLLMが理解できる形式に変換します。</li>
+<li><strong>クロス・アテンション (Cross-Attention):</strong>
+Transformerの仕組みを使い、テキストが画像内の「どこ」に注目すべきかを計算させます。</li>
+</ul>
+<h3 id="3-学習のステップどう育てるか">3. 学習のステップ（どう育てるか）</h3>
+<p>VLMの学習（ドッキング）は、多くの場合 <strong>「段階的学習（Multi-stage Training）」</strong> という手法をとります。</p>
+<p>最初からすべてを繋げて学習させるのではなく、まずは「目（Encoder）」と「脳（LLM）」の言葉を合わせることから始めます。一般的に以下の2つのステージで行われます。</p>
+<p><strong>ステージ 1：視覚と言語のアライメント（事前学習）</strong></p>
+<p>この段階の目的は、 <strong>「Connector（通訳）」に画像と単語の対応関係を叩き込む</strong> ことです。</p>
+<ul>
+<li>
+<p><strong>何をするか:</strong> 膨大な「画像と短い説明文（キャプション）」のペアを学習させます。</p>
+</li>
+<li>
+<p><strong>学習のルール:</strong></p>
+</li>
+<li>
+<p><strong>Vision Encoder:</strong> フリーズ（重みを固定）。</p>
+</li>
+<li>
+<p><strong>LLM:</strong> フリーズ（重みを固定）。</p>
+</li>
+<li>
+<p><strong>Connector:</strong> <strong>ここだけを学習（更新）させます。</strong></p>
+</li>
+<li>
+<p><strong>効果:</strong> LLMが画像データを見たときに、「これは『猫』という概念だな」と理解できるための「翻訳能力」がConnectorに備わります。</p>
+</li>
+</ul>
+<p><strong>ステージ 2：インストラクション・チューニング（微調整）</strong></p>
+<p>基本の翻訳ができるようになったら、次は「人間の複雑な指示（命令）」に従えるように訓練します。</p>
+<ul>
+<li>
+<p><strong>何をするか:</strong> 「この写真のどこが面白いの？」「このレシートの合計金額を教えて」といった、対話形式のデータセットを使います。</p>
+</li>
+<li>
+<p><strong>学習のルール:</strong></p>
+</li>
+<li>
+<p><strong>Vision Encoder:</strong> 基本はフリーズ（高精度化のために一部解禁することもある）。</p>
+</li>
+<li>
+<p><strong>Connector:</strong> 学習を継続。</p>
+</li>
+<li>
+<p><strong>LLM:</strong> <strong>ここでLLMの重みも一部、あるいは全部解禁して学習させます（LoRAなどの軽量化手法がよく使われます）。</strong></p>
+</li>
+<li>
+<p><strong>効果:</strong> 単なる単語の羅列ではなく、文脈を読み取った高度な回答ができるようになります。</p>
+</li>
+</ul>
+<p><strong>ステップの理由</strong></p>
+<p>もし、最初からすべてを全開で学習させようとすると、以下のような問題が起きてしまいます。</p>
+<ol>
+<li><strong>壊滅的忘却:</strong> LLMが元々持っていた高度な言語能力（推論や知識）が、新しい画像データの入力によって壊れてしまう。</li>
+<li><strong>計算コストの爆発:</strong> 数十億パラメータを一度に動かすには、膨大なGPUリソースが必要になる。</li>
+<li><strong>役割の混乱:</strong> Connectorが翻訳を覚える前にLLMが無理やり合わせようとして、学習が収束しなくなる。</li>
+</ol>
+<h3 id="4-なぜ今これが熱いのか">4. なぜ今これが熱いのか？</h3>
+<p>かつては「犬」という画像から「Dog」というラベルを当てるだけでしたが、今のマルチモーダルは、LLM（大規模言語モデル）という「強力な脳」に、ビジョンエンコーダという「高性能な目」を接続できるようになったからです。</p>
+<p>これにより、ただの認識を超えて <strong>「画像を見て、その背後にあるストーリーを推論する」</strong> ことが可能になりました。</p>
+<h2 id="一般的な構成">一般的な構成</h2>
+<p>VLM（Vision-Language Model：視覚言語モデル）の基本的な構成は、人間で例えると <strong>「目」「神経（通訳）」「脳」</strong> という3つの主要なコンポーネントを繋ぎ合わせたものと考えると非常に理解しやすくなります。</p>
+<p>現代の主要なVLM（LLaVAやBLIP-2など）の多くはこの構成をとっています。</p>
+<h3 id="1-vision-encoder目">1. Vision Encoder（目）</h3>
+<p>画像を受け取り、コンピュータが理解できる数値（特徴量ベクトル）に変換する役割です。</p>
+<ul>
+<li><strong>主なモデル:</strong> <strong>CLIP-ViT</strong> や <strong>SigLIP</strong> など。</li>
+<li><strong>役割:</strong> 画像をパッチ（小さな断片）に分割し、それぞれのパッチに何が写っているか、それらがどう関連しているかを抽出します。</li>
+<li><strong>特徴:</strong> 多くのVLMでは、膨大な画像データで既に学習済みの「既存の強力なモデル」をそのまま、あるいは少しだけ調整して使用します。</li>
+</ul>
+<h3 id="2-connector--projector神経通訳">2. Connector / Projector（神経・通訳）</h3>
+<p>「目（ビジョンエンコーダ）」が出力するデータ形式を、「脳（LLM）」が理解できる言語形式に翻訳する橋渡し役です。ここが<strong>VLMのアーキテクチャ設計で最も工夫される部分</strong>です。</p>
+<ul>
+<li>
+<p><strong>主な手法:</strong></p>
+</li>
+<li>
+<p><strong>MLP（多層パーセプトロン）:</strong> 単純な変換層。画像の情報をそのまま言語空間へ投影します（LLaVAなどで採用）。</p>
+</li>
+<li>
+<p><strong>Q-Former (Querying Transformer):</strong> 少数の「クエリ」を使って画像から重要なエッセンスだけを抽出・圧縮します（BLIP-2などで採用）。</p>
+</li>
+<li>
+<p><strong>役割:</strong> 画像の「特徴ベクトル」を、LLMにとっての「単語（トークン）と同じようなもの（ソフト・プロンプト）」に変換します。</p>
+</li>
+</ul>
+<h3 id="3-large-language-model-llm脳">3. Large Language Model (LLM)（脳）</h3>
+<p>変換された画像情報を受け取り、ユーザーの質問（テキスト）と組み合わせて思考・回答を行う部分です。</p>
+<ul>
+<li><strong>主なモデル:</strong> <strong>Llama 3</strong>, <strong>Vicuna</strong>, <strong>Qwen</strong> など。</li>
+<li><strong>役割:</strong> 「画像から翻訳された情報」をあたかも「文章の続き」のように扱い、知識に基づいた推論や自然な文章生成を行います。</li>
+<li><strong>特徴:</strong> 基本的にはテキストのみで訓練された強力なLLMを流用します。</li>
+</ul>
+<h3 id="全体の動作フロー">全体の動作フロー</h3>
+<p>データが入力されてからVLMの中で行われる処理のざっくりとした流れです。</p>
+<ol>
+<li><strong>入力:</strong> ユーザーが「画像」と「この写真の面白い点は？」という「テキスト」を入力します。</li>
+<li><strong>視覚処理:</strong> <strong>Vision Encoder</strong>が画像を解析し、特徴データを出力します。</li>
+<li><strong>変換:</strong> <strong>Connector</strong>が、そのデータをLLMが読める「視覚トークン」に変換します。</li>
+<li><strong>推論:</strong> <strong>LLM</strong>が「視覚トークン」＋「ユーザーの質問」を読み込み、答えを生成します。</li>
+</ol>
+<h3 id="なぜこの構成なのか">なぜこの構成なのか？</h3>
+<p>この「モジュール型」の構成には大きなメリットがあります。それは <strong>「既存の最強モデルを合体させられる」</strong> という点です。</p>
+<ul>
+<li>すでに世界一賢いLLM（脳）がある。</li>
+<li>すでに世界一目が良いビジョンモデル（目）がある。</li>
+<li>それらを<strong>Connector（神経）で繋ぐだけで、ゼロから全てを学習させるより遥かに効率的にVLMが作れる</strong>のです。</li>
+</ul>
+<h2 id="所感">所感</h2>
+<p>重要なことは以下です。</p>
+<ul>
+<li>VLMは言語を理解するLLM、視覚を理解するVision Encoder、接続するConnectorで構成されます。</li>
+<li>モデルの学習は既にあるモデルをそのままにして、接続部をチューニング→指示学習で賢くします。</li>
+</ul>
+<p>つくるのは既にあるものを持ってきて上手に接続すれば、あとは調整して使えるということになります。
+次回以降はチューニングを扱っていきます。</p>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+  
+            
+        </body>
+        </html>
