@@ -1,0 +1,666 @@
+<!DOCTYPE html><html><head>
+      <title>README</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\yoshinaga\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.20\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+      <div class="crossnote markdown-preview  ">
+      
+<p>先日説明したVLMの評価指標について、手を動かして結果を見てみるとイメージがつきやすくなります。<br>
+今回は、実際に評価の自動化の手順を説明します。</p>
+<h2 id="手順">手順 </h2>
+<h3 id="1-全体のイメージvlmの健康診断">1. 全体のイメージ：VLMの「健康診断」 </h3>
+<p>VLMの評価とは、モデル（脳）に大量のテスト問題（画像と質問）を解かせ、その正解率を算出することです。</p>
+<ul>
+<li><strong>VLMEvalKit:</strong> 試験監督（問題を出し、採点し、成績表を作るツール）</li>
+<li><strong>Dataset:</strong> 問題集（画像と質問のセット）</li>
+<li><strong>Model:</strong> 受験生（評価したいAIモデル）</li>
+</ul>
+<h3 id="2-準備試験会場環境を作る">2. 準備：試験会場（環境）を作る </h3>
+<p>まずは、ツールが動く場所を作ります。</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash bash"><code><span class="token comment"># 1. ツールをダウンロード（リポジトリの取得）</span>
+<span class="token function">git</span> clone https://github.com/open-compass/VLMEvalKit.git
+<span class="token builtin class-name">cd</span> VLMEvalKit
+
+<span class="token comment"># 2. ツール専用の部屋を作る（Python仮想環境）</span>
+conda create <span class="token parameter variable">-n</span> vlmeval <span class="token assign-left variable">python</span><span class="token operator">=</span><span class="token number">3.10</span> <span class="token parameter variable">-y</span>
+conda activate vlmeval
+
+<span class="token comment"># 3. 必要な道具を揃える（ライブラリのインストール）</span>
+pip <span class="token function">install</span> <span class="token parameter variable">-r</span> requirements.txt
+
+</code></pre><blockquote>
+<p><strong>初心者へのヒント:</strong> <code>conda</code> を使うことで、他のプロジェクトの環境を壊さずに安全に実験できます。</p>
+</blockquote>
+<h3 id="3-データ準備問題集を手に入れる">3. データ準備：問題集を手に入れる </h3>
+<p>VLMには様々な問題集（ベンチマーク）がありますが、最初は <strong>MMBench</strong> がおすすめです。</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash bash"><code><span class="token comment"># MMBenchという有名な問題集をダウンロード</span>
+python scripts/download_datasets.py <span class="token parameter variable">--dataset</span> MMBench_DEV_EN
+
+</code></pre><ul>
+<li><strong>MMBenchとは？</strong>: 「画像の中に何がある？」「このグラフから言えることは？」といった、認識・推論・常識など幅広い能力を試す20種類以上の問題が入った代表的なベンチマークです。</li>
+</ul>
+<h3 id="4-実行試験を受けさせる推論">4. 実行：試験を受けさせる（推論） </h3>
+<p>ここが本番です。AIモデルに問題を解かせます。</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash bash"><code>python run.py <span class="token punctuation">\</span>
+  <span class="token parameter variable">--model</span> llava-v1.5-7b <span class="token punctuation">\</span>
+  <span class="token parameter variable">--dataset</span> MMBench_DEV_EN <span class="token punctuation">\</span>
+  --num-samples <span class="token number">50</span>
+
+</code></pre><ul>
+<li><strong><code>--model</code></strong>: 誰に試験を受けさせるか。<code>llava-v1.5-7b</code> はオープンソースで有名な「優等生」モデルです。</li>
+<li><strong><code>--num-samples 50</code></strong>: <strong>【重要】</strong> 全部で数千問ある問題を、最初の50問だけで切り上げます。時間がかかりすぎないようにするための「お試し設定」です。</li>
+</ul>
+<h3 id="5-採点成績表を確認する">5. 採点：成績表を確認する </h3>
+<p>試験が終わったら、自動で採点が行われます。</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash bash"><code>python eval.py <span class="token punctuation">\</span>
+  <span class="token parameter variable">--dataset</span> MMBench_DEV_EN <span class="token punctuation">\</span>
+  <span class="token parameter variable">--pred</span> outputs/MMBench_DEV_EN/llava-v1.5-7b.json
+
+</code></pre><ul>
+<li><strong>出力例</strong>: <code>MMBench_DEV_EN Accuracy: 0.682</code></li>
+<li><strong>見方</strong>: 「このモデルは、画像を見て質問に答えるタスクで <strong>68.2%</strong> 正解した」という意味になります。</li>
+</ul>
+<h3 id="6-指標の意味を知る主なベンチマーク">6. 指標の意味を知る（主なベンチマーク） </h3>
+<p>成績表に並ぶ単語が何を表しているか、主要なものを整理しました。</p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク名</th>
+<th>測っている能力</th>
+<th>初心者向け解説</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MMBench</strong></td>
+<td><strong>総合力</strong></td>
+<td>認識、推論、数え上げなど「全科目の合計点」。</td>
+</tr>
+<tr>
+<td><strong>POPE</strong></td>
+<td><strong>誠実さ（ハルシネーション）</strong></td>
+<td>「ないものをあると言わないか」という嘘の少なさ。</td>
+</tr>
+<tr>
+<td><strong>SEED-Bench</strong></td>
+<td><strong>動画・空間理解</strong></td>
+<td>時間の流れや、物体の位置関係を正しく把握できるか。</td>
+</tr>
+<tr>
+<td><strong>MMMU</strong></td>
+<td><strong>専門知識</strong></td>
+<td>大学レベルの科学・美術・ビジネスなどの難しい問題。</td>
+</tr>
+</tbody>
+</table>
+<p>更に詳細を知りたい場合以下をご覧ください。</p>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/01/26/000000">https://yoshishinnze.hatenablog.com/entry/2026/01/26/000000</a></p>
+<h2 id="実際に動作">実際に動作 </h2>
+<p>google colabを起動します。</p>
+<ol>
+<li>GPUの設定</li>
+</ol>
+<p><img src="image/README/1769219098611.png" alt="1769219098611"></p>
+<ol start="2">
+<li>リポジトリ取得</li>
+</ol>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>!git clone https://github.com/open-compass/VLMEvalKit.git
+%cd VLMEvalKit
+</code></pre><ol start="3">
+<li>関連パッケージインストール</li>
+</ol>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>!pip install -r requirements.txt
+</code></pre><ol start="4">
+<li>実行</li>
+</ol>
+<p>今回はMiniCPM-V-2というモデルを使って、MMBench_DEV_ENの評価を行います。</p>
+<p>2026年年初時点でVLMEvalKitにて、使えるモデルは以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>分類</th>
+<th>モデルKey (<code>--model</code>)</th>
+<th>実際のモデル名</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MiniCPM系</strong></td>
+<td><code>MiniCPM-V-2</code></td>
+<td>MiniCPM-V 2.6</td>
+<td>高解像度・軽量・高性能</td>
+</tr>
+<tr>
+<td></td>
+<td><code>MiniCPM-Llama3-V-2-5</code></td>
+<td>MiniCPM-Llama3-V 2.5</td>
+<td>Llama3ベースのVLM</td>
+</tr>
+<tr>
+<td><strong>Qwen系</strong></td>
+<td><code>qwen2_vl_7b_instruct</code></td>
+<td>Qwen2-VL-7B-Instruct</td>
+<td>日本語にも強い最新標準モデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>qwen2_vl_2b_instruct</code></td>
+<td>Qwen2-VL-2B-Instruct</td>
+<td><strong>計量・軽量モデル（小規模環境向け）</strong></td>
+</tr>
+<tr>
+<td></td>
+<td><code>qwen_vl_chat</code></td>
+<td>Qwen-VL-Chat</td>
+<td>初代Qwen-VL</td>
+</tr>
+<tr>
+<td><strong>InternVL系</strong></td>
+<td><code>InternVL2-26B</code></td>
+<td>InternVL2-26B</td>
+<td>非常に強力なオープンモデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>InternVL2-8B</code></td>
+<td>InternVL2-8B</td>
+<td>バランスの良い中規模モデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>InternVL-Chat-V1-5</code></td>
+<td>InternVL-Chat-V1.5</td>
+<td>先ほどエラーが出ていたV1.5系</td>
+</tr>
+<tr>
+<td><strong>Llama系</strong></td>
+<td><code>Llama-3.2-11B-Vision-Instruct</code></td>
+<td>Llama-3.2-11B-Vision</td>
+<td>Metaリリースの公式Visionモデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>Llama-3.2-90B-Vision-Instruct</code></td>
+<td>Llama-3.2-90B-Vision</td>
+<td>非常に大規模な高性能モデル</td>
+</tr>
+<tr>
+<td><strong>LLaVA系</strong></td>
+<td><code>llava_v1.5_7b</code></td>
+<td>LLaVA-v1.5-7B</td>
+<td>VLMブームの火付け役（標準）</td>
+</tr>
+<tr>
+<td></td>
+<td><code>llava_v1.5_13b</code></td>
+<td>LLaVA-v1.5-13B</td>
+<td>LLaVAの高精度版</td>
+</tr>
+<tr>
+<td></td>
+<td><code>llava_next_llama3_8b</code></td>
+<td>LLaVA-NeXT (Llama-3-8B)</td>
+<td>LLaVAの改良版</td>
+</tr>
+<tr>
+<td><strong>Google/MS系</strong></td>
+<td><code>paligemma-3b-pt-224</code></td>
+<td>PaliGemma-3B</td>
+<td>Googleの軽量転移学習モデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>phi3-vision-instruct</code></td>
+<td>Phi-3 Vision</td>
+<td>Microsoftの軽量・高効率モデル</td>
+</tr>
+<tr>
+<td><strong>独自系</strong></td>
+<td><code>GLM-4v-9b</code></td>
+<td>GLM-4v-9B</td>
+<td>中国で人気の高い高性能モデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>cogvlm2-llama3-chat-19b</code></td>
+<td>CogVLM2-Llama3-Chat</td>
+<td>視覚理解に特化した構造</td>
+</tr>
+<tr>
+<td><strong>クローズドAPI</strong></td>
+<td><code>gpt4v</code></td>
+<td>GPT-4V (OpenAI)</td>
+<td>API経由で利用する最高峰モデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>gemini-1.5-pro</code></td>
+<td>Gemini 1.5 Pro</td>
+<td>Googleの長文・高精度APIモデル</td>
+</tr>
+<tr>
+<td></td>
+<td><code>claude3v_opus</code></td>
+<td>Claude 3 Opus</td>
+<td>Anthropicの最上位モデル</td>
+</tr>
+</tbody>
+</table>
+<pre data-role="codeBlock" data-info="bash" class="language-bash bash"><code><span class="token operator">!</span>python run.py <span class="token parameter variable">--data</span> MMBench_DEV_EN <span class="token parameter variable">--model</span> MiniCPM-V-2 <span class="token parameter variable">--verbose</span>
+</code></pre><p>するとモデルのダウンロードが行われます。</p>
+<p><img src="image/README/1769219558678.png" alt="1769219558678"></p>
+<p>その後はモデルに問題を解かせていきます。</p>
+<p><img src="image.png" alt="alt text"></p>
+<p>評価が終わると以下のようにサマリが出力されます。</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash bash"><code>--------------------------------------  ------------------
+<span class="token function">split</span>                                   dev
+Overall                                 <span class="token number">0.8651202749140894</span>
+AR                                      <span class="token number">0.8894472361809045</span>
+CP                                      <span class="token number">0.9222972972972973</span>
+FP-C                                    <span class="token number">0.8251748251748252</span>
+FP-S                                    <span class="token number">0.8703071672354948</span>
+LR                                      <span class="token number">0.6949152542372882</span>
+RR                                      <span class="token number">0.8869565217391304</span>
+action_recognition                      <span class="token number">0.9444444444444444</span>
+attribute_comparison                    <span class="token number">0.8863636363636364</span>
+attribute_recognition                   <span class="token number">0.972972972972973</span>
+celebrity_recognition                   <span class="token number">0.8787878787878788</span>
+function_reasoning                      <span class="token number">0.9113924050632911</span>
+future_prediction                       <span class="token number">0.675</span>
+identity_reasoning                      <span class="token number">0.9777777777777777</span>
+image_emotion                           <span class="token number">0.94</span>
+image_quality                           <span class="token number">0.7358490566037735</span>
+image_scene                             <span class="token number">0.9807692307692307</span>
+image_style                             <span class="token number">0.9622641509433962</span>
+image_topic                             <span class="token number">0.9444444444444444</span>
+nature_relation                         <span class="token number">0.875</span>
+object_localization                     <span class="token number">0.7654320987654321</span>
+ocr                                     <span class="token number">0.8717948717948718</span>
+physical_property_reasoning             <span class="token number">0.8133333333333334</span>
+physical_relation                       <span class="token number">0.875</span>
+social_relation                         <span class="token number">0.9069767441860465</span>
+spatial_relationship                    <span class="token number">0.6222222222222222</span>
+structuralized_imagetext_understanding  <span class="token number">0.7051282051282052</span>
+--------------------------------------  ------------------
+</code></pre><h3 id="評価結果の見方について">評価結果の見方について </h3>
+<p><strong>1. マクロ評価指標（略称：大項目）</strong></p>
+<p>これらは、各個別タスクを特定の能力カテゴリごとに集計したものです。</p>
+<table>
+<thead>
+<tr>
+<th>指標名</th>
+<th>内容（推定されるフルスペル）</th>
+<th>何を示すか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Overall</strong></td>
+<td>Overall Accuracy</td>
+<td>全タスクの平均スコア。モデルの総合的な実力を示します。</td>
+</tr>
+<tr>
+<td><strong>AR</strong></td>
+<td>Attribute Recognition</td>
+<td><strong>属性認識</strong>。物の色、形、状態などを正しく認識する力。</td>
+</tr>
+<tr>
+<td><strong>CP</strong></td>
+<td>Comparison</td>
+<td><strong>比較能力</strong>。2つ以上の対象の大きさや属性を比べる力。</td>
+</tr>
+<tr>
+<td><strong>FP-C</strong></td>
+<td>Fact-based Prediction (C)</td>
+<td><strong>事実に基づく予測</strong>。画像内の事実に即した論理的な予測。</td>
+</tr>
+<tr>
+<td><strong>FP-S</strong></td>
+<td>Fact-based Prediction (S)</td>
+<td><strong>事実に基づく推論/情景理解</strong>。状況証拠から文脈を読み取る力。</td>
+</tr>
+<tr>
+<td><strong>LR</strong></td>
+<td>Localization / Reasoning</td>
+<td><strong>位置・推論</strong>。物体がどこにあるか、なぜそうなっているかの高度な理解。</td>
+</tr>
+<tr>
+<td><strong>RR</strong></td>
+<td>Relation Reasoning</td>
+<td><strong>関係推論</strong>。物体間の物理的・社会的なつながりの理解。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2. 詳細タスク別評価（小項目）</strong></p>
+<p>具体的なタスク内容ごとの正答率です。</p>
+<table>
+<thead>
+<tr>
+<th>指標名</th>
+<th>意味（日本語）</th>
+<th>評価されている能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>action_recognition</strong></td>
+<td>動作認識</td>
+<td>人や動物が「何をしているか」を捉える力。</td>
+</tr>
+<tr>
+<td><strong>attribute_comparison</strong></td>
+<td>属性比較</td>
+<td>「AはBより大きいか」といった比較の正確さ。</td>
+</tr>
+<tr>
+<td><strong>attribute_recognition</strong></td>
+<td>属性認識</td>
+<td>物体の色や質感などを正確に特定する力。</td>
+</tr>
+<tr>
+<td><strong>celebrity_recognition</strong></td>
+<td>有名人物認識</td>
+<td>著名人の顔や名前を特定できる知識量。</td>
+</tr>
+<tr>
+<td><strong>function_reasoning</strong></td>
+<td>機能推論</td>
+<td>物体が「何のために使われるか」という道具的理解。</td>
+</tr>
+<tr>
+<td><strong>future_prediction</strong></td>
+<td>未来予測</td>
+<td>「この後何が起きるか」を推測する時系列的な理解。</td>
+</tr>
+<tr>
+<td><strong>identity_reasoning</strong></td>
+<td>同一性推論</td>
+<td>対象が何であるかを特定・分類する論理。</td>
+</tr>
+<tr>
+<td><strong>image_emotion</strong></td>
+<td>画像感情分析</td>
+<td>画像から受ける雰囲気や感情を読み取る力。</td>
+</tr>
+<tr>
+<td><strong>image_quality</strong></td>
+<td>画像品質評価</td>
+<td>画像が鮮明か、ノイズがあるかなどの品質判断。</td>
+</tr>
+<tr>
+<td><strong>image_scene</strong></td>
+<td>シーン認識</td>
+<td>「台所」「屋外」「街中」など場所の全体理解。</td>
+</tr>
+<tr>
+<td><strong>image_style</strong></td>
+<td>画像スタイル認識</td>
+<td>油絵風、写真、漫画など、表現手法の識別。</td>
+</tr>
+<tr>
+<td><strong>image_topic</strong></td>
+<td>画像トピック</td>
+<td>画像が何のテーマ（政治、スポーツ等）を扱っているか。</td>
+</tr>
+<tr>
+<td><strong>nature_relation</strong></td>
+<td>自然界の物理関係</td>
+<td>植物や動物、自然現象の相互作用の理解。</td>
+</tr>
+<tr>
+<td><strong>object_localization</strong></td>
+<td>物体位置特定</td>
+<td>座標的な位置や「右、左、上」の正確な把握。</td>
+</tr>
+<tr>
+<td><strong>ocr</strong></td>
+<td>文字認識</td>
+<td>画像内のテキスト（看板、書類など）を読み取る力。</td>
+</tr>
+<tr>
+<td><strong>physical_property_reasoning</strong></td>
+<td>物理特性推論</td>
+<td>重さ、硬さ、材質などの物理学的な推論。</td>
+</tr>
+<tr>
+<td><strong>physical_relation</strong></td>
+<td>物理的関係</td>
+<td>物体同士が接しているか、中にあるかなどの関係。</td>
+</tr>
+<tr>
+<td><strong>social_relation</strong></td>
+<td>社会的関係</td>
+<td>人間同士の握手、対立、協力などの社会的文脈。</td>
+</tr>
+<tr>
+<td><strong>spatial_relationship</strong></td>
+<td>空間的関係</td>
+<td>奥行きや重なりなど、3D空間における配置理解。</td>
+</tr>
+<tr>
+<td><strong>structuralized_imagetext_understanding</strong></td>
+<td>構造化図表理解</td>
+<td>グラフや表など、レイアウトされた情報の読み取り。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="結果の分析">結果の分析 </h3>
+<p>今回利用したモデルの結果を見ると、以下のような傾向が見て取れます。</p>
+<ul>
+<li><strong>得意（&gt;0.95）</strong>: <code>image_scene</code> (0.98), <code>identity_reasoning</code> (0.97), <code>attribute_recognition</code> (0.97) など。 <strong>「何がどこにあり、どんなシーンか」を特定する基本的な認識力</strong> は極めて高いです。</li>
+<li><strong>苦手（&lt;0.70）</strong>: <code>spatial_relationship</code> (0.62), <code>future_prediction</code> (0.67), <code>LR</code> (0.69) など。 <strong>「空間的な位置関係」や「時間の経過に伴う予測」</strong> といった、高次元の推論に課題があるようです。</li>
+</ul>
+<h2 id="最後に">最後に </h2>
+<p>実務や研究でVLMモデルを使う場合、目的にあっているかを定量的に評価したい場面が多々あると思います。</p>
+<ul>
+<li>そんな際に比較基準を揃える、や、評価の土台を揃えるといった観点</li>
+<li>件数が多く自動化が必要</li>
+</ul>
+<p>という場面で今回のように自動で評価する手法は役に立つと思います。</p>
+
+      </div>
+      
+      
+    
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+    
+  
+    </body></html>
