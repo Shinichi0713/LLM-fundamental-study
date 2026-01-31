@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Mamba&#x304c;&#x89e3;&#x6c7a;&#x3057;&#x305f;&#x304b;&#x3063;&#x305f;&#x8ab2;&#x984c;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>今を時めくGPT、GeminiのベースになるTransformerが出てきて、8～9年経過しました。
+その後、マイナーチェンジはあれど、Transformerに台頭するアーキテクチャはなかなか出てきていません。</p>
+<p>そんな状況に一石を投じる可能性がある <strong>Mamba</strong> という手法について説明したいと思います。</p>
+<h2 id="mambaが解決したかった課題">Mambaが解決したかった課題</h2>
+<p>Mambaが解決したかった最大の課題は、一言で言えば <strong>「Transformerの計算量『2乗の壁』と『記憶のジレンマ』」</strong> です。</p>
+<h3 id="1-計算量の2乗の壁-quadratic-scaling">1. 計算量の「2乗の壁」 (Quadratic Scaling)</h3>
+<p>Transformerの中核技術である「アテンション（注意機構）」は、文章内の<strong>すべての単語ペアの関係</strong>を計算します。</p>
+<ul>
+<li><strong>課題:</strong> 入力されるトークン（単語）の数を  <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span>  とすると、計算コストとメモリ使用量が  <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>L</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">L^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>（2乗）のペースで増えてしまいます。</li>
+<li><strong>影響:</strong> 文章が長くなればなるほど、必要なメモリが爆発的に増え、実用的なコストで処理できる文章の長さに限界（数千〜数万トークン程度）が生じていました。</li>
+</ul>
+<p>Mambaはこれを <strong>線形（ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span>  に比例）</strong> な計算量に抑えることで、100万トークンを超えるような超長文でも現実的なスピードで処理できるようにしました。</p>
+<h3 id="2-推論時の記憶のジレンマ-kvキャッシュ問題">2. 推論時の「記憶のジレンマ」 (KVキャッシュ問題)</h3>
+<p>Transformerでチャットを行う際、モデルは過去の会話をすべて「KVキャッシュ」という形でメモリに溜め込んでおく必要があります。</p>
+<ul>
+<li><strong>課題:</strong> 会話が長くなると、このキャッシュだけでGPUのメモリを使い果たしてしまいます。また、1文字出すごとに過去の全データを見直すため、生成速度がどんどん遅くなります。</li>
+<li><strong>Mambaの解決策:</strong> RNN（再帰型ニューラルネットワーク）のように、過去の情報を <strong>「固定サイズの小さな状態（State）」</strong> に圧縮して持ち運びます。どれだけ会話が長くなってもメモリ使用量が増えず、生成スピードも一定のまま高速に動作します。</li>
+</ul>
+<h3 id="3-ssm状態空間モデルの忘却問題の解消">3. SSM（状態空間モデル）の「忘却問題」の解消</h3>
+<p>Mamba以前にも、計算量が少ない「状態空間モデル（SSM）」という技術は存在しましたが、Transformerに勝てない弱点がありました。</p>
+<ul>
+<li><strong>課題:</strong> 従来のSSMは、 <strong>「入力に関わらず、常に一定のルールで情報を圧縮する」</strong> という性質（Time-invariant）がありました。そのため、重要ではない単語も重要な単語も同じように扱ってしまい、結果として重要な情報をすぐに「忘れて」しまうという精度不足がありました。</li>
+<li><strong>Mambaの解決策:</strong>  <strong>「Selective（選択的）SSM」</strong> を導入しました。入力される単語の内容に応じて、情報を「覚えるか」「捨てるか」を動的に判断できるようにしました。これにより、Transformerのような高度な文脈理解を、SSMの軽さで実現したのです。</li>
+</ul>
+<h2 id="特徴">特徴</h2>
+<p>Mambaは、2023年末に発表された <strong>「状態空間モデル（State Space Model: SSM）」</strong> という技術をベースにした新しいニューラルネットワークのアーキテクチャです。</p>
+<p>これまでAI界を支配してきた<strong>Transformer（ChatGPTなどで使われている技術）の弱点を克服し、取って代わる可能性がある技術</strong>として非常に注目されています。</p>
+<h3 id="1-transformerの計算量の壁を突破">1. Transformerの「計算量の壁」を突破</h3>
+<p>Transformer（アテンション機構）には、 <strong>「入力する文章が長くなればなるほど、計算量とメモリ使用量が2乗で増えていく」</strong> という弱点があります。10倍の長さの文を読むには、100倍の計算コストがかかるイメージです。</p>
+<p>一方、Mambaは <strong>「線形スケーリング」</strong> を実現しています。</p>
+<ul>
+<li><strong>Transformer:</strong> 文章が2倍になると、コストは4倍。</li>
+<li><strong>Mamba:</strong> 文章が2倍になっても、コストは2倍。</li>
+</ul>
+<p>これにより、Transformerでは困難だった超長大なドキュメントや、動画のような膨大なデータの処理が非常に効率的になります。</p>
+<h3 id="2-rnnの軽さとtransformerの賢さの両立">2. 「RNNの軽さ」と「Transformerの賢さ」の両立</h3>
+<p>Mambaは、古い技術である <strong>RNN（再帰型ニューラルネットワーク）</strong> と、最新の<strong>Transformer</strong>の「いいとこ取り」をしています。</p>
+<ul>
+<li><strong>RNNのように:</strong> データを順番に処理し、過去の情報をコンパクトな「状態（State）」として保持します。これにより、推論時のメモリ消費が非常に少なくて済みます。</li>
+<li><strong>Transformerのように:</strong> 大規模なデータで効率的に並列学習ができ、高い理解能力を持ちます。</li>
+</ul>
+<p>Mambaの核となる技術は <strong>「Selective SSM（選択的状態空間モデル）」</strong> と呼ばれます。これは、流れてくるデータの中から「どの情報を残し、どの情報を忘れるか」を入力内容に応じて動的に選択する仕組みです。</p>
+<h3 id="3-推論スピードが圧倒的に速い">3. 推論スピードが圧倒的に速い</h3>
+<p>MambaはTransformerに比べて、同じ性能であれば <strong>最大で5倍以上の推論スピード（文章を生成する速度）</strong> を叩き出すことができます。また、一度に処理できる情報の長さ（コンテキストウィンドウ）を飛躍的に伸ばしても、動作が重くなりにくいというメリットがあります。</p>
+<h2 id="mambaの中核技術">Mambaの中核技術</h2>
+<p>Mambaの革新性である「Selective SSM（選択的状態空間モデル）」の核心は、数学的に言うと <strong>「パラメータを定数から関数に変えたこと」</strong> にあります。</p>
+<p>従来のSSMが「流れるプール」だとすれば、Selective SSMは「自分で開閉を判断する水門」です。
+なぜそんなことが可能なのか、数学的な仕組みを解説します。</p>
+<h3 id="1-基礎となる状態空間モデルssmの式">1. 基礎となる「状態空間モデル（SSM）」の式</h3>
+<p>まず、ベースとなるSSMは以下の2つのシンプルな式で記述されます。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>h</mi><mi>t</mi></msub><mo>=</mo><mi mathvariant="bold">A</mi><msub><mi>h</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mi mathvariant="bold">B</mi><msub><mi>x</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">h_t = \mathbf{A} h_{t-1} + \mathbf{B} x_t
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9028em;vertical-align:-0.2083em;"></span><span class="mord mathbf">A</span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord mathbf">B</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>y</mi><mi>t</mi></msub><mo>=</mo><mi mathvariant="bold">C</mi><msub><mi>h</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">y_t = \mathbf{C} h_t
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord mathbf">C</span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">x_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>: 現在の入力（単語）</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">h_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>: 隠れ状態（これまでの記憶）</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">A</mi><mo separator="true">,</mo><mi mathvariant="bold">B</mi><mo separator="true">,</mo><mi mathvariant="bold">C</mi></mrow><annotation encoding="application/x-tex">\mathbf{A, B, C}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8805em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbf">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbf">C</span></span></span></span></span>: 情報をどう処理するかを決める重み行列（パラメータ）</li>
+</ul>
+<p>従来の課題：</p>
+<p>先行研究で提案されいたSSMでは、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">A</mi><mo separator="true">,</mo><mi mathvariant="bold">B</mi><mo separator="true">,</mo><mi mathvariant="bold">C</mi></mrow><annotation encoding="application/x-tex">\mathbf{A, B, C}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8805em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbf">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbf">C</span></span></span></span></span> は学習が終わると固定された「定数」でした。
+入力がどんな単語であっても、情報の圧縮ルールが変わらないため、文脈に応じた柔軟な記憶ができませんでした。</p>
+<h3 id="2-選択selectiveの正体入力への依存">2. 「選択（Selective）」の正体：入力への依存</h3>
+<p>Mambaは、これらのパラメータを <strong>入力 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">x_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> に応じてその場で計算される「関数」</strong> に作り替えました。
+具体的には、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">B</mi></mrow><annotation encoding="application/x-tex">\mathbf{B}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">B</span></span></span></span> や <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">C</mi></mrow><annotation encoding="application/x-tex">\mathbf{C}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">C</span></span></span></span>、そして時間ステップを制御する <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span>（デルタ）を以下のように定義します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">B</mi><mi>t</mi></msub><mo>=</mo><mi>L</mi><mi>i</mi><mi>n</mi><mi>e</mi><mi>a</mi><msub><mi>r</mi><mi>B</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{B}_t = Linear_B(x_t)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mord mathnormal">in</span><span class="mord mathnormal">e</span><span class="mord mathnormal">a</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">C</mi><mi>t</mi></msub><mo>=</mo><mi>L</mi><mi>i</mi><mi>n</mi><mi>e</mi><mi>a</mi><msub><mi>r</mi><mi>C</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{C}_t = Linear_C(x_t)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mord mathnormal">in</span><span class="mord mathnormal">e</span><span class="mord mathnormal">a</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mi>t</mi></msub><mo>=</mo><mi>S</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>p</mi><mi>l</mi><mi>u</mi><mi>s</mi><mo stretchy="false">(</mo><mi>P</mi><mi>a</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>e</mi><mi>t</mi><mi>e</mi><mi>r</mi><mo>+</mo><mi>L</mi><mi>i</mi><mi>n</mi><mi>e</mi><mi>a</mi><msub><mi>r</mi><mi mathvariant="normal">Δ</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>t</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\Delta_t = Softplus(Parameter + Linear_{\Delta}(x_t))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">Δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal" style="margin-right:0.01968em;">tpl</span><span class="mord mathnormal">u</span><span class="mord mathnormal">s</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">am</span><span class="mord mathnormal">e</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.02778em;">er</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mord mathnormal">in</span><span class="mord mathnormal">e</span><span class="mord mathnormal">a</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Δ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">))</span></span></span></span></span></p>
+<p>論文に描かれている数理モデルは以下のような絵で表されます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\mamba\image\README\1769331064534.png" alt="1769331064534"></p>
+<p>これがなぜ「情報の選択」になるか、ですが。
+以下説明の重みと対応付けてご覧ください。</p>
+<p>例えば、文章の中に「しかし（However）」という重要な接続詞が出てきたとします。</p>
+<ol>
+<li>モデルが <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">x_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>（しかし）を受け取る。</li>
+<li>その <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">x_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を使って、瞬時に <strong>「記憶を大きく書き換えるための <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">B</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{B}_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>」や「情報の重みを調整する <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\Delta_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">Δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>」</strong> を計算する。</li>
+<li>逆に、どうでもいい「the」や「a」が来たときは、ゲート（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\Delta_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">Δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>）を小さくして、現在の入力を無視し、過去の記憶（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">h_{t-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9028em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span>）をそのまま維持する。</li>
+</ol>
+<p>というような情報に応じた取捨選択ように機能することになります。
+つまり、「情報の選択」を行う訳です。
+SSMに来た情報に応じた取捨選択の能力が備わったことになります。</p>
+<h3 id="3-数学的なフィルタリングの仕組み">3. 数学的な「フィルタリング」の仕組み</h3>
+<p>特に重要なのが、離散化された <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">A</mi></mrow><annotation encoding="application/x-tex">\mathbf{A}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">A</span></span></span></span>（これを <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi mathvariant="bold">A</mi><mo>ˉ</mo></mover></mrow><annotation encoding="application/x-tex">\mathbf{\bar{A}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8512em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8512em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf">A</span></span><span style="top:-3.2551em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2875em;"><span class="mord mathbf">ˉ</span></span></span></span></span></span></span></span></span></span> と呼びます）の変化です。数式では近似的に以下のようになります。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mover accent="true"><mi mathvariant="bold">A</mi><mo>ˉ</mo></mover><mi>t</mi></msub><mo>=</mo><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi mathvariant="normal">Δ</mi><mi>t</mi></msub><mi mathvariant="bold">A</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{\bar{A}}_t = \exp(\Delta_t \mathbf{A})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0012em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8512em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf">A</span></span><span style="top:-3.2551em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2875em;"><span class="mord mathbf">ˉ</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">exp</span><span class="mopen">(</span><span class="mord"><span class="mord">Δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathbf">A</span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\Delta_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">Δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> が 0に近いとき： <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi mathvariant="bold">A</mi><mo>ˉ</mo></mover><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{\bar{A}}_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0012em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8512em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf">A</span></span><span style="top:-3.2551em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2875em;"><span class="mord mathbf">ˉ</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> は 1 に近づきます。これは <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>t</mi></msub><mo>≈</mo><msub><mi>h</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">h_t \approx h_{t-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9028em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span>、つまり <strong>「過去をすべて覚えておく（今の入力は無視）」</strong> という挙動です。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\Delta_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">Δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> が 大きいとき： <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi mathvariant="bold">A</mi><mo>ˉ</mo></mover><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{\bar{A}}_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0012em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8512em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathbf">A</span></span><span style="top:-3.2551em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2875em;"><span class="mord mathbf">ˉ</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> は 0 に近づきます。これは過去の影響をリセットし、**「今の入力を新しい記憶として上書きする」**という挙動です。</li>
+</ul>
+<p>この <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">\Delta_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">Δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を単語ごとに動的に変えることで、Mambaは <strong>「どの情報をゴミ箱に捨て、どの情報を金庫に残すか」</strong> を数学的に選別しているのです。</p>
+<h3 id="4-計算の工夫並列スキャン-parallel-scan">4. 計算の工夫：並列スキャン (Parallel Scan)</h3>
+<p>パラメータを入力依存（変数）にすると、従来のSSMの強みであった「畳み込み（Convolution）」による高速な一括計算ができなくなります。</p>
+<p>普通に計算すると、RNNのように1単語ずつ順番に計算するしかなく、学習が非常に遅くなってしまいます。</p>
+<p>Mambaはこれを <strong>「並列スキャンアルゴリズム」</strong> と、GPUのメモリ（SRAM/HBM）を効率的に使うカーネルの実装によって解決しました。</p>
+<ul>
+<li>数学的な依存関係は維持しつつ、</li>
+<li>ハードウェアレベルで並列に計算を行う。</li>
+</ul>
+<p>これにより、「情報の選択」という知的な作業と「圧倒的な計算速度」を両立させたのです。</p>
+<h3 id="本節のまとめ">本節のまとめ</h3>
+<p>MambaがTransformerに匹敵する知能を持てたのは、　<strong>「入力されたデータそのものを見て、記憶のルールをその都度書き換える（Selective）」</strong>　という動的な仕組みを、SSMという軽量な枠組みに組み込むことで実現しました。</p>
+<p>結果、Transformerが課題としていた計算量が過大になる点、すべての記憶を呼び起こす計算が生じるという課題を解決し、軽量・高速性を手に入れました。</p>
+<h2 id="アーキテクチャ">アーキテクチャ</h2>
+<p>Mambaのアーキテクチャは、一言で言えば　<strong>「RNNの構造を持ちながら、Transformerの学習効率と知能、そして独自の情報の取捨選択能力を兼ね備えたハイブリッドな設計」</strong>　です。</p>
+<p>その内部構造は、大きく分けて　<strong>「Selective SSM」</strong>　と、それを支える　<strong>「ブロック構造」</strong>　の2つのレイヤーで構成されています。</p>
+<h2 id="1-最小単位selective-ssm選択的状態空間モデル">1. 最小単位：Selective SSM（選択的状態空間モデル）</h2>
+<p>Mambaの心臓部です。従来のSSMは「入力に関わらず情報の扱い方が一定」でしたが、Mambaは<strong>入力（単語）に応じてパラメータを動的に変化</strong>させます。</p>
+<ul>
+<li><strong>入力依存のパラメータ (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo separator="true">,</mo><mi>C</mi><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">B, C, \Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span></span></span></span>):</strong>
+現在のトークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> を見て、「どの情報を隠れ状態 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">h</span></span></span></span> に書き込むか (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span>)」、「どの情報を出力として取り出すか (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>)」、「記憶をどれくらい保持・更新するか (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span>)」を計算します。</li>
+<li><strong>「忘却」と「集中」の数学:</strong>
+特に時間刻み幅 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span>（デルタ）が重要です。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span> が小さい <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 過去の記憶をそのまま保持（今の単語は無視）。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span> が大きい <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 過去をリセットして、今の単語を強く記憶。</li>
+</ul>
+<p>これにより、アテンション機構を使わずに「重要な文脈への集中」を再現しています。
+※アテンション機構がきれいにワークするのも情報の取捨選択性にあります。著者は、この機能が簡単な構造のSSMを一変させたと考えてます。</p>
+<h2 id="2-ブロック全体の構成mamba-block">2. ブロック全体の構成：Mamba Block</h2>
+<p>Mambaは、上記のSelective SSMを単体で使うのではなく、標準的なニューラルネットワークのパーツと組み合わせて1つの「ブロック」として構成しています。</p>
+<ol>
+<li><strong>入力の分岐:</strong> 入力されたデータは2つのルートに分かれます。</li>
+<li><strong>メインルート (SSM側):</strong></li>
+</ol>
+<ul>
+<li><strong>線形投影 (Linear):</strong> 次元の拡張。</li>
+<li><strong>1D 畳み込み (1D Conv):</strong> 前後の単語との局所的な関係性を把握（SSMが苦手な「直近の並び」を補完）。</li>
+<li><strong>Selective SSM:</strong> 核心部。長距離の依存関係を処理。</li>
+</ul>
+<ol start="3">
+<li><strong>サブルート (ゲート側):</strong></li>
+</ol>
+<ul>
+<li><strong>SiLU 活性化関数:</strong> 入力に非線形な「重み」を与えます。</li>
+</ul>
+<ol start="4">
+<li><strong>統合 (Gating):</strong> メインルートの結果とサブルートの結果を掛け合わせます（アダマール積）。これにより、特定の情報をさらに強調したり抑制したりします。</li>
+</ol>
+<h2 id="3-ハードウェアを意識した実装hardware-aware-scan">3. ハードウェアを意識した実装：Hardware-aware Scan</h2>
+<p>Mambaのアーキテクチャを語る上で欠かせないのが、 <strong>計算の「解き方」</strong> です。</p>
+<p>通常、入力依存のパラメータを持つモデルは、RNNのように1つずつ計算（シーケンシャル）せざるを得ず、GPUの並列性能を活かせません。Mambaはこれを以下の工夫で解決しました。</p>
+<ul>
+<li><strong>Parallel Scan:</strong> 数学的な工夫により、逐次的な計算を並列化可能な形に変換します。</li>
+<li><strong>カーネル融合 (Kernel Fusion):</strong> メモリ（低速なDRAM）と計算ユニット（高速なSRAM）の間でデータを何度もやり取りするのを防ぎ、GPU内で一気に計算を完結させます。</li>
+</ul>
+<h2 id="4-アーキテクチャのまとめtransformerとの比較">4. アーキテクチャのまとめ：Transformerとの比較</h2>
+<table>
+<thead>
+<tr>
+<th>特徴</th>
+<th>Transformer</th>
+<th>Mamba</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>中心技術</strong></td>
+<td>アテンション (Attention)</td>
+<td>選択的SSM (Selective SSM)</td>
+</tr>
+<tr>
+<td><strong>記憶の持ち方</strong></td>
+<td>全過去データのキャッシュ (KV)</td>
+<td>固定サイズの隠れ状態 (State)</td>
+</tr>
+<tr>
+<td><strong>長文への強さ</strong></td>
+<td>(2乗で重くなる)</td>
+<td>(線形で軽い)</td>
+</tr>
+<tr>
+<td><strong>推論速度</strong></td>
+<td>文が長くなると遅くなる</td>
+<td>常に高速・一定</td>
+</tr>
+</tbody>
+</table>
+<p>上記で説明した内容を図で示すと以下のようなアーキテクチャとなります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\mamba\image\README\1769331893609.png" alt="1769331893609"></p>
+<p>左端のH3アーキテクチャはSSMベースアーキテクチャの基盤であり、中央の図の線形Attentionから着想を得たブロックとMLPブロックをインターリーブ（交互に配置）した構成がMambaです。</p>
+<h2 id="実験結果">実験結果</h2>
+<p>論文では「インダクション・ヘッド（Induction Heads）」実験によりMambaの実力を評価しています。</p>
+<p>結果は、MambaがTransformerの専売特許と思われていた <strong>「文脈から学習する知能」</strong> を、より高い効率で備えていることを証明したというものでした。</p>
+<h3 id="インダクションヘッド実験の要約">インダクション・ヘッド実験の要約</h3>
+<p><strong>1. どんなタスクをこなしたか？</strong></p>
+<p>**「インダクション（誘導）タスク」**という、LLMの知能の根源を測るテストを行いました。</p>
+<ul>
+<li><strong>内容:</strong> 「Harry Potter」という言葉が以前に出現した際、次に「Harry」という単語が現れたら、過去のパターンをコピーして「Potter」と予測できるかを試すものです。</li>
+<li><strong>評価のポイント:</strong> 文章が極端に長くなったとしても、間のノイズに惑わされず、特定の単語（Harry）とセットになる言葉（Potter）を <strong>「選択的に記憶」</strong> し、正確に引き出せるかを検証しました。</li>
+</ul>
+<p><strong>2. 得られた精度と驚異的な結果</strong></p>
+<p>Mamba（Selective SSM）は、このタスクにおいて <strong>「完璧な解決」</strong> を示しました。</p>
+<table>
+<thead>
+<tr>
+<th>評価項目</th>
+<th>Mamba (Selective SSM)</th>
+<th>従来のTransformer / SSM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>予測精度</strong></td>
+<td><strong>完璧 (Perfectly solve)</strong></td>
+<td>訓練時の長さまでは良好</td>
+</tr>
+<tr>
+<td><strong>長さの外挿</strong></td>
+<td><strong>100万トークンまで完璧に汎化</strong></td>
+<td>訓練時の2倍の長さで破綻</td>
+</tr>
+<tr>
+<td><strong>汎化倍率</strong></td>
+<td><strong>4000倍</strong> (256  100万)</td>
+<td><strong>2倍未満</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="なぜこれほどの結果が出たのか">なぜこれほどの結果が出たのか？</h3>
+<ul>
+<li><strong>ノイズの無視:</strong> Mambaの「選択的ゲート」が、HarryとPotter以外の無関係な情報を数学的に100%無視することに成功したためです。</li>
+<li><strong>距離の克服:</strong> Transformerはアテンションの性質上、距離が離れすぎると情報の場所を見失いますが、Mambaは「状態（State）」として情報を保持するため、距離が100万単語離れていても情報の鮮度が落ちませんでした。</li>
+</ul>
+<h2 id="結論">結論</h2>
+<p>Attentionの一番重要な機能は情報を取捨選択することが出来るということです。
+これが文章を理解する上では非常に重要でした。</p>
+<p>この性能を維持するために、莫大な計算量という課題を抱えていたのが今までです。</p>
+<p>Mambaは軽量なモデルに、Attentionに匹敵する情報の取捨選択の機能を実装することで精度、高速性の両方を手に入れました。</p>
+<p>この手法はMamba-2、Mamba-3でさらに数学的なテコ入れがされ手法としての利点に磨きがかかっています。</p>
+<p>Transformerは&quot;持つもの&quot;の特別な手法でしたが、もしかすると、Mambaの台頭により知能の民主化につながることになるかもしれません。</p>
+<p>そんな可能性を秘めた手法について解説させて頂きました。</p>
+
+<h2>最後に</h2>
+<p>記事を最後まで読んでくださってありがとうございます。<br />記事の内容を読んで頑張れと思っていただいた読者様、是非、読者になって今後も応援してください。</p>
+<iframe src="https://blog.hatena.ne.jp/yoshishinnze/yoshishinnze.hatenablog.com/subscribe/iframe" allowtransparency="true" frameborder="0" scrolling="no" width="150" height="28"></iframe>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
