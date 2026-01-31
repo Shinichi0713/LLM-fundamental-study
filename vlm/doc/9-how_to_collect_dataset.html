@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x9078;&#x5b9a;&#x306e;&#x524d;&#x306b;&#x78ba;&#x8a8d;&#x3057;&#x305f;&#x3044;&#x3053;&#x3068;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>先日VLMのモデルの実装法の概要、評価法を扱いました。
+今回はVLMの収集すべきデータセットについて、選定の前の確認事項から、用途別のデータセットについて説明します。</p>
+<h2 id="選定の前に確認したいこと">選定の前に確認したいこと</h2>
+<p>VLMの学習用データセットを探し始める前に、 <strong>「どのようなモデルを、何の目的で作りたいか」</strong> という設計図を明確にする必要があります。</p>
+<p>VLMの世界は非常に幅広く、目的が「写真の説明」なのか「図表の読み取り」なのかによって、選ぶべきデータの種類が全く異なるからです。</p>
+<h3 id="1-学習のフェーズステージ">1. 学習のフェーズ（ステージ）</h3>
+<p>VLMの学習は通常、段階を踏んで行われます。どの段階のデータを探しているのかを明確にしましょう。</p>
+<ul>
+<li>
+<p><strong>Pre-training（事前学習）:</strong> 画像とテキストの基本的な対応関係を学ばせる段階。</p>
+</li>
+<li>
+<p><em>必要なデータ:</em> CLIPのように、インターネットから収集された大量の画像とキャプションのペア（数億〜数十億規模）。</p>
+</li>
+<li>
+<p><strong>Instruction Tuning（指示調整）:</strong> 「この画像には何が写っていますか？」といったユーザーの指示に従えるようにする段階。</p>
+</li>
+<li>
+<p><strong>必要なデータ:</strong> 「画像・問い・答え」がセットになった、人間またはAIによって精緻に作られたデータ（LLaVAなど）。</p>
+</li>
+</ul>
+<h3 id="2-ターゲットとするタスクドメイン">2. ターゲットとするタスク（ドメイン）</h3>
+<p>汎用的なモデルを作りたいのか、特定の専門分野に特化させたいのかを決めます。</p>
+<ul>
+<li><strong>一般キャプショニング:</strong> 日常の風景を説明する（COCO, LAIONなど）。</li>
+<li><strong>VQA（視覚的質疑応答）:</strong> 画像の内容について推論して答える（VQA v2など）。</li>
+<li><strong>Document/OCR:</strong> 請求書や論文、スライドなどの文字情報を読み取る（DocVQA, ChartQAなど）。</li>
+<li><strong>空間認識:</strong> オブジェクトの位置（バウンディングボックス）を特定する。</li>
+</ul>
+<h3 id="3-データの質と量のトレードオフ">3. データの「質」と「量」のトレードオフ</h3>
+<ul>
+<li><strong>量重視（Web-scale）:</strong> 質はそこそこ（ノイズが多い）だが、とにかく大量。モデルの基礎体力をつけるのに向いています。</li>
+<li><strong>質重視（Curated/Synthetic）:</strong> GPT-4Vなどの強力なモデルを使って生成された高品質な解説データ。最近のトレンドは、量よりも「高品質な推論プロセス」が含まれたデータに移行しています。</li>
+</ul>
+<h3 id="4-モデルのアーキテクチャ入力形式">4. モデルのアーキテクチャ（入力形式）</h3>
+<p>どのような形式で画像を入力するモデルなのかによって、データの準備方法が変わります。</p>
+<ul>
+<li><strong>シングル画像:</strong> 1枚の画像に対して1つのテキスト。</li>
+<li><strong>マルチ画像/ビデオ:</strong> 複数の画像や動画のフレームを入力し、それらの関係性を説明させる必要があるか。</li>
+<li><strong>インターリーブ形式:</strong> テキストの途中に画像が挟まるような、より自然なドキュメント形式（MMC4など）。</li>
+</ul>
+<h3 id="5-ライセンスと倫理的制約">5. ライセンスと倫理的制約</h3>
+<p>商用利用を考えている場合、これが最も重要になることもあります。</p>
+<ul>
+<li><strong>商用利用可否:</strong> Apache 2.0やMITライセンスのものか、CC BY-NC（非商用限定）などの制限があるか。</li>
+<li><strong>プライバシー:</strong> 顔のぼかし処理がされているか、不適切なコンテンツ（NSFW）がフィルタリングされているか。</li>
+</ul>
+<h2 id="公開データセット">公開データセット</h2>
+<p>VLMの学習に利用できるデータセットは、現在「事前学習用（膨大・低品質）」から「指示調整用（中規模・高品質）」まで多岐にわたります。</p>
+<p>目的別に代表的なものをまとめました。</p>
+<h3 id="1-事前学習用大規模画像テキストペア">1. 事前学習用（大規模画像・テキストペア）</h3>
+<p>モデルに「画像と概念の対応」を教えるためのデータセットです。</p>
+<table>
+<thead>
+<tr>
+<th>データセット名</th>
+<th>規模</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LAION-5B</strong></td>
+<td>58億ペア</td>
+<td>インターネットから収集された最大級のデータ。現在は法規制の関係でリンク集として公開。</td>
+</tr>
+<tr>
+<td><strong>COYO-700M</strong></td>
+<td>7億ペア</td>
+<td>KakaoBrainが公開。LAIONよりフィルタリングが精度良く行われている。</td>
+</tr>
+<tr>
+<td><strong>Conceptual Captions (CC3M/12M)</strong></td>
+<td>300万/1200万</td>
+<td>Googleが公開。比較的クリーンで、初期のVLM研究（BLIPなど）でよく使われる。</td>
+</tr>
+<tr>
+<td><strong>OBELICS</strong></td>
+<td>1.4億画像</td>
+<td><strong>インターリーブ形式</strong>（記事の中に画像が混ざる形式）。ドキュメント理解に強い。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-指示調整用instruction-tuning">2. 指示調整用（Instruction Tuning）</h3>
+<p>ユーザーの問いに答えたり、推論を行ったりするための高品質なデータセットです。</p>
+<table>
+<thead>
+<tr>
+<th>データセット名</th>
+<th>規模</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLaVA-v1.5 / v1.6</strong></td>
+<td>約60万件</td>
+<td>GPT-4を用いて生成された高品質な会話データ。現在のVLM学習の標準。</td>
+</tr>
+<tr>
+<td><strong>ShareGPT4V</strong></td>
+<td>120万件</td>
+<td>非常に詳細な記述（Detailed Caption）が含まれており、モデルの語彙力向上に寄与。</td>
+</tr>
+<tr>
+<td><strong>LRV-Instruction</strong></td>
+<td>40万件</td>
+<td>幻覚（ハルシネーション）を抑えるために、正しい指示と誤った指示を混ぜたデータ。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-特定タスクドメイン特化型">3. 特定タスク・ドメイン特化型</h3>
+<p>特定の能力（OCR、図表、数学など）を強化したい場合に必須となるデータセットです。</p>
+<ul>
+<li>
+<p><strong>図表・グラフ理解:</strong></p>
+</li>
+<li>
+<p><strong>ChartQA:</strong> グラフの数値を読み取り、推論する。</p>
+</li>
+<li>
+<p><strong>DocVQA:</strong> 請求書や文書の文字位置と内容を理解する。</p>
+</li>
+<li>
+<p><strong>空間認識・グラウンディング:</strong></p>
+</li>
+<li>
+<p><strong>RefCOCO / RefCOCO+:</strong> 「左から2番目の赤い椅子」といった具体的な物体指定に対応。</p>
+</li>
+<li>
+<p><strong>推論・科学:</strong></p>
+</li>
+<li>
+<p><strong>ScienceQA:</strong> 科学的な知識が必要な多肢選択式問題。</p>
+</li>
+<li>
+<p><strong>MathVista:</strong> 画像に基づいた数学的な推論が必要な超難関データセット。</p>
+</li>
+</ul>
+<h3 id="4-データセットを探すためのプラットフォーム">4. データセットを探すためのプラットフォーム</h3>
+<p>最新のデータセットは日々更新されるため、以下のサイトで「VLM」や「Vision-Language」タグをチェックするのが最も効率的です。</p>
+<ol>
+<li><strong>Hugging Face Datasets:</strong> <code>Multimodal</code> フィルタを使用。モデルとデータセットがセットで公開されていることが多いです。</li>
+<li><strong>Papers with Code:</strong> 各タスク（VQA, Image Captioning等）のリーダーボードから、SOTAモデルが何で学習されたかを確認できます。</li>
+</ol>
+<h3 id="5-最近のトレンド合成データ-synthetic-data">5. 最近のトレンド：合成データ (Synthetic Data)</h3>
+<p>最近は、人間が作ったデータだけでなく、 <strong>「強力なモデル（GPT-4o等）に画像の詳細を書き出させたデータ」</strong> で学習するのが主流です。</p>
+<ul>
+<li><strong>メリット:</strong> ノイズが少なく、推論プロセスが丁寧。</li>
+<li><strong>注意点:</strong> 元となるモデル（GPT-4など）の利用規約により、そのデータで学習したモデルの商用利用が制限される場合があります。</li>
+</ul>
+<h2 id="前処理">前処理</h2>
+<p>VLM（視覚言語モデル）の学習における前処理は、 <strong>「画像の処理」</strong> と <strong>「テキストの処理」</strong> 、そしてその両方を <strong>「位置（空間）や文脈で紐付ける処理」</strong> の3つに大別されます。</p>
+<p>モデルが画像と文字を正しく関連付けられるかどうかは、この前処理の設計にかかっています。</p>
+<h3 id="1-画像側の前処理-vision-preprocessing">1. 画像側の前処理 (Vision Preprocessing)</h3>
+<p>ビジョンエンコーダー（CLIPなど）に入力するために、生の画像をモデルが理解しやすい形式に変換します。</p>
+<ul>
+<li><strong>リサイズとアスペクト比の維持:</strong>
+多くのモデルは  や  といった固定サイズを要求します。ただし、単純なリサイズはアスペクト比を歪ませるため、 <strong>パディング（余白追加）<strong>や</strong>ランダムクロップ（切り抜き）</strong> が一般的に行われます。</li>
+<li><strong>正規化 (Normalization):</strong>
+画素値（0-255）を、モデルが学習された際と同じ平均値と標準偏差（例：ImageNet統計量）で正規化します。</li>
+<li><strong>パッチ分割 (Patch Embedding):</strong>
+ViT（Vision Transformer）ベースのVLMでは、画像を  などの小さな正方形（パッチ）に分割し、それぞれをトークンとして扱います。</li>
+</ul>
+<h3 id="2-テキスト側の前処理-language-preprocessing">2. テキスト側の前処理 (Language Preprocessing)</h3>
+<p>画像に関連するキャプションや指示文を処理します。</p>
+<ul>
+<li><strong>トークナイズ:</strong> LLMのボキャブラリに基づいてテキストを数値IDに変換します。</li>
+<li><strong>特殊トークンの挿入:</strong> VLM特有の処理として、画像情報がどこに入るかを示すプレースホルダー（例：<code>&lt;image&gt;</code>）を挿入します。</li>
+</ul>
+<blockquote>
+<p>例: <code>USER: &lt;image&gt;\nこの画像について説明して。 ASSISTANT:</code></p>
+</blockquote>
+<ul>
+<li><strong>パディングとマスキング:</strong> バッチ内の文章の長さを揃え、パディング部分をアテンション計算から除外します。</li>
+</ul>
+<h3 id="3-空間情報の処理-visual-grounding--ocr">3. 空間情報の処理 (Visual Grounding / OCR)</h3>
+<p>特定の場所を指し示す能力（グラウンディング）を持たせる場合、追加の処理が必要です。</p>
+<ul>
+<li><strong>バウンディングボックスの正規化:</strong>
+画像内の位置情報を <code>[xmin, ymin, xmax, ymax]</code> の形式で抽出し、それを <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> から <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1000</mn></mrow><annotation encoding="application/x-tex">1000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1000</span></span></span></span> などの数値にスケーリングして、テキスト形式のトークンとして扱えるようにします。</li>
+</ul>
+<blockquote>
+<p>例: <code>{&quot;point&quot;: [250, 500], &quot;label&quot;: &quot;dog&quot;}</code></p>
+</blockquote>
+<ul>
+<li><strong>OCRエンジンの適用:</strong>
+文書理解（DocVQAなど）が目的の場合、あらかじめ外部のOCRエンジンでテキストの位置と内容を抽出し、それをプロンプトに含める処理を行います。</li>
+</ul>
+<h3 id="4-vlm特有の高度なテクニック">4. VLM特有の高度なテクニック</h3>
+<p>最近の高性能なVLMで行われている特殊な前処理です。</p>
+<ul>
+<li><strong>AnyRes (多解像度処理):</strong>
+高解像度の画像をそのままリサイズすると文字が潰れるため、画像を複数のタイルに分割して処理し、最後に統合する手法（LLaVA-v1.6などで採用）です。</li>
+<li><strong>データの増強 (Data Augmentation):</strong>
+モデルの堅牢性を高めるために、画像にノイズを加えたり、反転させたりします。ただし、VLMの場合「右にあるものは何か？」という問いに対して画像を反転させると正解が変わるため、<strong>テキストとの整合性を保った増強</strong>が必要です。</li>
+</ul>
+<h3 id="5-前処理のパイプラインまとめ">5. 前処理のパイプライン（まとめ）</h3>
+<ol>
+<li><strong>データのクリーニング:</strong> 画像の破損チェック、不適切なテキストのフィルタリング。</li>
+<li><strong>サンプリング:</strong> 画像1枚に対して複数のキャプションがある場合、どれを採用するか決定。</li>
+<li><strong>トークナイズとリサイズ:</strong> 画像とテキストをそれぞれのエンコーダーが受け取れる形式に変換。</li>
+<li><strong>アライメント:</strong> 画像トークンとテキストトークンを連結し、一つの系列（Sequence）にする。</li>
+</ol>
+<h2 id="まとめ">まとめ</h2>
+<p>今回はVLMの学習に必要なデータセットについて説明しました。
+VLMのデータセットはLLMに比べると、画像と文章両方の処理が必要となります。
+前処理も含めてご参考頂ければと思います。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

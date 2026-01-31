@@ -97,6 +97,272 @@ VLM（視覚言語モデル）の性能は、採用する「目（ビジョン�
 * **VLMでの効果:** 「どこに何があるか」という空間的な把握能力が高いため、画像内の特定の物体を指し示す（Grounding）タスクや、高解像度な図表・文書の理解に適しています。
 
 
+## VLMの実装法
+
+以下では **VLM（Vision-Language Model）で「実際に使われている／使いやすい」データセット**を、
+**用途別（事前学習・Instruction tuning・評価）**に整理して網羅的に説明します。
+研究・実装の両方で使えることを重視しています。
+
+---
+
+# 1. 全体俯瞰（まずここを押さえる）
+
+VLMで使うデータは大きく **3系統**に分かれます。
+
+```
+① 画像–テキスト対応（Caption / Web）
+② 視覚QA・推論（Task oriented）
+③ マルチモーダルInstruction（会話）
+```
+
+ほとんどのVLMは **① → ② → ③** の順で使います。
+
+---
+
+# 2. 画像–テキスト対応データ（基礎事前学習）
+
+### CLIP系 / VLMの土台
+
+---
+
+## 2.1 LAION 系（最重要）
+
+### ● LAION-400M / 2B / 5B
+
+* 画像＋Webキャプション
+* ノイズ多いが量が圧倒的
+* **CLIP / OpenCLIP / VLM事前学習の標準**
+
+用途：
+
+* Vision encoder pretrain
+* Vision–Language alignment
+
+注意：
+
+* 個人環境では **サブセット必須**
+
+---
+
+## 2.2 CC系（比較的クリーン）
+
+### ● Conceptual Captions (CC3M / CC12M)
+
+| データ   | サイズ    |
+| ----- | ------ |
+| CC3M  | 約300万  |
+| CC12M | 約1200万 |
+
+特徴：
+
+* 自然言語寄り
+* ノイズ少なめ
+
+---
+
+## 2.3 COCO Captions
+
+* 約12万画像
+* 高品質5キャプション/画像
+
+用途：
+
+* 小規模VLM
+* 微調整
+
+---
+
+# 3. 視覚QA・推論データ（能力付与）
+
+---
+
+## 3.1 VQA系（必須）
+
+### ● VQA v2
+
+* 画像＋質問＋回答
+* 定番中の定番
+
+### ● GQA
+
+* 構成的推論
+* 関係理解に強い
+
+---
+
+## 3.2 Reasoning / 知識系
+
+### ● OK-VQA
+
+* 外部知識が必要
+
+### ● VizWiz
+
+* 視覚障害者撮影画像
+* 実世界ノイズ
+
+---
+
+## 3.3 OCR / 文書理解
+
+### ● TextVQA
+
+### ● DocVQA
+
+### ● InfographicVQA
+
+→ **文書系VLMには必須**
+
+---
+
+# 4. マルチモーダルInstructionデータ（LLM化）
+
+### ※ 現代VLMの核心
+
+---
+
+## 4.1 LLaVA系（最重要）
+
+### ● LLaVA-Instruct (150k)
+
+* GPT-4で生成された画像会話
+* **VLM instruction tuning の標準**
+
+構造：
+
+```json
+{
+  "image": "...",
+  "conversations": [
+    {"from": "human", "value": "..."},
+    {"from": "gpt", "value": "..."}
+  ]
+}
+```
+
+---
+
+## 4.2 MiniGPT-4 / BLIP-2 Instruction
+
+* キャプション＋対話
+* 軽量VLMに向く
+
+---
+
+## 4.3 ShareGPT4V
+
+* 実画像＋GPT-4V生成QA
+* 高品質・高難度
+
+---
+
+## 4.4 MIMIC-IT
+
+* Multi-task instruction
+* 画像操作・説明・QA混合
+
+---
+
+# 5. 動画VLM用データセット
+
+---
+
+## 5.1 Video–Text
+
+* WebVid-2M
+* MSR-VTT
+
+---
+
+## 5.2 Video QA
+
+* TGIF-QA
+* TVQA
+* Ego4D
+
+---
+
+# 6. 評価専用データセット（学習禁止）
+
+### ※ VLMEvalKitでよく使う
+
+---
+
+## 6.1 汎用評価
+
+| データ       | 特徴     |
+| --------- | ------ |
+| MMBench   | 選択式・標準 |
+| SEEDBench | マルチ能力  |
+| MMMU      | 専門分野   |
+| MMStar    | 高難度    |
+
+---
+
+## 6.2 Hallucination / 安全性
+
+| データ         | 内容    |
+| ----------- | ----- |
+| POPE        | 幻覚検出  |
+| MMHal-Bench | 整合性   |
+| VisDial     | 対話一貫性 |
+
+---
+
+# 7. 軽量VLM向け「現実的構成」
+
+### GPU 1枚・研究用途ならこれで十分
+
+### 学習データ例
+
+```
+事前学習:
+  CC3M + LAION subset
+
+Instruction:
+  LLaVA-150k
+  ShareGPT4V (一部)
+
+評価:
+  MMBench
+  POPE
+```
+
+---
+
+# 8. Q-Former / 非Q-Formerでの違い
+
+| 構成         | データの重要点                  |
+| ---------- | ------------------------ |
+| Q-Former   | Image–Text alignment が重要 |
+| Linear     | Instruction量が性能を左右       |
+| Cross-Attn | 多様タスクQAが必須               |
+
+---
+
+# 9. よくある誤解（重要）
+
+* ❌ 「VQAだけでVLMは作れる」
+  → ✗（会話能力が出ない）
+
+* ❌ 「Instructionだけで良い」
+  → ✗（視覚理解が弱い）
+
+👉 **必ず複数系統を組み合わせる**
+
+---
+
+# 10. 目的別おすすめまとめ
+
+| 目的    | データ                |
+| ----- | ------------------ |
+| 動作確認  | COCO + LLaVA-150k  |
+| 論文実験  | CC3M + VQA + LLaVA |
+| 軽量VLM | CC3M + MiniGPT-4   |
+| 文書理解  | DocVQA + TextVQA   |
+| 幻覚評価  | POPE               |
+
+
 
 
 
