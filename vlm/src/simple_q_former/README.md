@@ -145,343 +145,279 @@ BLIP2がOPT/T5を使う理由はここです。
 | 少量データ           | 弱い           | 比較的強い           |
 | VLM用途           | 不向き          | 向いている           |
 
-### 今回の症状の典型パターン
+## モデル構築
+
+次に上述の、**Flan-T5 を言語モデルとして用いた Q-Former 型 VLM**を、BLIP-2の考え方に沿って**自分で構築する方法**を、研究実装レベルで体系的に説明します。
+（Colabでの実装を前提、かつ今回のトラブルを避ける構成にしています）
+
+### 全体構成（Flan-T5 + Q-Former）
+
+BLIP-2型VLMは次の3ブロックです。
 
 ```
-tensor([[50256]])
-Generated caption:
+画像
+  ↓
+Vision Encoder（CLIP ViT）
+  ↓
+Q-Former（Query Transformer）
+  ↓
+Flan-T5（Encoder-Decoder LLM）
+  ↓
+テキスト生成
 ```
 
-これはVLM実験では：
+##### 各役割
 
-> 条件無視 + 即EOS = Conditioning failure
+| モジュール          | 役割              |
+| -------------- | --------------- |
+| Vision Encoder | 画像 → patch特徴    |
+| Q-Former       | 画像特徴を言語トークン数に圧縮 |
+| Flan-T5        | テキスト生成          |
 
-条件を考えるのをやめてしまってるとされる状態です。
+ポイント：
 
-今回うまくいかなかった主因をまとめると次だと考えています。
-
-1. GPT-2が外部特徴を活用できない構造
-2. データ量不足
-3. Prefix conditioningの弱さ
-4. EOSへの損失バイアス
-
----
-
-# 研究的な示唆（ここが重要）
-
-この結果はむしろ**正しい挙動**です。
-
-なぜなら：
-
-> GPT-2 + Q-Former は、小規模VLMでは成立しにくい
-
-実際のVLM：
-
-* BLIP2 → OPT / T5
-* LLaVA → LLaMA
-* Flamingo → gated cross-attention
-
-すべて：
-
-**Cross-Attention型**
-
----
-
-# もし改善するなら（優先度順）
-
-① GPT-2にCross-Attention追加
-② LoRAのみ学習
-③ EOS weightを下げる
-④ Caption長を制約
-⑤ データ増量
-
-ただし、実験効率を考えると：
-
-**Flan-T5-smallに切り替える方が圧倒的に良い**
-
----
-
-必要なら次に、
-
-**なぜFlan-T5 + Q-Formerが小規模実験で最も成功率が高いか（理論 + 実験的理由）**
-
-を、VLM設計の観点で整理できます。これはモデル選定の判断基準としてかなり重要です。
+> **LLMは直接画像を見ない** = Q-Formerが「言語に近い表現」を作る
 
 
+### Step 1：モデル選択（Colab向け）
 
-# 結論（推奨構成）
+今回使うモデル・ネットワークパラメータは以下とします。
 
-## ◎ 推奨：**BLIP-2構成（Q-Former継続）＋ Flan-T5 + Instruction形式**
+* Vision: `openai/clip-vit-base-patch32`
+* Q-Former: `Blip2QFormerModel`
+* LLM: `google/flan-t5-base`
 
-```
-Image → CLIP ViT-L
-       ↓
-   Q-Former (trainable)
-       ↓
-   Projection
-       ↓
-Flan-T5-base (LoRA)
-       ↓
-Answer text
-```
+選定理由はGoogle Colabで動作させるギリギリだからです。
 
-**これがColabで動く中では、VQA性能の伸びが最も大きい構成です。**
+* VRAM ≈ 8〜10GBで動く
+* XLは15GB以上必要
 
----
 
-# なぜGPT-2構成より強いのか
-
-先ほどの構成の弱点：
-
-| 問題            | 影響          |
-| ------------- | ----------- |
-| GPT-2は指示理解が弱い | 質問条件を無視しやすい |
-| Caption向け学習   | QA形式に弱い     |
-| Decoder-only  | 条件理解能力が低い   |
-
-VQAは実際には：
-
-> **Image + Question → 条件付き生成**
-
-つまり必要なのは：
-
-* 条件理解
-* instruction-following
-* reasoning
-
-Flan-T5はここが圧倒的に強いです。
-
----
-
-# 推奨構成の詳細
-
-## 1. Vision Encoder
-
-**CLIP ViT-L/14**
-
-理由：
-
-* ViT-BよりVQA性能が明確に上
-* Colabでもfreezeなら余裕
+### Step 2：基本ロード
 
 ```python
-openai/clip-vit-large-patch14
+import torch
+from transformers import (
+    CLIPVisionModel,
+    Blip2QFormerConfig,
+    Blip2QFormerModel,
+    T5ForConditionalGeneration,
+    T5Tokenizer
+)
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Vision Encoder
+vision_model = CLIPVisionModel.from_pretrained(
+    "openai/clip-vit-base-patch32"
+).to(device)
+
+vision_model.eval()
+for p in vision_model.parameters():
+    p.requires_grad = False
 ```
 
-freeze推奨。
 
----
 
-## 2. Q-Former
+### Step 3：Q-Former構築
 
-そのまま使用（BLIP-2形式）
+Q-Formerは
 
-設定：
+* learnable query tokens
+* cross-attention to vision features
 
-* query tokens: **32〜64**
-* trainable
+### 設定
 
-VQAでは**query数を増やすと効きやすい**
+```python
+qformer_config = Blip2QFormerConfig(
+    hidden_size=768,
+    num_hidden_layers=6,
+    num_attention_heads=12,
+    intermediate_size=3072,
+    encoder_hidden_size=vision_model.config.hidden_size
+)
 
----
+qformer = Blip2QFormerModel(qformer_config).to(device)
 
-## 3. LLM
-
-### Flan-T5-base（推奨）
-
-約 250M パラメータ
-
-Colab可：
-
-* LoRA使用
-* fp16
-
-代替：
-
-* flan-t5-small（さらに軽量）
-* flan-t5-large（Colab Pro）
-
----
-
-# 入力フォーマット（重要）
-
-VQAでは形式が性能に直結します。
-
-### 入力テンプレート
-
-```
-Question: What color is the car?
-Answer:
+# Query tokens（重要）
+num_query_tokens = 32
+query_tokens = torch.nn.Parameter(
+    torch.randn(1, num_query_tokens, qformer_config.hidden_size)
+).to(device)
 ```
 
-または
+※これが以前の `query_tokens` エラーの本体です
+BLIP2本体以外では**自分で持つ必要があります**
 
-```
-Based on the image, answer the question.
-Question: ...
-Answer:
-```
 
-Flanはinstruction形式で性能が上がります。
+### Step 4：Flan-T5ロード
 
----
+```python
+tokenizer = T5Tokenizer.from_pretrained("google/flan-t5-base")
 
-# 学習対象（Colab向け）
+llm = T5ForConditionalGeneration.from_pretrained(
+    "google/flan-t5-base"
+).to(device)
 
-| 部分             | 設定     |
-| -------------- | ------ |
-| Vision Encoder | freeze |
-| Q-Former       | train  |
-| Projection     | train  |
-| Flan-T5        | LoRAのみ |
-
-これでVRAM 12GB前後で収まります。
-
----
-
-# データセット（Colab向け）
-
-性能を上げるなら：
-
-## VQAv2（小サブセット）
-
-例：
-
-* trainから 20k〜50k サンプル抽出
-
-理由：
-
-* 多様な質問
-* Captionより難易度高い
-* 性能差が出やすい
-
----
-
-# さらに性能を上げる重要ポイント
-
-## ① Query数を増やす
-
-```
-num_query_tokens = 64
+# LLMは凍結（BLIP-2戦略）
+for p in llm.parameters():
+    p.requires_grad = False
 ```
 
-Captionでは32で十分ですが、VQAでは効きます。
+理由
+→ Colabで学習安定
+→ Q-Formerだけ学習するのがBLIP-2の本質
 
----
 
-## ② Questionをテキストトークンとして入力
+### Step 5：Projection（重要）
 
-LLM入力：
+Q-Formerの出力 → T5埋め込み次元へ
 
-```
-[Image tokens][Question tokens]
-```
-
-※ Captionとの違い
-
----
-
-## ③ Answer長制限
-
-```
-max_new_tokens = 5〜10
+```python
+proj = torch.nn.Linear(
+    qformer_config.hidden_size,
+    llm.config.d_model
+).to(device)
 ```
 
-VQAは短文が多い。
 
----
+### Step 6：Forward処理（核心）
 
-# Colabで動く「性能順」構成比較
+```python
+def forward(image, input_ids, attention_mask):
+    # 1. Vision
+    with torch.no_grad():
+        vision_outputs = vision_model(pixel_values=image)
+        image_embeds = vision_outputs.last_hidden_state
 
-| 構成                              | VQA性能     |
-| ------------------------------- | --------- |
-| CLIP + QFormer + GPT-2          | ★         |
-| CLIP + QFormer + GPT-2(LoRA)    | ★★        |
-| CLIP + QFormer + Flan-T5-small  | ★★★       |
-| CLIP-L + QFormer + Flan-T5-base | ★★★★（推奨）  |
-| BLIP-2そのまま                      | ★★★★★（重い） |
+    B = image.size(0)
 
----
+    # 2. Query expand
+    queries = query_tokens.expand(B, -1, -1)
 
-# さらに強い構成（余裕があれば）
+    # 3. Q-Former
+    q_outputs = qformer(
+        query_embeds=queries,
+        encoder_hidden_states=image_embeds,
+        return_dict=True
+    )
 
-## Option A: InstructBLIP（最強Colab枠）
+    q_hidden = q_outputs.last_hidden_state
 
-```
-Salesforce/instructblip-flan-t5-base
-```
+    # 4. Projection
+    q_hidden = proj(q_hidden)
 
-特徴：
+    # 5. T5 Encoder入力として使用
+    encoder_outputs = llm.encoder(
+        inputs_embeds=q_hidden,
+        return_dict=True
+    )
 
-* VQA特化済み
-* Q-Former最適化済み
-* 追加学習でさらに性能UP
+    # 6. Text generation loss
+    outputs = llm(
+        encoder_outputs=encoder_outputs,
+        labels=input_ids,
+        attention_mask=attention_mask
+    )
 
----
-
-## Option B: LLaVA-1.5-7B（Colab Pro）
-
-ただし：
-
-* VRAM要求高い
-* 学習は厳しい
-
----
-
-# なぜこの構成が今回の条件に最適か
-
-今回の条件：
-
-* Colabで動く
-* 自作VLM延長
-* 性能向上を確認したい
-
-この構成は：
-
-* Q-Formerの研究性を維持
-* Instruction能力を導入
-* 計算量は現実的
-* 性能差が明確に出る
-
----
-
-# 実験としての意義
-
-この構成にすると、
-
-以下が評価できます：
-
-* GPT-2 vs Flan-T5 の比較
-* Query数の影響
-* Instructionの効果
-* Captionモデル → VQA適応
-
-研究的にも意味があります。
-
----
-
-# まとめ
-
-ColabでVQA性能を上げるなら：
-
-**最もバランスの良い構成**
-
-```
-CLIP ViT-L (freeze)
-+ Q-Former (64 queries)
-+ Linear projection
-+ Flan-T5-base (LoRA)
-+ Instruction形式入力
-+ VQAv2サブセット
+    return outputs
 ```
 
----
+ここが
 
-必要なら次に、
+> **Q-Former → LLMの接続の本質**
 
-* Colabでそのまま動く **最小VQA実装コード**
-* VRAM使用量目安
-* 学習ステップ数の現実ライン
-* GPT-2構成との性能差の目安
+### Step 7：学習対象パラメータ
 
-まで具体的に出せます。
+```python
+trainable = list(qformer.parameters()) + \
+            list(proj.parameters()) + \
+            [query_tokens]
+
+optimizer = torch.optim.AdamW(trainable, lr=1e-4)
+```
+
+BLIP-2戦略：
+
+| モジュール        | 学習     |
+| ------------ | ------ |
+| Vision       | Freeze |
+| Flan-T5      | Freeze |
+| Q-Former     | Train  |
+| Query tokens | Train  |
+| Projection   | Train  |
+
+
+### Step 8：なぜこの構成が良いか（実験的理由）
+
+##### ① Colabで現実的
+
+Flan-T5-base ≈ 1GB
+
+##### ② GPT-2より強い理由
+
+Flan-T5は
+
+* Encoder-Decoder
+* Cross-attention設計
+* Instruction tuning済み
+
+→ VLM適性が高い
+
+##### ③ BLIP-2理論に一致
+
+BLIP-2の思想：
+
+> 大きなLLMは凍結
+> 小さな橋だけ学習
+
+これを完全に再現しています。
+
+### Step 9：生成（テスト）
+
+```python
+def generate(image, prompt="Describe the image"):
+    inputs = tokenizer(prompt, return_tensors="pt").to(device)
+
+    with torch.no_grad():
+        vision_outputs = vision_model(pixel_values=image)
+        image_embeds = vision_outputs.last_hidden_state
+
+        B = image.size(0)
+        queries = query_tokens.expand(B, -1, -1)
+
+        q_outputs = qformer(
+            query_embeds=queries,
+            encoder_hidden_states=image_embeds,
+            return_dict=True
+        )
+
+        q_hidden = proj(q_outputs.last_hidden_state)
+
+        encoder_outputs = llm.encoder(
+            inputs_embeds=q_hidden,
+            return_dict=True
+        )
+
+        outputs = llm.generate(
+            encoder_outputs=encoder_outputs,
+            max_length=30
+        )
+
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+```
+
+### まとめ（研究的視点）
+
+Flan-T5 + Q-Former構築の要点
+
+1. Visionを凍結
+2. Query tokensを自前で持つ
+3. Q-Formerで圧縮
+4. LinearでT5次元へ
+5. T5 encoderに inputs_embeds で渡す
+6. LLMは凍結
+
+## 実験結果
+
+
