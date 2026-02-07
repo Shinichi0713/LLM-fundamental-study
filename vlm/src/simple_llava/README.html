@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x672c;&#x8a66;&#x9a13;&#x306e;&#x76ee;&#x7684;&#x3068;&#x9032;&#x3081;&#x65b9;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>今回は前回までで扱ってきたVLM(Vision-Language Model)について、学習コード選定、モデル実装の上実際に学習まで行ってみました。
+実装までと、試験の結果をまとめます。</p>
+<h2 id="本試験の目的と進め方">本試験の目的と進め方</h2>
+<p>Q-Former + LoRA を用いた最小構成 VLM 実験について以下に示します。</p>
+<h3 id="1-この試験で何を確認したいのか試験意図">1. この試験で何を確認したいのか（試験意図）</h3>
+<h4 id="背景">背景</h4>
+<p>VLMは、</p>
+<ul>
+<li>画像エンコーダ（Vision Encoder）</li>
+<li>言語モデル（LLM）</li>
+<li>それらをつなぐ中間機構（Q-Former など）</li>
+</ul>
+<p>から構成されます。</p>
+<p>しかし実装・学習が複雑なため、</p>
+<blockquote>
+<p>「本当に“画像情報”が言語生成に使われているのか？」
+「どのモジュールがどの役割を果たしているのか？」</p>
+</blockquote>
+<p>が分かりにくくなりがちです。</p>
+<h4 id="本試験の狙い">本試験の狙い</h4>
+<p><strong>この実験では、次の一点だけを明確に確認します。</strong></p>
+<blockquote>
+<p><strong>Q-Former を介して画像特徴を与えることで、
+LLM の出力が画像に依存して変化するようになるか？</strong></p>
+</blockquote>
+<p>つまり、</p>
+<ul>
+<li>Vision Encoder は「特徴抽出器」</li>
+<li>Q-Former は「視覚情報の要約・選別器」</li>
+<li>LLM（LoRA）は「画像条件付き言語生成器」</li>
+</ul>
+<p>として <strong>役割分担が成立しているか</strong> を検証します。</p>
+<h4 id="なぜ-q-former--lora-なのか">なぜ Q-Former + LoRA なのか</h4>
+<ul>
+<li>LLM 全体を学習すると
+→ <em>言語能力の再学習</em> と <em>視覚条件付け</em> が混ざってしまう</li>
+<li>Q-Formerのみだと
+→ LLM 側が画像を活用しきれない場合がある</li>
+</ul>
+<p>そこで、</p>
+<ul>
+<li><strong>Q-Former：画像情報を抽出・圧縮</strong></li>
+<li><strong>LoRA：LLMが画像トークンを“どう使うか”だけ学習</strong></li>
+</ul>
+<p>という <strong>最小限かつ因果関係が追いやすい構成</strong>を採用します。</p>
+<h3 id="2-この試験でやらないこと">2. この試験で「やらないこと」</h3>
+<p>本試験は<strong>性能競争が目的ではありません</strong>。</p>
+<p>以下は意図的に行いません。</p>
+<ul>
+<li>❌ 大規模データセットでの高精度評価</li>
+<li>❌ Vision Encoder や LLM 本体のフルファインチューニング</li>
+<li>❌ 複雑なタスク（VQA、指示追従など）</li>
+</ul>
+<p>目的はあくまで <strong>構造理解と動作確認</strong> です。</p>
+<h3 id="3-モデル構成の全体像概念図">3. モデル構成の全体像（概念図）</h3>
+<pre><code>画像
+ ↓
+Vision Encoder（CLIP, freeze）
+ ↓
+視覚特徴列
+ ↓
+Q-Former（学習）
+ ↓
+少数の視覚トークン
+ ↓
+Linear Projection（学習）
+ ↓
+LLM 入力空間
+ ↓
+LLM + LoRA（LoRAのみ学習）
+ ↓
+テキスト生成
+</code></pre>
+<h3 id="4-試験をどのように進めるか手順">4. 試験をどのように進めるか（手順）</h3>
+<h4 id="step-1-最小データでの準備">Step 1: 最小データでの準備</h4>
+<ul>
+<li>
+<p>データ：COCO / Flickr30k のごく一部</p>
+</li>
+<li>
+<p>タスク：<strong>画像 → 短いキャプション生成</strong></p>
+</li>
+<li>
+<p>目的：</p>
+<ul>
+<li>loss が下がるか</li>
+<li>学習が正常に流れるか</li>
+</ul>
+</li>
+</ul>
+<h4 id="step-2-freeze--train-の切り分け確認">Step 2: Freeze / Train の切り分け確認</h4>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vision Encoder</td>
+<td>freeze</td>
+</tr>
+<tr>
+<td>LLM 本体</td>
+<td>freeze</td>
+</tr>
+<tr>
+<td>Q-Former</td>
+<td>train</td>
+</tr>
+<tr>
+<td>LLM LoRA</td>
+<td>train</td>
+</tr>
+<tr>
+<td>Projection</td>
+<td>train</td>
+</tr>
+</tbody>
+</table>
+<p>→ <strong>学習パラメータが少量であること</strong>を確認する</p>
+<h4 id="step-3-学習が成立しているかの確認">Step 3: 学習が成立しているかの確認</h4>
+<p>学習がうまく進むかについて以下を確認します。</p>
+<ul>
+<li>loss が epoch ごとに減少する</li>
+<li>同じ文章でも、画像を変えると生成が変わる</li>
+<li>Q-Former を固定すると性能が落ちる</li>
+</ul>
+<p>これにより、</p>
+<blockquote>
+<p>「画像 → Q-Former → LLM」
+という情報経路が実際に使われている</p>
+</blockquote>
+<p>ことを確認します。</p>
+<h4 id="step-4-対照実験重要">Step 4: 対照実験（重要）</h4>
+<p>理解を深めるために以下を比較します。</p>
+<table>
+<thead>
+<tr>
+<th>実験</th>
+<th>期待される結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-Formerあり</td>
+<td>画像依存の生成</td>
+</tr>
+<tr>
+<td>Q-Formerなし（平均プール）</td>
+<td>表現力が低下</td>
+</tr>
+<tr>
+<td>LoRAなし</td>
+<td>画像を無視しがち</td>
+</tr>
+</tbody>
+</table>
+<p>→ <strong>各構成要素の役割を分離して理解</strong>できます。</p>
+<h3 id="5-この試験で得られるもの">5. この試験で得られるもの</h3>
+<h4 id="技術的に理解できること">技術的に理解できること</h4>
+<ul>
+<li>Q-Former の役割（なぜ Query が必要か）</li>
+<li>LLM が画像トークンをどう条件として使うか</li>
+<li>LoRA が「適応」だけを担う仕組み</li>
+</ul>
+<h4 id="実装的に得られること">実装的に得られること</h4>
+<ul>
+<li>BLIP-2 系 VLM の最小実装テンプレート</li>
+<li>Colab で再現可能な実験環境</li>
+<li>将来の拡張（VQA / Instruct / 大規模化）の土台</li>
+</ul>
+<h3 id="6-この実験の位置づけまとめ">6. この実験の位置づけ（まとめ）</h3>
+<p>この試験は、</p>
+<blockquote>
+<p>「VLM を“ブラックボックスとして使う”前に、
+“中で何が起きているかを理解する”ための通過点」</p>
+</blockquote>
+<p>です。</p>
+<ul>
+<li>成功すれば
+→ 自作 VLM の設計・改良が理論的にできる</li>
+<li>失敗しても
+→ どの接続・学習が効いていないかが分かる</li>
+</ul>
+<p>ということを検証することを目的としています。</p>
+<h2 id="実験の対象">実験の対象</h2>
+<p>VLMで基本的なタスクである Image Captionを題材とします。</p>
+<p>先程述べた目的に沿うように学習して画像の説明が出来ることを確認することがターゲットです。</p>
+<p>また、実験を行う環境はgoogle colab上で行います。</p>
+<h3 id="学習データセット">学習データセット</h3>
+<p>データセットは <strong>Flickr8k Dataset</strong> というものを使います。</p>
+<p><strong>概要</strong></p>
+<p>Flickr8k は、
+<strong>画像と自然言語キャプションの対応関係を学習するための代表的な画像キャプション生成データセット</strong>です。</p>
+<p><strong>基本仕様</strong></p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画像数</td>
+<td><strong>8,000 枚</strong></td>
+</tr>
+<tr>
+<td>キャプション</td>
+<td><strong>各画像に 5 文ずつ</strong></td>
+</tr>
+<tr>
+<td>総キャプション数</td>
+<td>約 <strong>40,000 文</strong></td>
+</tr>
+<tr>
+<td>言語</td>
+<td>英語</td>
+</tr>
+<tr>
+<td>画像内容</td>
+<td>人物・動物・日常風景・屋外活動など</td>
+</tr>
+</tbody>
+</table>
+<p><strong>データの構造</strong></p>
+<p><strong>① 画像</strong></p>
+<ul>
+<li>JPEG 画像</li>
+<li>実世界の写真（Flickr 由来）</li>
+<li>解像度はばらつきあり</li>
+</ul>
+<p>例：</p>
+<ul>
+<li>子供が遊んでいる</li>
+<li>犬が走っている</li>
+<li>人が自転車に乗っている</li>
+</ul>
+<p><strong>② キャプション（教師データ）</strong></p>
+<p>各画像に対して <strong>5 つの異なる説明文</strong>があります。</p>
+<p>例：</p>
+<pre><code>A man riding a bicycle on a city street.
+A cyclist rides down the road.
+A person on a bike in traffic.
+A man is biking along the street.
+A bicycle rider moves through the city.
+</code></pre>
+<p>→ <strong>意味は同じだが表現が異なる</strong>
+→ 言語生成モデルの学習に非常に有効</p>
+<p><strong>今回の学習での使い方</strong></p>
+<p>入力と出力の対応は以下の通りで典型的な <strong>Image Captioning（画像キャプション生成）</strong> タスクです。</p>
+<table>
+<thead>
+<tr>
+<th>モデル入力</th>
+<th>モデル出力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画像</td>
+<td>キャプション文</td>
+</tr>
+</tbody>
+</table>
+<h3 id="モデルの構成">モデルの構成</h3>
+<p>以下では、 <strong>今回あなたが構築・学習した VLM（Vision-Language Model）の構成</strong> を説明していきます。</p>
+<p><strong>モデル全体像</strong></p>
+<p>今回構築したモデルは、次の 4 つの主要コンポーネントから成ります。</p>
+<pre><code>画像
+ ↓
+Vision Encoder（CLIP）
+ ↓
+Q-Former（Query-based Transformer）
+ ↓
+Projection Layer
+ ↓
+LLM（GPT-2 + LoRA）
+ ↓
+テキスト（キャプション）
+</code></pre>
+<p>これは <strong>BLIP-2 系 VLM の最小構成</strong>を、
+<strong>Google Colab 上で動くサイズ</strong>に落とし込んだものです。</p>
+<p><strong>各コンポーネントの役割</strong></p>
+<p><strong>① Vision Encoder（CLIP ViT）</strong></p>
+<p><strong>役割</strong></p>
+<ul>
+<li>画像を「視覚トークン列」に変換する</li>
+</ul>
+<p><strong>特徴</strong></p>
+<ul>
+<li>事前学習済み</li>
+<li>高品質な視覚特徴を安定して抽出</li>
+<li>学習中は <strong>凍結（freeze）</strong></li>
+</ul>
+<p><strong>なぜ凍結するか</strong></p>
+<ul>
+<li>実験目的が「VLM の接続部の検証」であり、</li>
+<li>画像認識性能そのものを改善する必要がないため</li>
+</ul>
+<p><strong>② Q-Former（Query-based Transformer）</strong></p>
+<p><strong>役割</strong></p>
+<ul>
+<li>大量の視覚トークンから</li>
+<li><strong>少数の query token を使って重要情報だけを抽出</strong></li>
+</ul>
+<p><strong>仕組み</strong></p>
+<ul>
+<li>Learnable query tokens</li>
+<li>Cross-Attention（query → image）</li>
+</ul>
+<p><strong>出力</strong></p>
+<ul>
+<li>固定長（例：32 個）の視覚要約トークン</li>
+</ul>
+<p><strong>今回の実験での位置づけ</strong></p>
+<ul>
+<li>本実験の<strong>主役</strong></li>
+<li>「視覚と言語をどう接続するか」の検証対象</li>
+</ul>
+<p><strong>③ Projection Layer（線形写像）</strong></p>
+<p><strong>役割</strong></p>
+<ul>
+<li>Q-Former 出力を</li>
+<li>LLM の埋め込み空間に変換</li>
+</ul>
+<p><strong>なぜ必要か</strong></p>
+<ul>
+<li>
+<p>Vision 側と LLM 側では</p>
+<ul>
+<li>次元数</li>
+<li>分布
+が異なるため</li>
+</ul>
+</li>
+</ul>
+<p><strong>構成</strong></p>
+<ul>
+<li>単一の Linear Layer（最小構成）</li>
+</ul>
+<p><strong>④ LLM（GPT-2 + LoRA）</strong></p>
+<p><strong>役割</strong></p>
+<ul>
+<li>視覚条件付きで自然言語を生成</li>
+</ul>
+<p><strong>設定</strong></p>
+<ul>
+<li>GPT-2 small</li>
+<li>LoRA による軽量ファインチューニング</li>
+<li>ベース重みはほぼ凍結</li>
+</ul>
+<p><strong>なぜ LoRA を使うか</strong></p>
+<ul>
+<li>Colab で学習可能</li>
+<li>過学習を防ぐ</li>
+<li>視覚情報への適応のみを促す</li>
+</ul>
+<p><strong>今回構成の意図</strong></p>
+<p>今回の目的は：</p>
+<blockquote>
+<p><strong>「Q-Former を含む VLM が視覚情報を言語生成に正しく注入できるか」を最小構成で検証すること</strong></p>
+</blockquote>
+<p><strong>各設計選択の妥当性</strong></p>
+<p><strong>Vision Encoder を凍結</strong></p>
+<ul>
+<li>視覚特徴は十分高品質</li>
+<li>変数を増やさない</li>
+<li>実験の再現性が高い</li>
+</ul>
+<p><strong>Q-Former を導入</strong></p>
+<ul>
+<li>視覚→言語接続の最重要部分</li>
+<li>Query token による情報圧縮を検証可能</li>
+<li>単純 concat より構造的</li>
+</ul>
+<p><strong>単純な Projection</strong></p>
+<ul>
+<li>不要な複雑性を排除</li>
+<li>問題が起きたとき原因を特定しやすい</li>
+</ul>
+<p><strong>小型 LLM + LoRA</strong></p>
+<ul>
+<li>計算資源制約に適合</li>
+<li>「画像条件付き生成」が成立するかに集中できる</li>
+</ul>
+<h2 id="実験結果">実験結果</h2>
+<h3 id="コード">コード</h3>
+<p>実際に組んだコードは以下のレポジトリに保管しています。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/vlm/src/simple_llava">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/vlm/src/simple_llava</a></p>
+<h3 id="学習">学習</h3>
+<p>3epoch学習させました。
+未だ学習は十分ではないかもしれませんが、一旦性能を確認してみます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\src\simple_llava\image\README\1769855623928.png" alt="1769855623928"></p>
+<h3 id="評価">評価</h3>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\src\simple_llava\image\README\1769855498660.png" alt="1769855498660"></p>
+<p>この絵を入力してみましたが出力は何も行われませんでした。
+出てくるなり、[EOS] だったため文章生成自体されなかったという結果に終わりました。</p>
+<p>その他の絵も同様だったため、今回作成したモデルでは思うようなcaptionはされないという結果になりました。</p>
+<h2 id="結論">結論</h2>
+<p>google colabでも動作するということで、かなりモデルのサイズは小さくせざるをえませんでした。
+また、学習時のパラメータを抑えるためにq-loraを用いて、LLM自体の学習は行わないようにしています。</p>
+<p>今回の結果ですが、[EOS]が出てくること自体は、コードによる学習は行われたということになりそうです。
+(ダメならば、もっと意味のないトークンが並ぶことが多いようです)</p>
+<p>この場合、LLMからすると、まだ何を行うべきかが理解できていないということが解釈となりそうです。</p>
+<p>原因は学習の不足、VLMの能力不足が理由に上がりそうです。</p>
+<p>次回以降の反省点としていきたいと思います。</p>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+            
+        </body>
+        </html>

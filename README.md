@@ -15,6 +15,7 @@ On the other hand, I have Reinforcement-Learning repository also.
 [Shinichi0713/Reinforce-Learning-Study](https://github.com/Shinichi0713/Reinforce-Learning-Study)
 
 ## My Work
+
 The author is currently authoring a comprehensive book on LLMs. It is designed to guide readers through the process of building an LLM from the ground up, enabling them to master the underlying technologies of today's language models. This is a must-read for anyone serious about learning the inner workings of LLMs.
 
 <img src="image/README/1767397068346.png" alt="The Logic of LLMs" width="700" style="display: block; margin: 0 auto;">
@@ -408,9 +409,8 @@ https://www.youtube.com/watch?v=NatwshCTe_4
 at first, check the vesion respondance.
 https://pytorch.org/get-started/locally/
 
-
 ## blog
 
 I publish technical articles focused on LLM related technics on my blog. Feel free to visit and have a read.
 
-https://yoshishinnze.hatenablog.com/
+[writer's blog](https://yoshishinnze.hatenablog.com/)
