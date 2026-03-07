@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Re-challenging My Custom VLM&colon; Improving Image Captioning Performance</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>menu</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <h2 id="re-challenging-my-custom-vlm-improving-image-captioning-performance">Re-challenging My Custom VLM: Improving Image Captioning Performance</h2>
+<p>I decided to take another shot at building a custom VLM after my previous attempt failed. The task is <strong>Image Captioning</strong>, and the primary objective is to enable the model to understand and describe images properly.</p>
+<p>In my previous attempt, I tried training a model with a <strong>Q-Former</strong> architecture. Specifically, I constructed a model based on <strong>GPT-2</strong>, but the result was that it did not work effectively.</p>
+<p>[Link to blog post: <a href="https://yoshishinnze.hatenablog.com/entry/2026/02/01/000000">https://yoshishinnze.hatenablog.com/entry/2026/02/01/000000</a>]</p>
+<h2 id="purpose">Purpose</h2>
+<p>To clarify the goals for this session:</p>
+<blockquote>
+<p><strong>Improve VQA performance significantly compared to the previous minimal VLM (CLIP + Q-Former + GPT-2) within the constraints of running on Google Colab.</strong></p>
+</blockquote>
+<p>Under these conditions, rather than simply increasing the model size, it is crucial to balance:</p>
+<ul>
+<li><strong>An architecture suited for Image Captioning</strong></li>
+<li><strong>Utilization of pre-trained multimodal representations</strong></li>
+<li><strong>Computational complexity manageable for training and inference on Colab</strong></li>
+</ul>
+<hr>
+<h2 id="analysis-of-causes">Analysis of Causes</h2>
+<p>In the previous configuration (<strong>CLIP + Q-Former + GPT-2</strong>), the issue where <strong>no image caption was generated</strong> (outputting <code>tensor([[50256]])</code> → empty output) was not just a single bug, but a typical example of several structural failure factors overlapping.</p>
+<h3 id="conclusion-the-most-fundamental-reason">Conclusion (The Most Fundamental Reason)</h3>
+<p><strong>GPT-2 has weak &quot;conditional generation&quot; capabilities and was likely almost entirely unable to utilize the visual information provided via the Q-Former.</strong></p>
+<p>As a result:</p>
+<ul>
+<li>It ignored visual features.</li>
+<li>It outputted <code>&lt;eos&gt;</code> immediately at the start.</li>
+<li>This resulted in an empty caption.</li>
+</ul>
+<p><code>50256</code> is the <strong>eos token</strong> for GPT-2.</p>
+<h3 id="primary-failure-factors-structural-level">Primary Failure Factors (Structural Level)</h3>
+<h4 id="1-gpt-2-is-not-an-encoder-decoder">1. GPT-2 is not an Encoder-Decoder</h4>
+<p>GPT-2 is <strong>Decoder-only</strong>, and its original purpose is next-token prediction (text continuation). In the previous setup:
+<code>Image → CLIP → Q-Former → GPT-2</code>
+The problem is that GPT-2 lacks a built-in mechanism to &quot;force&quot; the use of external features (it lacks standard Cross-Attention). Consequently, even during training, the model finds that simply outputting <code>&lt;eos&gt;</code> results in a smaller loss than trying to use visual features, leading to <strong>condition ignoring.</strong></p>
+<h4 id="2-insufficient-training-data">2. Insufficient Training Data</h4>
+<p>Using Flickr8k (6,000–8,000 images) against GPT-2's 100 million parameters essentially meant trying to learn visual-conditioned language generation from scratch, leading to mode collapse.</p>
+<h4 id="3-insufficient-information-flow-q-former--gpt-2">3. Insufficient Information Flow (Q-Former → GPT-2)</h4>
+<p>In a typical implementation where the Q-Former output is passed through a Linear layer to the GPT-2 embedding dimension, GPT-2's weak prefix conditioning means the influence of visual features often vanishes after just a few tokens. This is why BLIP-2 utilizes OPT or T5 instead.</p>
+<h4 id="4-training-stability-and-settings">4. Training Stability and Settings</h4>
+<p>Issues such as full-parameter fine-tuning of GPT-2, small batch sizes, high learning rates, or the absence of LoRA often lead to the collapse of the language prior. Additionally, the &quot;pad token is same as eos token&quot; warning likely encouraged the model to overfit on the EOS token.</p>
+<hr>
+<h2 id="model-construction">Model Construction</h2>
+<p>Following the BLIP-2 philosophy, I will construct a <strong>Q-Former type VLM using Flan-T5 as the language model</strong>.</p>
+<h3 id="overall-architecture-flan-t5--q-former">Overall Architecture (Flan-T5 + Q-Former)</h3>
+<pre><code>Image
+  ↓
+Vision Encoder (CLIP ViT)
+  ↓
+Q-Former (Query Transformer)
+  ↓
+Flan-T5 (Encoder-Decoder LLM)
+  ↓
+Text Generation
+
+</code></pre>
+<h3 id="step-15-components-and-setup-colab-oriented">Step 1–5: Components and Setup (Colab-oriented)</h3>
+<ul>
+<li><strong>Vision:</strong> <code>openai/clip-vit-base-patch32</code> (Frozen)</li>
+<li><strong>Q-Former:</strong> <code>Blip2QFormerModel</code> with 32 learnable query tokens.</li>
+<li><strong>LLM:</strong> <code>google/flan-t5-base</code> (Frozen). This is chosen because it fits within Colab's VRAM (approx. 8–10GB).</li>
+<li><strong>Projection:</strong> A Linear layer to map Q-Former's hidden size to T5's embedding dimension.</li>
+</ul>
+<h3 id="step-67-forward-processing-and-trainable-parameters">Step 6–7: Forward Processing and Trainable Parameters</h3>
+<p>The core logic involves passing the Q-Former's output as the <code>inputs_embeds</code> for the T5 Encoder. Following the BLIP-2 strategy, the <strong>Vision Encoder and LLM are frozen</strong>, while the <strong>Q-Former, Query Tokens, and Projection layer are trained.</strong></p>
+<h3 id="step-8-why-this-configuration-is-superior">Step 8: Why this configuration is superior</h3>
+<ol>
+<li><strong>Realistic for Colab:</strong> Flan-T5-base is approx. 1GB.</li>
+<li><strong>Stronger than GPT-2:</strong> Being an Encoder-Decoder with native Cross-Attention and pre-training via Instruction Tuning, it has much higher VLM suitability.</li>
+</ol>
+<hr>
+<h2 id="experimental-results">Experimental Results</h2>
+<p>Training was conducted for 5 epochs. The loss transitioned as follows:</p>
+<ul>
+<li>Epoch 1: 9.9075</li>
+<li>...</li>
+<li>Epoch 5: 9.9096</li>
+</ul>
+<h3 id="testing">Testing</h3>
+<p>After training, I picked a sample from the loader and generated text.</p>
+<p><strong>Model Output:</strong></p>
+<ul>
+<li><strong>Generated:</strong> <code>- The Associated Press - The Associated Press is a news organization that covers the political and economic news from Washington, D.</code></li>
+</ul>
+<p><strong>Observation:</strong>
+Well... it’s completely different. While the model is now capable of generating sentences, the meaning is entirely unrelated to the image.</p>
+<p>However, the fact that it can now generate text at all is progress. The short training time necessitated by Google Colab's limits likely prevented the model from fully learning the translation between visual and textual space.</p>
+<hr>
+<h2 id="reflection">Reflection</h2>
+<p>In this attempt, I revised the internal structure based on previous failures. I kept the Q-Former but replaced the backbone LLM with Flan-T5, based on the hypothesis that <strong>Cross-Attention is essential for multimodal systems to function properly.</strong></p>
+<p>Although it still fails to generate descriptions that match the images—likely due to insufficient training—the model has progressed to the point of generating actual sentences.</p>
+<p>I feel like I am just one step away.</p>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+            
+        </body>
+        </html>
