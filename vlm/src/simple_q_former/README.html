@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x76ee;&#x7684;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+
+</style>
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+ 
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <p>先日うまくいかなかった自作VLMを再チャレンジしようと思います。
+タスクはImage Captionで、Image Captionをうまく理解できるようにすることを目的として検討します。</p>
+<p>因みに先日はQ-Formerの学習試行を行いました。
+GPT-2ベースでモデル構築の上学習しましたが、あまりうまくいかなかったという結果でした。</p>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/02/01/000000">https://yoshishinnze.hatenablog.com/entry/2026/02/01/000000</a></p>
+<h2 id="目的">目的</h2>
+<p>目的を整理します。</p>
+<blockquote>
+<p><strong>Google Colab 上で動く範囲で、先ほどの最小VLM（CLIP + Q-Former + GPT-2）よりVQA性能を明確に向上させたい</strong></p>
+</blockquote>
+<p>この条件では、単にモデルを大きくするよりも、</p>
+<ul>
+<li><strong>Image Captionに適したアーキテクチャ</strong></li>
+<li><strong>事前学習済みマルチモーダル表現の活用</strong></li>
+<li><strong>Colabで学習・推論可能な計算量</strong></li>
+</ul>
+<p>のバランスが重要です。</p>
+<h2 id="原因考察">原因考察</h2>
+<p>先日の構成（<strong>CLIP + Q-Former + GPT-2</strong>）で <strong>Image Caption が生成されなかった（<code>tensor([[50256]])</code> → 空出力）件</strong>は、単一の不具合というより、<strong>構成的に起きやすい失敗要因が重なった典型例</strong>です。</p>
+<h3 id="結論最も本質的な理由">結論（最も本質的な理由）</h3>
+<p><strong>GPT-2は「条件付き生成（conditioning）」に弱く、Q-Former経由の視覚情報をほぼ利用できていない可能性が高い</strong></p>
+<p>その結果：</p>
+<ul>
+<li>視覚特徴を無視</li>
+<li>開始直後に <code>&lt;eos&gt;</code> を出力</li>
+<li>→ 空キャプション</li>
+</ul>
+<p><code>50256</code> は GPT-2 の <strong>eos token</strong> です。</p>
+<h3 id="失敗の主因構造レベル">失敗の主因（構造レベル）</h3>
+<h4 id="-gpt-2はencoder-decoderではない">① GPT-2はEncoder-Decoderではない</h4>
+<p>GPT-2は：</p>
+<ul>
+<li><strong>Decoder-only</strong></li>
+<li>本来の用途：次トークン予測（テキスト続き生成）</li>
+</ul>
+<p>今回の構成：</p>
+<pre><code>Image → CLIP → Q-Former → GPT-2
+</code></pre>
+<p>ここで問題：</p>
+<ul>
+<li>GPT-2には「外部特徴を強制的に使う仕組み」がない</li>
+<li>Cross-Attentionが標準では存在しない</li>
+</ul>
+<p>結果：</p>
+<p><strong>条件無視問題</strong></p>
+<p>学習中も：</p>
+<pre><code>P(token | previous tokens)
+</code></pre>
+<p>だけで最適化されるため、</p>
+<p>視覚特徴を使うよりも</p>
+<pre><code>即EOS
+</code></pre>
+<p>の方が損失が小さくなるケースが多い。
+→GPT-2は損失最小のため、EOSをすぐに出してダメージ最小化を狙ってた可能性があります。</p>
+<h4 id="-学習データ量が少なすぎる">② 学習データ量が少なすぎる</h4>
+<p>Flickr8k：</p>
+<ul>
+<li>6,000〜8,000画像</li>
+<li>GPT-2: 1億パラメータ</li>
+</ul>
+<p>これは実質：</p>
+<blockquote>
+<p>視覚条件付き言語生成をゼロから学習させている状態</p>
+</blockquote>
+<p>結果：</p>
+<ul>
+<li>条件無視</li>
+<li>モード崩壊</li>
+<li>EOS出力</li>
+</ul>
+<h4 id="-q-formergpt-2接続の情報量不足">③ Q-Former→GPT-2接続の情報量不足</h4>
+<p>典型的な実装：</p>
+<pre><code>Q-Former出力 → Linear → GPT-2 embedding次元
+</code></pre>
+<p>問題：</p>
+<ul>
+<li>GPT-2はprefix conditioningに弱い</li>
+<li>数個のトークンでは影響が消える</li>
+</ul>
+<p>BLIP2がOPT/T5を使う理由はここです。</p>
+<h4 id="-学習安定性の問題実務的に多い">④ 学習安定性の問題（実務的に多い）</h4>
+<p>もし以下条件なら、ほぼ失敗します：</p>
+<ul>
+<li>GPT-2フル学習</li>
+<li>batch小</li>
+<li>learning rate大きい</li>
+<li>LoRAなし</li>
+</ul>
+<p>結果：</p>
+<ul>
+<li>Language prior崩壊</li>
+<li>生成不能</li>
+<li>EOS固定</li>
+</ul>
+<h4 id="-attention-mask警告ログの内容">⑤ Attention mask警告（ログの内容）</h4>
+<p>先日でていたログ：</p>
+<blockquote>
+<p>pad token is same as eos token</p>
+</blockquote>
+<p>これは：</p>
+<ul>
+<li>GPT-2のpad設定不適切</li>
+<li>学習時にEOSが過学習される</li>
+</ul>
+<p>これもEOS出力を助長します。</p>
+<h3 id="今回構成">今回構成</h3>
+<p>文章生成するLLMをGPT-2からFlan-T5に変更しようと思います。
+なぜFlan-T5では改善するのかですが。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>GPT-2</th>
+<th>Flan-T5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>構造</td>
+<td>Decoder-only</td>
+<td>Encoder-Decoder</td>
+</tr>
+<tr>
+<td>外部条件</td>
+<td>弱い</td>
+<td>強い</td>
+</tr>
+<tr>
+<td>Cross-Attention</td>
+<td>なし</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>少量データ</td>
+<td>弱い</td>
+<td>比較的強い</td>
+</tr>
+<tr>
+<td>VLM用途</td>
+<td>不向き</td>
+<td>向いている</td>
+</tr>
+</tbody>
+</table>
+<h2 id="モデル構築">モデル構築</h2>
+<p>次に上述の、<strong>Flan-T5 を言語モデルとして用いた Q-Former 型 VLM</strong>を、BLIP-2の考え方に沿って<strong>自分で構築する方法</strong>を、研究実装レベルで体系的に説明します。
+（Colabでの実装を前提、かつ今回のトラブルを避ける構成にしています）</p>
+<h3 id="全体構成flan-t5--q-former">全体構成（Flan-T5 + Q-Former）</h3>
+<p>BLIP-2型VLMは次の3ブロックです。</p>
+<pre><code>画像
+  ↓
+Vision Encoder（CLIP ViT）
+  ↓
+Q-Former（Query Transformer）
+  ↓
+Flan-T5（Encoder-Decoder LLM）
+  ↓
+テキスト生成
+</code></pre>
+<h5 id="各役割">各役割</h5>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vision Encoder</td>
+<td>画像 → patch特徴</td>
+</tr>
+<tr>
+<td>Q-Former</td>
+<td>画像特徴を言語トークン数に圧縮</td>
+</tr>
+<tr>
+<td>Flan-T5</td>
+<td>テキスト生成</td>
+</tr>
+</tbody>
+</table>
+<p>ポイント：</p>
+<blockquote>
+<p><strong>LLMは直接画像を見ない</strong> = Q-Formerが「言語に近い表現」を作る</p>
+</blockquote>
+<h3 id="step-1モデル選択colab向け">Step 1：モデル選択（Colab向け）</h3>
+<p>今回使うモデル・ネットワークパラメータは以下とします。</p>
+<ul>
+<li>Vision: <code>openai/clip-vit-base-patch32</code></li>
+<li>Q-Former: <code>Blip2QFormerModel</code></li>
+<li>LLM: <code>google/flan-t5-base</code></li>
+</ul>
+<p>選定理由はGoogle Colabで動作させるギリギリだからです。</p>
+<ul>
+<li>VRAM ≈ 8〜10GBで動く</li>
+<li>XLは15GB以上必要</li>
+</ul>
+<h3 id="step-2基本ロード">Step 2：基本ロード</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> (
+    CLIPVisionModel,
+    Blip2QFormerConfig,
+    Blip2QFormerModel,
+    T5ForConditionalGeneration,
+    T5Tokenizer
+)
+
+device = <span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>
+
+<span class="hljs-comment"># Vision Encoder</span>
+vision_model = CLIPVisionModel.from_pretrained(
+    <span class="hljs-string">&quot;openai/clip-vit-base-patch32&quot;</span>
+).to(device)
+
+vision_model.<span class="hljs-built_in">eval</span>()
+<span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> vision_model.parameters():
+    p.requires_grad = <span class="hljs-literal">False</span>
+</code></pre>
+<h3 id="step-3q-former構築">Step 3：Q-Former構築</h3>
+<p>Q-Formerは</p>
+<ul>
+<li>learnable query tokens</li>
+<li>cross-attention to vision features</li>
+</ul>
+<h3 id="設定">設定</h3>
+<pre><code class="language-python">qformer_config = Blip2QFormerConfig(
+    hidden_size=<span class="hljs-number">768</span>,
+    num_hidden_layers=<span class="hljs-number">6</span>,
+    num_attention_heads=<span class="hljs-number">12</span>,
+    intermediate_size=<span class="hljs-number">3072</span>,
+    encoder_hidden_size=vision_model.config.hidden_size
+)
+
+qformer = Blip2QFormerModel(qformer_config).to(device)
+
+<span class="hljs-comment"># Query tokens（重要）</span>
+num_query_tokens = <span class="hljs-number">32</span>
+query_tokens = torch.nn.Parameter(
+    torch.randn(<span class="hljs-number">1</span>, num_query_tokens, qformer_config.hidden_size)
+).to(device)
+</code></pre>
+<p>※これが以前の <code>query_tokens</code> エラーの本体です
+BLIP2本体以外では<strong>自分で持つ必要があります</strong></p>
+<h3 id="step-4flan-t5ロード">Step 4：Flan-T5ロード</h3>
+<pre><code class="language-python">tokenizer = T5Tokenizer.from_pretrained(<span class="hljs-string">&quot;google/flan-t5-base&quot;</span>)
+
+llm = T5ForConditionalGeneration.from_pretrained(
+    <span class="hljs-string">&quot;google/flan-t5-base&quot;</span>
+).to(device)
+
+<span class="hljs-comment"># LLMは凍結（BLIP-2戦略）</span>
+<span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> llm.parameters():
+    p.requires_grad = <span class="hljs-literal">False</span>
+</code></pre>
+<p>理由
+→ Colabで学習安定
+→ Q-Formerだけ学習するのがBLIP-2の本質</p>
+<h3 id="step-5projection重要">Step 5：Projection（重要）</h3>
+<p>Q-Formerの出力 → T5埋め込み次元へ</p>
+<pre><code class="language-python">proj = torch.nn.Linear(
+    qformer_config.hidden_size,
+    llm.config.d_model
+).to(device)
+</code></pre>
+<h3 id="step-6forward処理核心">Step 6：Forward処理（核心）</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">image, input_ids, attention_mask</span>):
+    <span class="hljs-comment"># 1. Vision</span>
+    <span class="hljs-keyword">with</span> torch.no_grad():
+        vision_outputs = vision_model(pixel_values=image)
+        image_embeds = vision_outputs.last_hidden_state
+
+    B = image.size(<span class="hljs-number">0</span>)
+
+    <span class="hljs-comment"># 2. Query expand</span>
+    queries = query_tokens.expand(B, -<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>)
+
+    <span class="hljs-comment"># 3. Q-Former</span>
+    q_outputs = qformer(
+        query_embeds=queries,
+        encoder_hidden_states=image_embeds,
+        return_dict=<span class="hljs-literal">True</span>
+    )
+
+    q_hidden = q_outputs.last_hidden_state
+
+    <span class="hljs-comment"># 4. Projection</span>
+    q_hidden = proj(q_hidden)
+
+    <span class="hljs-comment"># 5. T5 Encoder入力として使用</span>
+    encoder_outputs = llm.encoder(
+        inputs_embeds=q_hidden,
+        return_dict=<span class="hljs-literal">True</span>
+    )
+
+    <span class="hljs-comment"># 6. Text generation loss</span>
+    outputs = llm(
+        encoder_outputs=encoder_outputs,
+        labels=input_ids,
+        attention_mask=attention_mask
+    )
+
+    <span class="hljs-keyword">return</span> outputs
+</code></pre>
+<p>ここが</p>
+<blockquote>
+<p><strong>Q-Former → LLMの接続の本質</strong></p>
+</blockquote>
+<h3 id="step-7学習対象パラメータ">Step 7：学習対象パラメータ</h3>
+<pre><code class="language-python">trainable = <span class="hljs-built_in">list</span>(qformer.parameters()) + \
+            <span class="hljs-built_in">list</span>(proj.parameters()) + \
+            [query_tokens]
+
+optimizer = torch.optim.AdamW(trainable, lr=<span class="hljs-number">1e-4</span>)
+</code></pre>
+<p>BLIP-2戦略：</p>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>学習</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vision</td>
+<td>Freeze</td>
+</tr>
+<tr>
+<td>Flan-T5</td>
+<td>Freeze</td>
+</tr>
+<tr>
+<td>Q-Former</td>
+<td>Train</td>
+</tr>
+<tr>
+<td>Query tokens</td>
+<td>Train</td>
+</tr>
+<tr>
+<td>Projection</td>
+<td>Train</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-8なぜこの構成が良いか実験的理由">Step 8：なぜこの構成が良いか（実験的理由）</h3>
+<h5 id="-colabで現実的">① Colabで現実的</h5>
+<p>Flan-T5-base ≈ 1GB</p>
+<h5 id="-gpt-2より強い理由">② GPT-2より強い理由</h5>
+<p>Flan-T5は</p>
+<ul>
+<li>Encoder-Decoder</li>
+<li>Cross-attention設計</li>
+<li>Instruction tuning済み</li>
+</ul>
+<p>→ VLM適性が高い</p>
+<h5 id="-blip-2理論に一致">③ BLIP-2理論に一致</h5>
+<p>BLIP-2の思想：</p>
+<blockquote>
+<p>大きなLLMは凍結
+小さな橋だけ学習</p>
+</blockquote>
+<p>これを完全に再現しています。</p>
+<h3 id="step-9生成テスト">Step 9：生成（テスト）</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate</span>(<span class="hljs-params">image, prompt=<span class="hljs-string">&quot;Describe the image&quot;</span></span>):
+    inputs = tokenizer(prompt, return_tensors=<span class="hljs-string">&quot;pt&quot;</span>).to(device)
+
+    <span class="hljs-keyword">with</span> torch.no_grad():
+        vision_outputs = vision_model(pixel_values=image)
+        image_embeds = vision_outputs.last_hidden_state
+
+        B = image.size(<span class="hljs-number">0</span>)
+        queries = query_tokens.expand(B, -<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>)
+
+        q_outputs = qformer(
+            query_embeds=queries,
+            encoder_hidden_states=image_embeds,
+            return_dict=<span class="hljs-literal">True</span>
+        )
+
+        q_hidden = proj(q_outputs.last_hidden_state)
+
+        encoder_outputs = llm.encoder(
+            inputs_embeds=q_hidden,
+            return_dict=<span class="hljs-literal">True</span>
+        )
+
+        outputs = llm.generate(
+            encoder_outputs=encoder_outputs,
+            max_length=<span class="hljs-number">30</span>
+        )
+
+    <span class="hljs-keyword">return</span> tokenizer.decode(outputs[<span class="hljs-number">0</span>], skip_special_tokens=<span class="hljs-literal">True</span>)
+</code></pre>
+<h3 id="まとめ研究的視点">まとめ（研究的視点）</h3>
+<p>Flan-T5 + Q-Former構築の要点</p>
+<ol>
+<li>Visionを凍結</li>
+<li>Query tokensを自前で持つ</li>
+<li>Q-Formerで圧縮</li>
+<li>LinearでT5次元へ</li>
+<li>T5 encoderに inputs_embeds で渡す</li>
+<li>LLMは凍結</li>
+</ol>
+<h2 id="実験結果">実験結果</h2>
+<p>学習は5 epoch。</p>
+<p>ロスはこんな感じで推移しました。</p>
+<pre><code>Epoch 1, Loss: 9.9075
+Epoch 2, Loss: 9.9085
+Epoch 3, Loss: 9.9094
+Epoch 4, Loss: 9.9139
+Epoch 5, Loss: 9.9096
+</code></pre>
+<h3 id="テスト">テスト</h3>
+<p>学習後、loaderから適当にピックアップして、文章生成しました。
+画像と生成された文章をセットで出力します。</p>
+<p><strong>モデル出力</strong></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\src\simple_q_former\image\README\1770508774015.png" alt="1770508774015"></p>
+<p>うーん。。。
+全然違う。。。
+文章は生成できるようになりましたが、全然違う意味を出力しています。</p>
+<pre><code>Step 0 Sample 0
+Generated: - The Associated Press - The Associated Press is a news organization that covers the political and economic news from Washington, D.
+</code></pre>
+<p>但し、今度は文章生成できるようになりました。
+Google Colabが時間制限あったので、泣く泣く学習時間を短くしたことが少なからず影響あったかもしれません。</p>
+<p>学習している場所がかなり極小なので変換しきれなかったか。。。</p>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+            
+        </body>
+        </html>
