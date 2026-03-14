@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <p>本日は思考の連鎖を行い、より精度の高い推論を行うAIモデルについて説明していきます。</p>
+<h2 id="概要">概要</h2>
+<p>思考の連鎖のことを <strong>CoT（Chain of Thought：思考の連鎖）</strong> と呼びます。</p>
+<p>CoTを行うモデルとは、一言で言えば <strong>「答えを出す前に、人間のように一歩ずつ論理を組み立ててから回答するAI」</strong> のことです。</p>
+<p>従来のモデルが「直感」で即答していたのに対し、CoTモデルは「熟考」してから答えるという大きな違いがあります。</p>
+<h3 id="1-cotの概要システム1からシステム2へ">1. CoTの概要：システム1からシステム2へ</h3>
+<p>心理学者のダニエル・カーネマンが提唱した「二重過程理論」になぞらえて説明されることが一般的です。</p>
+<ul>
+<li><strong>従来のモデル（システム1）:</strong> 直感的、高速。単語の並びの確率から即座に答えを生成します。そのため、複雑な計算や論理パズルで「うっかりミス」をしやすい傾向がありました。</li>
+<li><strong>CoTモデル（システム2）:</strong> 論理的、遅い。問題を小さなステップに分解し、 <strong>「まずAを確認し、次にBを計算し、その結果からCを導く」</strong> という中間プロセスを明示的に踏みます。</li>
+</ul>
+<h3 id="2-2種類のcotアプローチ">2. 2種類のCoTアプローチ</h3>
+<p>CoTを実現する方法には、大きく分けて「プロンプトによる手法」と「モデルの設計による手法」の2つがあります。</p>
+<p><strong>① プロンプトによるCoT（Prompting）</strong></p>
+<p>既存の汎用モデルに対し、ユーザーが指示を与えることで思考を促す手法です。</p>
+<ul>
+<li><strong>有名な呪文:</strong> 「ステップバイステップで考えてください（Let's think step by step）」と付け加えるだけで、推論の精度が劇的に向上することが知られています。</li>
+</ul>
+<p><strong>② 推論特化型モデル（Native Reasoning）</strong></p>
+<p>OpenAIの <strong>o1 (o1-preview/mini)</strong> や <strong>DeepSeek-R1</strong> などの最新モデルがこれに該当します。</p>
+<ul>
+<li><strong>仕組み:</strong> モデル自体が強化学習（RL）を通じて、「どう思考すれば正解に辿り着けるか」を自ら学習しています。</li>
+<li><strong>特徴:</strong> ユーザーが指示しなくても、内部で（あるいは画面上に隠された形で）膨大な「思考トークン」を生成し、数秒〜数十秒かけて難問を解きます。</li>
+</ul>
+<h3 id="3-なぜcotが必要なのか解決する課題">3. なぜCoTが必要なのか（解決する課題）</h3>
+<p>CoTを行うモデルは、これまでのLLMが苦手としていた領域で圧倒的な力を発揮します。</p>
+<ul>
+<li><strong>数学・論理パズル:</strong> 途中の計算過程を書き出すことで、最終的な計算ミスを防ぎます。</li>
+<li><strong>複雑なコーディング:</strong> アルゴリズムの設計図を先に作り、それに沿ってコードを書くため、バグが少なくなります。</li>
+<li><strong>自己修正能力:</strong> 思考の途中で「あ、この前提は間違っていた」と気づき、自分でルートを修正することが可能になります。</li>
+</ul>
+<h2 id="cotによる効果">CoTによる効果</h2>
+<p>前節で述べた数学的思考や、ステップバイステップの思考が必要な問題に対して特に効果を発揮します。</p>
+<p><strong>1. Chain-of-Thought Prompting Elicits Reasoning in Large Language Models (2022)</strong></p>
+<p>CoTという手法を世に広めたGoogleの研究者らによる基礎的な論文です。</p>
+<ul>
+<li>比較内容: 標準的なプロンプト（直接回答）vs CoTプロンプト（「ステップバイステップで考えて」と指示）。</li>
+<li>定量的な結果（GSM8Kベンチマーク - 小学校算数の文章題）:</li>
+</ul>
+<p>PaLM 540Bモデルでの結果が示されてます。 標準的なプロンプトでは17.9%だった正解率が、CoTを用いるだけで56.9%まで向上しました。</p>
+<p>モデルサイズが大きくなるほど、CoTによる性能向上の幅が大きくなる（スケーリング則）ことも示されています。</p>
+<p><strong>2. Learning to Reason with LLMs (OpenAI o1 発表資料, 2024)</strong></p>
+<p>推論に特化した最新モデル「o1」と、従来の汎用モデル「GPT-4o」を比較した結果です。</p>
+<ul>
+<li>比較内容: 標準的な次単語予測モデル (GPT-4o) vs 内部で長大な思考を行う推論モデル (o1)。
+<ul>
+<li>定量的な結果:
+AIME 2024（全米数学招待試験）: GPT-4oの正解率が13%だったのに対し、o1は83%（1サンプルの場合）〜93%（複数回答からの選別時）という圧倒的な差を記録しました。
+GPQA Diamond（博士レベルの科学問題）: o1は人間の専門家（博士号保持者）の正解率を上回り、このベンチマークで初めて人間を超えたモデルとなりました。</li>
+</ul>
+</li>
+</ul>
+<p>CoT（Chain of Thought：思考の連鎖）を行うモデルとは、一言で言えば**「答えを出す前に、人間のように一歩ずつ論理を組み立ててから回答するAI」**のことです。</p>
+<p>従来のモデルが「直感」で即答していたのに対し、CoTモデルは「熟考」してから答えるという大きな違いがあります。</p>
+<h3 id="性能の比較">性能の比較</h3>
+<p>以下のように結論付けることが出来ると考えています。
+CoTを行うモデルは基本的に何度も推論を行うことで難解な問題の解答率が向上するが、解答速度は遅くなります。</p>
+<table>
+<thead>
+<tr>
+<th>特徴</th>
+<th>従来のモデル</th>
+<th>CoTモデル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>回答速度</strong></td>
+<td>速い（即答）</td>
+<td>遅い（数秒〜数分の熟考）</td>
+</tr>
+<tr>
+<td><strong>得意分野</strong></td>
+<td>文章作成、翻訳、要約</td>
+<td>数学、理数系、プログラミング</td>
+</tr>
+<tr>
+<td><strong>信頼性</strong></td>
+<td>論理の飛躍が起きやすい</td>
+<td>プロセスが可視化され、正確性が高い</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cotを行う仕組み">CoTを行う仕組み</h2>
+<p>CoT（思考の連鎖）を「手法」ではなく、モデルの「能力」として組み込むためには、従来のLLMとは異なるアーキテクチャ上の工夫や、特殊な学習プロセスが必要になります。</p>
+<p>特に最近の推論特化型モデル（OpenAI o1やDeepSeek-R1）が採用している仕組みを軸に解説します。</p>
+<h3 id="1-学習の仕組み強化学習rlのパラダイムシフト">1. 学習の仕組み：強化学習（RL）のパラダイムシフト</h3>
+<p>従来のモデルは「次の単語を予測する（教師あり学習）」がメインでしたが、CoT能力の獲得には <strong>強化学習（Reinforcement Learning）</strong> が決定的な役割を果たします。</p>
+<ul>
+<li>
+<p><strong>報酬設計（Outcome-based vs Process-based）:</strong></p>
+</li>
+<li>
+<p>これまでは「最終的な答えが合っているか」に報酬を与えていました。</p>
+</li>
+<li>
+<p>最新のCoTモデルでは、 <strong>「正解に至るまでの論理ステップがいかに正確で無駄がないか」</strong> という推論プロセス自体を評価し、報酬を与える仕組み（Process-supervised Reward Models: PRM）が導入されています。</p>
+</li>
+<li>
+<p><strong>自己対戦（Self-Play / PPO）:</strong></p>
+</li>
+<li>
+<p>モデルに一つの問題を何度も解かせ、最も正解率が高かった思考パターンを学習にフィードバックします。これにより、モデルは「こう考えると失敗しにくい」という戦略を自ら発見します。</p>
+</li>
+</ul>
+<h3 id="2-アーキテクチャの工夫計算リソースの動的割り当て">2. アーキテクチャの工夫：計算リソースの動的割り当て</h3>
+<p>ハードウェアの計算資源を「いつ、どれだけ使うか」という制御が洗練されています。</p>
+<ul>
+<li>
+<p><strong>Test-Time Compute（推論時計算量）の増大:</strong></p>
+</li>
+<li>
+<p>従来のアーキテクチャは「1つの入力に対して1つの出力」を出す固定的なものでした。</p>
+</li>
+<li>
+<p>CoTモデルでは、難しい問題に対しては <strong>内部的な思考トークン（Hidden Thoughts）</strong> を大量に生成し、計算時間を引き延ばすことで「推論の深さ」を調整します。これはアーキテクチャそのものというより、デコーディング戦略の高度化です。</p>
+</li>
+<li>
+<p><strong>KVキャッシュの最適化:</strong></p>
+</li>
+<li>
+<p>思考プロセスが長くなるとコンテキスト（記憶）が膨大になります。長い思考を維持しつつ高速に処理するために、Grouped Query Attention (GQA) などのアテンション機構の最適化が必須となります。</p>
+</li>
+</ul>
+<h3 id="3-データの仕組み高品質な推論トレースの収集">3. データの仕組み：高品質な推論トレースの収集</h3>
+<p>「頭の良い人の考え方」をモデルに見せる必要があります。</p>
+<ul>
+<li>
+<p><strong>Chain-of-Thought Fine-tuning:</strong></p>
+</li>
+<li>
+<p>「問題＋回答」のペアではなく、「問題＋<strong>詳細な思考プロセス</strong>＋回答」という形式のデータを数万〜数十万件学習させます。</p>
+</li>
+<li>
+<p><strong>合成データの活用 (Synthetic Data):</strong></p>
+</li>
+<li>
+<p>人間が書いた思考プロセスには限界があるため、非常に賢いモデルに問題を解かせ、その「正解した時の思考ログ」を別のモデルの学習データとして再利用（蒸留）します。</p>
+</li>
+</ul>
+<h3 id="4-評価の仕組み検証器verifierの導入">4. 評価の仕組み：検証器（Verifier）の導入</h3>
+<p>モデルが出した答えだけでなく、その「理屈」が正しいかを数学的にチェックする仕組みが裏側で動いている場合があります。</p>
+<ul>
+<li><strong>STaR (Self-Taught Reasoner):</strong></li>
+<li>間違った思考プロセスで正解に辿り着いた場合、それを「悪い例」として除外し、正しい論理で正解したパターンだけを強化する反復的な学習アルゴリズムです。</li>
+</ul>
+<h3 id="まとめcotを実現する三本柱">まとめ：CoTを実現する三本柱</h3>
+<p>ここまでを整理すると以下のようになります。
+特に思考のプロセスを学習するため強化学習が鍵となってきます。</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>強化学習 (RL)</strong></td>
+<td>正解までの「考え方の道筋」を最適化する。</td>
+</tr>
+<tr>
+<td><strong>推論時計算 (TTC)</strong></td>
+<td>難しい問題に対し、思考トークンを増やして「考える時間」を確保する。</td>
+</tr>
+<tr>
+<td><strong>PRM (報酬モデル)</strong></td>
+<td>最終結果だけでなく、途中経過の論理破綻を厳しく採点する。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="強化学習の流れ">強化学習の流れ</h2>
+<p>CoT（思考の連鎖）を強化学習で獲得させるプロセスは、従来の「答えを当てる」学習から、 <strong>「正解に至るまでの『考え方』の報酬を最大化する」</strong> 学習へと進化しています。</p>
+<p>OpenAI o1やDeepSeek-R1などで採用されている、強化学習（RL）によるパラメータ更新のステップを順番に解説します。</p>
+<h3 id="1-初期モデルの準備cold-start">1. 初期モデルの準備（Cold Start）</h3>
+<p>まず、ベースとなるLLMに「思考の型」を教え込みます。
+ここは未だ教師あり学習です。</p>
+<ul>
+<li><strong>SFT（教師あり微調整）:</strong> 人間が書いた、あるいは非常に高性能なモデルが生成した「思考プロセス付きの回答データ」を用いて学習させます。</li>
+<li><strong>目的:</strong> モデルに「<code>&lt;thought&gt;</code>タグの中で思考し、最後に答えを出す」という基本的なフォーマットを覚えさせます。</li>
+</ul>
+<h3 id="2-推論の生成rollout--sampling">2. 推論の生成（Rollout / Sampling）</h3>
+<p>モデルに大量の問題（プロンプト）を与え、実際に回答させます。</p>
+<ul>
+<li><strong>サンプリング:</strong> 同じ問題に対して、モデルは異なる「思考の道筋」をいくつか生成します。</li>
+<li><strong>思考トークンの蓄積:</strong> この時、モデルは内部的に長い推論ステップ（思考トークン）を書き出します。</li>
+</ul>
+<h3 id="3-報酬の算出reward-scoring">3. 報酬の算出（Reward Scoring）</h3>
+<p>生成された各「思考＋回答」のペアに対して、スコア（報酬）を与えます。ここが最も重要なステップです。</p>
+<ul>
+<li><strong>Outcome Reward (ORM):</strong> 最終的な答えが正しいか（数学の解が一致するか、コードがテストを通るか）を判定します。</li>
+<li><strong>Process Reward (PRM):</strong> 思考の各ステップが論理的か、途中で矛盾していないかを判定します。</li>
+<li><strong>DeepSeek-R1などの工夫:</strong> 人間の評価を使わず、ルールベース（答え合わせ）や他のモデルによる自動評価で高速に報酬を与えます。</li>
+</ul>
+<p>そしてここ(思考プロセス（過程）の良し悪しにスコアを与える仕組み)が非常に熱視線を浴びている分野でもあります。
+特に「答えが合っているか（結果）」だけでなく、「考え方が正しいか（プロセス）」を評価するために、主に3つの数学的・工学的アプローチが取られています。</p>
+<ol>
+<li>PRM (Process-supervised Reward Models) による評価</li>
+</ol>
+<p>人間が「このステップは正しい、ここは間違い」とラベル付けした膨大なデータを使って、 <strong>「推論ステップの正しさを判定する専用のAI（報酬モデル）」</strong> を訓練する方法です。</p>
+<ul>
+<li>ステップごとの確率出力: 推論の各ステップ（通常は改行や句点区切り）の末尾に、報酬モデルが <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> から <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> のスコアを付与します。</li>
+<li>メリット: 最終的な答えが「たまたま」合っていただけのケース（例：計算ミスが2回重なって正解になった場合）を「不正解」として却下できます。</li>
+</ul>
+<ol start="2">
+<li>ルールベースによる形式的検証（DeepSeek-R1などで顕著）</li>
+</ol>
+<p>数学やプログラミングといった「正解が厳密に定義できる分野」では、人間や他のAIに頼らず、機械的にプロセスを評価します。</p>
+<ul>
+<li>
+<p>シンボリック検証: 数学の問題であれば、途中の数式を計算エンジン（SymPyなど）に渡し、前のステップから論理的に導出可能かをチェックします。</p>
+</li>
+<li>
+<p>フォーマット報酬: 思考プロセスの中に「実行可能なコード」や「特定の思考フレームワーク」が含まれているか、<thought> タグが適切に使われているかといった「形式」に対して報酬を与えます。</p>
+</li>
+<li>
+<p>言語の一致: 思考言語と回答言語が混ざっていないか（例：英語で考えて日本語で答える指示なのに、思考が日本語になっていないか）を判定します。</p>
+</li>
+</ul>
+<p>Gemini の回答
+思考プロセス（過程）の良し悪しにスコアを与える仕組みは、現在のAI開発において最も熱い研究分野の一つです。</p>
+<p>特に「答えが合っているか（結果）」だけでなく、「考え方が正しいか（プロセス）」を評価するために、主に3つの数学的・工学的アプローチが取られています。</p>
+<p><strong>1. PRM (Process-supervised Reward Models) による評価</strong></p>
+<p>人間が「このステップは正しい、ここは間違い」とラベル付けした膨大なデータを使って、**「推論ステップの正しさを判定する専用のAI（報酬モデル）」**を訓練する方法です。</p>
+<p>ステップごとの確率出力: 推論の各ステップ（通常は改行や句点区切り）の末尾に、報酬モデルが 0 から 1 のスコアを付与します。</p>
+<p>メリット: 最終的な答えが「たまたま」合っていただけのケース（例：計算ミスが2回重なって正解になった場合）を「不正解」として却下できます。</p>
+<p><strong>2. ルールベースによる形式的検証（DeepSeek-R1などで顕著）</strong></p>
+<p>数学やプログラミングといった「正解が厳密に定義できる分野」では、人間や他のAIに頼らず、機械的にプロセスを評価します。</p>
+<p>シンボリック検証: 数学の問題であれば、途中の数式を計算エンジン（SymPyなど）に渡し、前のステップから論理的に導出可能かをチェックします。</p>
+<p>フォーマット報酬: 思考プロセスの中に「実行可能なコード」や「特定の思考フレームワーク」が含まれているか、<thought> タグが適切に使われているかといった「形式」に対して報酬を与えます。</p>
+<p>言語の一致: 思考言語と回答言語が混ざっていないか（例：英語で考えて日本語で答える指示なのに、思考が日本語になっていないか）を判定します。</p>
+<p><strong>3. モデル間の「合意（Consensus）」による評価</strong></p>
+<p>「正解のプロセスが1つではない」場合、複数の強力なモデル（GPT-4oやClaude 3.5など）に判定を依頼します。</p>
+<p>LLM-as-a-Judge: 評価専用のプロンプトを受け取った「審判AI」が、生成された思考プロセスを読み、以下の観点でスコアを付けます。</p>
+<ul>
+<li>
+<p>論理の一貫性: 矛盾した主張をしていないか。</p>
+</li>
+<li>
+<p>冗長性: 答えに関係のない無駄な思考をダラダラと続けていないか。</p>
+</li>
+<li>
+<p>自己修正: 間違いに気づいた際に、正しく軌道修正できているか（これは高い報酬になります）。</p>
+</li>
+</ul>
+<p>実際に報酬を計算しているコードはこのようなものです。</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">correctness_reward</span>(<span class="hljs-params">prompts, completions, answer, **kwargs</span>):
+    <span class="hljs-comment"># 回答が正解と一致しているかチェック</span>
+    <span class="hljs-comment"># 正解なら高い報酬、不正解なら 0</span>
+    responses = [extract_answer(c) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> completions]
+    <span class="hljs-keyword">return</span> [<span class="hljs-number">1.0</span> <span class="hljs-keyword">if</span> r == a <span class="hljs-keyword">else</span> <span class="hljs-number">0.0</span> <span class="hljs-keyword">for</span> r, a <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(responses, answer)]
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">format_reward</span>(<span class="hljs-params">completions, **kwargs</span>):
+    <span class="hljs-comment"># &lt;thought&gt; タグを使って思考しているかチェック</span>
+    <span class="hljs-comment"># 形式を守っていれば報酬を与える</span>
+    <span class="hljs-keyword">return</span> [<span class="hljs-number">0.2</span> <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;&lt;thought&gt;&quot;</span> <span class="hljs-keyword">in</span> c <span class="hljs-keyword">and</span> <span class="hljs-string">&quot;&lt;/thought&gt;&quot;</span> <span class="hljs-keyword">in</span> c <span class="hljs-keyword">else</span> <span class="hljs-number">0.0</span> <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> completions]
+</code></pre>
+<p>このように、「正解したか」と「思考のプロセスを踏んだか」をコードで判定し、AIにフィードバックを与えています。</p>
+<h3 id="4-期待値の比較と有利度advantageの計算">4. 期待値の比較と有利度（Advantage）の計算</h3>
+<p>生成した複数の回答の中で、どれが「平均より良かったか」を計算します。</p>
+<ul>
+<li><strong>有利度（Advantage）:</strong> ある思考ルートが、他のルートと比較してどれだけ優れた報酬を得たかを数値化します。</li>
+<li><strong>ポイント:</strong> 「正解したルート」の確率を上げ、「間違えたルート」や「無駄に長いルート」の確率を下げるための指標になります。</li>
+</ul>
+<h3 id="5-目的関数の最適化ppo--grpo">5. 目的関数の最適化（PPO / GRPO）</h3>
+<p>計算された「有利度」に基づいて、モデルのパラメータを更新します。</p>
+<ul>
+<li><strong>PPO (Proximal Policy Optimization):</strong> 最も一般的な手法です。モデルの挙動が急激に変わりすぎないように制約をかけながら、報酬が高くなる方向へ重みを更新します。</li>
+<li><strong>GRPO (Group Relative Policy Optimization):</strong> DeepSeek-R1で採用された手法です。基準となるモデル（Critic）を置かず、生成したグループ内での相対評価で学習するため、メモリ効率が非常に高いのが特徴です。</li>
+</ul>
+<h3 id="6-反復学習iterative-training">6. 反復学習（Iterative Training）</h3>
+<p>1〜5のステップを何度も繰り返します。</p>
+<ul>
+<li><strong>自己進化:</strong> パラメータが更新されると、モデルは「より賢い思考」を生成できるようになります。</li>
+<li><strong>結果:</strong> 繰り返し学習することで、モデルは「特定の思考パターン（例：まず深呼吸して考える、矛盾を再確認する）」が正解率を高めることに気づき、そのパターンを強化していきます。</li>
+</ul>
+<h2 id="近年のトレンド">近年のトレンド</h2>
+<p>CoT（思考の連鎖）の研究は、ここ1〜2年で「プロンプトで工夫する段階」から <strong>「モデルの学習そのものに組み込む段階」</strong> へ急速にシフトしています。</p>
+<p>現在、アカデミアや業界で注目されている主要なトレンドを4つのポイントで解説します。</p>
+<h3 id="1-推論時計算test-time-computeの最大化">1. 「推論時計算（Test-Time Compute）」の最大化</h3>
+<p>現在の最大のトレンドは、モデルを大きくするだけでなく、 <strong>「回答を出すまでの計算時間を増やす」</strong> ことで性能を上げるアプローチです。</p>
+<ul>
+<li><strong>Search-based Reasoning:</strong> AlphaGoが盤面を先読みしたように、LLMが思考プロセスを複数展開し、木探索（Tree-of-Thought）を行って最適な推論ルートを探索する技術が主流になっています。</li>
+<li><strong>思考の深さの調整:</strong> モデルが「難しい問題だ」と判断したら、内部的に思考トークンを多く使い、逆に簡単な問題なら即答するように、計算資源を適応的に配分する研究が進んでいます。</li>
+</ul>
+<h3 id="2-自己進化自己修正self-correctionの高度化">2. 自己進化・自己修正（Self-Correction）の高度化</h3>
+<p>人間が評価データを与えなくても、モデル自身が推論の誤りに気づき、修正する能力をいかに高めるかが争点です。</p>
+<ul>
+<li><strong>Self-Correction loops:</strong> 思考の途中で「現在の推論には論理的な矛盾がある」と判定し、バックトラック（前の状態に戻ってやり直す）するメカニズムです。</li>
+<li><strong>反事実的な思考:</strong> 「もし自分の出した答えが間違っていたら？」という仮説をモデル自らが検証するプロセスを学習させ、ロバスト性を高める試みが盛んです。</li>
+</ul>
+<h3 id="3-多モーダルcotmultimodal-cot">3. 多モーダルCoT（Multimodal CoT）</h3>
+<p>文字情報だけでなく、画像、動画、音声と推論プロセスを融合させる研究です。</p>
+<ul>
+<li><strong>視覚的推論:</strong> 画像の中の物体関係を「見て、考えて、判断する」という一連のステップを、マルチモーダルモデルで一貫して行うアプローチです。</li>
+<li><strong>物理世界への応用:</strong> ロボットが複雑な作業をする際、カメラからの入力を思考のステップとして分解し、動作計画に変換する研究が加速しています。</li>
+</ul>
+<h3 id="4-思考の圧縮と蒸留reasoning-distillation">4. 思考の圧縮と蒸留（Reasoning Distillation）</h3>
+<p>o1やDeepSeek-R1のような「巨大な推論モデル」の知能を、いかに軽量なモデルに継承させるかというトレンドです。</p>
+<ul>
+<li><strong>思考の蒸留:</strong> 推論特化型モデル（Teacher）が出力した「思考のプロセス（Thought Trace）」を、小規模なモデル（Student）の教師データとして学習させることで、小さなモデルでも高度な論理推論能力を持たせることが可能になりました。</li>
+<li><strong>効率化:</strong> 推論ステップをコンパクトにまとめる（思考の要約）研究が進んでおり、スマホやエッジデバイス上で高速なCoTを実現する動きがあります。</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>ということで本日は思考の連鎖によって従来のワンスルーの文章を生成するだけでは解けなかった問題を解けるようにしたCoTについて説明を行いました。</p>
+<p>昨年出てきた凄いモデルの正体は学習に思考プロセスを設けて、学習段階で思考プロセスを評価する仕組みによって芽生えました。</p>
+<p>学習は解答の正誤を確認するものから、考えの確からしさを評価するものに移行した、ということになります。</p>
+<p>そして、この流れは次のフィジカルAIにも受け継がれていくことになるでしょう。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
