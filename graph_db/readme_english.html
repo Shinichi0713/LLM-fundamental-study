@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>1&period; Fundamental Components</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>Table of Contents</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <h1 id="1-fundamental-components">1. Fundamental Components</h1>
+<p>A graph database is primarily composed of the following three elements.</p>
+<h3 id="node">Node</h3>
+<p>A <strong>node</strong> represents the data entity itself, such as a <strong>person, object, or location</strong>.
+This is roughly equivalent to a <strong>record in an RDB table</strong>.</p>
+<h3 id="edge-relationship">Edge (Relationship)</h3>
+<p>An <strong>edge</strong> represents the relationship between nodes.
+Edges typically have <strong>directionality</strong> and can contain semantic meaning such as:</p>
+<ul>
+<li>“is a friend of”</li>
+<li>“purchased”</li>
+</ul>
+<p>Edges can also contain their own attributes.</p>
+<h3 id="property">Property</h3>
+<p>A <strong>property</strong> is additional information attached to nodes or edges, such as:</p>
+<ul>
+<li>a person's name</li>
+<li>the purchase date of an item</li>
+</ul>
+<hr>
+<h1 id="2-why-graph-databases-are-needed-difference-from-rdb">2. Why Graph Databases Are Needed (Difference from RDB)</h1>
+<p>Traditional RDBs can represent relationships, but when relationships become complex, operations called <strong>JOINs</strong> become frequent and computationally expensive.</p>
+<h3 id="in-an-rdb">In an RDB</h3>
+<p>If we attempt to query something like:</p>
+<blockquote>
+<p>“List the products purchased by the friends of A's friends.”</p>
+</blockquote>
+<p>Multiple tables must be joined repeatedly. As the depth of the relationship increases, <strong>performance deteriorates significantly</strong>.</p>
+<h3 id="in-a-graph-db">In a Graph DB</h3>
+<p>Since nodes are already connected via <strong>edges</strong>, queries simply <strong>traverse pointers</strong> along those edges.
+Even if the relationship depth becomes large, <strong>performance remains relatively stable</strong>.</p>
+<hr>
+<h1 id="3-major-use-cases">3. Major Use Cases</h1>
+<p>Graph databases excel in domains where relationships between data are complex.</p>
+<h3 id="social-network-recommendations">Social Network Recommendations</h3>
+<p>They can instantly identify:</p>
+<ul>
+<li>“friends of friends”</li>
+<li>people with shared interests</li>
+</ul>
+<h3 id="fraud-detection-eg-credit-cards">Fraud Detection (e.g., credit cards)</h3>
+<p>Connections between:</p>
+<ul>
+<li>payment terminals</li>
+<li>IP addresses</li>
+<li>bank accounts</li>
+</ul>
+<p>can be analyzed to detect suspicious transaction patterns.</p>
+<h3 id="knowledge-graphs">Knowledge Graphs</h3>
+<p>Systems like search engines connect disparate information such as:</p>
+<ul>
+<li>people</li>
+<li>books</li>
+<li>locations</li>
+<li>historical facts</li>
+</ul>
+<p>and derive answers based on contextual relationships.</p>
+<h3 id="supply-chain-management">Supply Chain Management</h3>
+<p>Graph models can represent complex dependencies among:</p>
+<ul>
+<li>components</li>
+<li>factories</li>
+<li>logistics routes</li>
+</ul>
+<p>This allows rapid identification of downstream impact when disruptions occur.</p>
+<hr>
+<h1 id="4-representative-products">4. Representative Products</h1>
+<p>Some well-known graph database systems include:</p>
+<ul>
+<li>
+<p><strong>Neo4j</strong>
+The most widely used open-source graph database.</p>
+</li>
+<li>
+<p><strong>Amazon Neptune</strong>
+A fully managed graph database service provided by AWS.</p>
+</li>
+<li>
+<p><strong>Memgraph</strong> / <strong>ArangoDB</strong>
+Systems optimized for in-memory processing or hybrid data models.</p>
+</li>
+</ul>
+<hr>
+<h1 id="experiment">Experiment</h1>
+<p>If you want to experiment with a real graph query language such as <strong>Cypher</strong>, the following workflow is recommended.</p>
+<hr>
+<h1 id="step-use-neo4j-aura-free-cloud-version">Step: Use Neo4j Aura (Free Cloud Version)</h1>
+<p>Neo4j provides a free cloud version that can be used simply by logging in.</p>
+<p><a href="https://neo4j.com/cloud/aura-free/">https://neo4j.com/cloud/aura-free/</a></p>
+<h3 id="steps">Steps</h3>
+<ol>
+<li>Create a free instance in Aura and obtain the <strong>Connection URL, username, and password</strong>.</li>
+<li>Connect from Google Colab using the following code.</li>
+</ol>
+<pre><code class="language-python">!pip install neo4j pyvis
+
+<span class="hljs-keyword">from</span> neo4j <span class="hljs-keyword">import</span> GraphDatabase
+
+<span class="hljs-comment"># Connection information</span>
+uri = <span class="hljs-string">&quot;neo4j+s://xxxxxxx.databases.neo4j.io&quot;</span>
+user = <span class="hljs-string">&quot;neo4j&quot;</span>
+password = <span class="hljs-string">&quot;your_password&quot;</span>
+
+driver = GraphDatabase.driver(uri, auth=(user, password))
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">create_friends</span>(<span class="hljs-params">tx</span>):
+    query = (
+        <span class="hljs-string">&quot;MERGE (a:Person {name: $name1}) &quot;</span>
+        <span class="hljs-string">&quot;MERGE (b:Person {name: $name2}) &quot;</span>
+        <span class="hljs-string">&quot;MERGE (a)-[:FRIEND]-&gt;(b)&quot;</span>
+    )
+    tx.run(query, name1=name1, name2=name2)
+
+<span class="hljs-keyword">with</span> driver.session() <span class="hljs-keyword">as</span> session:
+    session.execute_write(create_friends, <span class="hljs-string">&quot;Alice&quot;</span>, <span class="hljs-string">&quot;Bob&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Data registration completed.&quot;</span>)
+driver.close()
+</code></pre>
+<p>When you create a Neo4j Aura instance, a file called <strong>credentials.txt</strong> is automatically downloaded in your browser.</p>
+<p>Example:</p>
+<pre><code>NEO4J_URI=neo4j+s://xxxxxxxx.databases.neo4j.io
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=your_generated_password
+</code></pre>
+<hr>
+<h1 id="visualizing-the-stored-data">Visualizing the Stored Data</h1>
+<p>You can confirm the stored graph using the following code.</p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> neo4j <span class="hljs-keyword">import</span> GraphDatabase
+<span class="hljs-keyword">from</span> pyvis.network <span class="hljs-keyword">import</span> Network
+<span class="hljs-keyword">import</span> IPython
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">get_graph_data</span>(<span class="hljs-params">tx</span>):
+    query = <span class="hljs-string">&quot;MATCH (n)-[r]-&gt;(m) RETURN n, r, m LIMIT 50&quot;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">list</span>(tx.run(query))
+
+net = Network(notebook=<span class="hljs-literal">True</span>, height=<span class="hljs-string">&quot;500px&quot;</span>, width=<span class="hljs-string">&quot;100%&quot;</span>,
+              bgcolor=<span class="hljs-string">&quot;#222222&quot;</span>, font_color=<span class="hljs-string">&quot;white&quot;</span>, cdn_resources=<span class="hljs-string">&#x27;remote&#x27;</span>)
+
+<span class="hljs-keyword">with</span> driver.session() <span class="hljs-keyword">as</span> session:
+    results = session.execute_read(get_graph_data)
+
+    <span class="hljs-keyword">for</span> record <span class="hljs-keyword">in</span> results:
+        node_n = record[<span class="hljs-string">&quot;n&quot;</span>]
+        node_m = record[<span class="hljs-string">&quot;m&quot;</span>]
+        rel = record[<span class="hljs-string">&quot;r&quot;</span>]
+
+        net.add_node(node_n.<span class="hljs-built_in">id</span>,
+                     label=node_n.get(<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-built_in">str</span>(<span class="hljs-built_in">list</span>(node_n.labels))),
+                     title=<span class="hljs-built_in">str</span>(<span class="hljs-built_in">dict</span>(node_n)))
+
+        net.add_node(node_m.<span class="hljs-built_in">id</span>,
+                     label=node_m.get(<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-built_in">str</span>(<span class="hljs-built_in">list</span>(node_m.labels))),
+                     title=<span class="hljs-built_in">str</span>(<span class="hljs-built_in">dict</span>(node_m)))
+
+        net.add_edge(node_n.<span class="hljs-built_in">id</span>, node_m.<span class="hljs-built_in">id</span>, label=rel.<span class="hljs-built_in">type</span>)
+
+net.show(<span class="hljs-string">&quot;graph.html&quot;</span>)
+IPython.display.HTML(<span class="hljs-string">&quot;graph.html&quot;</span>)
+</code></pre>
+<p>This produces a network visualization of the stored relationships.</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\graph_db\image\README\1772890593028.png" alt="1772890593028"></p>
+<hr>
+<h1 id="example-scenario">Example Scenario</h1>
+<p>To demonstrate the real power of graph databases—<strong>multi-layer relationships (n-degree separation)</strong>—we construct a larger scenario.</p>
+<hr>
+<h1 id="story-tech-gadget-ecosystem">Story: “Tech Gadget Ecosystem”</h1>
+<h3 id="entities">Entities</h3>
+<p>Users
+Alice, Bob, Charlie, David, Eve</p>
+<p>Items
+iPhone 15, MacBook M3, Pixel 8, Galaxy S24, Sony WH-1000XM5</p>
+<p>Brands
+Apple, Google, Samsung, Sony</p>
+<p>Categories
+Smartphone, Laptop, Audio</p>
+<p>Stores
+Shinjuku Store, Shibuya Store</p>
+<hr>
+<h3 id="relationships">Relationships</h3>
+<ul>
+<li>Who purchased what (<code>PURCHASED</code>)</li>
+<li>Who is friends with whom (<code>FRIEND</code>)</li>
+<li>Product–brand relationships (<code>BRANDED_BY</code>)</li>
+<li>Product–store relationships (<code>STOCKED_IN</code>)</li>
+</ul>
+<hr>
+<h1 id="1-register-large-story-data">1. Register Large Story Data</h1>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_massive_story</span>(<span class="hljs-params">tx</span>):
+    tx.run(<span class="hljs-string">&quot;MATCH (n) DETACH DELETE n&quot;</span>)
+
+    tx.run(<span class="hljs-string">&quot;&quot;&quot;
+    CREATE (c1:Category {name: &#x27;Smartphone&#x27;}),
+           (c2:Category {name: &#x27;Laptop&#x27;}),
+           (c3:Category {name: &#x27;Audio&#x27;}),
+           (b1:Brand {name: &#x27;Apple&#x27;}),
+           (b2:Brand {name: &#x27;Google&#x27;}),
+           (b3:Brand {name: &#x27;Samsung&#x27;}),
+           (b4:Brand {name: &#x27;Sony&#x27;})
+    &quot;&quot;&quot;</span>)
+
+    tx.run(<span class="hljs-string">&quot;&quot;&quot;
+    CREATE (i1:Item {name:&#x27;iPhone 15&#x27;,price:120000}),
+           (i2:Item {name:&#x27;MacBook M3&#x27;,price:200000}),
+           (i3:Item {name:&#x27;Pixel 8&#x27;,price:90000}),
+           (i4:Item {name:&#x27;Galaxy S24&#x27;,price:110000}),
+           (i5:Item {name:&#x27;WH-1000XM5&#x27;,price:50000})
+    &quot;&quot;&quot;</span>)
+</code></pre>
+<p>(This code continues to build relationships among users, items, and brands.)</p>
+<h1 id="2-graph-visualization">2. Graph Visualization</h1>
+<p>Nodes are color-coded by type:</p>
+<ul>
+<li>User</li>
+<li>Item</li>
+<li>Brand</li>
+<li>Category</li>
+</ul>
+<p>Using <strong>PyVis</strong>, the network structure becomes visually interpretable.</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\graph_db\image\README\1772890804095.png" alt="1772890804095"></p>
+<h1 id="3-advanced-recommendation-query">3. Advanced Recommendation Query</h1>
+<p>One powerful example query is:</p>
+<blockquote>
+<p>“Recommend items purchased by a friend's friend that the user has not yet bought.”</p>
+</blockquote>
+<pre><code class="language-python">MATCH (me:User {name:$name})-[:FRIEND*<span class="hljs-number">1.</span><span class="hljs-number">.2</span>]-(friend)
+      -[:PURCHASED]-&gt;(item)-[:BRANDED_BY]-&gt;(brand)
+WHERE NOT (me)-[:PURCHASED]-&gt;(item)
+RETURN item.name, brand.name
+</code></pre>
+<p>Example output:</p>
+<pre><code>Recommendation: WH-1000XM5 (Sony)
+Reason: Your friend Charlie owns it.
+</code></pre>
+<hr>
+<h1 id="advantages-of-this-structure">Advantages of This Structure</h1>
+<h3 id="1-utilizing-sparse-data">1. Utilizing Sparse Data</h3>
+<p>Even users not directly connected to Alice (e.g., Charlie or David) can be reached via:</p>
+<pre><code>[:FRIEND*1..2]
+</code></pre>
+<p>In an RDB, this would require multiple <strong>self-joins</strong>, making the query far more complex.</p>
+<hr>
+<h3 id="2-flexible-business-logic">2. Flexible Business Logic</h3>
+<p>New conditions such as:</p>
+<ul>
+<li>same brand preference</li>
+<li>same store visits</li>
+</ul>
+<p>can be implemented simply by modifying <strong>Cypher path patterns</strong>.</p>
+<hr>
+<h3 id="3-visual-insight">3. Visual Insight</h3>
+<p>When visualized with PyVis, the network shows clusters such as:</p>
+<ul>
+<li>Apple ecosystem users</li>
+<li>Google ecosystem users</li>
+</ul>
+<p>making social and product relationships immediately visible.</p>
+<hr>
+<h1 id="summary">Summary</h1>
+<p>Through this discussion we explored:</p>
+<ul>
+<li>Graph database fundamentals</li>
+<li>Practical implementation using Google Colab</li>
+<li>Advanced recommendation queries</li>
+</ul>
+<p>The core reason graph databases are so powerful is:</p>
+<blockquote>
+<p><strong>Relationships themselves are stored as data.</strong></p>
+</blockquote>
+<hr>
+<h2 id="1-essence-of-graph-databases">1. Essence of Graph Databases</h2>
+<p>In traditional RDB systems:</p>
+<ul>
+<li>Relationships are reconstructed using <strong>JOINs at runtime</strong>.</li>
+</ul>
+<p>In graph databases:</p>
+<ul>
+<li>Relationships are stored directly as <strong>edges</strong>.</li>
+</ul>
+<p>Thus traversal is extremely efficient.</p>
+<hr>
+<h2 id="2-significance-of-multi-layer-modeling">2. Significance of Multi-Layer Modeling</h2>
+<p>In our example we connected three types of information:</p>
+<ul>
+<li><strong>Social relationships</strong> (User–User)</li>
+<li><strong>Transactions</strong> (User–Item)</li>
+<li><strong>Knowledge</strong> (Item–Brand/Category)</li>
+</ul>
+<p>This unified network enables queries such as:</p>
+<blockquote>
+<p>“Smartphones from the Apple brand purchased by a friend's friend of Alice.”</p>
+</blockquote>
+<hr>
+<h2 id="3-tool-stack-roles">3. Tool Stack Roles</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Role</th>
+<th>Best Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NetworkX</strong></td>
+<td>In-memory graph analysis</td>
+<td>Research and algorithm experiments</td>
+</tr>
+<tr>
+<td><strong>Neo4j</strong></td>
+<td>Persistent graph database</td>
+<td>Production-scale services</td>
+</tr>
+<tr>
+<td><strong>PyVis</strong></td>
+<td>Visualization</td>
+<td>Understanding complex relationships</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-why-graph-databases-are-gaining-attention">4. Why Graph Databases Are Gaining Attention</h2>
+<p>An important modern trend is integration with <strong>LLM systems</strong>.</p>
+<h3 id="graphrag">GraphRAG</h3>
+<p><strong>Retrieval-Augmented Generation</strong> combined with graph databases allows LLMs to reference <strong>structured knowledge graphs</strong> instead of relying only on text retrieval.</p>
+<p>This significantly reduces <strong>hallucinations</strong> and improves factual accuracy.</p>
+<hr>
+<h2 id="5-future-directions">5. Future Directions</h2>
+<p>Graph databases open the door to further advanced capabilities:</p>
+<ul>
+<li>Graph algorithms such as <strong>PageRank</strong></li>
+<li>Community detection (finding groups with shared interests)</li>
+<li>Temporal graphs using edge properties such as timestamps</li>
+<li>Large-scale graph processing on terabyte-level datasets in cloud infrastructure</li>
+</ul>
+<hr>
+<p>Graph databases therefore represent a powerful paradigm for modeling <strong>real-world systems where relationships matter as much as the data itself</strong>.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+        </body>
+        </html>

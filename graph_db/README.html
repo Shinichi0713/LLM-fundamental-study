@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>1&period; &#x57fa;&#x672c;&#x7684;&#x306a;&#x69cb;&#x6210;&#x8981;&#x7d20;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>Graph DB（グラフデータベース）は、データとその <strong>「関係性」</strong> に焦点を当てたデータベースです。</p>
+<p>一般的なリレーショナルデータベース（RDB）がデータを「表（テーブル）」で管理するのに対し、グラフDBはデータ同士を網（ネットワーク）のような構造で管理します。</p>
+<h2 id="1-基本的な構成要素">1. 基本的な構成要素</h2>
+<p>グラフDBは、主に以下の3つの要素で構成されます。</p>
+<ul>
+<li><strong>ノード (Node)</strong>：
+データそのもの（「人」「物」「場所」など）。RDBの「レコード」に相当します。</li>
+<li><strong>エッジ (Edge / Relationship)</strong>：
+ノード間のつながり。これ自体が「友人である」「購入した」といった属性を持ち、方向性（矢印）があるのが一般的です。</li>
+<li><strong>プロパティ (Property)</strong>：
+ノードやエッジに付随する詳細情報（人の名前、購入した日付など）。</li>
+</ul>
+<h2 id="2-なぜグラフdbが必要なのかrdbとの違い">2. なぜグラフDBが必要なのか？（RDBとの違い）</h2>
+<p>従来のRDBでもデータの関係性は表現できますが、関係が複雑になると <strong>「JOIN（結合）」</strong> という処理が多発し、動作が非常に重くなります。</p>
+<ul>
+<li><strong>RDBの場合</strong>：
+「Aさんの友人の、そのまた友人が買った商品をリストアップする」といった深い探索をしようとすると、複数のテーブルを何度も結合する必要があり、パフォーマンスが低下します。</li>
+<li><strong>グラフDBの場合</strong>：
+最初から「線（エッジ）」でつながっているため、ポインタを辿るだけで高速に検索できます。関係がどれだけ深くなっても、処理速度が落ちにくいのが特徴です。</li>
+</ul>
+<h2 id="3-主な活用シーン">3. 主な活用シーン</h2>
+<p>グラフDBは、データ同士が複雑に絡み合う領域で真価を発揮します。</p>
+<ul>
+<li><strong>SNSのレコメンデーション</strong>：
+「友達の友達」や「共通の趣味を持つ人」を瞬時に見つけ出す。</li>
+<li><strong>不正検知（クレジットカードなど）</strong>：
+複数の決済端末、IPアドレス、口座のつながりを分析し、不自然な資金移動のパターンを特定する。</li>
+<li><strong>ナレッジグラフ</strong>：
+Google検索のように、バラバラな情報（人物、著作、場所、歴史的事実）を関連付けて、文脈に応じた回答を導き出す。</li>
+<li><strong>サプライチェーン管理</strong>：
+部品、工場、物流ルートの複雑な依存関係を可視化し、どこかでトラブルが起きた際の影響範囲を特定する。</li>
+</ul>
+<h2 id="4-代表的な製品">4. 代表的な製品</h2>
+<ul>
+<li><strong>Neo4j</strong>：最も普及しているオープンソースのグラフDB。</li>
+<li><strong>Amazon Neptune</strong>：AWSが提供するフルマネージドのグラフDBサービス。</li>
+<li><strong>Memgraph / ArangoDB</strong>：メモリ内処理や他のデータモデルとの併用を得意とするもの。</li>
+</ul>
+<h2 id="テスト">テスト</h2>
+<p>本格的なグラフクエリ言語 Cypher (サイファー) を試したい場合は、以下の手順がおすすめです。</p>
+<p><strong>手順 ：Neo4j Aura（無料クラウド）を使う</strong></p>
+<p>Neo4jには、ログインするだけで使える無料のクラウド版があります。</p>
+<p><a href="https://neo4j.com/cloud/aura-free/">https://neo4j.com/cloud/aura-free/</a></p>
+<ol>
+<li>Auraで無料インスタンスを作成し、Connection URL, username, password を取得。</li>
+<li>Colabで以下を実行して接続します。</li>
+</ol>
+<pre><code class="language-python">!pip install neo4j pyvis
+
+<span class="hljs-keyword">from</span> neo4j <span class="hljs-keyword">import</span> GraphDatabase
+
+<span class="hljs-comment"># 接続情報（取得したものに書き換えてください）</span>
+uri = <span class="hljs-string">&quot;neo4j+s://xxxxxxx.databases.neo4j.io&quot;</span>
+user = <span class="hljs-string">&quot;neo4j&quot;</span>
+password = <span class="hljs-string">&quot;your_password&quot;</span>
+
+driver = GraphDatabase.driver(uri, auth=(user, password))
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">create_friends</span>(<span class="hljs-params">tx, name1, name2</span>):
+    <span class="hljs-comment"># Cypherクエリを使ってデータを追加</span>
+    query = (
+        <span class="hljs-string">&quot;MERGE (a:Person {name: $name1}) &quot;</span>
+        <span class="hljs-string">&quot;MERGE (b:Person {name: $name2}) &quot;</span>
+        <span class="hljs-string">&quot;MERGE (a)-[:FRIEND]-&gt;(b)&quot;</span>
+    )
+    tx.run(query, name1=name1, name2=name2)
+
+<span class="hljs-keyword">with</span> driver.session() <span class="hljs-keyword">as</span> session:
+    session.execute_write(create_friends, <span class="hljs-string">&quot;Alice&quot;</span>, <span class="hljs-string">&quot;Bob&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;データの登録が完了しました。&quot;</span>)
+driver.close()
+</code></pre>
+<p>※上記コードのURI、user、passwordはNeo4j Auraでインスタンス（データベース）を新規作成した際、ブラウザから credentials.txt というファイルが自動的にダウンロードされたはずです。</p>
+<pre><code class="language-plaintext">NEO4J_URI=neo4j+s://xxxxxxxx.databases.neo4j.io
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=your_generated_password
+</code></pre>
+<p>実際に登録されたデータを確認してみます。</p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> neo4j <span class="hljs-keyword">import</span> GraphDatabase
+<span class="hljs-keyword">from</span> pyvis.network <span class="hljs-keyword">import</span> Network
+<span class="hljs-keyword">import</span> IPython
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">get_graph_data</span>(<span class="hljs-params">tx</span>):
+    <span class="hljs-comment"># 関係性も含めてデータを取得するクエリ</span>
+    query = <span class="hljs-string">&quot;MATCH (n)-[r]-&gt;(m) RETURN n, r, m LIMIT 50&quot;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">list</span>(tx.run(query))
+
+<span class="hljs-comment"># 2. Pyvisネットワークの初期化</span>
+net = Network(notebook=<span class="hljs-literal">True</span>, height=<span class="hljs-string">&quot;500px&quot;</span>, width=<span class="hljs-string">&quot;100%&quot;</span>, bgcolor=<span class="hljs-string">&quot;#222222&quot;</span>, font_color=<span class="hljs-string">&quot;white&quot;</span>, cdn_resources=<span class="hljs-string">&#x27;remote&#x27;</span>)
+
+<span class="hljs-keyword">with</span> driver.session() <span class="hljs-keyword">as</span> session:
+    results = session.execute_read(get_graph_data)
+    
+    <span class="hljs-keyword">for</span> record <span class="hljs-keyword">in</span> results:
+        node_n = record[<span class="hljs-string">&quot;n&quot;</span>]
+        node_m = record[<span class="hljs-string">&quot;m&quot;</span>]
+        rel = record[<span class="hljs-string">&quot;r&quot;</span>]
+        
+        <span class="hljs-comment"># ノードの追加 (IDと表示ラベルを設定)</span>
+        <span class="hljs-comment"># labelにはnameプロパティなど、表示したい属性を指定</span>
+        net.add_node(node_n.<span class="hljs-built_in">id</span>, label=node_n.get(<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-built_in">str</span>(<span class="hljs-built_in">list</span>(node_n.labels))), title=<span class="hljs-built_in">str</span>(<span class="hljs-built_in">dict</span>(node_n)))
+        net.add_node(node_m.<span class="hljs-built_in">id</span>, label=node_m.get(<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-built_in">str</span>(<span class="hljs-built_in">list</span>(node_m.labels))), title=<span class="hljs-built_in">str</span>(<span class="hljs-built_in">dict</span>(node_m)))
+        
+        <span class="hljs-comment"># エッジ（矢印）の追加</span>
+        net.add_edge(node_n.<span class="hljs-built_in">id</span>, node_m.<span class="hljs-built_in">id</span>, label=rel.<span class="hljs-built_in">type</span>)
+
+<span class="hljs-comment"># 3. HTMLとして保存して表示</span>
+net.show(<span class="hljs-string">&quot;graph.html&quot;</span>)
+IPython.display.HTML(<span class="hljs-string">&quot;graph.html&quot;</span>)
+</code></pre>
+<p>すると以下の絵が表示されると思います。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\graph_db\image\README\1772890593028.png" alt="1772890593028"></p>
+<p><strong>例題</strong></p>
+<p>折角なので少しストーリー立てして、グラフネットワークした例も扱ってみます。</p>
+<p>グラフDBの真骨頂である <strong>「多層的な関係性（n次隔たり）」</strong> を体感できるよう、ストーリーを「ユーザー・商品・カテゴリー」だけでなく、 <strong>「ブランド・店舗・友人関係」</strong> まで広げた大規模なシミュレーションを作成しましょう。</p>
+<h3 id="今回のストーリー-テックガジェットエコシステム">今回のストーリー： 「テックガジェット・エコシステム」</h3>
+<ul>
+<li><strong>登場人物（User）</strong>: Alice, Bob, Charlie, David, Eve</li>
+<li><strong>商品（Item）</strong>: iPhone 15, MacBook M3, Pixel 8, Galaxy S24, Sony WH-1000XM5</li>
+<li><strong>ブランド（Brand）</strong>: Apple, Google, Samsung, Sony</li>
+<li><strong>カテゴリー（Category）</strong>: Smartphone, Laptop, Audio</li>
+<li><strong>店舗（Store）</strong>: Shinjuku Store, Shibuya Store</li>
+<li><strong>関係性</strong>:</li>
+<li>誰が何を買ったか (<code>PURCHASED</code>)</li>
+<li>誰と誰が友達か (<code>FRIEND</code>)</li>
+<li>どの商品がどのブランドか (<code>BRANDED_BY</code>)</li>
+<li>どの商品がどの店舗にあるか (<code>STOCKED_IN</code>)</li>
+</ul>
+<p><strong>1. 大規模データの登録（Cypherクエリ）</strong></p>
+<p>まずは以下のコードをGoogle Colabで実行して、一気にデータを流し込みます。既存のデータを一度消去してから作成する構成にしています。</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_massive_story</span>(<span class="hljs-params">tx</span>):
+    <span class="hljs-comment"># 既存データの全削除</span>
+    tx.run(<span class="hljs-string">&quot;MATCH (n) DETACH DELETE n&quot;</span>)
+    
+    <span class="hljs-comment"># 1. カテゴリーとブランドの作成</span>
+    tx.run(<span class="hljs-string">&quot;&quot;&quot;
+    CREATE (c1:Category {name: &#x27;Smartphone&#x27;}), (c2:Category {name: &#x27;Laptop&#x27;}), (c3:Category {name: &#x27;Audio&#x27;}),
+           (b1:Brand {name: &#x27;Apple&#x27;}), (b2:Brand {name: &#x27;Google&#x27;}), (b3:Brand {name: &#x27;Samsung&#x27;}), (b4:Brand {name: &#x27;Sony&#x27;})
+    &quot;&quot;&quot;</span>)
+    
+    <span class="hljs-comment"># 2. 商品の作成と属性接続</span>
+    tx.run(<span class="hljs-string">&quot;&quot;&quot;
+    MATCH (c1:Category {name: &#x27;Smartphone&#x27;}), (c2:Category {name: &#x27;Laptop&#x27;}), (c3:Category {name: &#x27;Audio&#x27;}),
+          (b1:Brand {name: &#x27;Apple&#x27;}), (b2:Brand {name: &#x27;Google&#x27;}), (b3:Brand {name: &#x27;Samsung&#x27;}), (b4:Brand {name: &#x27;Sony&#x27;})
+    CREATE (i1:Item {name: &#x27;iPhone 15&#x27;, price: 120000}),
+           (i2:Item {name: &#x27;MacBook M3&#x27;, price: 200000}),
+           (i3:Item {name: &#x27;Pixel 8&#x27;, price: 90000}),
+           (i4:Item {name: &#x27;Galaxy S24&#x27;, price: 110000}),
+           (i5:Item {name: &#x27;WH-1000XM5&#x27;, price: 50000})
+    CREATE (i1)-[:BELONGS_TO]-&gt;(c1), (i1)-[:BRANDED_BY]-&gt;(b1),
+           (i2)-[:BELONGS_TO]-&gt;(c2), (i2)-[:BRANDED_BY]-&gt;(b1),
+           (i3)-[:BELONGS_TO]-&gt;(c1), (i3)-[:BRANDED_BY]-&gt;(b2),
+           (i4)-[:BELONGS_TO]-&gt;(c1), (i4)-[:BRANDED_BY]-&gt;(b3),
+           (i5)-[:BELONGS_TO]-&gt;(c3), (i5)-[:BRANDED_BY]-&gt;(b4)
+    &quot;&quot;&quot;</span>)
+    
+    <span class="hljs-comment"># 3. ユーザーと友人関係・購入履歴の作成</span>
+    tx.run(<span class="hljs-string">&quot;&quot;&quot;
+    CREATE (u1:User {name: &#x27;Alice&#x27;}), (u2:User {name: &#x27;Bob&#x27;}), (u3:User {name: &#x27;Charlie&#x27;}),
+           (u4:User {name: &#x27;David&#x27;}), (u5:User {name: &#x27;Eve&#x27;})
+    &quot;&quot;&quot;</span>)
+    
+    <span class="hljs-comment"># 関係の構築</span>
+    tx.run(<span class="hljs-string">&quot;&quot;&quot;
+    MATCH (u1:User {name: &#x27;Alice&#x27;}), (u2:User {name: &#x27;Bob&#x27;}), (u3:User {name: &#x27;Charlie&#x27;}),
+          (u4:User {name: &#x27;David&#x27;}), (u5:User {name: &#x27;Eve&#x27;}),
+          (i1:Item {name: &#x27;iPhone 15&#x27;}), (i2:Item {name: &#x27;MacBook M3&#x27;}), 
+          (i3:Item {name: &#x27;Pixel 8&#x27;}), (i5:Item {name: &#x27;WH-1000XM5&#x27;})
+    CREATE (u1)-[:FRIEND]-&gt;(u2), (u2)-[:FRIEND]-&gt;(u3), (u3)-[:FRIEND]-&gt;(u4), (u4)-[:FRIEND]-&gt;(u5),
+           (u1)-[:PURCHASED {date: &#x27;2026-01-10&#x27;}]-&gt;(i1),
+           (u2)-[:PURCHASED {date: &#x27;2026-01-15&#x27;}]-&gt;(i1),
+           (u2)-[:PURCHASED {date: &#x27;2026-02-01&#x27;}]-&gt;(i2),
+           (u3)-[:PURCHASED {date: &#x27;2026-02-10&#x27;}]-&gt;(i5),
+           (u5)-[:PURCHASED {date: &#x27;2026-03-01&#x27;}]-&gt;(i3)
+    &quot;&quot;&quot;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;大規模なストーリーデータの登録が完了しました。&quot;</span>)
+
+<span class="hljs-keyword">with</span> driver.session() <span class="hljs-keyword">as</span> session:
+    session.execute_write(create_massive_story)
+
+</code></pre>
+<p><strong>2. グラフの可視化</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> neo4j <span class="hljs-keyword">import</span> GraphDatabase
+<span class="hljs-keyword">from</span> pyvis.network <span class="hljs-keyword">import</span> Network
+<span class="hljs-keyword">import</span> IPython
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">get_massive_graph</span>(<span class="hljs-params">tx</span>):
+    <span class="hljs-comment"># すべてのノードと関係性を取得</span>
+    query = <span class="hljs-string">&quot;MATCH (n)-[r]-&gt;(m) RETURN n, r, m LIMIT 100&quot;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">list</span>(tx.run(query))
+
+<span class="hljs-comment"># --- 可視化の設定 ---</span>
+<span class="hljs-comment"># ノードの種類ごとの色定義</span>
+colors = {
+    <span class="hljs-string">&quot;User&quot;</span>: <span class="hljs-string">&quot;#FFD700&quot;</span>,      <span class="hljs-comment"># ゴールド</span>
+    <span class="hljs-string">&quot;Item&quot;</span>: <span class="hljs-string">&quot;#87CEEB&quot;</span>,      <span class="hljs-comment"># スカイブルー</span>
+    <span class="hljs-string">&quot;Brand&quot;</span>: <span class="hljs-string">&quot;#FF6347&quot;</span>,     <span class="hljs-comment"># トマト</span>
+    <span class="hljs-string">&quot;Category&quot;</span>: <span class="hljs-string">&quot;#90EE90&quot;</span>   <span class="hljs-comment"># ライトグリーン</span>
+}
+
+<span class="hljs-comment"># Pyvisネットワークの初期化</span>
+net = Network(notebook=<span class="hljs-literal">True</span>, height=<span class="hljs-string">&quot;600px&quot;</span>, width=<span class="hljs-string">&quot;100%&quot;</span>, bgcolor=<span class="hljs-string">&quot;#222222&quot;</span>, font_color=<span class="hljs-string">&quot;white&quot;</span>, cdn_resources=<span class="hljs-string">&#x27;remote&#x27;</span>)
+
+<span class="hljs-comment"># 物理シミュレーションの設定（ノードが重ならないように調整）</span>
+net.force_atlas_2based()
+
+<span class="hljs-keyword">with</span> driver.session() <span class="hljs-keyword">as</span> session:
+    results = session.execute_read(get_massive_graph)
+    
+    <span class="hljs-keyword">for</span> record <span class="hljs-keyword">in</span> results:
+        n, r, m = record[<span class="hljs-string">&quot;n&quot;</span>], record[<span class="hljs-string">&quot;r&quot;</span>], record[<span class="hljs-string">&quot;m&quot;</span>]
+        
+        <span class="hljs-comment"># ノードのラベル（種類）を取得</span>
+        label_n = <span class="hljs-built_in">list</span>(n.labels)[<span class="hljs-number">0</span>]
+        label_m = <span class="hljs-built_in">list</span>(m.labels)[<span class="hljs-number">0</span>]
+        
+        <span class="hljs-comment"># ノードの追加</span>
+        net.add_node(n.<span class="hljs-built_in">id</span>, 
+                     label=n.get(<span class="hljs-string">&quot;name&quot;</span>, label_n), 
+                     title=<span class="hljs-string">f&quot;Type: <span class="hljs-subst">{label_n}</span>\nData: <span class="hljs-subst">{<span class="hljs-built_in">dict</span>(n)}</span>&quot;</span>, 
+                     color=colors.get(label_n, <span class="hljs-string">&quot;#FFFFFF&quot;</span>))
+        
+        net.add_node(m.<span class="hljs-built_in">id</span>, 
+                     label=m.get(<span class="hljs-string">&quot;name&quot;</span>, label_m), 
+                     title=<span class="hljs-string">f&quot;Type: <span class="hljs-subst">{label_m}</span>\nData: <span class="hljs-subst">{<span class="hljs-built_in">dict</span>(m)}</span>&quot;</span>, 
+                     color=colors.get(label_m, <span class="hljs-string">&quot;#FFFFFF&quot;</span>))
+        
+        <span class="hljs-comment"># エッジの追加</span>
+        net.add_edge(n.<span class="hljs-built_in">id</span>, m.<span class="hljs-built_in">id</span>, label=r.<span class="hljs-built_in">type</span>)
+
+<span class="hljs-comment"># --- 表示 ---</span>
+net.show(<span class="hljs-string">&quot;massive_story.html&quot;</span>)
+IPython.display.HTML(<span class="hljs-string">&quot;massive_story.html&quot;</span>)
+</code></pre>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\graph_db\image\README\1772890804095.png" alt="1772890804095"></p>
+<p><strong>3. 「これぞグラフDB」という高度なレコメンド</strong></p>
+<p>このデータを使って、 <strong>「直接の知り合いではないが、友人の友人が持っている特定のブランドの商品」</strong> を探してみましょう。</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">deep_recommendation</span>(<span class="hljs-params">tx, target_name</span>):
+    <span class="hljs-comment"># クエリ解説：</span>
+    <span class="hljs-comment"># ターゲットの友人(f1)の、さらに友人(f2)が購入した商品を、</span>
+    <span class="hljs-comment"># その商品のブランド情報も含めて取得</span>
+    query = <span class="hljs-string">&quot;&quot;&quot;
+    MATCH (me:User {name: $name})-[:FRIEND*1..2]-(friend)-[:PURCHASED]-&gt;(item)-[:BRANDED_BY]-&gt;(brand)
+    WHERE NOT (me)-[:PURCHASED]-&gt;(item)
+    RETURN item.name AS product, brand.name AS brand, friend.name AS owner, count(*) AS score
+    ORDER BY score DESC
+    &quot;&quot;&quot;</span>
+    result = tx.run(query, name=target_name)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;--- <span class="hljs-subst">{target_name}</span> さんへの高度なレコメンド ---&quot;</span>)
+    <span class="hljs-keyword">for</span> record <span class="hljs-keyword">in</span> result:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;おすすめ: <span class="hljs-subst">{record[<span class="hljs-string">&#x27;product&#x27;</span>]}</span> (<span class="hljs-subst">{record[<span class="hljs-string">&#x27;brand&#x27;</span>]}</span>)&quot;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;  理由: 友人の <span class="hljs-subst">{record[<span class="hljs-string">&#x27;owner&#x27;</span>]}</span> さんも愛用しています。&quot;</span>)
+
+<span class="hljs-keyword">with</span> driver.session() <span class="hljs-keyword">as</span> session:
+    session.execute_read(deep_recommendation, <span class="hljs-string">&quot;Alice&quot;</span>)
+
+</code></pre>
+<p><strong>3. この構成のメリット</strong></p>
+<ol>
+<li><strong>疎なデータの活用</strong>:
+Aliceと直接繋がっていないCharlieやDavidの情報も、<code>[:FRIEND*1..2]</code>（1〜2ステップの友人関係）という指定だけで簡単に手繰り寄せられます。RDBでこれをやると、Userテーブル同士を何度もセルフジョインし、さらに購入テーブルとジョインするため、コードが非常に複雑になります。</li>
+<li><strong>ビジネスロジックの柔軟性</strong>:
+「同じブランドが好き」「同じ店舗によく行く」といった条件を、<code>MATCH</code>文のパス（矢印のつなぎ方）を変えるだけで即座に追加・変更できます。</li>
+<li><strong>可視化のインパクト</strong>:
+前述の <code>pyvis</code> コードを再度実行すると、中心にユーザー、その周りに商品やブランドが配置され、誰がどの「派閥（Apple派、Google派など）」に近いのかが視覚的に一発でわかります。</li>
+</ol>
+<h2 id="総括">総括</h2>
+<p>これまでの議論を通じて、グラフDBの基礎から、Google Colabでの実践、そして高度なレコメンデーションまで一通り体験していただきました。</p>
+<p>これまでの内容を、　<strong>「なぜグラフDBがこれほど強力なのか」</strong>　という視点で総括します。</p>
+<h3 id="1-グラフdbの本質関係がデータである">1. グラフDBの本質：「関係」がデータである</h3>
+<p>従来のデータベース（RDB）では、関係性は「外部キー」という番号の照合（JOIN処理）によって後付けで計算されるものでした。
+一方、グラフDBでは、 <strong>「AさんとBさんは友達である」という線（エッジ）そのものが実データとして保存されています。</strong></p>
+<ul>
+<li><strong>RDB</strong>: 実行時に「表と表を突き合わせる」ため、関係が深くなるほど重くなる。</li>
+<li><strong>グラフDB</strong>: 最初から「線」で繋がっているため、ただ辿るだけでよく、データ量が増えても高速。</li>
+</ul>
+<h3 id="2-実践した多層的なモデリングの意義">2. 実践した「多層的なモデリング」の意義</h3>
+<p>今回、最後に行った大規模なストーリー構成では、以下の異なるエンティティを繋げました。</p>
+<ul>
+<li><strong>ソーシャル（User-User）</strong>: 誰と誰が友達か。</li>
+<li><strong>トランザクション（User-Item）</strong>: 誰が何を買ったか。</li>
+<li><strong>ナレッジ（Item-Brand/Category）</strong>: 商品の属性。</li>
+</ul>
+<p>これらが一つのネットワークになることで、 <strong>「Aliceの友人の、そのまた友人が買った、Appleブランドのスマホ」</strong> といった、現実世界の複雑な文脈をそのままクエリ（Cypher）で表現できるようになりました。</p>
+<h3 id="3-ツール技術スタックの役割分担">3. ツール・技術スタックの役割分担</h3>
+<p>今回触れた2つのツールの違いを再確認しましょう。</p>
+<table>
+<thead>
+<tr>
+<th>ツール</th>
+<th>特徴</th>
+<th>適した場面</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NetworkX</strong></td>
+<td>Pythonライブラリ。メモリ上で計算。</td>
+<td>アルゴリズムの研究、小〜中規模の統計分析。</td>
+</tr>
+<tr>
+<td><strong>Neo4j</strong></td>
+<td>グラフ専用DB。ディスクに永続保存。</td>
+<td>本番サービスの裏側、数億件規模のデータ管理。</td>
+</tr>
+<tr>
+<td><strong>Pyvis</strong></td>
+<td>可視化ツール。</td>
+<td>複雑な関係性を人間が直感的に理解するための図解。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-なぜ今グラフdbが注目されるのか">4. なぜ今、グラフDBが注目されるのか</h3>
+<p>議論の最後に関連する重要なトピックとして、現代のAI（特にLLM）との親和性が挙げられます。</p>
+<ul>
+<li><strong>GraphRAG (Retrieval-Augmented Generation)</strong>:
+LLMにグラフDBの知識を与える手法です。単なるキーワード検索ではなく、「この人物はこの組織に属しており、このプロジェクトに関与している」という<strong>正確な構造情報</strong>をLLMが参照できるため、ハルシネーション（嘘）を劇的に減らすことができます。</li>
+</ul>
+<h3 id="5-次なるステップへの展望">5. 次なるステップへの展望</h3>
+<p>グラフDBの世界はここからさらに広がります。</p>
+<ul>
+<li><strong>グラフアルゴリズム</strong>: 「PageRank（誰が一番重要か）」や「コミュニティ検出（共通の趣味を持つグループはどこか）」といった高度な計算。</li>
+<li><strong>時間軸の導入</strong>: 「いつ買ったか」というエッジのプロパティを使い、時間の経過とともに変化するレコメンド。</li>
+<li><strong>大規模展開</strong>: Google Colabから離れ、自前のサーバーやクラウドで数テラバイトのグラフを運用する技術。</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+        </body>
+        </html>
