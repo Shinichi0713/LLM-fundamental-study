@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>MLP Adapter</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <h2 id="mlp-adapter">MLP Adapter</h2>
+<p>VLMのおそらく一番メジャーなMLP AdapterでVLMを作ってみます。</p>
+<h2 id="trial-contents">Trial Contents</h2>
+<p>新規モデル組んでみて、画像の説明タスクが出来るようになるかを検証する。</p>
+<p>VLM（Vision-Language Model）が解決できるタスクは、画像とテキストの「相互理解」の深さによっていくつかのカテゴリーに分類されます。</p>
+<p>現在のトレンドであるLlama-3-VisionやLLaVAのようなモデルが、具体的にどのような実務をこなせるのか、主要なタスクを整理しました。</p>
+<h2 id="解かせるタスク">解かせるタスク</h2>
+<h3 id="1-視覚的理解記述vision-to-language">1. 視覚的理解・記述（Vision-to-Language）</h3>
+<p>画像の内容を言語化する、最も基本的なタスク群です。</p>
+<ul>
+<li><strong>Image Captioning（画像キャプション生成）:</strong> 画像の内容を1文〜数文で説明します。</li>
+<li><strong>Detailed Description（詳細記述）:</strong> キャプションよりも詳細に、背景、物体の色、位置関係、雰囲気などを深く描写します。</li>
+<li><strong>Visual Question Answering (VQA)（視覚的応答）:</strong> 「テーブルの上にリンゴは何個ありますか？」といった、画像に基づいた具体的な質問に回答します。</li>
+</ul>
+<h3 id="2-推論知識活用reasoning">2. 推論・知識活用（Reasoning）</h3>
+<p>単に見えるものを答えるだけでなく、画像から「意味」を読み取る高度なタスクです。</p>
+<ul>
+<li><strong>Visual Reasoning（視覚的推論）:</strong> 「この状況で次に何が起きそうですか？」など、物理法則や常識に基づいた推論を行います。</li>
+<li><strong>OCR &amp; Document Understanding（文書理解）:</strong> 画像内のテキストを読み取る（OCR）だけでなく、レシートの合計金額や請求書の期限などを構造的に理解します。</li>
+<li><strong>Mathematical / Scientific Reasoning（学術的推論）:</strong> グラフや図解を読み取り、数学の問題を解いたり、実験結果を分析したりします。</li>
+</ul>
+<h3 id="3-空間的認識grounding--localization">3. 空間的認識（Grounding &amp; Localization）</h3>
+<p>画像内の「どこ」に「何」があるかを座標（バウンディングボックス）で特定するタスクです。</p>
+<ul>
+<li><strong>Visual Grounding / Referring Expression:</strong> 「左奥にある赤い車」という言葉に対し、その場所の座標を特定します。</li>
+<li><strong>Object Detection (via Language):</strong> 従来の物体検出モデルのように、特定のクラス（犬、猫など）の場所を言語モデルのトークンとして出力します。</li>
+</ul>
+<h3 id="4-特殊応用タスク">4. 特殊・応用タスク</h3>
+<p>実務やクリエイティブの現場で活用される応用範囲です。</p>
+<ul>
+<li><strong>Image-to-Code（コード生成）:</strong> Webサイトのデザイン案（画像）を見て、それを再現するHTML/CSSやReactのコードを生成します。</li>
+<li><strong>Action Recognition（動作認識）:</strong> 動画や連続した画像から「今、何をしているか（料理中、歩行中など）」を判断します。</li>
+<li><strong>Anomaly Detection（異常検知）:</strong> 工場のライン写真などを見て、製品の傷や不具合（アノマリー）を指摘します。</li>
+</ul>
+<h3 id="vlmタスクの比較まとめ">VLMタスクの比較まとめ</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">カテゴリー</th>
+<th style="text-align:left">難易度</th>
+<th style="text-align:left">特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>記述 (Captioning)</strong></td>
+<td style="text-align:left">低</td>
+<td style="text-align:left">見えるものをそのまま言葉にする</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>応答 (VQA)</strong></td>
+<td style="text-align:left">中</td>
+<td style="text-align:left">画像と質問の整合性を取る必要がある</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>推論 (Reasoning)</strong></td>
+<td style="text-align:left">高</td>
+<td style="text-align:left">背景知識や論理的な思考が求められる</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>コード生成</strong></td>
+<td style="text-align:left">最高</td>
+<td style="text-align:left">視覚構造をプログラミング言語へ変換する</td>
+</tr>
+</tbody>
+</table>
+<p>今回は使うモデルもそこまで高度なものは使わずMLP Adapterの性能が発覚するところまでを見届ける、ということにあるため、難易度が一番容易な <strong>Captioning</strong> を選定する。</p>
+<h2 id="アーキテクチャ検討">アーキテクチャ検討</h2>
+<p>今回はいつものGoogle Colabでの学習ができることとする。</p>
+<p>結論から言うと、<strong>Colab制約下でのVLM + MLP AdapterによるCaptioning検証</strong> は、以下の設計にすると最も現実的かつ再現性が高いです：</p>
+<h3 id="全体アーキテクチャ">全体アーキテクチャ</h3>
+<pre><code>[Image]
+   ↓
+Vision Encoder（凍結）
+   ↓  (B, N, Dv)
+MLP Adapter（学習対象）
+   ↓  (B, N, Dl)
+Projection / Tokenization
+   ↓
+LLM（凍結 or LoRA）
+   ↓
+Text (Caption)
+</code></pre>
+<h3 id="1-各コンポーネントの設計指針">1. 各コンポーネントの設計指針</h3>
+<p><strong>① Vision Encoder（固定）</strong></p>
+<ul>
+<li>
+<p>推奨：</p>
+<ul>
+<li>CLIP ViT-B/16 または ViT-L/14</li>
+</ul>
+</li>
+<li>
+<p>理由：</p>
+<ul>
+<li>事前学習済みで特徴抽出が安定</li>
+<li>Colabでもメモリ的に扱える</li>
+</ul>
+</li>
+</ul>
+<p><strong>出力</strong></p>
+<pre><code>(B, N, Dv)
+例: (batch, 197 tokens, 768 dim)
+</code></pre>
+<p><strong>② MLP Adapter（今回の主役）</strong></p>
+<p>ここが検証対象。</p>
+<p><strong>基本設計</strong></p>
+<pre><code>MLP Adapter:
+  Linear(Dv → D_hidden)
+  GELU
+  Linear(D_hidden → Dl)
+</code></pre>
+<p><strong>推奨パラメータ</strong></p>
+<ul>
+<li><code>Dv = 768</code>（ViT-B）</li>
+<li><code>Dl = 4096</code>（LLaMA系なら）</li>
+<li><code>D_hidden = 1024〜2048</code></li>
+</ul>
+<p><strong>重要ポイント</strong></p>
+<ul>
+<li><strong>全トークンに対して適用（token-wise MLP）</strong></li>
+<li>poolingしない（情報損失防止）</li>
+<li>LayerNormを前後に入れると安定</li>
+</ul>
+<p><strong>③ Projection / Token Mapping</strong></p>
+<p>2パターンあります：</p>
+<p><strong>パターンA（シンプル）</strong></p>
+<pre><code>Adapter出力 → そのままLLMのembeddingとして使う
+</code></pre>
+<p><strong>パターンB（推奨）</strong></p>
+<pre><code>Adapter出力 → Linear → LLM埋め込み次元に完全一致
+</code></pre>
+<p>理由：</p>
+<ul>
+<li>LLMの埋め込み空間との整合性が改善</li>
+</ul>
+<p><strong>④ LLM（言語モデル）</strong></p>
+<p><strong>選択肢</strong></p>
+<ul>
+<li>
+<p>軽量：</p>
+<ul>
+<li>LLaMA-7B（4bit）</li>
+<li>Mistral-7B（4bit）</li>
+</ul>
+</li>
+<li>
+<p>Colabなら：</p>
+<ul>
+<li><strong>4bit量子化 + LoRA or Freeze</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>推奨設定</strong></p>
+<ul>
+<li>
+<p>最初は <strong>完全凍結</strong></p>
+</li>
+<li>
+<p>うまくいかなければ：</p>
+<ul>
+<li>LoRAを追加（q,k,vのみ）</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-入力フォーマット重要">2. 入力フォーマット（重要）</h3>
+<p>Captioningなので、以下の形式にします：</p>
+<pre><code>&lt;image_tokens&gt; + &quot;Describe this image:&quot;
+</code></pre>
+<p>例：</p>
+<pre><code>[VISUAL TOKENS] + &quot;A photo of&quot;
+</code></pre>
+<p>または instruction形式：</p>
+<pre><code>&quot;### Instruction: Describe the image\n### Response:&quot;
+</code></pre>
+<h3 id="3-学習対象最小構成">3. 学習対象（最小構成）</h3>
+<p>Colab前提なら：</p>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>学習</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vision Encoder</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>MLP Adapter</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>❌（or LoRA）</td>
+</tr>
+</tbody>
+</table>
+<p>👉 <strong>まずはAdapterのみ学習がベスト</strong></p>
+<h3 id="4-loss設計">4. Loss設計</h3>
+<p>標準的な：</p>
+<pre><code>Cross Entropy Loss（次トークン予測）
+</code></pre>
+<p>注意点：</p>
+<ul>
+<li>visual token部分はloss計算から除外</li>
+<li>text部分のみmask</li>
+</ul>
+<h3 id="5-colab最適化戦略">5. Colab最適化戦略</h3>
+<p><strong>メモリ対策</strong></p>
+<ul>
+<li>4bit量子化（必須）</li>
+<li>gradient checkpointing</li>
+<li>batch size = 1〜4</li>
+<li>sequence length制限（&lt;= 512）</li>
+</ul>
+<p><strong>学習安定化</strong></p>
+<ul>
+<li>
+<p>learning rate：</p>
+<ul>
+<li>Adapter: 1e-4 〜 5e-4</li>
+</ul>
+</li>
+<li>
+<p>warmupあり</p>
+</li>
+</ul>
+<h3 id="6-最小構成実験用">6. 最小構成（実験用）</h3>
+<pre><code>Vision Encoder: CLIP ViT-B/16（freeze）
+Adapter: 2-layer MLP
+LLM: LLaMA-7B（4bit freeze）
+</code></pre>
+<p>👉 この構成で</p>
+<ul>
+<li>「Adapterだけでcaptioning成立するか」
+を純粋に検証可能</li>
+</ul>
+<h3 id="7-期待される結果と限界">7. 期待される結果と限界</h3>
+<p><strong>うまくいくケース</strong></p>
+<ul>
+<li>
+<p>簡単なcaption</p>
+<ul>
+<li>&quot;a dog&quot;</li>
+<li>&quot;a man riding a bike&quot;</li>
+</ul>
+</li>
+</ul>
+<p><strong>難しいケース</strong></p>
+<ul>
+<li>詳細説明</li>
+<li>抽象的理解</li>
+<li>長文生成</li>
+</ul>
+<p>理由：</p>
+<ul>
+<li>cross-modal alignmentが弱い（Q-Former不在）</li>
+</ul>
+<h3 id="まとめ">まとめ</h3>
+<p>Colab前提なら最適解は：</p>
+<ul>
+<li>Vision：凍結</li>
+<li>LLM：凍結（or LoRA）</li>
+<li><strong>MLP Adapterのみ学習</strong></li>
+<li>token-level接続（poolしない）</li>
+</ul>
+<p>これで「MLP AdapterだけでVLMが成立するか」という研究的にクリーンな検証ができます。</p>
+<h2 id="実装">実装</h2>
+<p>コードは以下に保存しています。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/vlm/src/mlp_adapter/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/vlm/src/mlp_adapter/src</a></p>
+<h2 id="実験">実験</h2>
+<p>モデルはこのように実装します。</p>
+<p>LLMはhugging faceより任意のモデルをロード。
+VisionEncoderはClip。
+MLPAdapterは</p>
+<ol>
+<li>nn.LayerNorm(dv)：入力の正規化（ガードレール）</li>
+</ol>
+<p>Vision Encoder（ViTなど）から出てくる特徴量は、画像によって数値のレンジがバラつくことがあります。</p>
+<ol start="2">
+<li>nn.Linear(dv, hidden) + nn.GELU()：非線形な「解釈」</li>
+</ol>
+<p>単層の行列変換ではなく、間に hidden（1024次元）を挟んだ2層構造にしています。</p>
+<p>意図: 単純な線形変換（情報のスケーリング）だけでは不十分な、複雑な特徴の組み換えを可能にします。GELU を挟むことで、「特定の視覚パターンがあるときにだけ反応する」といった非線形な表現力をアダプターに持たせています。</p>
+<ol start="3">
+<li>nn.Linear(hidden, dl)：言語空間への「写像」</li>
+</ol>
+<p>ここで最終的に、LLMが理解できる次元（dl=2560）に引き上げます。</p>
+<p>意図: 視覚的な「概念」を、LLMの埋め込み空間（Embedding Space）のどこに配置すべきかを決定します。ここが実質的な「視覚と言語の翻訳機」の出口となります。</p>
+<ol start="4">
+<li>nn.LayerNorm(dl)：出力のアライメント（仕上げ）</li>
+</ol>
+<p>最後に再び LayerNorm を入れています。これが非常に重要です。</p>
+<p>意図: LLM（今回の例では dl=2560 なので、Phi-2やGemmaなどの小型モデルクラスを想定）の入力埋め込みは、通常非常にきれいに正規化された分布を持っています。アダプターの出力を最後に整えることで、LLMが「これは自分が知っている言葉のベクトルだ」と認識しやすくするための仕上げです。</p>
+<pre><code class="language-python">
+<span class="hljs-comment"># MLP Adapter</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MLPAdapter</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, dv=<span class="hljs-number">768</span>, dl=<span class="hljs-number">2560</span>, hidden=<span class="hljs-number">1024</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.net = nn.Sequential(
+            nn.LayerNorm(dv),
+            nn.Linear(dv, hidden),
+            nn.GELU(),
+            nn.Linear(hidden, dl),
+            nn.LayerNorm(dl)
+        )
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        <span class="hljs-keyword">return</span> self.net(x)
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleVLM</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, vision_model, llm, adapter</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.vision_model = vision_model
+        self.llm = llm
+        self.adapter = adapter
+
+        <span class="hljs-comment"># 凍結</span>
+        <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> self.vision_model.parameters():
+            p.requires_grad = <span class="hljs-literal">False</span>
+        <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> self.llm.parameters():
+            p.requires_grad = <span class="hljs-literal">False</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, pixel_values, input_ids, attention_mask, labels=<span class="hljs-literal">None</span></span>):
+        <span class="hljs-comment"># Vision</span>
+        vision_outputs = self.vision_model(pixel_values=pixel_values)
+        vision_embeds = vision_outputs.last_hidden_state  <span class="hljs-comment"># (B, N, Dv)</span>
+
+        <span class="hljs-comment"># Adapter</span>
+        visual_tokens = self.adapter(vision_embeds)  <span class="hljs-comment"># (B, N, Dl)</span>
+
+        <span class="hljs-comment"># Text embedding</span>
+        text_embeds = self.llm.get_input_embeddings()(input_ids)
+
+        <span class="hljs-comment"># concat</span>
+        inputs_embeds = torch.cat([visual_tokens, text_embeds], dim=<span class="hljs-number">1</span>)
+
+        <span class="hljs-comment"># mask</span>
+        visual_mask = torch.ones(
+            visual_tokens.size()[:<span class="hljs-number">2</span>],
+            dtype=attention_mask.dtype
+        ).to(device)
+
+        attention_mask = torch.cat([visual_mask, attention_mask], dim=<span class="hljs-number">1</span>)
+
+        <span class="hljs-comment"># labels</span>
+        <span class="hljs-keyword">if</span> labels <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            ignore = torch.full(
+                visual_tokens.size()[:<span class="hljs-number">2</span>],
+                -<span class="hljs-number">100</span>
+            ).to(device)
+            labels = torch.cat([ignore, labels], dim=<span class="hljs-number">1</span>)
+
+        outputs = self.llm(
+            inputs_embeds=inputs_embeds,
+            attention_mask=attention_mask,
+            labels=labels
+        )
+
+        <span class="hljs-keyword">return</span> outputs
+</code></pre>
+<h3 id="実験内容">実験内容</h3>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\src\mlp_adapter\image\README\1774083511417.png" alt="1774083511417"></p>
+<p>この画像を見て、単純に&quot;A dog looking the master&quot;と出力すればOK。</p>
+<p>学習コードは先ほどのレポジトリに保存しています。</p>
+<p><strong>結果</strong></p>
+<pre><code class="language-python">model.<span class="hljs-built_in">eval</span>()
+
+
+outputs = model(
+        pixel_values=image_inputs[<span class="hljs-string">&quot;pixel_values&quot;</span>],
+        input_ids=input_ids,
+        attention_mask=attention_mask,
+        labels=labels
+    )
+<span class="hljs-comment"># logitsから最も確率の高いトークンIDを取り出す</span>
+predicted_token_ids = torch.argmax(outputs.logits, dim=-<span class="hljs-number">1</span>) <span class="hljs-comment"># [1, seq_len]</span>
+
+<span class="hljs-comment"># Tokenizerでデコードして文章にする</span>
+predicted_text = tokenizer.decode(predicted_token_ids[<span class="hljs-number">0</span>])
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Predicted Text: <span class="hljs-subst">{predicted_text}</span>&quot;</span>)
+</code></pre>
+<p>出力</p>
+<pre><code> with A dog looking the master
+</code></pre>
+<p>期待通り。
+但し、汎用性があるかは別問題です。
+ですが、画像を認識はするようになりました。</p>
+<h2 id="一般論">一般論</h2>
+<p>Q-FormerとMLP Adapterではどちらが性能が高いと言われているでしょうか。</p>
+<p>結論から言うと、現在のトレンドや多くのベンチマーク結果では、<strong>「MLP Adapter」の方が精度（特に推論能力や汎用性）が高い</strong> とされる場面が増えています。</p>
+<p>かつては「Q-Former」が洗練された手法として注目されましたが、なぜ現在はシンプルな「MLP Adapter」が精度面でも優位に立っているのか、その理由を比較・解説します。</p>
+<h3 id="1-精度と性能の比較まとめ">1. 精度と性能の比較まとめ</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">評価項目</th>
+<th style="text-align:left">Q-Former (例: BLIP-2)</th>
+<th style="text-align:left">MLP Adapter (例: LLaVA-1.5/Next)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>情報の保持力</strong></td>
+<td style="text-align:left">クエリによる「要約」のため、細部が落ちやすい</td>
+<td style="text-align:left">全パッチをそのまま渡すため、情報密度が高い</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>推論能力</strong></td>
+<td style="text-align:left">記述や検索には強いが、複雑な推論はLLMに依存</td>
+<td style="text-align:left">LLMの事前学習知識を直接活用しやすく、推論に強い</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>学習の収束</strong></td>
+<td style="text-align:left">構造が複雑で、アライメントに時間がかかる</td>
+<td style="text-align:left">シンプルなため、短期間で高い精度に到達する</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>トークン効率</strong></td>
+<td style="text-align:left"><strong>◎ 非常に高い</strong>（数十トークンに圧縮）</td>
+<td style="text-align:left"><strong>△ 低い</strong>（数百〜数千トークン消費）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-なぜmlp-adapterの方が精度が出やすいのか">2. なぜ「MLP Adapter」の方が精度が出やすいのか？</h3>
+<p>近年の研究（LLaVA-1.5以降の論文など）で明らかになってきたのは、<strong>「アダプターは余計なことをせず、ただの翻訳役に徹したほうがLLMの知能を引き出せる」</strong> という事実です。</p>
+<ul>
+<li><strong>「生」の情報を届ける:</strong>
+Q-Formerは「学習可能なクエリ」を使って画像を要約しますが、これは一種の「情報のボトルネック」になります。一方、MLPは画像エンコーダが捉えた情報をほぼそのままLLMの次元に変換して流し込むため、LLMが画像の細部（小さな文字や物体の位置関係）をより正確に把握できます。</li>
+<li><strong>LLMの「言語空間」への適合:</strong>
+最近の非常に強力なLLM（Llama 3やQwenなど）は、入力が多少冗長でもそれを処理する高い能力を持っています。そのため、無理に圧縮（Q-Former）するよりも、多少トークン数が多くなっても正確な情報を渡す（MLP）方が、最終的な回答精度が高くなる傾向にあります。</li>
+</ul>
+<h3 id="3-どちらを選ぶべきか">3. どちらを選ぶべきか？</h3>
+<p>精度だけで選ぶなら「MLP Adapter」が優勢ですが、<strong>利用環境</strong>によって正解は変わります。</p>
+<h4 id="mlp-adapter-を選ぶべきケース精度推論重視"><strong>MLP Adapter を選ぶべきケース（精度・推論重視）</strong></h4>
+<ul>
+<li>Google Colab Proや高性能GPUサーバーを使える。</li>
+<li>画像内の細かい文字を読ませたい（OCR）、複雑な理由を説明させたい。</li>
+<li>LLaVAなどの最新のオープンソース資産を活用したい。</li>
+</ul>
+<h4 id="q-former-を選ぶべきケース効率コスト重視"><strong>Q-Former を選ぶべきケース（効率・コスト重視）</strong></h4>
+<ul>
+<li>推論時のメモリ消費（VRAM）を極限まで抑えたい。</li>
+<li>動画のように、大量のフレームを入力する必要があり、トークン圧縮が必須。</li>
+<li>画像検索やマッチングなど、情報の「要約ベクトル」が欲しい。</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>本日はVLMの視覚情報をLLMに伝えるBridgeをMLP Adapterで実装、学習してみました。
+視覚認識することは確認出来ました。</p>
+<p>後は、大きい画像に対応する技術が確認取れれば、VLMのstudyは一段落としようと思います。</p>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+            
+        </body>
+        </html>
