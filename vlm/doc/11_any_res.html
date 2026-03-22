@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>1&period; AnyRes&#x306e;&#x57fa;&#x672c;&#x7684;&#x306a;&#x4ed5;&#x7d44;&#x307f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>AnyRes（Dynamic High Resolution / Dynamic Cropping）は、近年のVLM（Phi-4, LLaVA-NeXT, InternVLなど）で採用されている、<strong>「画像の細部を潰さずに高解像度で処理する」</strong> ための非常に強力な機構です。</p>
+<p>従来のVLMが抱えていた「画像を無理やり正方形に縮小して、文字や小さな物体が読めなくなる」という弱点を解決するために開発されました。</p>
+<h2 id="1-anyresの基本的な仕組み">1. AnyResの基本的な仕組み</h2>
+<p>AnyResは、1枚の画像を「全体像」と「細部（タイル）」に分けて処理します。</p>
+<ol>
+<li><strong>アスペクト比の維持:</strong> 入力画像の縦横比を崩さずに、最適なグリッド（例：<strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">2 \times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span></strong> や <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">1 \times 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span></strong>）を決定します。</li>
+<li><strong>分割（Cropping）:</strong> 画像を複数のサブ画像（タイル）に分割します。</li>
+<li><strong>全体像の追加:</strong> 分割したタイルとは別に、画像全体を低解像度に縮小した「サムネイル」も用意します。</li>
+<li><strong>特徴量の結合:</strong> 全てのタイルとサムネイルをVision Encoderに通し、得られた特徴量トークンをLLMに一列に並べて流し込みます。</li>
+</ol>
+<h2 id="2-なぜこの機構が精度に効くのか">2. なぜこの機構が「精度」に効くのか？</h2>
+<p>エンジニア的な視点で見ると、AnyResは以下の3つのメリットをもたらします。</p>
+<ul>
+<li><strong>解像度の実質的な向上:</strong> 例えば <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>336</mn><mo>×</mo><mn>336</mn></mrow><annotation encoding="application/x-tex">336 \times 336</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">336</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">336</span></span></span></span></strong> のVision Encoderを使っている場合、<strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">2 \times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span></strong> のAnyResを使えば実質的に <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>672</mn><mo>×</mo><mn>672</mn></mrow><annotation encoding="application/x-tex">672 \times 672</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">672</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">672</span></span></span></span></strong> 相当の情報を処理できます。</li>
+<li><strong>OCR能力の飛躍:</strong> 小さな文字も分割されたタイル内では大きく表示されるため、文字認識の精度が劇的に向上します。</li>
+<li><strong>柔軟な対応:</strong> 横長の画像なら <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">1 \times 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span></strong>、縦長なら <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">3 \times 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></strong> のように、被写体に合わせて最適な分割数を選択できるため、情報の歪みがありません。</li>
+</ul>
+<h2 id="3-具体的なデータフローの例">3. 具体的なデータフローの例</h2>
+<p>Phi-4などでよく見られる、画像がトークン化されるまでの流れは以下の通りです。
+ビジョンで見たものをリサイズしてトークン横並びにする。</p>
+<ol>
+<li><strong>Original Image:</strong> <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1000</mn><mo>×</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">1000 \times 500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1000</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">500</span></span></span></span></strong> (横長)</li>
+<li><strong>Grid Selection:</strong> <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">1 \times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span></strong> のグリッドを選択。</li>
+<li><strong>Tiling:</strong> 左半分の <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>500</mn><mo>×</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">500 \times 500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">500</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">500</span></span></span></span></strong> と右半分の <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>500</mn><mo>×</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">500 \times 500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">500</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">500</span></span></span></span></strong> に分ける（各タイルを <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>336</mn><mo>×</mo><mn>336</mn></mrow><annotation encoding="application/x-tex">336 \times 336</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">336</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">336</span></span></span></span></strong> にリサイズ）。</li>
+<li><strong>Thumbnail:</strong> 全体を <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>336</mn><mo>×</mo><mn>336</mn></mrow><annotation encoding="application/x-tex">336 \times 336</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">336</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">336</span></span></span></span></strong> にリサイズ。</li>
+<li><strong>Concatenation:</strong> [サムネイルのトークン] + [左タイルのトークン] + [右タイルのトークン] を一列に並べてLLMへ。</li>
+</ol>
+<h2 id="4-anyresの課題トークン数の爆発">4. AnyResの課題：トークン数の爆発</h2>
+<p>精度は上がりますが、注意すべき点もあります。</p>
+<ul>
+<li><strong>計算コスト:</strong> 分割数が増えるほど、LLMに渡されるトークン数が倍増します（例：1枚576トークンが、5分割で2880トークンに）。</li>
+<li><strong>VRAM消費:</strong> トークン数が増えると、Attention計算に必要なVRAMも急激に増加します。</li>
+</ul>
+<p><strong>そのため、Phi-4のような小型モデルでは、この大量のトークンをいかに効率よく処理するか（先ほどお話ししたプーリングなど）がセットで設計されています。</strong></p>
+<h3 id="5-処理の意図">5. 処理の意図</h3>
+<p>AnyResという機構が、なぜこれほどまでに手間をかけて画像を分割・結合するのか。その本質的な意図は、一言で言えば <strong>「LLMの視力を、既存のVision Encoderの限界を超えてブーストすること」</strong> にあります。</p>
+<p>エンジニア的視点で、その「意図」を3つの核心的なメリットから紐解きます。</p>
+<p><strong>1. 「情報の蒸発」を防ぐ（高解像度の維持）</strong></p>
+<p>従来のVLM（CLIP-ViTなど）は、入力サイズが <strong>224x224</strong> や <strong>336x336</strong> と固定されています。
+例えば、横に長い「1000文字の契約書」をそのまま336ピクセルに縮小すると、文字が潰れて判読不能になります。</p>
+<ul>
+<li><strong>AnyResの意図:</strong> 画像を無理に縮小せず、「実寸に近い解像度」のまま分割して処理することで、小さな文字（OCR）や細かな物体（数ピクセルの傷など）の情報を損失させずにLLMへ届けることができます。</li>
+</ul>
+<p><strong>2. 「マクロ」と「ミクロ」の両立（空間認識の強化）</strong></p>
+<p>人間も、景色を見るときに「全体の雰囲気」を掴むのと同時に、「特定の部分」を凝視します。AnyResはこの挙動を模倣しています。</p>
+<ul>
+<li><strong>サムネイル（マクロ）の役割:</strong> 画像全体のレイアウト、構図、大まかな物体の配置を理解させる。</li>
+<li><strong>分割タイル（ミクロ）の役割:</strong> 個別の物体、テクスチャ、テキストなどの詳細を理解させる。</li>
+<li><strong>意図:</strong> これらを一列に並べてLLMに渡すことで、LLMは「この文字（タイル内）は、この看板（全体像内）の一部だ」という<strong>相対的な空間関係</strong>を理解できるようになります。</li>
+</ul>
+<p><strong>3. アスペクト比による「歪み」の排除</strong></p>
+<p>多くのVision Encoderは正方形での入力を求めますが、現実に正方形の画像は稀です。</p>
+<ul>
+<li><strong>従来の処理:</strong> 横長画像を正方形にリサイズすると、物体が横に潰れてしまい、形状の認識精度が落ちます。</li>
+<li><strong>AnyResの意図:</strong> グリッド（1x3や2x2）を動的に選ぶことで、元の画像の比率を保ったままパッチ化します。これにより、物体が「本来の形」で認識されるため、形状認識の精度が安定します。</li>
+</ul>
+<h3 id="6-処理の結果">6. 処理の結果</h3>
+<p>VLMの内部で起きていることをエンジニア的な視点で整理すると、<strong>「画像という多次元データを、LLMが『言葉』として解釈できる共通のベクトル空間（埋め込み空間）へ無理やり翻訳している」</strong> 状態と言えます。</p>
+<p>具体的にどのようなステップで「言語の分散表現（埋め込みベクトル）」に変換されているのか、そのプロセスを分解して解説します。</p>
+<p><strong>1. 視覚特徴から「視覚トークン」への変換</strong></p>
+<p>まず、Vision Encoder（ViTなど）が画像をパッチ（断片）に分け、それぞれのパッチをベクトル化します。この時点では、まだ「画像処理モデルが理解する数値」です。</p>
+<p><strong>2. MLP Adapterによる「翻訳」</strong></p>
+<p>ここで先ほどお話しした <strong>MLP Adapter</strong> が登場します。</p>
+<ul>
+<li><strong>次元の不一致を解消:</strong> 例えば、画像モデルの出力が1024次元、LLMの入力が4096次元だった場合、この次元を合わせます。</li>
+<li><strong>空間の写像:</strong> 単に数字の数を合わせるだけでなく、画像特徴が持つ「意味（赤い、丸い、尖っている）」を、LLMの語彙（Vocabulary）が持つ「意味」の近くに配置します。</li>
+</ul>
+<p><strong>3. LLM視点での「画像」</strong></p>
+<p>LLMにとって、アダプターを通過した後の画像トークンは、もはや画像ではなく <strong>「自分が知らない言語で書かれた未知の単語」</strong> のような存在です。</p>
+<ul>
+<li><strong>分散表現の統合:</strong> テキストの「猫」という単語の分散表現（Embedding）と、画像の「猫のパッチ」から変換された分散表現が、LLM内部の多次元空間において<strong>近い位置</strong>にプロットされるよう学習されます。</li>
+<li><strong>処理の同一化:</strong> LLMのSelf-Attention機構の中では、テキストトークンも視覚トークンも区別されません。全てのトークンが「同じ次元のベクトル」として並列に処理されます。</li>
+</ul>
+<p><strong>なぜこれが「強力」なのか？</strong></p>
+<p>この仕組みの最大の利点は、<strong>LLMがこれまでに膨大なテキストデータから学んだ「論理」や「常識」を、画像データに対してもそのまま適用できる</strong>点にあります。</p>
+<blockquote>
+<p><strong>例:</strong></p>
+<ol>
+<li>画像から「割れたグラス」の視覚トークンが来る。</li>
+<li>それが言語空間の「破損」「危険」「液体」などの概念に近いベクトルに変換される。</li>
+<li>LLMは「割れたグラスは危ないので片付けるべき」という既存の知識を使って、適切な回答を生成する。</li>
+</ol>
+</blockquote>
+<h2 id="実験">実験</h2>
+<p>とここまで説明したAnyRes実際に実装してみましょう。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+<span class="hljs-keyword">import</span> torchvision.transforms <span class="hljs-keyword">as</span> T
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">simulate_anyres</span>(<span class="hljs-params">image_path, patch_size=<span class="hljs-number">224</span></span>):
+    <span class="hljs-comment"># 1. 画像の読み込み</span>
+    raw_image = Image.<span class="hljs-built_in">open</span>(image_path).convert(<span class="hljs-string">&#x27;RGB&#x27;</span>)
+    
+    <span class="hljs-comment"># 2. 全体像（サムネイル）の作成</span>
+    <span class="hljs-comment"># どんなに大きくても一旦 patch_size に縮小</span>
+    thumbnail_transform = T.Compose([
+        T.Resize((patch_size, patch_size)),
+        T.ToTensor()
+    ])
+    thumbnail = thumbnail_transform(raw_image) <span class="hljs-comment"># [3, 224, 224]</span>
+
+    <span class="hljs-comment"># 3. 高解像度パッチへの分割 (2x2 グリッドを想定)</span>
+    <span class="hljs-comment"># 元画像を 448x448 にリサイズしてから 224x224 の4枚に分ける</span>
+    high_res_transform = T.Compose([
+        T.Resize((patch_size * <span class="hljs-number">2</span>, patch_size * <span class="hljs-number">2</span>)),
+        T.ToTensor()
+    ])
+    high_res_img = high_res_transform(raw_image) <span class="hljs-comment"># [3, 448, 448]</span>
+    
+    <span class="hljs-comment"># [3, 448, 448] -&gt; [3, 2, 224, 2, 224] -&gt; [4, 3, 224, 224] に変換</span>
+    patches = high_res_img.unfold(<span class="hljs-number">1</span>, patch_size, patch_size).unfold(<span class="hljs-number">2</span>, patch_size, patch_size)
+    patches = patches.contiguous().view(<span class="hljs-number">3</span>, -<span class="hljs-number">1</span>, patch_size, patch_size).permute(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>)
+    
+    <span class="hljs-comment"># 4. 可視化 (何が起きているか確認)</span>
+    fig, axes = plt.subplots(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>, figsize=(<span class="hljs-number">15</span>, <span class="hljs-number">5</span>))
+    axes[<span class="hljs-number">0</span>].imshow(thumbnail.permute(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>))
+    axes[<span class="hljs-number">0</span>].set_title(<span class="hljs-string">&quot;Thumbnail&quot;</span>)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">4</span>):
+        axes[i+<span class="hljs-number">1</span>].imshow(patches[i].permute(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>))
+        axes[i+<span class="hljs-number">1</span>].set_title(<span class="hljs-string">f&quot;Patch <span class="hljs-subst">{i+<span class="hljs-number">1</span>}</span>&quot;</span>)
+    plt.show()
+
+    <span class="hljs-keyword">return</span> thumbnail, patches
+
+<span class="hljs-comment"># 実行例 (Colabに画像をアップロードしてパスを指定してください)</span>
+thumbnail, patches = simulate_anyres(<span class="hljs-string">&quot;/content/feature-3.png&quot;</span>)
+</code></pre>
+<p><strong>結果</strong></p>
+<p>今回は航空写真の画像を入力してみた結果を示します。</p>
+<p>これがサムネイル。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\doc\image\11_any_res\1774084830666.png" alt="1774084830666"></p>
+<p>こちらが画像から2×2で画像を拡大表示したものになります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\doc\image\11_any_res\1774084841950.png" alt="1774084841950"></p>
+<p>これにより、画像がつぶされて、詳細の分析ができないことを防ぐことが出来るようになります。</p>
+<h2 id="総括">総括</h2>
+<p>AnyResが登場する前、VLMは「画像を無理やり正方形にリサイズする」過程で、多くの重要な情報を失っていました。AnyResはこれを以下の3つのアプローチで解決しました。</p>
+<ol>
+<li>情報の「非破壊」処理: 画像を分割（パッチ化）することで、Vision Encoderの入力制限（例：336x336）を守りつつ、実質的に数倍〜十数倍の高解像度情報を維持します。</li>
+<li>アスペクト比の適応: 横長なら横に、縦長なら縦にパッチを並べることで、物体が「潰れる」「伸びる」といった歪みを防ぎ、形状認識の精度を安定させました。</li>
+<li>階層的理解: 「全体像（サムネイル）」と「細部（パッチ）」を同時にLLMに流し込むことで、人間が景色を眺めつつ細部に目を凝らすような、マクロ・ミクロ両方の視点を与えました。</li>
+</ol>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
