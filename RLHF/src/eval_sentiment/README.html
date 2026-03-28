@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>RLHF&#x306e;&#x610f;&#x7fa9;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>以前本ブログで触れた <strong>RLHF</strong> について、実験してみようと思います。</p>
+<p>RLHFの概要については以下をご覧ください。</p>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/12/31/082922">https://yoshishinnze.hatenablog.com/entry/2025/12/31/082922</a></p>
+<h2 id="rlhfの意義">RLHFの意義</h2>
+<p>RLHFを利用するモチベーションは、<strong>「正解が一つではない曖昧な基準」をAIに教え込むため</strong> です。</p>
+<p>先ほどのポジティブ変換のコードで体験したように、単なる「次の単語の予測」を超えて、AIを「人間に好まれる振る舞い」へと矯正する役割があります。主な理由は以下の3点に集約されます。</p>
+<h3 id="1-何がより良いかという主観を教えるため">1. 「何がより良いか」という主観を教えるため</h3>
+<p>数学の問題には明確な「正解」がありますが、文章の「面白さ」「親切さ」「簡潔さ」には数式のような正解がありません。</p>
+<ul>
+<li><strong>SFT（教師あり学習）の限界:</strong> 「良い回答のサンプル」を大量に与えて真似させる手法ですが、人間が完璧な手本を何万通りも作るのはコストが高すぎます。</li>
+<li><strong>RLHFの解決策:</strong> AIが生成した2つの回答を人間が比較して「Aの方がBより自然だ」と選ぶだけ（比較評価）で学習が進みます。人間にとって「書く」より「選ぶ」方が圧倒的に楽なため、効率的に主観を注入できます。</li>
+</ul>
+<h3 id="2-倫理的安全なガードレールの設置">2. 倫理的・安全なガードレールの設置</h3>
+<p>AIがインターネット上の膨大なデータを学習すると、差別的な表現や有害な知識も吸収してしまいます。これらを「言わないように」制御するのは、従来の学習だけでは困難です。</p>
+<ul>
+<li><strong>RLHFの役割:</strong> 有害な質問に対して「答えを拒否する」あるいは「安全に配慮した回答をする」パターンに高い報酬を与えることで、AIの性格を品行方正に矯正します。ChatGPTが「爆弾の作り方」を教えてくれないのは、このRLHFによる「アライメント（調整）」の結果です。</li>
+</ul>
+<h3 id="3-ハルシネーション嘘の抑制">3. 「ハルシネーション（嘘）」の抑制</h3>
+<p>AIは確率的に言葉を繋ぐため、自信満々に嘘をつくことがあります。</p>
+<ul>
+<li><strong>RLHFの役割:</strong> 根拠のある正確な回答に高い報酬を与え、適当なデタラメに低い報酬を与えることで、モデルに「事実に基づいた回答を優先する」というバイアスをかけます。</li>
+</ul>
+<h2 id="ppoの仕組み">PPOの仕組み</h2>
+<p>PPO（Proximal Policy Optimization：近接方策最適化）を簡単に説明すると、<strong>「AIが失敗して極端な行動に走らないよう、少しずつ慎重に学習を進める強化学習のアルゴリズム」</strong> です。
+OpenAIによって開発されたこの手法は、現在ChatGPTなどのRLHF（人間からのフィードバックによる強化学習）において、最も標準的に使われている「教育方針」のようなものです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\RLHF\src\eval_sentiment\image\README\1774155374425.png" alt="1774155374425"></p>
+<p>PPOの仕組みを、3つのポイントで図解を交えて解説します。</p>
+<h3 id="1-欲張りすぎを防ぐクリッピング">1. 「欲張りすぎ」を防ぐクリッピング</h3>
+<p>強化学習では、AIが「この言葉を言えば報酬がもらえる！」と気づくと、その確率を急激に上げようとします。しかし、一度に学習しすぎると、モデルの性能が崩壊（言葉が支離滅裂になるなど）することがあります。</p>
+<ul>
+<li><strong>PPOの解決策:</strong> 前のモデルと今のモデルを比較し、更新の幅が一定の範囲（例えば <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.8</mn></mrow><annotation encoding="application/x-tex">0.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.8</span></span></span></span> 〜 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1.2</mn></mrow><annotation encoding="application/x-tex">1.2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.2</span></span></span></span> 倍の間）に収まるように<strong>クリッピング（制限）</strong> をかけます。</li>
+<li><strong>イメージ:</strong> 階段を一気に10段飛ばしで登ろうとするAIに対し、「1段ずつ確実に登りなさい」とブレーキをかける仕組みです。</li>
+</ul>
+<h3 id="2-二人の自分actor-criticによる自己研鑽">2. 二人の自分（Actor-Critic）による自己研鑽</h3>
+<p>PPOの内部では、役割の異なる2つのネットワークが協力して学習します。</p>
+<ul>
+<li><strong>Actor（アクター）:</strong> 実際に文章を生成する「演者」。</li>
+<li><strong>Critic（クリティック）:</strong> その文章がどれくらい報酬をもらえそうか予想する「評論家」。</li>
+<li><strong>仕組み:</strong> 評論家が「今の文章は予想より良かったよ！」と教える（これを<strong>アドバンテージ</strong>と呼びます）ことで、演者は自信を持ってその方向へ学習を進められます。</li>
+</ul>
+<h3 id="3-klダイバージェンスモデルの自分らしさの維持">3. KLダイバージェンス（モデルの「自分らしさ」の維持）</h3>
+<p>あなたが先ほどのコードで体験したように、RLHFでのPPOには「元のモデル（Reference Model）」との比較も含まれます。</p>
+<ul>
+<li><strong>目的:</strong> 報酬（アメ）欲しさに、言語モデルとしての自然さを捨てて「Good Good Good...」と連呼するような「報酬ハック」を防ぎます。</li>
+<li><strong>仕組み:</strong> 元のモデルの確率分布から離れすぎないように罰則（KLペナルティ）を与え、<strong>「賢いままで、性格だけを良くする」</strong> という絶妙なバランスを保ちます。</li>
+</ul>
+<h2 id="実験">実験</h2>
+<h3 id="実験の内容">実験の内容</h3>
+<p>コード内の for epoch in range(10): の中では、以下のサイクルが高速で回転しています。</p>
+<p><strong>1. 生成 (Rollout):</strong></p>
+<p>モデルに「The movie was」というお題（Query）を出し、続き（Response）を自由に書かせます。</p>
+<p><strong>評価 (Evaluation):</strong></p>
+<p>書き上がった文章を「報酬モデル（感情分析モデル）」に放り込みます。
+報酬モデルでは、放り込まれた文章がポジティブなら高報酬、ネガティブなら低報酬となるように報酬出力されます。</p>
+<p>&quot;The movie was fantastic!&quot; → 高報酬</p>
+<p>&quot;The movie was terrible.&quot; → 低報酬</p>
+<p><strong>2. 改善 (Optimization):</strong></p>
+<p>PPOアルゴリズムが、「高報酬をもらえた時のパラメータの動き」を強化し、次から同じようなポジティブな単語を選びやすくします。</p>
+<h3 id="アーキテクチャ">アーキテクチャ</h3>
+<p><strong>1. 推論モデル</strong></p>
+<p>今回のPPO（強化学習）のコードで使用した推論モデルは、<strong>「DistilGPT-2」</strong> です。</p>
+<p>なぜGPT-4やLlama-3のような巨大な最新モデルではなく、あえてこの古い小型モデルを選定したのか。そこには、Google Colabの無料枠という制限されたリソース内で「強化学習のメカニズム」を確実に体験するためです。</p>
+<ul>
+<li>モデル名: distilgpt2</li>
+<li>ベース: GPT-2 (124M parameters) を知識蒸留（Distillation）で軽量化したもの。</li>
+<li>パラメータ数: 約8200万（82M）。</li>
+<li>特徴: GPT-2の性能を約95%維持しつつ、サイズを33%削減、速度を2倍にした「速くて軽い」モデル。</li>
+</ul>
+<p><strong>2. 報酬モデル</strong></p>
+<p>今回試行における報酬モデルは <strong>「DistilBERT」</strong> というモデルです。</p>
+<p>強化学習（PPO）において、モデルを賢くするためには「数値化されたアメ」が必要です。このコードでは、DistilBERTの出力を以下のように <strong>「報酬（Reward）」という単一の数値</strong> に変換しています。</p>
+<ul>
+<li>ポジティブな文章なら: +Score（例: +0.98）</li>
+<li>ネガティブな文章なら: -Score（例: -0.95）</li>
+</ul>
+<p>モデルのスペックは以下です。</p>
+<ul>
+<li>モデル名: BERT（Googleが開発した双方向エンコーダ）を軽量化した「DistilBERT」です。</li>
+<li>特化訓練: IMDb という世界最大級の映画レビューサイトのデータセット（数万件の「良い/悪い」のラベル付きレビュー）を使って、「文章の感情（ポジティブ/ネガティブ）」を判定するように追加学習（Fine-tuning）されています。</li>
+<li>出力の形式: 文章を入力すると、以下の2つを返します。</li>
+<li>Label: POSITIVE（肯定的）または NEGATIVE（否定的）</li>
+<li>Score: その判定に対する 0.0 〜 1.0 の確信度。</li>
+</ul>
+<h3 id="実装">実装</h3>
+<p>今回はTRLというライブラリを用いてRLHFを実施していきます。</p>
+<blockquote>
+<p><strong>TRL (Transformer Reinforcement Learning)</strong><br>
+Hugging Faceが提供している、Transformerモデル（LLM）を<strong>強化学習（Reinforcement Learning）</strong> によって最適化するためのフルスタックなライブラリです。
+<strong>1. TRLの主な役割：LLMを「人間に寄せる」</strong><br>
+事前学習（Pre-training）を終えただけのモデルは、単なる「次の単語の予測機」に過ぎません。TRLは、そのモデルを <strong>「人間の意図や好みに合わせる（Alignment）」</strong> ための機能提供しています。
+具体的には、以下の RLHF（人間からのフィードバックによる強化学習） のフローを一気通貫でサポートしています。
+<strong>2. サポートしている主要なアルゴリズム</strong><br>
+TRLは、最新の強化学習・最適化手法を非常にシンプルなAPIで提供しています。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">アルゴリズム</th>
+<th style="text-align:left">特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>PPO (Proximal Policy Optimization)</strong></td>
+<td style="text-align:left">今回使用したもの。報酬モデル（審判）を使って、オンラインで試行錯誤しながら学習する王道の手法。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>DPO (Direct Preference Optimization)</strong></td>
+<td style="text-align:left">報酬モデルを介さず、「AよりBの回答が良い」という比較データから直接学習する、現在最も主流の軽量手法。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Reward Modeling</strong></td>
+<td style="text-align:left">人間の好みをスコア化するための「審判モデル」を訓練する機能。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>SFT (Supervised Fine-Tuning)</strong></td>
+<td style="text-align:left">強化学習の前の段階として、高品質な対話データでモデルを微調整する機能。</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<pre><code>!pip install trl==0.9.6
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm
+<span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> pipeline, AutoTokenizer
+<span class="hljs-keyword">from</span> trl <span class="hljs-keyword">import</span> PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead, create_reference_model
+
+<span class="hljs-comment"># 1. 基本設定</span>
+device = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>
+model_name = <span class="hljs-string">&quot;distilgpt2&quot;</span> <span class="hljs-comment"># Colabで高速に動くサイズ</span>
+
+<span class="hljs-comment"># 2. PPOの設定</span>
+config = PPOConfig(
+    model_name=model_name,
+    learning_rate=<span class="hljs-number">1.41e-5</span>,
+    batch_size=<span class="hljs-number">32</span>,
+    mini_batch_size=<span class="hljs-number">8</span>, <span class="hljs-comment"># VRAM節約のため小さめに設定</span>
+    optimize_cuda_cache=<span class="hljs-literal">True</span>
+)
+
+<span class="hljs-comment"># 3. モデルとトークナイザーの準備</span>
+<span class="hljs-comment"># PPO用に「価値頭(Value Head)」を追加したモデルをロード</span>
+model = AutoModelForCausalLMWithValueHead.from_pretrained(config.model_name).to(device)
+ref_model = create_reference_model(model) <span class="hljs-comment"># 更新前のモデルと比較用</span>
+tokenizer = AutoTokenizer.from_pretrained(config.model_name)
+tokenizer.pad_token = tokenizer.eos_token
+
+<span class="hljs-comment"># 4. 報酬モデル (Sentiment Analysis) の準備</span>
+<span class="hljs-comment"># 生成された文章がどれくらいポジティブかを判定する「審判」</span>
+reward_model = pipeline(<span class="hljs-string">&quot;sentiment-analysis&quot;</span>, model=<span class="hljs-string">&quot;lvwerra/distilbert-imdb&quot;</span>, device=device)
+
+<span class="hljs-comment"># 5. ダミーデータの準備 (プロンプト)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">tokenize</span>(<span class="hljs-params">sample</span>):
+    sample[<span class="hljs-string">&quot;input_ids&quot;</span>] = tokenizer.encode(<span class="hljs-string">&quot;The movie was&quot;</span>, add_special_tokens=<span class="hljs-literal">False</span>)
+    sample[<span class="hljs-string">&quot;query&quot;</span>] = <span class="hljs-string">&quot;The movie was&quot;</span>
+    <span class="hljs-keyword">return</span> sample
+
+<span class="hljs-comment"># 実験用に32個の同じクエリを用意</span>
+<span class="hljs-keyword">from</span> datasets <span class="hljs-keyword">import</span> Dataset
+
+<span class="hljs-comment"># 5. データセットの準備 (リストではなく Dataset オブジェクトにする)</span>
+raw_data = {
+    <span class="hljs-string">&quot;query&quot;</span>: [<span class="hljs-string">&quot;The movie was&quot;</span>] * <span class="hljs-number">256</span>,
+    <span class="hljs-string">&quot;input_ids&quot;</span>: [tokenizer.encode(<span class="hljs-string">&quot;The movie was&quot;</span>)] * <span class="hljs-number">256</span>
+}
+dataset = Dataset.from_dict(raw_data)
+dataset.set_format(<span class="hljs-string">&quot;torch&quot;</span>) <span class="hljs-comment"># PyTorchテンソルとして扱えるように設定</span>
+
+<span class="hljs-comment"># 6. PPO Trainerの初期化 (これでエラーが消えるはずです)</span>
+ppo_trainer = PPOTrainer(config, model, ref_model, tokenizer, dataset=dataset)
+
+<span class="hljs-comment"># 6. PPO Trainerの初期化</span>
+ppo_trainer = PPOTrainer(config, model, ref_model, tokenizer, dataset=dataset)
+
+<span class="hljs-comment"># 7. 学習ループ (体験用のため10ステップ)</span>
+generation_kwargs = {
+    <span class="hljs-string">&quot;min_length&quot;</span>: -<span class="hljs-number">1</span>,
+    <span class="hljs-string">&quot;top_k&quot;</span>: <span class="hljs-number">0.0</span>,
+    <span class="hljs-string">&quot;top_p&quot;</span>: <span class="hljs-number">1.0</span>,
+    <span class="hljs-string">&quot;do_sample&quot;</span>: <span class="hljs-literal">True</span>,
+    <span class="hljs-string">&quot;pad_token_id&quot;</span>: tokenizer.eos_token_id,
+    <span class="hljs-string">&quot;max_new_tokens&quot;</span>: <span class="hljs-number">10</span>,
+}
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Starting PPO Training...&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Starting PPO Training...&quot;</span>)
+
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> tqdm(<span class="hljs-built_in">range</span>(<span class="hljs-number">50</span>)): <span class="hljs-comment"># 50エポックに増やして変化を見やすくします</span>
+    all_rewards = []
+    
+    <span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> ppo_trainer.dataloader:
+        <span class="hljs-comment"># クエリのテンソル化</span>
+        query_tensors = [ids.to(device) <span class="hljs-keyword">for</span> ids <span class="hljs-keyword">in</span> batch[<span class="hljs-string">&quot;input_ids&quot;</span>]]
+
+        <span class="hljs-comment"># A. Responseの生成</span>
+        <span class="hljs-comment"># ppo_trainer.generate はリスト[torch.Tensor]を返します</span>
+        response_tensors = ppo_trainer.generate(query_tensors, **generation_kwargs)
+        
+        <span class="hljs-comment"># デコードしてテキスト化</span>
+        queries = [tokenizer.decode(q) <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> query_tensors]
+        responses = [tokenizer.decode(r) <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> response_tensors]
+
+        <span class="hljs-comment"># B. 報酬(Reward)の計算</span>
+        <span class="hljs-comment"># query と response を結合して評価</span>
+        texts = [q + r <span class="hljs-keyword">for</span> q, r <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(queries, responses)]
+        pipe_outputs = reward_model(texts)
+        
+        <span class="hljs-comment"># スコアの計算（5.0倍のスケーリングで学習を加速）</span>
+        step_rewards = [
+            torch.tensor((out[<span class="hljs-string">&quot;score&quot;</span>] <span class="hljs-keyword">if</span> out[<span class="hljs-string">&quot;label&quot;</span>] == <span class="hljs-string">&quot;POSITIVE&quot;</span> <span class="hljs-keyword">else</span> -out[<span class="hljs-string">&quot;score&quot;</span>]) * <span class="hljs-number">5.0</span>).to(device) 
+            <span class="hljs-keyword">for</span> out <span class="hljs-keyword">in</span> pipe_outputs
+        ]
+        
+        all_rewards.extend([r.item() <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> step_rewards])
+
+        <span class="hljs-comment"># C. PPOによる更新</span>
+        <span class="hljs-comment"># ここで query, response, reward を渡してモデルをアップデート</span>
+        stats = ppo_trainer.step(query_tensors, response_tensors, step_rewards)
+        
+    <span class="hljs-comment"># エポックごとの進捗表示</span>
+    avg_reward = <span class="hljs-built_in">sum</span>(all_rewards) / <span class="hljs-built_in">len</span>(all_rewards)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot; Epoch <span class="hljs-subst">{epoch}</span> | Average Reward: <span class="hljs-subst">{avg_reward:<span class="hljs-number">.4</span>f}</span>&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Training Complete.&quot;</span>)
+</code></pre>
+<p>学習による報酬の推移は以下通りとなりました。
+十分に学習したことが確認されます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\RLHF\src\eval_sentiment\image\README\1774154915097.png" alt="1774154915097"></p>
+<p><strong>学習後</strong></p>
+<p>学習した後お題を推測、かつ、報酬モデルで評価した結果は以下通りです。
+期待通りポジティブ解答がされるようになりました。</p>
+<p>推論コードは以下レポジトリをご参考下さい。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/RLHF/src/eval_sentiment">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/RLHF/src/eval_sentiment</a></p>
+<pre><code>--------------------------------------------------------------------------------
+The movie was        | PPO (After)     | the first foreign event in 146 years for a studio that is divided by two | 0.9697
+                     | Ref (Before)    | dedicated to the novel, his music, much to his disappointment -- even when | -0.6020
+--------------------------------------------------------------------------------
+I thought the film   | PPO (After)     | is the most honest and light-hearted, art-visual work that I | 0.9945
+                     | Ref (Before)    | was dumbass without a plot twist, but the ending made me feel hard | -0.7361
+--------------------------------------------------------------------------------
+This story is        | PPO (After)     | in the October 2018 issue of Boros in October 2018 issue of Boros | 0.9254
+                     | Ref (Before)    | from Postamp.com. Follow us @PrisonPlanet. | 0.5008
+--------------------------------------------------------------------------------
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>今回はRLHFの効果を体験するための実験を行いました。</p>
+<ul>
+<li>PPOの仕組みは <strong>TRL</strong> を用いることで容易に体験できます。</li>
+<li>PPOは対象モデルと、報酬モデルにより構成され、行動により突然の大きなパラメータ学習されないように、じわじわと学習していく仕組みが採用されています。</li>
+<li>RLHFを用いることで学習データが存在しないような抽象的な内容を学んでいくことが出来るようになります。</li>
+</ul>
+<div class="shop-card">
+    <div class="shop-card-image">
+        <img src="https://m.media-amazon.com/images/I/71kNKa-kS8L._SL1500_.jpg" alt="商品画像">
+    </div>
+    <div class="shop-card-content">
+        <div class="shop-card-title">Advanced Fine-Tuning with RLHF</div>
+        <div class="shop-card-description">Advanced Fine-Tuning with RLHF: Teaching AI to Align with Human Intent through Feedback Loops
+        In the age of intelligent systems, alignment is everything. From ChatGPT to Gemini, the world’s most advanced AI models rely on Reinforcement Learning from Human Feedback (RLHF) to understand and adapt to human values.
+        </div>
+        <div class="shop-card-link">
+            <a href="https://www.amazon.co.jp/Advanced-Fine-Tuning-RLHF-Teaching-Mastering-ebook/dp/B0FVYDPS21?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=33UWXT4Q6MXHE&dib=eyJ2IjoiMSJ9.78cps_z79JeM0J_TbHNs2BEAMWBgB3hnm5o68DoVhWn3hZ5nC4e0BybxYMMIHeys4WAXBgfsWRNVctkMU3F0kQ.s-7IN824u89ZjZIAAccDvlEfE2zq14XXAHa0_ScFvNk&dib_tag=se&keywords=RLHF&qid=1774155458&sprefix=rlhf%2Caps%2C204&sr=8-2&linkCode=ll2&tag=yoshishinnze-22&linkId=a3907a7e4f7f6a1c26129297695afe4f&ref_=as_li_ss_tl" target="_blank" rel="noopener">Amazonで詳細を見る</a>
+        </div>
+    </div>
+</div>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+        </body>
+        </html>

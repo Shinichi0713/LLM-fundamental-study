@@ -1,6 +1,48 @@
 Google Colab 上で **RLHF（Reinforcement Learning from Human Feedback）** を試験的に実施する場合、以下のような **小規模・再現可能な実験計画**にすると現実的です。ColabのGPU制約（メモリ・実行時間）を前提に設計しています。
 
----
+# RLHFをColabで
+
+Google ColabのリソースでRLHF（人間のフィードバックからの強化学習）を体験することは十分に可能です。 [1, 2, 3] 
+ただし、Colabの無料版（T4 GPU）ではメモリ制限があるため、軽量なモデル（DistilRoBERTaやGPT-2、小型のLlamaなど）を使用したり、PEFT/LoRAなどのメモリ節約技術を組み合わせたりするのが一般的です。 [4, 5, 6] 
+以下に、ColabでRLHFを体験するための代表的な方法とリソースをまとめます。
+
+### 1. Hugging Face trl ライブラリを使用する
+
+最も一般的で初心者向けのツールです。報酬モデルの学習からPPO（近傍方策最適化）による微調整まで、一連の流れをノートブック上で完結できます。 [1] 
+
+* 報酬モデルの学習: 2つの回答のどちらが良いかという「比較データ」を使い、小型のモデル（例: distilroberta-base）を分類器として訓練します。
+* PPOによる学習: PPOTrainer を使い、言語モデルが報酬を最大化するように更新します。メモリ節約のため、8-bit量子化やLoRAが併用されます。
+* 参考教材: [ArgillaのRLHFチュートリアル (Colab対応)](https://docs.v1.argilla.io/en/v1.21.0/tutorials_and_integrations/tutorials/feedback/train-reward-model-rlhf.html) [2, 3, 4, 6, 7] 
+
+### 2. DeepSpeed-Chat を使用する
+Microsoftが提供するフレームワークで、効率的なRLHFパイプラインを構築できます。
+
+* 特徴: メモリ最適化（ZeROなど）が強力で、Colabの環境でもInstructGPTのような3段階のステップ（SFT → 報酬モデル → RLHF）を試すことができます。
+* 参考ノートブック: [DeepSpeed-Chat Step 3 (RLHF) Colab版](https://colab.research.google.com/drive/1BLt_16TeroRE9X-B1_ahEpoNr8tdTz-q?usp=sharing) [5, 8] 
+
+### 3. DPO (Direct Preference Optimization) で代用する [6] 
+厳密には強化学習（PPO）ではありませんが、RLHFと同じ「人間の好みに合わせる」目的で、より低リソースで実行できる手法です。 [1] 
+
+* メリット: 報酬モデルの構築とRLのプロセスを1つの学習ステップに簡略化できるため、Colabでの実験に非常に適しています。 [6, 9] 
+
+__実装時の注意点__
+
+* ランタイム設定: 必ず ランタイム > ランタイムのタイプを変更 から GPU (T4) を選択してください。
+* メモリ管理: bitsandbytes ライブラリを使用してモデルを4-bitまたは8-bitでロードすることで、VRAM不足を回避できます。 [2, 3, 6] 
+
+まずは、準備が簡単な trl ライブラリ を使った「感情分析モデルを報酬としたテキスト生成の改善」などのチュートリアルから始めるのがスムーズです。
+
+
+[1] [https://colab.research.google.com](https://colab.research.google.com/github/ashworks1706/rlhf-from-scratch/blob/main/tutorial.ipynb#:~:text=With%20a%20trained%20reward%20model%20in%20place%2C,diverge%20too%20far%20from%20natural%20language%20patterns.)
+[2] [https://docs.v1.argilla.io](https://docs.v1.argilla.io/en/v1.21.0/tutorials_and_integrations/tutorials/feedback/train-reward-model-rlhf.html)
+[3] [https://docs.v1.argilla.io](https://docs.v1.argilla.io/en/v1.10.0/guides/llms/examples/train-reward-model-rlhf.html)
+[4] [https://docs.v1.argilla.io](https://docs.v1.argilla.io/en/v1.25.0/tutorials_and_integrations/tutorials/feedback/train-reward-model-rlhf.html)
+[5] [https://colab.research.google.com](https://colab.research.google.com/drive/1BLt_16TeroRE9X-B1_ahEpoNr8tdTz-q?usp=sharing)
+[6] [https://medium.com](https://medium.com/@ufuk.birbiri/llm-fine-tuning-with-direct-preference-optimization-dpo-with-code-12ed92259215)
+[7] [https://medium.com](https://medium.com/@vi.ha.engr/building-an-rlhf-pipeline-for-llms-a-beginner-friendly-tutorial-21112bfcff9b)
+[8] [https://www.rohan-paul.com](https://www.rohan-paul.com/p/reinforcement-learning-from-human)
+[9] [https://huggingface.co](https://huggingface.co/blog/NormalUhr/rlhf-pipeline)
+
 
 # ColabでRLHFを試すための実験計画
 
