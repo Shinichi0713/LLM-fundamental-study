@@ -382,6 +382,18 @@ PEFT:
 LLM-learning:
 [efficiently train llm](https://shinichi0713.github.io/LLM-fundamental-study/docs/13-LLM-learning)
 
+## VLM
+
+VLMs (Vision-Language Models) enable the execution of visual recognition tasks by combining Large Language Models (LLMs) with multimodal models such as CLIP. In this repository, we confirmed that visual recognition can be achieved by training the integration of LLMs and CLIP through mechanisms like Q-Formers or MLP Adapters.
+
+![1774083511417](vlm/src/mlp_adapter/image/README/1774083511417.png)
+
+```
+ with A dog looking the master
+```
+
+[VLM Trials](https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/vlm/src)
+
 ## AI tools
 
 The following section covers key metrics and essential tools for efficient AI development.
@@ -413,4 +425,4 @@ https://pytorch.org/get-started/locally/
 
 I publish technical articles focused on LLM related technics on my blog. Feel free to visit and have a read.
 
-[writer's blog](https://yoshishinnze.hatenablog.com/)
+[writer&#39;s blog](https://yoshishinnze.hatenablog.com/)
