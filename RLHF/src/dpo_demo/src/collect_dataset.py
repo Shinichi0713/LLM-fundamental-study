@@ -1,10 +1,9 @@
 from datasets import load_dataset
 
 # helpful-base サブセットをロード
-dataset = load_dataset("Anthropic/hh-rlhf", data_dir="helpless-base")
+dataset = load_dataset("Anthropic/hh-rlhf", data_dir="helpful-base")
 # または helpful-base / helpful-online なども使えます
 # dataset = load_dataset("Anthropic/hh-rlhf", data_dir="helpful-base")
-
 
 import re
 
@@ -58,4 +57,3 @@ print(f"学習データ数: {len(train_dpo)}")
 print(f"評価データ数: {len(eval_dpo)}")
 print("例:")
 print(train_dpo[0])
-
