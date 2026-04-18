@@ -245,4 +245,95 @@ def inhibit_feature(model, sae_list, input_ids, layer_idx, feature_idx, multipli
 
 実装の詳細は、Anthropicの**Methods論文**と**GitHubフロントエンド**を参照してください[Circuit Tracing: Revealing computational graphs in language models](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)[Anthropic: Tracing the thoughts of a large language model](https://www.anthropic.com/research/tracing-thoughts-language-model)。
 
+## 実験
+
+ここまでの話を行った**Circuit Tracing**を基本的な言語モデルであるBERTを使って実験していきます。
+学習データは事前学習に用いられているWikipediaで実施します。
+この学習データ（Wikipediaテキスト）で**SAE/CLTを学習し、Circuit Tracingを試す**ことで、以下のことが分かるようになります。
+
+### 1. BERTが「どのような特徴で文を理解しているか」が可視化される
+
+- **SAEの特徴量**：
+  - BERTのMLP出力を**スパースな特徴ベクトル**に分解。
+  - 各特徴が、例えば
+    - 「主語（人物名）」
+    - 「動詞（行動）」
+    - 「場所（地名）」
+    - 「時制（過去/現在）」
+    などの**言語的・意味的概念**に対応する可能性があります。
+- **Attribution Graph**：
+  - 特定の文（例：`John lives in Paris`）に対して、
+    - どの特徴が「John」トークンに寄与しているか
+    - どの特徴が「Paris」トークンに寄与しているか
+    を**線形効果として可視化**できます。
+
+**分かること**：
+- BERTが**文のどの部分を「重要」と見なしているか**（主語・述語・場所など）。
+- 各層で**どのような概念が活性化しているか**（層ごとの役割分担）。
+
+### 2. 層間の情報フロー（どの層が何を伝えているか）が分かる
+
+- **CLTの再構成**：
+  - 下位層の特徴から、上位層のMLP出力を**線形再構成**。
+  - 例：層3の「主語特徴」が、層6の「文全体の要約特徴」に寄与している、など。
+- **Attribution Graph**：
+  - 特定の出力logit（例：`Paris`のLOCラベル）に対して、
+    - どの層のどの特徴が寄与しているか
+    - どの層間パスが重要か
+    を**グラフとして可視化**できます。
+
+**分かること**：
+- BERT内部で**情報がどのように層を伝播しているか**（浅い層→深い層の流れ）。
+- 特定の判断（例：地名認識）に**どの層が重要な役割を果たしているか**。
+
+### 3. 特定の判断（例：地名認識）に「どの特徴が因果的に寄与しているか」が検証できる
+
+- **Feature Inhibition**：
+  - Attribution Graphで重要と判定された特徴を**抑制（符号反転など）**し、
+  - ターゲットlogit（例：`Paris`のLOC確率）がどう変わるかを観察。
+- 例：
+  - 「地名特徴」を抑制 → LOC確率が大きく低下
+  - → その特徴は**因果的にLOC判断に寄与**していると結論。
+
+**分かること**：
+- Circuit Tracingで抽出した**「回路」が実際に機能しているか**を検証。
+- 特定の判断（地名・人物・時制など）に**どの特徴が本質的か**を特定。
+
+### 4. BERTの「思考の回路」を、人間が解釈可能な形でトレースできる
+
+- **Attribution Graphの可視化**：
+  - ノード：特徴量・トークン・出力logit
+  - エッジ：線形寄与（勾配×活性）
+  - → **「どの特徴がどのトークン・どの出力に影響しているか」**をグラフとして見られる。
+- **Feature Inhibition**：
+  - グラフ上の重要ノードを**実際に操作**し、出力がどう変わるかを確認。
+
+**分かること**：
+- BERTが**どのような内部プロセスで回答を生成しているか**を、
+  - 「この特徴がこのトークンに注目し、この層を経てこの出力に至る」
+  という形で**ステップバイステップにトレース**できる。
+- これは、Anthropicの**「Tracing the thoughts of a large language model」**で示された**Circuit Tracing**のBERT版再現です[Anthropic: Tracing the thoughts of a large language model](https://www.anthropic.com/research/tracing-thoughts-language-model)。
+
+### 5. まとめ：この実験で分かること
+
+- **SAE**：
+  - BERTのMLP活性を**スパースな特徴量**に分解し、
+  - 各特徴が**どのような言語概念に対応しているか**を可視化。
+- **CLT**：
+  - 下位層の特徴から上層出力を再構成し、
+  - **層間の情報フロー（どの層が何を伝えているか）**を線形近似。
+- **Attribution Graph**：
+  - 特定の文・特定の出力に対して、
+    - **どの特徴がどのトークン・どの出力に寄与しているか**をグラフ化。
+- **Feature Inhibition**：
+  - 重要特徴を抑制し、
+  - **その特徴が実際に因果的に重要か**を検証。
+
+
+## 実装
+以下のレポジトリのコードで学習データの収集、モデル構築、学習、評価を行っています。
+
+https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/evaluate_method/circuit_tracing/src
+
+
 

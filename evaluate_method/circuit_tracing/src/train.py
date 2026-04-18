@@ -67,7 +67,10 @@ num_epochs = 10
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 for epoch in range(num_epochs):
-    for batch in dataloader:
+    # エポックごとのロスを記録
+    epoch_losses = []
+
+    for batch_idx, batch in enumerate(dataloader):
         input_ids = batch["input_ids"].to(device)
         mlp_outputs = get_mlp_outputs(input_ids)  # (n_layers, B, seq_len, d_model)
 
@@ -79,6 +82,7 @@ for epoch in range(num_epochs):
                 features_list.append(a_l)
 
         # 各ターゲット層lに対してCLTを学習
+        batch_loss = 0.0
         for l in range(n_layers):
             clt = clt_list[l]
             optimizer = clt_optimizers[l]
@@ -90,6 +94,20 @@ for epoch in range(num_epochs):
             loss = F.mse_loss(y_hat_l, y_l)
             loss.backward()
             optimizer.step()
+
+            batch_loss += loss.item()
+
+        # バッチごとの平均ロスを記録
+        avg_batch_loss = batch_loss / n_layers
+        epoch_losses.append(avg_batch_loss)
+
+        # 進捗表示（例：100バッチごと）
+        if batch_idx % 100 == 0:
+            print(f"Epoch {epoch+1}/{num_epochs}, Batch {batch_idx}, Avg Loss: {avg_batch_loss:.6f}")
+
+    # エポック終了時の平均ロス
+    epoch_avg_loss = sum(epoch_losses) / len(epoch_losses)
+    print(f"Epoch {epoch+1}/{num_epochs} finished. Average CLT Loss: {epoch_avg_loss:.6f}")
 
 def local_replacement_forward(model, sae_list, clt_list, input_ids):
     # Attention/LayerNormを固定したforward（概念例）
