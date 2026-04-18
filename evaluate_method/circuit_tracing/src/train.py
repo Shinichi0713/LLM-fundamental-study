@@ -44,21 +44,6 @@ optimizers = [torch.optim.Adam(sae.parameters(), lr=1e-3) for sae in sae_list]
 # BERTは勾配不要（重み固定）
 model.requires_grad_(False)
 
-for epoch in range(num_epochs):
-    for batch in dataloader:
-        input_ids = batch["input_ids"].to(device)
-        mlp_outputs = get_mlp_outputs(input_ids)  # (n_layers, B, seq_len, d_model)
-
-        for l in range(n_layers):
-            sae = sae_list[l]
-            optimizer = optimizers[l]
-            optimizer.zero_grad()
-
-            x_l = mlp_outputs[l]  # 層lのMLP出力
-            x_recon, a, loss = sae(x_l)
-
-            loss.backward()
-            optimizer.step()
 
 class CrossLayerTranscoder(nn.Module):
     def __init__(self, n_layers, d_model, n_features_per_layer):
@@ -77,6 +62,9 @@ class CrossLayerTranscoder(nn.Module):
 
 clt_list = [CrossLayerTranscoder(n_layers, d_model, n_features_per_layer) for _ in range(n_layers)]
 clt_optimizers = [torch.optim.Adam(clt.parameters(), lr=1e-3) for clt in clt_list]
+
+num_epochs = 10
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 for epoch in range(num_epochs):
     for batch in dataloader:
