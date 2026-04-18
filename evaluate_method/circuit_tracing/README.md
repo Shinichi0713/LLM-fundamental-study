@@ -1,7 +1,10 @@
 以下、Anthropicの **「Tracing the thoughts of a large language model」** における**Circuit Tracing**を、BERTなど他モデルで再現する手順を整理します。
 
+## 概要
 
-## 1. Circuit Tracingの概要（Anthropic）
+![1776472331534](image/README/1776472331534.png)
+
+### 1. Circuit Tracingの概要（Anthropic）
 
 AnthropicのCircuit Tracingは、LLM内部の **「特徴量（features）」同士の接続を可視化** し、**どの特徴がどの出力に因果的に寄与しているか**を明らかにする手法です[Anthropic: Tracing the thoughts of a large language model](https://www.anthropic.com/research/tracing-thoughts-language-model)。
 
@@ -18,11 +21,9 @@ AnthropicのCircuit Tracingは、LLM内部の **「特徴量（features）」同
 
 BERTもTransformerベースなので、**同じ枠組みで再現可能**です[Circuit Tracing: Revealing computational graphs in language models](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)。
 
----
+### 2. BERTでCircuit Tracingを再現する手順
 
-## 2. BERTでCircuit Tracingを再現する手順
-
-### ステップ1：BERTのMLP層にSparse Autoencoder（SAE）を学習
+__ステップ1：BERTのMLP層にSparse Autoencoder（SAE）を学習__
 
 **目的**：MLPの活性を**スパースな特徴量**に分解し、「意味のある概念」を抽出します。
 
@@ -61,9 +62,7 @@ class SparseAutoencoder(nn.Module):
 - BERTのMLP出力（`MLP_out`）を入力として、`x_recon ≈ MLP_out`になるようSAEを学習。
 - 各層ごとにSAEを用意し、**層ごとの特徴量**を抽出します。
 
----
-
-### ステップ2：Cross-Layer Transcoders（CLT）の構築
+__ステップ2：Cross-Layer Transcoders（CLT）の構築__
 
 **目的**：ある層のMLP出力を、**下位層の特徴量の線形和**で再構成し、**層間の情報フロー**を線形近似します。
 
@@ -96,9 +95,7 @@ class CrossLayerTranscoder(nn.Module):
 - BERTのMLP出力`y^l`を教師信号として、`y_hat^l ≈ y^l`になるようCLTを学習。
 - これにより、**「どの層のどの特徴が、上層のどの出力に寄与しているか」**を線形近似できます。
 
----
-
-### ステップ3：Local Replacement Modelの構築
+__ステップ3：Local Replacement Modelの構築__
 
 **目的**：特定プロンプトに対して、Attentionパターン・LayerNorm分母を固定し、モデルを**線形化**します。
 
@@ -122,11 +119,9 @@ def forward_with_frozen_attention(model, input_ids):
 
 **Local Replacement Model**：
 - 固定したAttention/LayerNormの上に、**CLTで再構成したMLP出力**を流し込む。
-- これにより、**「プロンプト依存の非線形部分を固定し、残りを線形近似」**したモデルが得られます。
+- これにより、**「プロンプト依存の非線形部分を固定し、残りを線形近似」** したモデルが得られます。
 
----
-
-### ステップ4：Attribution Graphsの計算
+__ステップ4：Attribution Graphsの計算__
 
 **目的**：**どの特徴がどの出力logitにどれだけ寄与しているか**を、**線形効果**として計算します。
 
@@ -172,9 +167,7 @@ def compute_attribution_graph(model, sae_list, input_ids, target_logit_idx):
 - BERTは**双方向Attention**なので、Attribution計算時に**全トークン間の影響**を考慮する必要があります。
 - 実際には、Anthropicの論文にある**backwards Jacobian**の式に従い、`stop_grad`で非線形部分を無視しながら計算します[Circuit Tracing: Revealing computational graphs in language models](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)。
 
----
-
-### ステップ5：Graph Pruning（重要ノード・エッジの抽出）
+__ステップ5：Graph Pruning（重要ノード・エッジの抽出）__
 
 **目的**：Attribution Graphが大きすぎるため、**重要度の高いノード・エッジのみを残す**。
 
@@ -192,9 +185,7 @@ def prune_attribution_graph(attribution_weights, top_k_ratio=0.1):
     return pruned
 ```
 
----
-
-### ステップ6：Feature Inhibition（因果検証）
+__ステップ6：Feature Inhibition（因果検証）__
 
 **目的**：特定特徴を**抑制・注入**し、出力がどう変わるかを見ることで、**因果的寄与**を検証します。
 
@@ -227,9 +218,7 @@ def inhibit_feature(model, sae_list, input_ids, layer_idx, feature_idx, multipli
 - 抑制前後で**ターゲットlogitの変化**を比較。
 - 変化が大きい → その特徴は**因果的に重要**。
 
----
-
-## 3. BERTでの具体的な適用例（例：NERタスク）
+### 3. BERTでの具体的な適用例（例：NERタスク）
 
 1. **タスク設定**：
    - BERT＋分類ヘッドで**固有表現認識（NER）**。
@@ -242,9 +231,7 @@ def inhibit_feature(model, sae_list, input_ids, layer_idx, feature_idx, multipli
    - Attribution Graphを計算し、**「Paris」トークンと「LOC」logitを結ぶ特徴パス**を可視化。
    - Feature Inhibitionで、**地名関連特徴**を抑制し、LOC確率が下がるか検証。
 
----
-
-## 4. まとめ
+### 4. まとめ
 
 - **Circuit Tracing**は、LLM内部の**特徴量同士の接続（circuits）**を可視化し、**因果的寄与**を検証する手法です。
 - BERTでも、以下の手順で再現可能です：
