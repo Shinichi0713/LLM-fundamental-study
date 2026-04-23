@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x7279;&#x5fb4;&#x91cf;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <p>大学の研究室で画像処理系の研究室に入った場合、まず研究室で当たり前のように&quot;特徴量&quot;という言葉を聞くことになります。
+ですが、大学の講義で画像処理を受けてこなかった場合、&quot;?&quot;となることが多いはずです。</p>
+<p>画像処理を行う場合、ほぼ確実に出てくる特徴量という言葉。
+特徴量とは一体何なんでしょう？</p>
+<p>本日は特徴量の正体について説明します。</p>
+<h2 id="特徴量">特徴量</h2>
+<p>画像処理で扱うことになる特徴量は、おおまかに次の3つに分けられます。</p>
+<ol>
+<li>
+<p><strong>画素値そのもの（輝度・色）</strong></p>
+<ul>
+<li>最も原始的な特徴量で、画像をグレースケールにしたときの「明るさ（輝度）」や、カラー画像のR/G/Bチャンネル値などです。</li>
+<li>多くの処理は、この画素値の集合に対してフィルタや統計処理をかけることから始まります。</li>
+</ul>
+</li>
+<li>
+<p><strong>局所的な形状・エッジ・テクスチャ</strong></p>
+<ul>
+<li><strong>エッジ</strong>：Sobelフィルタ、Cannyエッジ検出などで抽出される「輪郭」や「境界」。</li>
+<li><strong>コーナー</strong>：Harrisコーナー、FASTなどで検出される「角」や「特徴点」。</li>
+<li><strong>テクスチャ</strong>：LBP（Local Binary Patterns）、Gaborフィルタなどで表される「模様」や「質感」。</li>
+<li>物体認識やマッチングでは、こうした局所特徴が非常に重要になります。</li>
+</ul>
+</li>
+<li>
+<p><strong>統計的・大域的な特徴</strong></p>
+<ul>
+<li><strong>ヒストグラム</strong>：画像全体の明るさや色の分布。</li>
+<li><strong>HOG（Histogram of Oriented Gradients）</strong>：局所的な勾配方向の分布をまとめた特徴。</li>
+<li><strong>SIFT / SURF / ORB</strong>：スケールや回転に比較的頑健な局所特徴量（最近はディープラーニングに置き換えられつつありますが、基礎として学ぶことが多いです）。</li>
+</ul>
+</li>
+</ol>
+<p>最近はディープラーニング（CNNなど）で「特徴量を自動学習する」ことが主流ですが、その入力として使われるのは結局「画素値」であり、学習された特徴の中身を分解すると、上記のようなエッジ・テクスチャ・形状の組み合わせになっていることが多いです。</p>
+<p>まとめると、</p>
+<ul>
+<li>画像処理の基本は「画素値（輝度・色）」を出発点に、</li>
+<li>そこから「エッジ・コーナー・テクスチャ」などの局所特徴を抽出し、</li>
+<li>必要に応じて「ヒストグラム」などの統計特徴にまとめる、
+という流れで、これらはほぼ必ず扱うことになる特徴量と言えます。</li>
+</ul>
+<h2 id="実装してイメージ">実装してイメージ</h2>
+<p>実際に画像を使って求めてみるとイメージが良くわきます。
+以下では、OpenCVとscikit-imageを使って、エッジ・コーナー・テクスチャを求めるPythonコード例を示します。</p>
+<p>今回実験ではコントラストがきれいな画像が良いということで以下のような実家の写真を利用します。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\feature_point\image\feature_point\1776555019024.png" alt="1776555019024"></p>
+<h3 id="事前準備">事前準備</h3>
+<pre><code class="language-bash">pip install opencv-python scikit-image matplotlib numpy
+</code></pre>
+<h3 id="1-エッジsobel-canny">1. エッジ（Sobel, Canny）</h3>
+<p>エッジ抽出系の手法です。</p>
+<p>エッジ検出の基本は「画像中の輝度（明るさ）の急激な変化を見つける」ことです。SobelやCannyは、その変化をどのように計算・評価するかが異なります。</p>
+<p><strong>1. エッジ検出の共通原理</strong></p>
+<ul>
+<li>画像は画素値（輝度）の集まりで、エッジとは「輝度が急に変化する場所」です。</li>
+<li>数学的には、輝度変化の大きさ＝<strong>勾配（gradient）</strong> を計算し、勾配が大きい場所をエッジとみなします。</li>
+<li>勾配は、x方向（横）とy方向（縦）の変化をそれぞれ計算し、その大きさと方向を求めます。</li>
+</ul>
+<p><strong>2. Sobelフィルタの原理</strong></p>
+<p>Sobelは「一次微分」に基づくシンプルなエッジ検出です。</p>
+<ol>
+<li>
+<p><strong>カーネルによる畳み込み</strong></p>
+<ul>
+<li>画像に対して、x方向の勾配を求めるカーネル（例：<code>[-1,0,1; -2,0,2; -1,0,1]</code>）と、y方向の勾配を求めるカーネル（例：<code>[-1,-2,-1; 0,0,0; 1,2,1]</code>）を畳み込みます。</li>
+<li>これにより、各画素における「横方向の変化量（Gx）」と「縦方向の変化量（Gy）」が得られます。</li>
+</ul>
+</li>
+<li>
+<p><strong>勾配の大きさと方向</strong></p>
+<ul>
+<li>勾配の大きさ：<code>magnitude = sqrt(Gx^2 + Gy^2)</code></li>
+<li>勾配の方向：<code>direction = arctan(Gy / Gx)</code></li>
+<li>大きさが大きい画素ほど「エッジっぽい」と判断します。</li>
+</ul>
+</li>
+<li>
+<p><strong>特徴</strong></p>
+<ul>
+<li>計算が軽く実装も簡単ですが、ノイズに弱く、エッジが太くなりやすいです。</li>
+</ul>
+</li>
+</ol>
+<p><strong>3. Cannyエッジ検出の原理</strong></p>
+<p>CannyはSobelよりも高度で、次の4ステップからなります。</p>
+<ol>
+<li>
+<p><strong>ガウシアンフィルタによる平滑化</strong></p>
+<ul>
+<li>まず画像を少しぼかしてノイズを減らします（ガウシアンフィルタ）。</li>
+<li>これにより、細かいノイズ由来の偽エッジを減らします。</li>
+</ul>
+</li>
+<li>
+<p><strong>勾配の計算（Sobelなど）</strong></p>
+<ul>
+<li>Sobelなどで各画素の勾配の大きさと方向を求めます。</li>
+</ul>
+</li>
+<li>
+<p><strong>非極大値抑制（Non-Maximum Suppression）</strong></p>
+<ul>
+<li>勾配方向に対して、その画素が「周囲より極大」かどうかをチェックします。</li>
+<li>極大でない画素はエッジ候補から除外し、エッジを細く・シャープにします。</li>
+</ul>
+</li>
+<li>
+<p><strong>ヒステリシス閾値処理（Hysteresis Thresholding）</strong></p>
+<ul>
+<li>2つの閾値（高い方：<code>T_high</code>、低い方：<code>T_low</code>）を使います。</li>
+<li>勾配が <code>T_high</code> 以上の画素は「強いエッジ」として確定。</li>
+<li><code>T_low</code> 以上 <code>T_high</code> 未満の画素は、「強いエッジとつながっている場合のみ」エッジとして採用。</li>
+<li>これにより、細切れのエッジを連結しつつ、ノイズを抑えます。</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><strong>Sobel</strong>：単純な一次微分で勾配を計算し、大きさが大きいところをエッジとみなす。軽量だがノイズに弱い。</li>
+<li><strong>Canny</strong>：平滑化 → 勾配計算 → 非極大値抑制 → ヒステリシス閾値処理という多段階の処理で、細く・つながった・ノイズに強いエッジを抽出する。</li>
+</ul>
+<p>どちらも「輝度の急激な変化＝勾配」を検出するという点では共通ですが、Cannyはその後の後処理により、より高品質なエッジマップを得ることを目指しています。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> cv2
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+<span class="hljs-comment"># 画像読み込み（グレースケール）</span>
+img = cv2.imread(<span class="hljs-string">&quot;input.jpg&quot;</span>, cv2.IMREAD_GRAYSCALE)
+<span class="hljs-keyword">assert</span> img <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>, <span class="hljs-string">&quot;画像が読み込めませんでした&quot;</span>
+
+<span class="hljs-comment"># Sobelエッジ（x方向・y方向）</span>
+sobelx = cv2.Sobel(img, cv2.CV_64F, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, ksize=<span class="hljs-number">3</span>)
+sobely = cv2.Sobel(img, cv2.CV_64F, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, ksize=<span class="hljs-number">3</span>)
+sobel_mag = np.sqrt(sobelx**<span class="hljs-number">2</span> + sobely**<span class="hljs-number">2</span>)  <span class="hljs-comment"># 勾配の大きさ</span>
+
+<span class="hljs-comment"># Cannyエッジ</span>
+edges_canny = cv2.Canny(img, threshold1=<span class="hljs-number">50</span>, threshold2=<span class="hljs-number">150</span>)
+
+<span class="hljs-comment"># 可視化</span>
+plt.figure(figsize=(<span class="hljs-number">12</span>, <span class="hljs-number">4</span>))
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>)
+plt.imshow(img, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Original&quot;</span>)
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>)
+plt.imshow(sobel_mag, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Sobel magnitude&quot;</span>)
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>)
+plt.imshow(edges_canny, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Canny edges&quot;</span>)
+plt.tight_layout()
+plt.show()
+</code></pre>
+<p><strong>結果</strong></p>
+<p>上記で処理を行った結果です。
+Sobelで処理したものは建物の輪郭がくっきりとしていることが確認出来ます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\feature_point\image\feature_point\1776555061194.png" alt="1776555061194"></p>
+<h3 id="2-コーナーharris-fast">2. コーナー（Harris, FAST）</h3>
+<p>コーナー検出の基本は「どの方向に動かしても画像の局所パターンが大きく変わる点」を見つけることです。HarrisとFASTは、その判定の仕方が大きく異なります。</p>
+<p><strong>Harrisコーナーの原理</strong></p>
+<p>Harrisコーナーは「局所ウィンドウを少し動かしたときの画像の変化量」に基づきます。</p>
+<ol>
+<li>
+<p><strong>局所ウィンドウの移動による変化量を計算</strong></p>
+<ul>
+<li>ある画素を中心とする小さなウィンドウ（例：3×3や5×5）を考えます。</li>
+<li>このウィンドウを <code>(u, v)</code> だけ移動させたときの、画素値の二乗誤差の和（SSD）を計算します。</li>
+<li>SSDは、x方向とy方向の勾配（Sobelなどで求める）を使うと、近似的に次のように書けます：<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>E</mi><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo><mo>≈</mo><mo stretchy="false">[</mo><mi>u</mi><mtext> </mtext><mi>v</mi><mo stretchy="false">]</mo><mi>M</mi><mrow><mo fence="true">[</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mi>u</mi></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mi>v</mi></mstyle></mtd></mtr></mtable><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">E(u,v) \approx [u\ v] M \begin{bmatrix}u \\ v\end{bmatrix}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="mopen">[</span><span class="mord mathnormal">u</span><span class="mspace"> </span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">]</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">[</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">u</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">]</span></span></span></span></span></span></span></p>
+ここで <code>M</code> は「構造テンソル」と呼ばれ、局所的な勾配の共分散行列です。</li>
+</ul>
+</li>
+<li>
+<p><strong>Mの固有値で「フラット・エッジ・コーナー」を判別</strong></p>
+<ul>
+<li><code>M</code> の固有値 <code>λ1, λ2</code> を考えると：
+<ul>
+<li>両方とも小さい → フラット（どの方向に動かしてもあまり変わらない）</li>
+<li>片方だけ大きい → エッジ（ある方向に動かすと大きく変わる）</li>
+<li>両方とも大きい → コーナー（どの方向に動かしても大きく変わる）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>コーナー応答関数</strong></p>
+<ul>
+<li>実際には固有値を直接計算せず、次のような「コーナー応答」Rを計算します：<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>R</mi><mo>=</mo><mi>det</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>M</mi><mo stretchy="false">)</mo><mo>−</mo><mi>k</mi><mo>⋅</mo><mtext>trace</mtext><mo stretchy="false">(</mo><mi>M</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">R = \det(M) - k \cdot \text{trace}(M)^2
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">det</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1141em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">trace</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></p>
+</li>
+<li><code>R</code> が大きいほどコーナーとみなします。</li>
+</ul>
+</li>
+<li>
+<p><strong>特徴</strong></p>
+<ul>
+<li>回転に対して比較的頑健で、安定したコーナー検出ができます。</li>
+<li>計算コストはエッジ検出より高めです。</li>
+</ul>
+</li>
+</ol>
+<p><strong>FASTコーナーの原理</strong></p>
+<p>FAST（Features from Accelerated Segment Test）は、名前の通り「高速」を重視したコーナー検出です。</p>
+<ol>
+<li>
+<p><strong>円周上の画素との比較</strong></p>
+<ul>
+<li>注目画素 <code>p</code> を中心に、半径3ピクセル程度の円周上に16個の画素を取ります。</li>
+<li><code>p</code> の明るさを <code>I_p</code>、円周上の画素の明るさを <code>I_i</code> とします。</li>
+</ul>
+</li>
+<li>
+<p><strong>連続するN画素が閾値を超えるかチェック</strong></p>
+<ul>
+<li>閾値 <code>t</code> を決め、次の条件を満たす連続する画素数が <code>N</code> 個以上あるかを見ます：
+<ul>
+<li><code>I_i ≥ I_p + t</code>（明るい側）</li>
+<li>または <code>I_i ≤ I_p - t</code>（暗い側）</li>
+</ul>
+</li>
+<li>典型的には <code>N = 9</code> や <code>N = 12</code> が使われます。</li>
+</ul>
+</li>
+<li>
+<p><strong>高速化の工夫</strong></p>
+<ul>
+<li>円周上の1, 5, 9, 13番目の画素だけを先にチェックし、コーナーになり得ない場合は早期に打ち切ることで高速化します。</li>
+<li>候補点に対してのみ、残りの画素も含めて完全なチェックを行います。</li>
+</ul>
+</li>
+<li>
+<p><strong>特徴</strong></p>
+<ul>
+<li>非常に高速で、リアルタイム処理やモバイル向けに適しています。</li>
+<li>回転やスケール変化にはあまり頑健ではありませんが、単純さと速度が最大の利点です。</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><strong>Harris</strong>：局所ウィンドウを動かしたときの画像変化（構造テンソル）を解析し、固有値やコーナー応答関数で「どの方向に動いても大きく変わる点」をコーナーと判定する。</li>
+<li><strong>FAST</strong>：注目画素の周囲の円周上の画素と明るさを比較し、「連続するN画素が閾値を超えて明るい／暗い」場合をコーナーとみなす。シンプルで高速。</li>
+</ul>
+<p>Harrisは理論的に整理された安定性重視、FASTは実用上の速度重視、という位置づけです。</p>
+<p><strong>Harrisコーナー</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> cv2
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+img = cv2.imread(<span class="hljs-string">&quot;input.jpg&quot;</span>, cv2.IMREAD_GRAYSCALE)
+<span class="hljs-keyword">assert</span> img <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>, <span class="hljs-string">&quot;画像が読み込めませんでした&quot;</span>
+
+<span class="hljs-comment"># Harrisコーナー検出</span>
+dst = cv2.cornerHarris(img.astype(np.float32), blockSize=<span class="hljs-number">2</span>, ksize=<span class="hljs-number">3</span>, k=<span class="hljs-number">0.04</span>)
+dst = cv2.dilate(dst, <span class="hljs-literal">None</span>)  <span class="hljs-comment"># コーナーを強調</span>
+
+<span class="hljs-comment"># 閾値以上の点をコーナーとしてマーク</span>
+img_color = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+img_color[dst &gt; <span class="hljs-number">0.01</span> * dst.<span class="hljs-built_in">max</span>()] = [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>]  <span class="hljs-comment"># 赤点</span>
+
+plt.imshow(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))
+plt.title(<span class="hljs-string">&quot;Harris corners&quot;</span>)
+plt.axis(<span class="hljs-string">&quot;off&quot;</span>)
+plt.show()
+</code></pre>
+<p><strong>FASTコーナー</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> cv2
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+img = cv2.imread(<span class="hljs-string">&quot;input.jpg&quot;</span>, cv2.IMREAD_GRAYSCALE)
+<span class="hljs-keyword">assert</span> img <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>, <span class="hljs-string">&quot;画像が読み込めませんでした&quot;</span>
+
+<span class="hljs-comment"># FAST検出器</span>
+fast = cv2.FastFeatureDetector_create(threshold=<span class="hljs-number">30</span>)
+
+<span class="hljs-comment"># キーポイント検出</span>
+keypoints = fast.detect(img, <span class="hljs-literal">None</span>)
+
+<span class="hljs-comment"># 描画</span>
+img_kp = cv2.drawKeypoints(img, keypoints, <span class="hljs-literal">None</span>, color=(<span class="hljs-number">255</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>))
+
+plt.imshow(img_kp, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;FAST keypoints&quot;</span>)
+plt.axis(<span class="hljs-string">&quot;off&quot;</span>)
+plt.show()
+</code></pre>
+<p><strong>結果</strong></p>
+<p>結果は以下のように得られます。
+Harrisコーナーは比較的綺麗にコーナーを抽出していると思います。(でもない部分もありますが)
+Fastは可検出が多いことが見て取れます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\feature_point\image\feature_point\1776555302703.png" alt="1776555302703"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\feature_point\image\feature_point\1776555315562.png" alt="1776555315562"></p>
+<h3 id="3-テクスチャlbp-gabor">3. テクスチャ（LBP, Gabor）</h3>
+<p>LBPとGaborフィルタは、どちらもテクスチャを数値化するための代表的な手法です。ただし、そのアプローチは大きく異なります。</p>
+<blockquote>
+<p><strong>テクスチャ</strong><br>
+画像処理における「テクスチャ」とは、<strong>局所的な画素パターンの繰り返しや規則性・不規則性によって生じる、見た目の「質感」や「模様」</strong> のことです。</p>
+<ul>
+<li>例：</li>
+<li>木目、布の織り目、レンガの並び、砂利のざらざら感、水面のさざ波など。</li>
+<li>特徴：</li>
+<li>単一の画素値では表せず、<strong>周辺画素との関係（パターン）</strong> として現れます。</li>
+<li>明るさや色の変化の頻度・方向・大きさなどで特徴づけられます。</li>
+<li>画像処理での扱い：</li>
+<li>LBP（Local Binary Patterns）やGaborフィルタなどを使って、局所的なパターンを数値化し、「テクスチャ特徴量」として扱います。</li>
+<li>これにより、材質の違い（布 vs 革 vs 金属など）や表面の状態（なめらか vs ざらざら）を識別するのに役立ちます。
+要するに、テクスチャは「画素の集合として見たときの模様や質感」であり、エッジやコーナーとは別の種類の局所情報として扱われます。</li>
+</ul>
+</blockquote>
+<p><strong>LBP（Local Binary Patterns）の原理</strong></p>
+<p>LBPは、<strong>局所的な明るさの大小関係を2進数で符号化する</strong>ことでテクスチャを表現します。</p>
+<ol>
+<li>
+<p><strong>局所近傍との比較</strong></p>
+<ul>
+<li>注目画素を中心に、周囲の円周上に等間隔で複数の画素を取ります（例：半径1で8点）。</li>
+<li>中心画素の明るさを基準に、周囲の各画素が「それ以上か／未満か」を判定します。</li>
+</ul>
+</li>
+<li>
+<p><strong>2進数への符号化</strong></p>
+<ul>
+<li>周囲の画素が中心より明るければ1、暗ければ0としてビット列を作ります。</li>
+<li>例：時計回りに <code>[1,0,1,1,0,0,1,0]</code> → 2進数 <code>10110010</code> → 10進数 <code>178</code> など。</li>
+</ul>
+</li>
+<li>
+<p><strong>LBP値の分布でテクスチャを表現</strong></p>
+<ul>
+<li>画像全体に対してこのLBP値を計算し、そのヒストグラム（どのパターンがどれだけ現れるか）を特徴量として使います。</li>
+<li>回転や照明変化に対して比較的頑健で、計算も軽いのが特徴です。</li>
+</ul>
+</li>
+</ol>
+<p><strong>Gaborフィルタの原理</strong></p>
+<p>Gaborフィルタは、<strong>特定の方向・周波数・スケールの模様成分を抽出する「バンドパスフィルタ」</strong> です。人間の視覚系の単純細胞の応答をモデル化したものとして知られています。</p>
+<ol>
+<li>
+<p><strong>ガボール関数によるフィルタ</strong></p>
+<ul>
+<li>ガウス関数（ぼかし）と正弦波（周期的な模様）を掛け合わせた関数です。</li>
+<li>例：<code>Gabor(x,y) = exp(-(x'^2 + y'^2)/2σ^2) * cos(2πf x')</code>
+<ul>
+<li><code>(x', y')</code> は回転座標（特定の方向に合わせる）</li>
+<li><code>f</code> は周波数（模様の細かさ）</li>
+<li><code>σ</code> はスケール（範囲の広さ）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>畳み込みによる応答</strong></p>
+<ul>
+<li>画像とGaborフィルタを畳み込むことで、その方向・周波数・スケールに合った模様が強い場所で大きな応答（値）が得られます。</li>
+<li>実部と虚部（または振幅と位相）を計算し、振幅の大きさをテクスチャの強さとして使うことが多いです。</li>
+</ul>
+</li>
+<li>
+<p><strong>マルチスケール・マルチ方向のフィルタバンク</strong></p>
+<ul>
+<li>1つのGaborフィルタだけでは不十分なため、複数の方向（例：0°, 45°, 90°, 135°）と複数のスケール（細かい模様〜粗い模様）でフィルタバンクを作ります。</li>
+<li>各フィルタの応答をまとめて、テクスチャ特徴ベクトルとして使います。</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><strong>LBP</strong>：局所的な明るさの大小関係を2進数で符号化し、そのパターンの分布でテクスチャを表現する。シンプルで高速。</li>
+<li><strong>Gaborフィルタ</strong>：特定の方向・周波数・スケールの模様成分を抽出するフィルタで、マルチスケール・マルチ方向の応答を特徴量として使う。より表現力が高いが計算コストも高い。</li>
+</ul>
+<p>LBPは「局所的な順序関係」に着目し、Gaborは「周期的な模様成分」に着目する、という違いがあります。</p>
+<p><strong>LBP（Local Binary Patterns）</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> cv2
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> skimage.feature <span class="hljs-keyword">import</span> local_binary_pattern
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+img = cv2.imread(<span class="hljs-string">&quot;input.jpg&quot;</span>, cv2.IMREAD_GRAYSCALE)
+<span class="hljs-keyword">assert</span> img <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>, <span class="hljs-string">&quot;画像が読み込めませんでした&quot;</span>
+
+<span class="hljs-comment"># LBPパラメータ</span>
+radius = <span class="hljs-number">1</span>
+n_points = <span class="hljs-number">8</span> * radius
+
+<span class="hljs-comment"># LBP画像を計算</span>
+lbp = local_binary_pattern(img, n_points, radius, method=<span class="hljs-string">&quot;uniform&quot;</span>)
+
+<span class="hljs-comment"># 可視化</span>
+plt.figure(figsize=(<span class="hljs-number">10</span>, <span class="hljs-number">4</span>))
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>)
+plt.imshow(img, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Original&quot;</span>)
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>)
+plt.imshow(lbp, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;LBP image&quot;</span>)
+plt.tight_layout()
+plt.show()
+</code></pre>
+<p><strong>Gaborフィルタ</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> cv2
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> skimage.filters <span class="hljs-keyword">import</span> gabor
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+img = cv2.imread(<span class="hljs-string">&quot;input.jpg&quot;</span>, cv2.IMREAD_GRAYSCALE)
+<span class="hljs-keyword">assert</span> img <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>, <span class="hljs-string">&quot;画像が読み込めませんでした&quot;</span>
+
+<span class="hljs-comment"># Gaborフィルタ適用（実部・虚部）</span>
+freq = <span class="hljs-number">0.1</span>
+theta = np.pi / <span class="hljs-number">4</span>  <span class="hljs-comment"># 45度</span>
+real, imag = gabor(img, frequency=freq, theta=theta)
+
+<span class="hljs-comment"># 応答の大きさ</span>
+gabor_mag = np.sqrt(real**<span class="hljs-number">2</span> + imag**<span class="hljs-number">2</span>)
+
+<span class="hljs-comment"># 可視化</span>
+plt.figure(figsize=(<span class="hljs-number">12</span>, <span class="hljs-number">4</span>))
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>)
+plt.imshow(img, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Original&quot;</span>)
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>)
+plt.imshow(real, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Gabor real&quot;</span>)
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>)
+plt.imshow(gabor_mag, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Gabor magnitude&quot;</span>)
+plt.tight_layout()
+plt.show()
+</code></pre>
+<p><strong>結果</strong></p>
+<p>両手法とも、自分が狙った質感・パターンを抽出する方法です。
+但し、表現力と呼ばれる気にする詳細度のような能力はLBPの方が良いため、得られる結果としてはLBPの方が、特定の場所に注目してそうということが見て取れます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\feature_point\image\feature_point\1776556139163.png" alt="1776556139163"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\feature_point\image\feature_point\1776556154370.png" alt="1776556154370"></p>
+<h2 id="総括">総括</h2>
+<p>特徴点とは画像のエッジ、コーナー、テクスチャなどの特定の要素に注目して、エッセンスを抜き出した情報です。
+人間は頭の中で自然と行っていますが、画像処理を行う場合は自分で実施する必要があります。
+また、エッジ、コーナー、テクスチャそれぞれで、意味合いも変わってくることが説明出来ればと思います。</p>
+<p>最後に本の紹介です。
+画像処理はOpenCVとの付き合いだといっても過言ありません。
+認識はニューラルネットワークで行うとは言え、前処理から取得したデータの後処理はOpenCVが必須です。
+そんな画像処理とOpenCVの理解を行う専門書として基礎から理解するならば、この本はベストです。</p>
+<div class="shop-card">
+    <div class="shop-card-image">
+        <img src="https://m.media-amazon.com/images/I/71nNKhke2wL._SL1280_.jpg" alt="商品画像">
+    </div>
+    <div class="shop-card-content">
+        <div class="shop-card-title">OpenCVによる画像処理入門</div>
+        <div class="shop-card-description">理数科高校生,工業高等専門学校生,大学学部生などを対象とした講義用教科書としての利用を想定し,基本的かつ汎用性の高い画像処理アルゴリズムを選定して解説した.また初学者が独学でも学べるように,開発環境の構築方法,トラブルシューティングなどの詳細な手順を載せている.本書ではまず,画像処理アルゴリズムについて解説し,内部で行われる処理が十分に理解されることに重点を置いている.その後,C言語での実装例を並べて表記し,各アルゴリズムがどのようにコーディングされるのかを解説する.さらに,OpenCVの関数を用いたプログラム(Python,C++言語)も併記し,OpenCVの利用方法を説明する.</div>
+        <div class="shop-card-link">
+            <a href="https://www.amazon.co.jp/OpenCV%E3%81%AB%E3%82%88%E3%82%8B%E7%94%BB%E5%83%8F%E5%87%A6%E7%90%86%E5%85%A5%E9%96%80-%E6%94%B9%E8%A8%82%E7%AC%AC3%E7%89%88-KS%E6%83%85%E5%A0%B1%E7%A7%91%E5%AD%A6%E5%B0%82%E9%96%80%E6%9B%B8-%E5%B0%8F%E6%9E%9D-%E6%AD%A3%E7%9B%B4/dp/4065301173?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=1GKZ84JYI9K43&dib=eyJ2IjoiMSJ9.oW3hXIDRmo7kFHpx9f9Tsb0qUPCKaITSf3s7tb8UZjjxNBfY2yYcviCNTJxQXY2211tyOkWNmBBW_5TNom0jgXVnQqwZrYeHnBeMxwhRCBNyIokL2BA0z5Avha8YPA2oCEirn6P1XZOkJ659PnHk2S57PH5MXqWgNER_bT0eLxt8R3-WxIKQ-K45ldpZFkbqDJXjH99W4GeWtUngKgrO-PaOaHcAT_yoip5vBB5PxigDyTQ0lRW4rlVphO8ib2OKOXsT9tV7IzXgg5lYjNSm7xeXv-LWBBgiNIJHXk0lkbo.ryeDz6BL8MFKAUscsfgQErKijhC1Pa1Cy6RMXfMcwp0&dib_tag=se&keywords=%E7%94%BB%E5%83%8F%E5%87%A6%E7%90%86&qid=1776556677&sprefix=%E7%94%BB%E5%83%8F%E5%87%A6%E7%90%86%2Caps%2C176&sr=8-7&linkCode=ll2&tag=yoshishinnze-22&linkId=59006882367baf5c6cdbd8902ce21e62&ref_=as_li_ss_tl" target="_blank" rel="noopener">Amazonで詳細を見る</a>
+        </div>
+    </div>
+</div>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+        </body>
+        </html>
