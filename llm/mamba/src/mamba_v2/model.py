@@ -1,12 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from datasets import load_dataset
 from transformers import AutoTokenizer
@@ -19,6 +13,7 @@ if tokenizer.pad_token is None:
 vocab_size = tokenizer.vocab_size
 
 # 上で実装した MambaLM を再定義（必要に応じて別ファイルから import しても可）
+
 
 class MambaBlock(nn.Module):
     def __init__(self, d_model, d_state, d_conv, expand=2):
@@ -139,31 +134,3 @@ class MambaLM(nn.Module):
         x = self.ln_f(x)
         logits = self.lm_head(x)
         return logits
-
-    
-if __name__ == "__main__":
-    # ハイパーパラメータ（例：Mamba-130M相当の小さめ設定）
-    vocab_size = 50257  # GPT-2トークナイザなど
-    d_model = 768
-    n_layer = 12
-    d_state = 16
-    d_conv = 4
-    expand = 2
-
-    model = MambaLM(
-        vocab_size=vocab_size,
-        d_model=d_model,
-        n_layer=n_layer,
-        d_state=d_state,
-        d_conv=d_conv,
-        expand=expand,
-    )
-
-    # ダミー入力（バッチサイズ2, シーケンス長128）
-    input_ids = torch.randint(0, vocab_size, (2, 128))
-
-    # 順伝播
-    logits = model(input_ids)  # (2, 128, vocab_size)
-
-    print("Logits shape:", logits.shape)
-    # 出力例: Logits shape: torch.Size([2, 128, 50257])
