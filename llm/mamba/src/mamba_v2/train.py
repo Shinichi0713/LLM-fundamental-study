@@ -116,22 +116,47 @@ def tokenize_function(examples):
 
 # wikitext-2-raw-v1 をロード
 dataset = load_dataset("wikitext", "wikitext-2-raw-v1")
+train_texts = dataset["train"]["text"]
 
-# トークナイズ
-tokenized_datasets = dataset.map(
-    tokenize_function,
-    batched=True,
-    remove_columns=dataset["train"].column_names,
-)
+# None や空文字列を除外
+train_texts = [t for t in train_texts if t is not None and t.strip() != ""]
 
-# 学習用データのみ使用
-train_dataset = tokenized_datasets["train"]
+# トークナイズ関数（バッチ処理）
+def tokenize_function(texts):
+    return tokenizer(
+        texts,
+        padding="max_length",
+        truncation=True,
+        max_length=256,
+        return_tensors="pt",
+    )
 
-# データローダー作成
+# 一度にトークナイズするバッチサイズ
+BATCH_SIZE_TOKENIZE = 1000
+all_input_ids = []
+
+for i in range(0, len(train_texts), BATCH_SIZE_TOKENIZE):
+    batch_texts = train_texts[i:i+BATCH_SIZE_TOKENIZE]
+    encodings = tokenize_function(batch_texts)
+    all_input_ids.append(encodings["input_ids"])
+
+# 全テンソルを結合
+input_ids_tensor = torch.cat(all_input_ids, dim=0)
+
+# Dataset
+train_dataset = torch.utils.data.TensorDataset(input_ids_tensor)
+
+# collate_fn（バッチ化）
+def collate_fn(batch):
+    input_ids_list = [item[0] for item in batch]
+    input_ids = torch.stack(input_ids_list)
+    return {"input_ids": input_ids}
+
 train_loader = DataLoader(
     train_dataset,
-    batch_size=4,  # ColabのGPUメモリに合わせて調整
+    batch_size=4,
     shuffle=True,
+    collate_fn=collate_fn,
 )
 
 from torch.optim import AdamW
