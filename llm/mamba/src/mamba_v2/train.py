@@ -106,12 +106,11 @@ print(f"Model loaded on {device}")
 
 
 def tokenize_function(examples):
-    # テキストをトークナイズ（最大長を適宜調整）
     tokenized = tokenizer(
         examples["text"],
         truncation=True,
-        max_length=512,  # Colabのメモリに合わせて調整
-        padding=False,
+        max_length=512,        # 最大長を固定
+        padding="max_length",  # ここを追加：最大長までパディング
     )
     return tokenized
 
