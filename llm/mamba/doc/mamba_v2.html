@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Mamba-2&#x306e;&#x5185;&#x90e8;&#x69cb;&#x6210;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <p>本日は以前説明したTransformerの軽量モデルであるMamba-2の実装、実験を行います。
+実験目的は学習してランダム文字列以外を出せるようになるかです。
+実験にあたり、利用する環境は例の如くGoogle Colabとします。</p>
+<p>またMamba-2の詳細については以下の記事をご参考下さい。
+実装にあたっては記事の内容を用いて行っていきます。</p>
+<h2 id="mamba-2の内部構成">Mamba-2の内部構成</h2>
+<p>Mamba-2の内部構造を、<strong>実装のヒントになるように</strong>分解して説明します。</p>
+<h3 id="1-mamba-2の基本アイデアssdstate-space-duality">1. Mamba-2の基本アイデア：SSD（State Space Duality）</h3>
+<p>Mamba-2の核は、<strong>SSM（State Space Model）とAttentionの「双対性（duality）」</strong> を利用することです。</p>
+<ul>
+<li>
+<p><strong>SSM側</strong>：<br>
+連続時間の線形システム<br>
+(h'(t) = A h(t) + B x(t)), (y(t) = C h(t))<br>
+を離散化して、再帰的に状態を更新する（O(n)）。</p>
+</li>
+<li>
+<p><strong>Attention側</strong>：<br>
+入力トークン同士のペアワイズな相互作用（O(n²)）。</p>
+</li>
+</ul>
+<p>Mamba-2は、<strong>SSMを「行列積の形」に書き換えることで、Attentionと同じ構造（行列積）で計算できる</strong>ことを示しました。<br>
+これにより、<strong>SSMの計算をGPUのテンソルコアで高速に実行</strong>できるようになります。</p>
+<h3 id="2-mamba-2のレイヤー構造実装のヒント">2. Mamba-2のレイヤー構造（実装のヒント）</h3>
+<p>Mamba-2の1ブロック（<code>MambaBlock</code>）は、おおまかに以下の構造です。</p>
+<p><strong>2.1 入力投影（<code>in_proj</code>）</strong></p>
+<pre><code class="language-python">self.in_proj = nn.Linear(d_model, d_inner * <span class="hljs-number">2</span>, bias=<span class="hljs-literal">False</span>)
+</code></pre>
+<ul>
+<li>入力次元 <code>d_model</code> を <code>d_inner</code>（拡張次元）に投影し、<strong>2倍のチャネル</strong>にします。</li>
+<li>半分は SSM 用（<code>x</code>）、半分はゲート用（<code>z</code>）です。</li>
+</ul>
+<p><strong>2.2 1D因果畳み込み（<code>conv1d</code>）</strong></p>
+<pre><code class="language-python">self.conv1d = nn.Conv1d(
+    in_channels=d_inner,
+    out_channels=d_inner,
+    kernel_size=d_conv,
+    groups=d_inner,  <span class="hljs-comment"># depthwise conv</span>
+    padding=d_conv - <span class="hljs-number">1</span>,
+    bias=<span class="hljs-literal">False</span>,
+)
+</code></pre>
+<ul>
+<li><strong>局所的な依存関係</strong>（n-gram的な情報）を捉えるための因果畳み込みです。</li>
+<li><code>groups=d_inner</code> なので、<strong>depthwise convolution</strong> になっています。</li>
+</ul>
+<p><strong>2.3 SSMパラメータ生成（<code>x_proj</code>, <code>dt_proj</code>, <code>A_log</code>, <code>D</code>）</strong></p>
+<pre><code class="language-python">self.x_proj = nn.Linear(d_inner, d_state + d_inner, bias=<span class="hljs-literal">False</span>)
+self.dt_proj = nn.Linear(d_inner, d_time_rank, bias=<span class="hljs-literal">False</span>)
+self.A_log = nn.Parameter(torch.randn(d_inner, d_state))
+self.D = nn.Parameter(torch.ones(d_inner))
+</code></pre>
+<ul>
+<li><code>x_proj</code>：入力 <code>x</code> から <strong>B, C, Δ（dt）</strong> を生成します。</li>
+<li><code>dt_proj</code>：Δ（時間ステップ）を計算するための投影です。</li>
+<li><code>A_log</code>：対数スケールの状態遷移行列（<code>A = -exp(A_log)</code>）。</li>
+<li><code>D</code>：スキップ接続のスケール（<code>y = C h + D x</code>）。</li>
+</ul>
+<p><strong>2.4 SSD（State Space Duality）による高速計算</strong></p>
+<p>Mamba-2の肝は、<strong>SSMの再帰計算を「行列積」に変換</strong>することです。</p>
+<ul>
+<li>通常のSSM：<br>
+(h_t = \bar{A} h_{t-1} + \bar{B} x_t)（逐次更新）</li>
+<li>Mamba-2（SSD）：<br>
+(H = (I - A)^{-1} B X) のような形で、<strong>全シーケンスを一度に計算</strong>します。</li>
+</ul>
+<p>実装的には、以下のようなイメージです。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 疑似コード</span>
+<span class="hljs-comment"># A_bar, B_bar, C を計算（dt に依存）</span>
+A_bar = exp(A * dt)  <span class="hljs-comment"># (d_inner, d_state)</span>
+B_bar = (A_bar - I) * (A^{-<span class="hljs-number">1</span>}) * B * dt  <span class="hljs-comment"># 簡略化したイメージ</span>
+
+<span class="hljs-comment"># 行列積で状態を計算</span>
+<span class="hljs-comment"># H = (I - A_bar)^{-1} B_bar X のような形</span>
+H = torch.einsum(<span class="hljs-string">&quot;bli,id-&gt;bld&quot;</span>, X, A_bar) + torch.einsum(<span class="hljs-string">&quot;bld,bli-&gt;bli&quot;</span>, B_bar, X)
+Y = torch.einsum(<span class="hljs-string">&quot;bli,bli-&gt;bli&quot;</span>, C, H) + D * X
+</code></pre>
+<p>実際には、<strong>連続時間のSSMを「台形則（trapezoidal rule）」で離散化</strong>し、<br>
+それを行列積の形に書き換えることで、<strong>GPUのテンソルコアで高速に計算</strong>します。</p>
+<p><strong>2.5 ゲートと出力投影</strong></p>
+<pre><code class="language-python">y = y * F.silu(z)  <span class="hljs-comment"># ゲート適用</span>
+y = self.out_proj(y)  <span class="hljs-comment"># d_inner -&gt; d_model</span>
+y = y + residual  <span class="hljs-comment"># 残差接続</span>
+</code></pre>
+<ul>
+<li><code>z</code> は入力投影のもう半分で、<strong>選択的な情報の流れ</strong>を制御します（Mambaの「選択的SSM」の核心）。</li>
+<li><code>out_proj</code> で元の次元に戻し、残差接続を加えます。</li>
+</ul>
+<h3 id="3-mamba-2の実装のポイントヒント">3. Mamba-2の実装のポイント（ヒント）</h3>
+<p><strong>3.1 選択的SSM（Selective SSM）</strong></p>
+<p>Mamba-2は、<strong>入力に依存してSSMパラメータ（B, C, Δ）を変化させる</strong>ことで、<br>
+「どの情報を状態に保持するか」を動的に選択します。</p>
+<ul>
+<li><code>x_proj</code> と <code>dt_proj</code> で、<strong>入力ごとに異なるB, C, Δ</strong>を生成。</li>
+<li>これにより、<strong>長い依存関係を捉えつつ、不要な情報を忘れる</strong>ことができます。</li>
+</ul>
+<p><strong>3.2 SSDによる高速化</strong></p>
+<ul>
+<li>再帰計算を<strong>行列積に変換</strong>することで、<strong>シーケンス長に対して並列に計算</strong>できます。</li>
+<li>GPUのテンソルコア（行列積ユニット）を最大限に活用できるため、<strong>学習が非常に高速</strong>になります。</li>
+</ul>
+<p><strong>3.3 実装の簡略化（Colab用）</strong></p>
+<p>Colabで自作する場合は、以下のように簡略化できます。</p>
+<ul>
+<li><code>dt_proj</code> と複雑な離散化は省略し、<strong>固定の時間ステップ</strong>で近似。</li>
+<li>SSDの行列積も、<strong>単純な <code>einsum</code> で近似</strong>（前回提示したコードのような形）。</li>
+<li>まずは「動くMamba風モデル」を作り、その後で本家のSSDを参考に改良するのが現実的です。</li>
+</ul>
+<h3 id="4-まとめ">4. まとめ</h3>
+<ul>
+<li>Mamba-2は、<strong>SSMとAttentionの双対性（SSD）<strong>を利用して、SSMを</strong>行列積の形で高速計算</strong>します。</li>
+<li>1ブロックは、<strong>入力投影 → 1D因果畳み込み → SSMパラメータ生成 → SSD計算 → ゲート＆出力投影</strong>という流れです。</li>
+<li>実装のヒントとしては、
+<ul>
+<li><code>in_proj</code> でチャネルを拡張し、<code>x</code> と <code>z</code> に分割。</li>
+<li><code>conv1d</code> で局所情報を抽出。</li>
+<li><code>x_proj</code>, <code>dt_proj</code>, <code>A_log</code>, <code>D</code> でSSMパラメータを生成。</li>
+<li>SSD（行列積）で状態を一度に計算。</li>
+<li><code>z</code> でゲートをかけ、<code>out_proj</code> で次元を戻す。</li>
+</ul>
+</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>コードは以下に保管しています。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/llm/mamba/src/mamba_v2">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/llm/mamba/src/mamba_v2</a></p>
+<p>学習データは実験のため、以下の簡単な少数の文章で実行します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> datasets <span class="hljs-keyword">import</span> Dataset
+<span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> DataLoader
+<span class="hljs-keyword">from</span> torch.optim <span class="hljs-keyword">import</span> AdamW
+
+<span class="hljs-comment"># 1. 学習データの再定義（少し情報を増やす）</span>
+rich_texts = [
+    <span class="hljs-string">&quot;Mamba is a linear-time sequence model for long context processing.&quot;</span>,
+    <span class="hljs-string">&quot;Mamba is highly efficient and outperforms transformers in speed.&quot;</span>,
+    <span class="hljs-string">&quot;Mamba is a breakthrough in state space model architectures.&quot;</span>,
+    <span class="hljs-string">&quot;Mamba is used for both language and vision tasks nowadays.&quot;</span>
+] * <span class="hljs-number">5</span> <span class="hljs-comment"># 繰り返しを減らす（過学習防止）</span>
+
+<span class="hljs-comment"># データセット更新</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">collate_fn_ignore_padding</span>(<span class="hljs-params">batch</span>):
+    <span class="hljs-comment"># パディング値を -100 に設定すると、PyTorchのCrossEntropyLossは無視してくれます</span>
+    ignore_index = -<span class="hljs-number">100</span>
+    input_ids_list = [torch.tensor(item[<span class="hljs-string">&quot;input_ids&quot;</span>], dtype=torch.long) <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> batch]
+    max_len = <span class="hljs-number">64</span> 
+    
+    padded_inputs = []
+    padded_labels = []
+    
+    <span class="hljs-keyword">for</span> ids <span class="hljs-keyword">in</span> input_ids_list:
+        ln = <span class="hljs-built_in">len</span>(ids)
+        <span class="hljs-comment"># 入力側は pad_token_id (なければ0) で埋める</span>
+        p_input = torch.cat([ids, torch.full((max_len - ln,), tokenizer.pad_token_id <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>)])
+        <span class="hljs-comment"># ラベル側は パディング部分を ignore_index で埋める</span>
+        p_label = torch.cat([ids, torch.full((max_len - ln,), ignore_index)])
+        
+        padded_inputs.append(p_input)
+        padded_labels.append(p_label)
+    
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">&quot;input_ids&quot;</span>: torch.stack(padded_inputs),
+        <span class="hljs-string">&quot;labels&quot;</span>: torch.stack(padded_labels)
+    }
+    
+raw_dataset = Dataset.from_dict({<span class="hljs-string">&quot;text&quot;</span>: rich_texts})
+tokenized_dataset = raw_dataset.<span class="hljs-built_in">map</span>(tokenize_function, batched=<span class="hljs-literal">True</span>, remove_columns=[<span class="hljs-string">&quot;text&quot;</span>])
+train_loader = DataLoader(tokenized_dataset, batch_size=<span class="hljs-number">2</span>, shuffle=<span class="hljs-literal">True</span>, collate_fn=collate_fn_ignore_padding)
+
+<span class="hljs-comment"># 2. モデルをリセット（または学習率を極小にする）</span>
+optimizer = AdamW(model.parameters(), lr=<span class="hljs-number">1e-6</span>) <span class="hljs-comment"># 学習率をさらに下げる</span>
+device = torch.device(<span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Re-training with lower LR...&quot;</span>)
+model.train()
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>): <span class="hljs-comment"># 少しじっくり回す</span>
+    <span class="hljs-built_in">print</span>(epoch)
+    <span class="hljs-keyword">for</span> step, batch <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(train_loader):
+        input_ids = batch[<span class="hljs-string">&quot;input_ids&quot;</span>].to(device)
+        labels = batch[<span class="hljs-string">&quot;labels&quot;</span>].to(device)
+        optimizer.zero_grad()
+        outputs = model(input_ids, labels=labels)
+        loss = outputs.loss
+        loss.backward()
+        optimizer.step()
+    <span class="hljs-built_in">print</span>(loss)
+</code></pre>
+<p>実装を行う上での注意点を挙げます。</p>
+<ol>
+<li>tokenizerはgpt-2を使ってください。mamba-2でHugging faceより公開されているものは、語彙のサイズが想定と異なっているもののようです。</li>
+<li>学習する場合、勾配爆発を防止するため勾配クリッピングを行ってください。</li>
+</ol>
+<pre><code class="language-Python">torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="hljs-number">1.0</span>)
+</code></pre>
+<ol start="3">
+<li>サイズは絞る。公式通りのサイズはGoogle Colabで動作しません。</li>
+</ol>
+<p>以下でようやく動作しました。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 130mの構造（次元数）を保ちつつ、層の数だけを削ってVRAMを節約する設定</span>
+config = Mamba2Config(
+    num_hidden_layers=<span class="hljs-number">4</span>,      <span class="hljs-comment"># 軽量化</span>
+    hidden_size=<span class="hljs-number">512</span>,          <span class="hljs-comment"># 128の倍数で安定</span>
+    num_heads=<span class="hljs-number">8</span>,              <span class="hljs-comment"># エラーが求めている 8 に合わせる</span>
+    head_dim=<span class="hljs-number">128</span>,             
+    expand=<span class="hljs-number">2</span>,
+    n_groups=<span class="hljs-number">8</span>,               <span class="hljs-comment"># 明示的に指定して安全策をとる</span>
+    vocab_size=tokenizer.vocab_size
+)
+</code></pre>
+<p><strong>学習した結果</strong></p>
+<p>未だ言語の分散表現が構築されてないでしょうから、文章の羅列マシーンです。
+学習前はただのランダム文字列(動詞、名詞の区別がない)状態だったのですが、おぼろげながら文章の並びは正規に近づいているかもしれません。</p>
+<p>当たり前ですが、まだまだです。
+サイズ、言語の常識を学ぶ十分なデータ量、ともにまだありません。</p>
+<p><strong>学習前</strong></p>
+<pre><code>Prompt: Mamba is
+Generating: fare cigar CONTIN chunksikolb Youominium Pog Township describe times Bes%;Henryisbury Secure consortium gamble gen reasonable794 1949 Carnage Solitaireheavy extensivelyGrab Cyrus node
+</code></pre>
+<p><strong>学習後</strong></p>
+<pre><code>Prompt: Mamba is
+Generating: armed Python EVENT discreditCRIP Andreasdeveloparial Leave overlooked power Uh gradually fearing Cant NON affluentGET Filmamenomez Riy unl scantENSE slimstyleachment shaft plastic
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>一旦とりあえず学習して動作するMamba-2は実装出来ました。
+Google Colab内で動かすには、サイズが思ったより軽量ではありませんでした。
+モデルのサイズを絞れば、wikipediaなどのデータセットで学習はさせられそうですが、もう少し工夫してみたい結果となりました。</p>
+
+            
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+        </body>
+        </html>
