@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;&#x5185;&#x5bb9;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <p>LLMが出してきた解答に対して、なんでやねん、と言われることが相当数あります。
+そんなLLMへの説明性を求める声に対する手法として先日 <strong>Circuit Tracing</strong> を説明しました。
+本日はCircuit Tracingを簡易的に実現する方法について実験を交えて説明していきます。</p>
+<p>Circuit Tracingについての説明記事は以下をご参考下さい。</p>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/04/16/043000">https://yoshishinnze.hatenablog.com/entry/2026/04/16/043000</a></p>
+<h2 id="実験内容">実験内容</h2>
+<h3 id="目的">目的</h3>
+<p>重要な情報がどのようにモデルの内部を流れたかを可視化して、ニューラルネットワークの内部動作をある程度理解できる形にする。</p>
+<h3 id="circuit-tracing-の本質的な要素">Circuit Tracing の本質的な要素</h3>
+<p>Circuit Tracing（特に Anthropic 的なアプローチ）は、ざっくり言うと以下をやっています：</p>
+<ol>
+<li>
+<p><strong>アクティベーションの取得</strong></p>
+<ul>
+<li>モデルの各層・各ニューロンの出力（activation）を記録する。</li>
+</ul>
+</li>
+<li>
+<p><strong>勾配の計算</strong></p>
+<ul>
+<li>出力（ロジットや特定の特徴量）に対する勾配を計算し、「どの部分が出力に効いているか」を調べる。</li>
+</ul>
+</li>
+<li>
+<p><strong>重要ニューロンの抽出</strong></p>
+<ul>
+<li>activation × gradient などから、「出力に寄与しているニューロン」を特定する。</li>
+</ul>
+</li>
+<li>
+<p><strong>層間依存の推定</strong></p>
+<ul>
+<li>どの層のどのニューロンが、次の層のどのニューロンに影響しているかを推定する（線形回帰や相関、あるいは介入による因果推定）。</li>
+</ul>
+</li>
+<li>
+<p><strong>可視化・解釈</strong></p>
+<ul>
+<li>得られた依存関係をグラフ（circuit）として可視化し、「モデル内部の情報の流れ」を人間が理解できる形にする。</li>
+</ul>
+</li>
+</ol>
+<p>この流れを実現して、今回モデル内部の情報の流れを明らかにしてみようと思います。</p>
+<h2 id="実現手段検討">実現手段検討</h2>
+<p>前節で説明した実験を実際に行うための実現法について検討します。</p>
+<h3 id="1-アクティベーションの取得">1. アクティベーションの取得</h3>
+<ul>
+<li>Circuit Tracing：<br>
+多くの場合、<strong>全ニューロン</strong>や<strong>特定の特徴量</strong>のactivationを記録します。</li>
+<li>このテンプレート：<br>
+<code>encoder.layer.*.output.dense</code> にフックを登録し、<strong>各層のMLP出力</strong>だけを記録しています。<br>
+→ <strong>「層単位のactivation」という最小単位</strong>でCircuit Tracingの「activation記録」を再現していきます。</li>
+</ul>
+<h3 id="2-勾配の計算">2. 勾配の計算</h3>
+<ul>
+<li>Circuit Tracing：<br>
+出力ロジットや特定のfeatureに対する勾配を計算し、<strong>どの部分がその出力に寄与しているか</strong>を調べます。</li>
+<li>このテンプレート：<br>
+<code>loss = logits[0, target_class]</code> として最大ロジットを「損失」とみなし、<code>loss.backward()</code> で勾配を計算。<br>
+→ <strong>「出力クラスに対する勾配」という最小構成</strong>でCircuit Tracingの「gradient-based attribution」を再現できるはずです。</li>
+</ul>
+<h3 id="3-重要ニューロンの抽出">3. 重要ニューロンの抽出</h3>
+<ul>
+<li>Circuit Tracing：<br>
+activation × gradient や、より洗練された手法（integrated gradientsなど）で「重要ニューロン」を抽出します。</li>
+<li>このテンプレート：<br>
+<code>(act * grad).abs().mean(dim=1)</code> で、<strong>簡易的な重要度スコア</strong>を計算し、上位k個を「重要ニューロン」とみなします。<br>
+→ <strong>「gradient × activation」というシンプルな重要度指標</strong>でCircuit Tracingの「重要ニューロン抽出」を再現し重要情報をピックアップできるはずです。</li>
+</ul>
+<h3 id="4-層間依存の推定">4. 層間依存の推定</h3>
+<p>ここが一番やり方に困りました。
+相関性があれば、回帰予測につなげて評価できるのではということで以下を案出します。</p>
+<ul>
+<li>Circuit Tracing：<br>
+線形回帰、相関、あるいは介入（ablation）を用いて、<strong>どのニューロンがどのニューロンに影響しているか</strong>を推定します。</li>
+<li>このテンプレート：<br>
+隣接する2層の重要ニューロン間で線形回帰を行い、係数の絶対値が大きいものを「依存関係あり」とみなします。<br>
+→ **「線形回帰による簡易的な依存推定」**でCircuit Tracingの「層間circuit推定」を再現してみます。</li>
+</ul>
+<h3 id="5-可視化解釈">5. 可視化・解釈</h3>
+<p>ここまでとってきた情報を可視化してみます。</p>
+<ul>
+<li>Circuit Tracing：<br>
+得られた依存関係をグラフ（circuit）として描画し、人間が読める形にします。</li>
+<li>このテンプレート：<br>
+NetworkXで <code>(層:ニューロン) → (層:ニューロン)</code> のエッジを描画。<br>
+→ <strong>「ニューロン単位の有向グラフ」という最小構成</strong>でCircuit Tracingの「circuit可視化」を再現。</li>
+</ul>
+<h3 id="この実験で出来ること">この実験で出来ること</h3>
+<p>Circuit Tracing の本質は、</p>
+<blockquote>
+<p><strong>「モデル内部のどの部分が、どのように出力に寄与しているか」を、人間が理解できる形で取り出すこと</strong></p>
+</blockquote>
+<p>です。</p>
+<p>上記によりエッセンスを実現できるはずです。：</p>
+<ul>
+<li><strong>activation</strong>（各層の出力）</li>
+<li><strong>gradient</strong>（出力に対する感度）</li>
+<li><strong>重要度スコア</strong>（activation × gradient）</li>
+<li><strong>層間依存</strong>（線形回帰）</li>
+<li><strong>可視化</strong>（NetworkXグラフ）</li>
+</ul>
+<p>これらを組み合わせるだけで、「BERTのどのニューロンが出力に効いているか」「どの層からどの層に影響が流れているか」を<strong>ざっくり見る</strong>ことができます。</p>
+<h2 id="実験">実験</h2>
+<p>例の如くGoogle Colabを起動していきます。
+また、今回はリソースが限られていることからBertで実験を行います。</p>
+<p>実験に用いたコードは以下レポジトリをご参考下さい。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/evaluate_method/circuit_tracing/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/evaluate_method/circuit_tracing/src</a></p>
+<h3 id="1-セットアップcolab-1セル目">1. セットアップ（Colab 1セル目）</h3>
+<pre><code class="language-python">!pip install transformers torch networkx scikit-learn matplotlib
+</code></pre>
+<ul>
+<li><code>transformers</code>: BERTモデルとトークナイザ</li>
+<li><code>torch</code>: PyTorch本体</li>
+<li><code>networkx</code>: グラフ可視化</li>
+<li><code>scikit-learn</code>: 線形回帰（層間依存の推定）</li>
+<li><code>matplotlib</code>: グラフ描画</li>
+</ul>
+<p>Colabで1セル実行すれば、必要なライブラリが入ります。</p>
+<h3 id="2-モデル--入力">2. モデル + 入力</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BertTokenizer, BertForSequenceClassification
+
+device = <span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>
+
+model_name = <span class="hljs-string">&quot;bert-base-uncased&quot;</span>
+tokenizer = BertTokenizer.from_pretrained(model_name)
+model = BertForSequenceClassification.from_pretrained(model_name).to(device)
+model.<span class="hljs-built_in">eval</span>()
+
+text = <span class="hljs-string">&quot;The movie was surprisingly good and very enjoyable.&quot;</span>
+inputs = tokenizer(text, return_tensors=<span class="hljs-string">&quot;pt&quot;</span>).to(device)
+</code></pre>
+<ul>
+<li><code>bert-base-uncased</code> の分類モデルをロードし、GPUに載せます。</li>
+<li><code>model.eval()</code> で推論モードにします（Dropoutなどが無効になる）。</li>
+<li>サンプル文をトークナイズして <code>inputs</code> を作成します。</li>
+</ul>
+<h3 id="3-activation取得forward-hook">3. activation取得（forward hook）</h3>
+<pre><code class="language-python">activations = {}
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">get_hook</span>(<span class="hljs-params">name</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">hook</span>(<span class="hljs-params">module, inp, out</span>):
+        activations[name] = out.detach()
+    <span class="hljs-keyword">return</span> hook
+
+<span class="hljs-keyword">for</span> name, module <span class="hljs-keyword">in</span> model.named_modules():
+    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;encoder.layer&quot;</span> <span class="hljs-keyword">in</span> name <span class="hljs-keyword">and</span> <span class="hljs-string">&quot;output.dense&quot;</span> <span class="hljs-keyword">in</span> name:
+        module.register_forward_hook(get_hook(name))
+</code></pre>
+<ul>
+<li><code>model.named_modules()</code> で全モジュールを走査し、<code>encoder.layer.*.output.dense</code> にフックを登録します。</li>
+<li>フックでは、<code>out</code>（その層の出力）を <code>detach()</code> して <code>activations[name]</code> に保存します。</li>
+<li><code>detach()</code> しているのは、<strong>勾配を追跡しないコピー</strong>として保存するためです（後で勾配を別途計算する）。</li>
+</ul>
+<h3 id="4-forward--勾配取得">4. forward + 勾配取得</h3>
+<pre><code class="language-python">inputs[<span class="hljs-string">&quot;input_ids&quot;</span>].requires_grad = <span class="hljs-literal">True</span>
+
+outputs = model(**inputs)
+logits = outputs.logits
+
+target_class = logits.argmax(dim=-<span class="hljs-number">1</span>)
+
+loss = logits[<span class="hljs-number">0</span>, target_class]
+loss.backward()
+</code></pre>
+<ul>
+<li><code>inputs[&quot;input_ids&quot;].requires_grad = True</code> で入力トークンIDに勾配を追跡させます。</li>
+<li><code>model(**inputs)</code> でフォワード計算を行い、<code>logits</code> を取得します。</li>
+<li><code>target_class = logits.argmax(dim=-1)</code> で最大ロジットのクラスを取得します。</li>
+<li><code>loss = logits[0, target_class]</code> でそのクラスのロジットを「損失」として扱い、<code>loss.backward()</code> で勾配を計算します。</li>
+</ul>
+<p>ここで、<code>inputs[&quot;input_ids&quot;]</code> から <code>logits</code> までの計算グラフに対して勾配が伝わります。</p>
+<h3 id="5-勾配--activation重要度スコア">5. 勾配 × activation（重要度スコア）</h3>
+<pre><code class="language-python">importance = {}
+
+<span class="hljs-keyword">for</span> name, act <span class="hljs-keyword">in</span> activations.items():
+    <span class="hljs-keyword">if</span> act.requires_grad:
+        grad = act.grad
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">continue</span>
+    
+    score = (act * grad).<span class="hljs-built_in">abs</span>().mean(dim=<span class="hljs-number">1</span>).squeeze()  <span class="hljs-comment"># token平均</span>
+    importance[name] = score.cpu().numpy()
+</code></pre>
+<ul>
+<li><code>activations</code> に保存した各層の出力 <code>act</code> について、<code>act.requires_grad</code> が <code>True</code> のものだけを対象にします。</li>
+<li><code>act.grad</code> で、その層の出力に対する勾配を取得します。</li>
+<li><code>(act * grad).abs().mean(dim=1)</code> で、<strong>アクティベーション × 勾配</strong>の絶対値を取り、トークン次元で平均します。
+<ul>
+<li>これは「そのニューロンが出力ロジットにどれだけ寄与したか」の<strong>簡易的な重要度スコア</strong>です。</li>
+</ul>
+</li>
+<li><code>importance[name]</code> に各層の重要度スコア（ニューロンごとのベクトル）を保存します。</li>
+</ul>
+<h3 id="6-上位ニューロン抽出">6. 上位ニューロン抽出</h3>
+<pre><code class="language-python">top_neurons = {}
+
+k = <span class="hljs-number">5</span>  <span class="hljs-comment"># 各層から上位k個</span>
+
+<span class="hljs-keyword">for</span> name, score <span class="hljs-keyword">in</span> importance.items():
+    idx = score.argsort()[-k:][::-<span class="hljs-number">1</span>]
+    top_neurons[name] = idx
+</code></pre>
+<ul>
+<li>各層の重要度スコア <code>score</code> に対して <code>argsort()[-k:][::-1]</code> で、<strong>上位k個のニューロンインデックス</strong>を取得します。</li>
+<li><code>top_neurons[name]</code> に、その層の「重要ニューロン」のインデックスリストを保存します。</li>
+</ul>
+<p>これで、「各層でどのニューロンが出力に効いているか」が分かります。</p>
+<h3 id="7-層間依存簡易線形回帰">7. 層間依存（簡易：線形回帰）</h3>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> sklearn.linear_model <span class="hljs-keyword">import</span> LinearRegression
+
+edges = []
+
+layer_names = <span class="hljs-built_in">list</span>(top_neurons.keys())
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(layer_names) - <span class="hljs-number">1</span>):
+    l1 = layer_names[i]
+    l2 = layer_names[i+<span class="hljs-number">1</span>]
+    
+    act1 = activations[l1][<span class="hljs-number">0</span>].detach().cpu().numpy()
+    act2 = activations[l2][<span class="hljs-number">0</span>].detach().cpu().numpy()
+    
+    <span class="hljs-keyword">for</span> n2 <span class="hljs-keyword">in</span> top_neurons[l2]:
+        y = act2[:, n2]
+        
+        <span class="hljs-keyword">for</span> n1 <span class="hljs-keyword">in</span> top_neurons[l1]:
+            x = act1[:, n1].reshape(-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
+            
+            reg = LinearRegression().fit(x, y)
+            score = <span class="hljs-built_in">abs</span>(reg.coef_[<span class="hljs-number">0</span>])
+            
+            <span class="hljs-keyword">if</span> score &gt; <span class="hljs-number">0.1</span>:
+                edges.append((<span class="hljs-string">f&quot;<span class="hljs-subst">{l1}</span>:<span class="hljs-subst">{n1}</span>&quot;</span>, <span class="hljs-string">f&quot;<span class="hljs-subst">{l2}</span>:<span class="hljs-subst">{n2}</span>&quot;</span>, score))
+</code></pre>
+<ul>
+<li><code>layer_names</code> は <code>top_neurons</code> のキー（層名）のリストです。</li>
+<li>隣接する2層 <code>l1</code> と <code>l2</code> について：
+<ul>
+<li><code>act1</code>：層 <code>l1</code> のアクティベーション（バッチ次元0番目）</li>
+<li><code>act2</code>：層 <code>l2</code> のアクティベーション</li>
+</ul>
+</li>
+<li><code>l2</code> の重要ニューロン <code>n2</code> のアクティベーション <code>y</code> を目的変数とし、
+<code>l1</code> の重要ニューロン <code>n1</code> のアクティベーション <code>x</code> を説明変数として<strong>線形回帰</strong>を実行します。</li>
+<li><code>reg.coef_[0]</code> の絶対値が大きいほど、「<code>n1</code> が <code>n2</code> に強く影響している」とみなします。</li>
+<li>しきい値（例：0.1）を超えるものだけをエッジとして <code>edges</code> に追加します。</li>
+</ul>
+<p>これで、「どの層のどのニューロンが、次の層のどのニューロンに強く影響しているか」という<strong>疑似circuit</strong>が得られます。</p>
+<h3 id="8-グラフ化circuit可視化">8. グラフ化（Circuit可視化）</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> networkx <span class="hljs-keyword">as</span> nx
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+G = nx.DiGraph()
+
+<span class="hljs-keyword">for</span> src, dst, w <span class="hljs-keyword">in</span> edges:
+    G.add_edge(src, dst, weight=w)
+
+plt.figure(figsize=(<span class="hljs-number">12</span>, <span class="hljs-number">8</span>))
+pos = nx.spring_layout(G, k=<span class="hljs-number">0.5</span>)
+
+nx.draw(G, pos, with_labels=<span class="hljs-literal">True</span>, node_size=<span class="hljs-number">500</span>, font_size=<span class="hljs-number">6</span>)
+plt.title(<span class="hljs-string">&quot;Pseudo Circuit Graph&quot;</span>)
+plt.show()
+</code></pre>
+<ul>
+<li><code>edges</code> の各タプル <code>(src, dst, w)</code> を有向グラフ <code>G</code> に追加します。</li>
+<li><code>nx.spring_layout</code> でノード配置を計算し、<code>nx.draw</code> で描画します。</li>
+<li>ノードラベルは <code>層名:ニューロン番号</code> です。</li>
+</ul>
+<p>これで、「BERT内部のどのニューロンがどのニューロンに繋がっているか」を<strong>視覚的に確認</strong>できます。</p>
+<h3 id="9-実験結果">9. 実験結果</h3>
+<p>実行すると以下が得られます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\evaluate_method\circuit_tracing\doc\image\trial\1777588820181.png" alt="1777588820181"></p>
+<p><strong>見方</strong></p>
+<ul>
+<li>キー：層名（例：bert.encoder.layer.0.output.dense）</li>
+<li>値：その層の各ニューロンに対する重要度スコアの配列</li>
+</ul>
+<p>スコアは (act * grad).abs().mean(dim=1) で計算されたもの
+大きいほど、「そのニューロンのactivationが出力ロジットに強く寄与した」ことを意味します</p>
+<blockquote>
+<p>例：importance[&quot;bert.encoder.layer.0.output.dense&quot;][100] = 0.2
+→ 「layer 0 の MLP出力の100番ニューロンは、出力ロジットに対してかなり効いている」</p>
+</blockquote>
+<p>実際に結果を見るときは</p>
+<ul>
+<li>層ごとの塊を見る</li>
+</ul>
+<p>同じ層のニューロンが近くに配置されるので、「どの層に重要ニューロンが集中しているか」が分かります。</p>
+<ul>
+<li>エッジの向きを見る</li>
+</ul>
+<p>基本的に「低層 → 高層」の方向にエッジが伸びます（layer.i → layer.i+1）。</p>
+<ul>
+<li>ハブノードを探す</li>
+</ul>
+<p>多くのエッジが集まるノードは、「情報の集約点」や「中継点」になっている可能性があります。</p>
+<p>今回グラフはNetworkXの spring_layout を使ってノードを配置しています。
+spring_layout は、エッジで繋がっているノード同士を近くに配置し、繋がっていないノードを遠くに配置するレイアウトアルゴリズムです。</p>
+<ul>
+<li>エッジが多いノード：他のノードと多くの接続があるため、 グラフの中心付近に配置されやすい。</li>
+<li>エッジが少ないノード：接続が少ないため、 グラフの外側に配置されやすい。</li>
+</ul>
+<p>つまり、「内側＝多くのノードと繋がっているハブ」「外側＝接続が少ない末端」 という解釈が基本になります。</p>
+<p><strong>外側にあるノード（末端に近いノード）</strong></p>
+<p>エッジ数が少ない（＝他のノードとあまり繋がっていない）
+このテンプレートでは、「その層で重要だが、次の層への影響が限定的」なニューロンや、「最後の層に近いニューロン」 が外側に来やすいです。
+例：最終層に近い層のニューロンで、出力ロジットに直接効いているが、次の層への依存関係が少ない場合。</p>
+<p>例えばこんなノードは出力に直接影響したものです。
+<img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\evaluate_method\circuit_tracing\doc\image\trial\1777589498156.png" alt="1777589498156"></p>
+<p><strong>内側にあるノード（ハブ的なノード）</strong></p>
+<p>エッジ数が多い（＝多くのノードと繋がっている）
+このテンプレートでは、「複数の層・複数のニューロンに影響を与えている中継点」 のようなニューロンが内側に来やすいです。
+例：ある層のニューロンが、次の層の複数の重要ニューロンに強く影響している場合。</p>
+<p>この辺りは情報のハブになったレイヤです。5～8層あたりが多そうです。
+<img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\evaluate_method\circuit_tracing\doc\image\trial\1777589544986.png" alt="1777589544986"></p>
+<h3 id="分かること">分かること</h3>
+<ul>
+<li><strong>「どのニューロンが重要か」</strong>
+<ul>
+<li>勾配 × アクティベーションで、出力ロジットに寄与するニューロンを特定。</li>
+</ul>
+</li>
+<li><strong>「どの層→どの層に影響が流れているか（相関ベース）」</strong>
+<ul>
+<li>線形回帰で、隣接層間のニューロン同士の関係を推定。</li>
+</ul>
+</li>
+</ul>
+<h3 id="論文で説明されているcircuit-tracingとの差異">論文で説明されているCircuit Tracingとの差異</h3>
+<ul>
+<li><strong>feature分解（PCA/SAEなし）</strong>
+<ul>
+<li>ニューロン単位で見ているだけで、**意味のある特徴（feature）**には分解していません。</li>
+</ul>
+</li>
+<li><strong>真の因果（介入不足）</strong>
+<ul>
+<li>線形回帰は相関ベースであり、**介入（ablation）**による因果検証は行っていません。</li>
+</ul>
+</li>
+<li><strong>attention経路の統合なし</strong>
+<ul>
+<li>Attention head の寄与や、Attention経路のcircuit化は行っていません。</li>
+</ul>
+</li>
+</ul>
+<h2 id="まとめ">まとめ</h2>
+<p>今回実験はニューラルネットワークの説明性をどう追うかという課題に対して、内部の情報の流れに注目したCircuit Tracingを実験しました。
+現実、AI機能を開発しているときでもビジネスサイドの利用者さんからは、ニューラルネットワークが出してきた結果に対して、&quot;そのまま信じない&quot;、&quot;なんでそうなったかの理由の方がしりたい&quot;と言われることが多く、AIの説明性は非常に大きな課題です。
+今回の手法を、もう少し解釈性を高めることで利用者にAIが行った判断の理由を提示できるようになります。</p>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+            
+        </body>
+        </html>
