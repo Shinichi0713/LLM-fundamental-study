@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>1&period; &#x5927;&#x898f;&#x6a21;&#x306a;&#x4e8b;&#x524d;&#x5b66;&#x7fd2; &lpar;Pre-training&rpar;&colon; &#x8a00;&#x8a9e;&#x80fd;&#x529b;&#x306e;&#x57fa;&#x76e4;&#x69cb;&#x7bc9;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav> 
+            <p>LLM（大規模言語モデル）が、単なる言語パターン復唱機から、論理的な推論や複雑な問題解決を行う「思考力」を獲得するまでの学習の流れは、3つの段階を経て進展します。
+この「思考力」は、特に<strong>Chain-of-Thought (CoT)</strong> の能力、つまり<strong>段階的な推論プロセス</strong>を生成する能力を指すことが多いです。</p>
+<p>といった辺りでLLMが<strong>人のような思考力</strong>(のようなもの)を得るまでの学習について、本日は説明していきます。</p>
+<h2 id="1-大規模な事前学習-pre-training-言語能力の基盤構築">1. 大規模な事前学習 (Pre-training): 言語能力の基盤構築</h2>
+<p>この段階で、モデルは言語の基本的な構造と、世界に関する広範な知識を獲得します。
+MLMやCLMという手法でLLMを訓練していきます。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">段階</th>
+<th style="text-align:left">目的</th>
+<th style="text-align:left">仕組み</th>
+<th style="text-align:left">思考力への貢献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>事前学習</strong></td>
+<td style="text-align:left">次の単語予測を通して、言語の統計的パターンと世界の知識を学習する。</td>
+<td style="text-align:left"><strong>自己教師あり学習:</strong> 大量のテキストデータ（数兆トークン）から、穴埋めや次の単語予測（Causal Language Modeling）を繰り返す。</td>
+<td style="text-align:left">大量の知識を記憶し、単語間の複雑な関係性を理解する基盤を構築します。しかし、この段階ではまだ、<strong>論理的な推論プロセス</strong>を<strong>自発的に</strong>生成する能力は低いです。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-命令チューニング-instruction-tuning-人間の指示への適合">2. 命令チューニング (Instruction Tuning): 人間の指示への適合</h2>
+<p>モデルに、人間が出す様々な「命令（指示）」を理解し、それに従った形式で応答する能力を学習させます。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">段階</th>
+<th style="text-align:left">目的</th>
+<th style="text-align:left">仕組み</th>
+<th style="text-align:left">思考力への貢献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>SFT (Supervised Fine-Tuning) または命令チューニング</strong></td>
+<td style="text-align:left">モデルの出力を「人間が使いやすい形式」に整える。</td>
+<td style="text-align:left"><strong>教師あり学習:</strong> 指示（プロンプト）とその回答（理想的な出力）のペアを集めたデータセットを用いて微調整を行う。</td>
+<td style="text-align:left">モデルは「質問に答える」「要約する」「リストを作成する」といった<strong>タスクの形式</strong>を学習します。<strong>CoTプロンプト</strong>（例: 「ステップバイステップで考えなさい」）を与えられた場合、それに従った出力形式（推論ステップ）を生成する能力がわずかに向上します。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-推論能力の獲得と洗練-alignment--cot-tuning">3. 推論能力の獲得と洗練 (Alignment &amp; CoT Tuning)</h2>
+<p>この段階で、LLMは「指示に適切に従う」能力に加え、<strong>複雑な論理的思考を実行する能力</strong>を本格的に獲得し、強化します。
+ここが近年のLLMの思考力を向上させた核心と言えるかもしれません。</p>
+<h3 id="a-cotデータの収集と微調整">A. CoTデータの収集と微調整</h3>
+<p>思考力を獲得する最も直接的な手法は、<strong>良質な推論データ</strong>を用いた微調整です。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">手法</th>
+<th style="text-align:left">仕組み</th>
+<th style="text-align:left">思考力への貢献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>CoT (Chain-of-Thought) データセットの学習</strong></td>
+<td style="text-align:left">複雑な問題と、その<strong>解法に至るまでの段階的な推論ステップ</strong>が記述されたデータセットを用いてSFTを行う。</td>
+<td style="text-align:left">モデルは、単なる最終結果だけでなく、<strong>「どのように考えるべきか」<strong>という推論のメカニズムを学習し、これが</strong>Few-shot CoT</strong>や<strong>Zero-shot CoT</strong>といった、より高度な推論能力の基盤となります。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-人間のフィードバックによる調整-alignment">B. 人間のフィードバックによる調整 (Alignment)</h3>
+<p>最終的に、生成された推論プロセスが<strong>人間の意図や論理</strong>に合致するように調整されます。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">手法</th>
+<th style="text-align:left">仕組み</th>
+<th style="text-align:left">思考力への貢献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>RLHF (Reinforcement Learning from Human Feedback)</strong></td>
+<td style="text-align:left">人間がモデルの複数の出力（推論ステップを含む）の優劣を評価し、その評価を元に強化学習を用いてモデルを調整する。</td>
+<td style="text-align:left"><strong>人間が良しとする論理的・倫理的な推論</strong>をするようにモデルを誘導します。思考のプロセスがより人間に理解しやすく、エラーが少ない形に洗練されます。</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>DPO (Direct Preference Optimization)</strong></td>
+<td style="text-align:left">RLHFの報酬モデルを省略し、人間の好みを直接モデルの学習に組み込む。</td>
+<td style="text-align:left">複雑なRL設定を避けつつ、LLMの推論出力の質を人間の基準に合わせて高め、<strong>安定性</strong>と<strong>信頼性</strong>を確保します。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="思考力獲得のための最も重要な要素">思考力獲得のための最も重要な要素</h3>
+<p>「次の単語を予測する」という基本的な仕組み自体は変わりませんが、**「次に予測されるべき単語が、論理的推論の次のステップである」**ように学習を誘導することが、思考力獲得の本質です。</p>
+<p>これが成功するためには、**CoTデータセットによるSFT（段階3-A）**と、**RLHF/DPO（段階3-B）**による人間とのアライメントが不可欠です。</p>
+<h2 id="4-命令チューニングの課題">4. 命令チューニングの課題</h2>
+<p>先述の命令チューニングを行う場合、課題があります。
+それは、意味が同じ言い回しが異なる文章を、正解とは見なさない点です。
+つまり、命令チューニング（SFT）におけるクロスエントロピー損失の大きな限界は、**「正解がデータセットにある単一の言い回しに強く固定されてしまう」**ことです。</p>
+<p>理想的な応答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> が一つしか用意されていない場合、モデルは<strong>表現の多様性</strong>を無視し、その特定の単語列を生成するように強くバイアスされます。</p>
+<p>言い回しが異なっても意味が同じ、あるいはより良い応答を正解として評価するための工夫は、次の学習ステップである**RLHF（人間のフィードバックによる強化学習）**にその核心があります。</p>
+<p>命令チューニングの段階と、それを克服するRLHFの仕組みについて解説します。</p>
+<h3 id="1-命令チューニング-sft-の限界と対策">1. 命令チューニング (SFT) の限界と対策</h3>
+<p>命令チューニングの段階では、モデルは厳密にデータセットのトークン列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><msub><mi>r</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>r</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>r</mi><mi>n</mi></msub><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{r_1, r_2, \dots, r_n\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">}</span></span></span></span> を予測しようとします。</p>
+<p><strong>A. 損失の性質による限界</strong></p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Loss</mtext><mo>∝</mo><mo>−</mo><munder><mo>∑</mo><mi>t</mi></munder><mi>log</mi><mo>⁡</mo><mi mathvariant="bold">P</mi><mo stretchy="false">(</mo><msub><mi>r</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mtext>context</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Loss} \propto - \sum_{t} \log \mathbf{P}(r_t | \text{context})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Loss</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.3em;vertical-align:-1.25em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.9em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbf">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord text"><span class="mord">context</span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>この損失は、モデルがデータセットに含まれる正解トークン以外のトークンを予測した場合、<strong>その予測の良し悪しに関わらず</strong>高いペナルティ（高い損失）を与えます。</p>
+<ul>
+<li><strong>例:</strong>
+<ul>
+<li><strong>データセットの正解:</strong> 「とても良い提案だと思います。」</li>
+<li><strong>モデルの出力:</strong> 「素晴らしいアイデアです。」</li>
+<li><strong>結果:</strong> 意味は同じでも、トークンが異なるため、モデルは損失を受け、データセットの正解に近づくよう強制されます。</li>
+</ul>
+</li>
+</ul>
+<p><strong>B. SFT段階での工夫（多様性の維持）</strong></p>
+<p>命令チューニングの段階でできる工夫は限られていますが、以下の方法で多様な表現に対応しようとします。</p>
+<ul>
+<li><strong>多様な正解の作成:</strong> データセットの作成段階で、同じ命令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> に対して、意味は同じだが言い回しが異なる複数の応答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>R</mi><mn>2</mn></msub><mo separator="true">,</mo><msub><mi>R</mi><mn>3</mn></msub><mo separator="true">,</mo><mo>…</mo></mrow><annotation encoding="application/x-tex">R_1, R_2, R_3, \dots</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span></span></span></span> を含めます。モデルはこれらの多様な表現を「正解の候補」として学習し、一つの特定の表現に固執しにくくなります。</li>
+</ul>
+<h3 id="2-評価の多様性を実現するrlhfの仕組み">2. 評価の多様性を実現するRLHFの仕組み</h3>
+<p>言い回しが異なっても「意味が通っている」「より自然である」「より有用である」といった<strong>抽象的な品質</strong>を評価する能力は、命令チューニングの次のステップである <strong>人間のフィードバックからの強化学習 (RLHF)</strong> によってモデルに組み込まれます。</p>
+<p>RLHFは、以下の3つの主要なステップで構成されます。</p>
+<p><strong>ステップ 1: 報酬モデル (Reward Model, RM) の学習</strong></p>
+<p>これが、<strong>言い回しが異なっても品質を評価する「評価関数」そのもの</strong>です。</p>
+<ul>
+<li><strong>仕組み:</strong>
+<ol>
+<li>LLM（SFT済み）に同じ命令を与え、複数の異なる応答（例：A, B, C）を生成させます。</li>
+<li>人間がこれらの応答を比較し、「<strong>最も良い</strong>」「<strong>次に良い</strong>」といった順位付け（Preference）を行います。（例：B &gt; A &gt; C）</li>
+<li>この人間の順位付けデータを用いて、<strong>報酬モデル (RM)</strong> という別の小さなモデルを教師あり学習で訓練します。</li>
+<li>RMは、命令 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> と応答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> のペアを入力として受け取り、その応答の<strong>品質スコア <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>I</mi><mo separator="true">,</mo><mi>R</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R(I, R)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span></strong> を出力するように学習されます。</li>
+</ol>
+</li>
+<li><strong>効果:</strong> RMは、特定の単語列の再現性ではなく、<strong>人間が感じる応答の抽象的な品質</strong>（有用性、無害性、論理性、自然な言い回しなど）を評価する「評価関数」となります。</li>
+</ul>
+<p><strong>ステップ 2: 強化学習 (RL) によるLLMの調整</strong></p>
+<p>学習された報酬モデル <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>I</mi><mo separator="true">,</mo><mi>R</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R(I, R)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span> を使用して、LLM自体を強化学習で微調整します。</p>
+<ul>
+<li><strong>仕組み:</strong>
+<ol>
+<li>LLMはランダムに文章を生成します（行動 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span>）。</li>
+<li>生成された文章は、ステップ1で学習したRMによって即座に評価され、<strong>報酬</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mi>R</mi><mo stretchy="false">(</mo><mi>I</mi><mo separator="true">,</mo><mi>R</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">r = R(I, R)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span> が与えられます。</li>
+<li>LLMは、この報酬を最大化するようにパラメータを更新します（PPOアルゴリズムなどを使用）。</li>
+</ol>
+</li>
+<li><strong>効果:</strong> モデルは、<strong>クロスエントロピー損失に縛られず</strong>、報酬モデルが高く評価するような、<strong>多様な言い回しでも品質の高い応答</strong>を生成するように学習されます。</li>
+</ul>
+<p>したがって、命令チューニングは「何を答えるべきか」の<strong>知識と形式</strong>を教える手法ですが、「どのように答えるべきか」の<strong>品質と多様性</strong>を評価し、学習するのは<strong>報酬モデル</strong>を用いたRLHFの役割となります。</p>
+<h2 id="5-rlhf">5. RLHF</h2>
+<p>先ほどの文章の続きとして、「多様性がなぜ必要か」からRLHFの仕組みを整理すると、次のような流れになります。</p>
+<h3 id="なぜ多様性が必要なのか">なぜ「多様性」が必要なのか</h3>
+<p>LLMの応答には、<strong>単一の「正解の言い回し」が存在しない</strong>場面が非常に多いです。</p>
+<ul>
+<li>
+<p>同じ質問に対しても、</p>
+<ul>
+<li>ユーザーの知識レベル（専門家か、初心者か）</li>
+<li>場面（ビジネス文書か、カジュアルなチャットか）</li>
+<li>文化・言語の違い<br>
+によって、適切な表現は変わります。</li>
+</ul>
+</li>
+<li>
+<p>また、思考プロセス（CoT）を書かせる場合でも、</p>
+<ul>
+<li>箇条書きで整理する</li>
+<li>段落形式で説明する</li>
+<li>例示を多く入れる<br>
+など、<strong>表現スタイルは多様であってよい</strong>はずです。</li>
+</ul>
+</li>
+</ul>
+<p>ところが、命令チューニング（SFT）のクロスエントロピー損失は、<br>
+「データセットに書かれている特定のトークン列」以外を強くペナルティします。<br>
+その結果、モデルは<strong>意味的に正しくても、言い回しが違う応答を「悪い出力」として学習</strong>してしまいます。</p>
+<p>このままでは、</p>
+<ul>
+<li>ユーザーが求めるスタイルに柔軟に対応できない</li>
+<li>創造的な言い換えや、より自然な表現が生まれにくい</li>
+<li>CoTの書き方も画一的になり、説明の柔軟性が失われる</li>
+</ul>
+<p>という問題が起きます。<br>
+そのため、<strong>「意味が同じなら、表現は多様であってよい」という多様性</strong>を確保することが重要になります。</p>
+<h3 id="rlhfの仕組みの概要多様性確保の観点から">RLHFの仕組みの概要（多様性確保の観点から）</h3>
+<p>RLHF（Reinforcement Learning from Human Feedback）は、<br>
+「特定の言い回しに縛られず、<strong>抽象的な品質</strong>を評価して学習する」仕組みです。</p>
+<p><strong>1. 報酬モデル（Reward Model, RM）の学習</strong></p>
+<p>まず、<strong>「どの応答が良いか」を判断する評価関数</strong>を別途学習します。</p>
+<ul>
+<li>
+<p>手順の概要</p>
+<ol>
+<li>SFT済みのLLMに同じ指示を与え、複数の応答（A, B, C, …）を生成させる。</li>
+<li>人間がそれらを比較し、「どれが一番良いか」「どれが次に良いか」といった<strong>順位付け（Preference）</strong> を行う。</li>
+<li>その順位付けデータを使って、**報酬モデル（RM）**という小さなモデルを教師あり学習で訓練する。</li>
+<li>RMは、指示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> と応答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> のペアを入力として、その応答の<strong>品質スコア <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>I</mi><mo separator="true">,</mo><mi>R</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R(I, R)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span></strong> を出力するように学習される。</li>
+</ol>
+</li>
+<li>
+<p>多様性との関係</p>
+<ul>
+<li>RMは「特定のトークン列」ではなく、<strong>人間が感じる抽象的な品質</strong>（有用性、無害性、論理性、自然さなど）を評価する。</li>
+<li>そのため、<strong>言い回しが違っても、意味が良ければ高スコア</strong>になる。</li>
+<li>これにより、「データセットに書かれていない表現」でも、人間が好むなら報酬が得られるようになる。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 強化学習（RL）によるLLMの調整</strong></p>
+<p>次に、学習した報酬モデルを使って、LLM自体を強化学習で微調整します。</p>
+<ul>
+<li>
+<p>手順の概要</p>
+<ol>
+<li>LLMが指示 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span> に対して応答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> を生成する（これが「行動」に相当）。</li>
+<li>生成された応答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> をRMに入力し、<strong>報酬 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mi>R</mi><mo stretchy="false">(</mo><mi>I</mi><mo separator="true">,</mo><mi>R</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">r = R(I, R)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span></strong> を得る。</li>
+<li>LLMは、この報酬を最大化するようにパラメータを更新する（PPOなどのRLアルゴリズムを使用）。</li>
+</ol>
+</li>
+<li>
+<p>多様性との関係</p>
+<ul>
+<li>LLMは、<strong>クロスエントロピー損失に縛られず</strong>、RMが高く評価する応答を出す方向に学習される。</li>
+<li>RMが「多様な言い回しでも、意味が良ければ高評価」するため、LLMも<strong>多様な表現で高品質な応答</strong>を生成するようになる。</li>
+<li>これにより、SFT段階で起きていた「単一の言い回しへの過剰なバイアス」が緩和される。</li>
+</ul>
+</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>総括すると、LLMが「人のような思考力」を得るまでの流れは、大きく次の2つの側面から整理できます。</p>
+<h3 id="1-思考力獲得の3段階">1. 「思考力」獲得の3段階</h3>
+<ol>
+<li>
+<p><strong>事前学習（Pre-training）</strong></p>
+<ul>
+<li>大量のテキストから「次の単語予測」を通じて、言語の統計的パターンと世界の知識を獲得。</li>
+<li>知識の基盤はできるが、<strong>自発的な論理推論</strong>はまだ弱い。</li>
+</ul>
+</li>
+<li>
+<p><strong>命令チューニング（SFT）</strong></p>
+<ul>
+<li>指示と回答のペアで微調整し、「質問に答える」「要約する」など<strong>タスクの形式</strong>を学習。</li>
+<li>「ステップバイステップで考えなさい」といったCoTプロンプトに従う<strong>形式</strong>を学ぶが、推論の質はまだ限定的。</li>
+</ul>
+</li>
+<li>
+<p><strong>推論能力の獲得と洗練（CoTチューニング＋RLHF/DPO）</strong></p>
+<ul>
+<li>CoTデータセットで<strong>段階的な推論プロセス</strong>を直接学習させ、Few-shot/Zero-shot CoTの基盤を作る。</li>
+<li>RLHF/DPOで、人間の好みに沿った<strong>論理的・倫理的な推論</strong>を強化し、思考プロセスを人間に理解しやすく、エラーが少ない形に洗練する。</li>
+</ul>
+</li>
+</ol>
+<p>この3段階を通じて、<br>
+「次の単語予測」という基本動作を保ちつつ、<strong>次に予測される単語が“論理推論の次のステップ”になるように</strong>学習を誘導することで、LLMは人のような思考力を獲得していきます。</p>
+<h3 id="2-命令チューニングの限界とrlhfによる多様性確保">2. 命令チューニングの限界とRLHFによる多様性確保</h3>
+<ul>
+<li>
+<p><strong>SFTの限界</strong></p>
+<ul>
+<li>クロスエントロピー損失は「データセットに書かれた特定の言い回し」以外を強くペナルティする。</li>
+<li>そのため、<strong>意味が同じでも言い回しが違う応答を“悪い出力”として学習</strong>し、表現の多様性が失われやすい。</li>
+</ul>
+</li>
+<li>
+<p><strong>RLHFの役割</strong></p>
+<ul>
+<li>報酬モデル（RM）が、特定の単語列ではなく、<strong>人間が感じる抽象的な品質</strong>（有用性・自然さ・論理性など）を評価する。</li>
+<li>強化学習でLLMを調整し、<strong>多様な言い回しでも高品質な応答</strong>を出すように誘導する。</li>
+<li>これにより、SFTで起きていた「単一の言い回しへの過剰なバイアス」を緩和し、<strong>柔軟で多様な思考表現</strong>を可能にする。</li>
+</ul>
+</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+        </body>
+        </html>
