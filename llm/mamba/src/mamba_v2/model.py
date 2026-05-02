@@ -5,59 +5,101 @@ import math
 
 from transformers import AutoTokenizer
 
+from causal_conv1d import CausalConv1d  # 因果性を保証するconv1d
+from einops import rearrange  # 形状操作を簡潔にする
+
+
 class Mamba2Block(nn.Module):
-    def __init__(self, d_model, d_state=16, d_conv=4, expand=2, num_heads=8):
+    def __init__(
+        self,
+        d_model,
+        d_state=16,
+        d_conv=4,
+        expand=2,
+        nheads=8,
+        ngroups=1,
+        dt_min=0.001,
+        dt_max=0.1,
+        dt_init_floor=1e-4,
+        A_init_range=(0.9, 0.999),
+        use_mem_eff_path=False,
+        chunk_size=None,
+        layer_idx=None,
+        **factory_kwargs,
+    ):
         super().__init__()
         self.d_model = d_model
         self.d_state = d_state
         self.d_conv = d_conv
         self.d_inner = d_model * expand
-        self.num_heads = num_heads
-        assert self.d_inner % self.num_heads == 0, "d_inner must be divisible by num_heads"
-        self.d_head = self.d_inner // self.num_heads  # 各headが担当する次元
+        self.nheads = nheads
+        self.ngroups = ngroups
+        self.use_mem_eff_path = use_mem_eff_path
+        self.chunk_size = chunk_size
+        self.layer_idx = layer_idx
 
-        # 入力投影: [z, x_inner, dt, B, C] をまとめて出す
-        total_dim = (
-            self.d_inner +          # z
-            self.d_inner +          # x_inner
-            self.num_heads +        # dt
-            self.num_heads * self.d_state +  # B
-            self.num_heads * self.d_state    # C
+        # head次元（簡易版では固定）
+        self.headdim = self.d_inner // self.nheads
+        assert self.d_inner % self.nheads == 0, "d_inner must be divisible by nheads"
+
+        # in_proj の出力次元: [z0, x0, z, xBC, dt]
+        # z0, x0: MLP的なゲート・スキップ用（簡易版では同じ次元数と仮定）
+        d_mlp = self.d_inner  # 簡易版では d_mlp = d_inner と仮定
+        d_in_proj = (
+            d_mlp +                     # z0
+            d_mlp +                     # x0
+            self.d_inner +               # z
+            self.d_inner +               # xBC (d_ssm + 2*ngroups*d_state)
+            self.nheads                 # dt
         )
-        self.in_proj = nn.Linear(d_model, total_dim, bias=False)
+        self.in_proj = nn.Linear(self.d_model, d_in_proj, bias=False)
 
-        # 1D depthwise conv
-        self.conv1d = nn.Conv1d(
+        # CausalConv1d（kernel_size=4 がMamba-2標準）
+        self.conv1d = CausalConv1d(
             in_channels=self.d_inner,
             out_channels=self.d_inner,
             kernel_size=d_conv,
             groups=self.d_inner,
-            padding=d_conv - 1,
-            bias=False,
         )
 
-        # dt のバイアス（headごと）
-        self.dt_bias = nn.Parameter(torch.randn(num_heads))
+        self.act = nn.SiLU()
 
-        # A は対角行列（headごとに異なる減衰係数）
-        self.A_log = nn.Parameter(
-            torch.log(1e-3 + torch.arange(1, num_heads + 1, dtype=torch.float32))
+        # dt のバイアス（Mamba-2風の初期化）
+        dt = torch.exp(
+            torch.rand(self.nheads, **factory_kwargs) * (math.log(dt_max) - math.log(dt_min))
+            + math.log(dt_min)
         )
+        dt = torch.clamp(dt, min=dt_init_floor)
+        inv_dt = dt + torch.log(-torch.expm1(-dt))  # softplusの逆関数
+        self.dt_bias = nn.Parameter(inv_dt)
+        self.dt_bias._no_weight_decay = True  # 重み減衰をかけない（Mamba-2風）
+
+        # A の初期化（Mamba-2風）
+        assert A_init_range[0] > 0 and A_init_range[1] >= A_init_range[0]
+        A = torch.empty(self.nheads, dtype=torch.float32).uniform_(*A_init_range)
+        A_log = torch.log(A)
+        self.A_log = nn.Parameter(A_log)
+        self.A_log._no_weight_decay = True
+
+        # D（skipパラメータ）
+        self.D = nn.Parameter(torch.ones(self.nheads))
+        self.D._no_weight_decay = True
+
+        # RMSNormGated の代わりに LayerNorm + ゲート（簡易版）
+        self.norm = nn.LayerNorm(self.d_inner)
+        self.gate_proj = nn.Linear(self.d_inner, self.d_inner)
 
         # 出力投影
-        self.out_proj = nn.Linear(self.d_inner, d_model, bias=False)
+        self.out_proj = nn.Linear(self.d_inner, self.d_model, bias=False)
 
-        # 正規化（RMSNorm がなければ LayerNorm）
-        try:
-            from torch.nn import RMSNorm
-            self.norm = RMSNorm(d_model)
-        except ImportError:
-            self.norm = nn.LayerNorm(d_model)
+        # 推論用状態キャッシュ（簡易版）
+        self.conv_state = None
+        self.ssm_state = None
 
     def discretize(self, dt, A):
         """
         dt: [B, L, H]
-        A:  [H, N]  (N = d_state)
+        A:  [H, N]
         ΔA = exp(Δt A) の簡易実装
         """
         dt = dt.unsqueeze(-1)  # [B, L, H, 1]
@@ -65,87 +107,162 @@ class Mamba2Block(nn.Module):
         dA = torch.exp(dt * A)  # [B, L, H, N]
         return dA
 
-    def forward(self, x):
+    def forward(self, u, inference_params=None):
         """
-        x: [B, L, D]
+        u: [B, L, D]
+        inference_params: 簡易版では未使用（本格実装では状態キャッシュに使う）
         """
-        residual = x
-        x = self.norm(x)
+        batch, seqlen, _ = u.shape
 
-        batch, seq_len, _ = x.size()
+        # in_proj で [z0, x0, z, xBC, dt] を計算
+        zxbcdt = self.in_proj(u)  # [B, L, d_in_proj]
 
-        # in_proj で [z, x_inner, dt, B, C] をまとめて計算
-        z_x_dt_bc = self.in_proj(x)  # [B, L, total_dim]
-
-        # 分割する次元を明示
+        # 分割（簡易版では d_mlp = d_inner と仮定）
+        d_mlp = self.d_inner
         split_sizes = [
-            self.d_inner,           # z
-            self.d_inner,           # x_inner
-            self.num_heads,         # dt
-            self.num_heads * self.d_state,  # B
-            self.num_heads * self.d_state,  # C
+            d_mlp,                     # z0
+            d_mlp,                     # x0
+            self.d_inner,               # z
+            self.d_inner,               # xBC
+            self.nheads,                # dt
         ]
-        z, x_inner, dt, B, C = torch.split(z_x_dt_bc, split_sizes, dim=-1)
+        z0, x0, z, xBC, dt = torch.split(zxbcdt, split_sizes, dim=-1)
 
-        # 1. Conv1d による局所混合
-        x_inner = x_inner.transpose(1, 2)  # [B, D_inner, L]
-        x_inner = self.conv1d(x_inner)[:, :, :seq_len]
-        x_inner = x_inner.transpose(1, 2)  # [B, L, D_inner]
-        x_inner = F.silu(x_inner)
-
-        # 2. dt のスケーリングとバイアス追加
-        dt = dt + self.dt_bias.view(1, 1, -1)  # [B, L, H]
+        # dt のスケーリング（softplus）
+        dt = dt + self.dt_bias.view(1, 1, -1)
         dt = F.softplus(dt)
 
-        # 3. A の取得（headごとの対角行列）
+        # A の取得
         A = -torch.exp(self.A_log)  # [H]
         A = A.unsqueeze(-1).expand(-1, self.d_state)  # [H, N]
 
-        # 4. 離散化: ΔA, ΔB を計算（簡易版）
-        dA = self.discretize(dt, A)  # [B, L, H, N]
-        dB = dt.unsqueeze(-1)  # [B, L, H, 1]
+        # Conv1d による局所混合（CausalConv1d）
+        xBC = xBC.transpose(1, 2)  # [B, D, L]
+        xBC = self.conv1d(xBC)[:, :, :seqlen]  # 出力を入力長にスライス
+        xBC = self.act(xBC)
+        xBC = xBC.transpose(1, 2)  # [B, L, D]
 
-        # B, C を head と state に合わせて整形
-        B = B.view(batch, seq_len, self.num_heads, self.d_state)  # [B, L, H, N]
-        C = C.view(batch, seq_len, self.num_heads, self.d_state)  # [B, L, H, N]
+        # xBC を [x, B, C] に分割
+        # 簡易版では xBC の次元を d_inner とし、その中から分割
+        d_ssm = self.d_inner - 2 * self.ngroups * self.d_state
+        assert d_ssm > 0, "d_inner must be larger than 2*ngroups*d_state"
+        x, BC = torch.split(xBC, [d_ssm, 2 * self.ngroups * self.d_state], dim=-1)
+        B, C = torch.split(BC, [self.ngroups * self.d_state, self.ngroups * self.d_state], dim=-1)
 
-        # x_inner を head 方向に分割（各headが d_head 次元を担当）
-        # x_inner: [B, L, D_inner] -> [B, L, H, D_head]
-        x_inner = x_inner.view(batch, seq_len, self.num_heads, self.d_head)
+        # 形状を head と state に合わせる
+        x = rearrange(x, "b l (h p) -> b l h p", h=self.nheads, p=self.headdim)
+        B = rearrange(B, "b l (g n) -> b l g n", g=self.ngroups)
+        C = rearrange(C, "b l (g n) -> b l g n", g=self.ngroups)
+        dt = rearrange(dt, "b l h -> b l h 1")  # [B, L, H, 1]
 
-        # 5. recurrent scan（簡易実装）
-        h = torch.zeros(batch, self.num_heads, self.d_state, device=x.device)  # [B, H, N]
+        # SSM scan（簡易版：forループ）
+        h = torch.zeros(batch, self.nheads, self.headdim, self.d_state, device=u.device)
         outputs = []
-        for t in range(seq_len):
-            # x_inner_t: [B, H, D_head]
-            x_t = x_inner[:, t]  # [B, H, D_head]
+        for t in range(seqlen):
+            # 離散化: ΔA, ΔB
+            dA = torch.exp(dt[:, t] * A.unsqueeze(0))  # [B, H, N]
+            dB = dt[:, t]  # [B, H, 1]
 
-            # 各headごとに、x_t と B_t を掛け合わせて SSM への入力を形成
-            # ここでは簡易に、x_t の平均を取ってスカラーに縮約する例
-            # （本来は線形変換などで d_head -> 1 に投影するのが望ましい）
-            x_input = x_t.mean(dim=-1, keepdim=True)  # [B, H, 1]
+            # 状態更新: h_t = ΔA_t * h_{t-1} + ΔB_t * x_t * B_t
+            h = dA * h + dB * x[:, t].unsqueeze(-1) * B[:, t].unsqueeze(1)
 
-            # 状態更新: h_t = ΔA_t * h_{t-1} + ΔB_t * x_input * B_t
-            h = dA[:, t] * h + dB[:, t] * x_input * B[:, t]
-
-            # 出力: y_t = h_t * C_t
-            y_t = (h * C[:, t]).sum(dim=-1)  # [B, H]
+            # 出力: y_t = h_t * C_t + D * x_t
+            y_t = (h * C[:, t].unsqueeze(1)).sum(dim=-1)  # [B, H, P]
+            y_t = y_t + self.D.view(1, self.nheads, 1) * x[:, t]
             outputs.append(y_t)
 
-        y = torch.stack(outputs, dim=1)  # [B, L, H]
+        y = torch.stack(outputs, dim=1)  # [B, L, H, P]
+        y = rearrange(y, "b l h p -> b l (h p)")  # [B, L, D_inner]
 
-        # head を結合して出力次元に戻す
-        y = y.reshape(batch, seq_len, self.num_heads)  # [B, L, H]
-        # 必要に応じて線形変換で d_inner に合わせる（簡易対応）
-        if y.size(-1) != self.d_inner:
-            y = nn.Linear(y.size(-1), self.d_inner, bias=False).to(y.device)(y)
+        # 正規化＋ゲート（RMSNormGated の簡易版）
+        y = self.norm(y)
+        gate = torch.sigmoid(self.gate_proj(y))
+        y = gate * y
 
-        # 6. ゲート z と組み合わせて出力
-        y = y * F.silu(z)
-        y = self.out_proj(y)
+        # MLP的スキップ接続（z0, x0）
+        if d_mlp > 0:
+            z0_act = F.silu(z0)
+            mlp_skip = z0_act * x0
+            y = torch.cat([mlp_skip, y], dim=-1)
 
-        return y + residual
+        # 出力投影
+        out = self.out_proj(y)
 
+        return out
+
+    def step(self, hidden_states, conv_state, ssm_state):
+        """
+        簡易版のstep関数（1トークンずつの推論用）
+        本格実装では causal_conv1d_update や selective_state_update を使うが、
+        ここでは概念実装として簡易に実装。
+        """
+        batch, seqlen, _ = hidden_states.shape
+        assert seqlen == 1, "Only support decoding with 1 token at a time"
+
+        zxbcdt = self.in_proj(hidden_states.squeeze(1))  # [B, d_in_proj]
+        d_mlp = self.d_inner
+        z0, x0, z, xBC, dt = torch.split(
+            zxbcdt,
+            [d_mlp, d_mlp, self.d_inner, self.d_inner, self.nheads],
+            dim=-1
+        )
+
+        # Conv step（簡易版）
+        if conv_state is not None:
+            # 状態を更新（簡易実装）
+            conv_state = torch.roll(conv_state, shifts=-1, dims=-1)
+            conv_state[:, :, -1] = xBC.transpose(1, 2)
+            xBC = torch.sum(conv_state * self.conv1d.weight.view(self.d_inner, self.d_conv), dim=-1)
+            xBC = self.act(xBC)
+        else:
+            # 初回は通常のconv1d（簡易版）
+            xBC = xBC.transpose(1, 2)
+            xBC = self.conv1d(xBC)[:, :, :1]
+            xBC = self.act(xBC)
+            xBC = xBC.transpose(1, 2)
+
+        # xBC を [x, B, C] に分割
+        d_ssm = self.d_inner - 2 * self.ngroups * self.d_state
+        x, BC = torch.split(xBC, [d_ssm, 2 * self.ngroups * self.d_state], dim=-1)
+        B, C = torch.split(BC, [self.ngroups * self.d_state, self.ngroups * self.d_state], dim=-1)
+
+        # 形状整形
+        x = rearrange(x, "b (h p) -> b h p", h=self.nheads, p=self.headdim)
+        B = rearrange(B, "b (g n) -> b g n", g=self.ngroups)
+        C = rearrange(C, "b (g n) -> b g n", g=self.ngroups)
+        dt = F.softplus(dt + self.dt_bias).unsqueeze(-1)  # [B, H, 1]
+
+        # A の取得
+        A = -torch.exp(self.A_log)  # [H]
+        A = A.unsqueeze(-1).expand(-1, self.d_state)  # [H, N]
+
+        # SSM step（簡易版）
+        if ssm_state is None:
+            ssm_state = torch.zeros(batch, self.nheads, self.headdim, self.d_state, device=hidden_states.device)
+
+        dA = torch.exp(dt * A.unsqueeze(0))  # [B, H, N]
+        dB = dt  # [B, H, 1]
+
+        # 状態更新
+        ssm_state = dA * ssm_state + dB * x.unsqueeze(-1) * B.unsqueeze(1)
+        y = (ssm_state * C.unsqueeze(1)).sum(dim=-1)  # [B, H, P]
+        y = y + self.D.view(1, self.nheads, 1) * x
+
+        y = rearrange(y, "b h p -> b (h p)")  # [B, D_inner]
+
+        # 正規化＋ゲート
+        y = self.norm(y)
+        gate = torch.sigmoid(self.gate_proj(y))
+        y = gate * y
+
+        # MLP的スキップ
+        if d_mlp > 0:
+            z0_act = F.silu(z0)
+            mlp_skip = z0_act * x0
+            y = torch.cat([mlp_skip, y], dim=-1)
+
+        out = self.out_proj(y)
+        return out.unsqueeze(1), conv_state, ssm_state
 
 class SimpleSSM(nn.Module):
     def __init__(self, d_model, expand=2):
