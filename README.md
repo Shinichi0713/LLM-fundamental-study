@@ -334,6 +334,30 @@ visualize as heat map.
 
 ![1760833255365](image/README/1760833255365.png)
 
+
+### Circuit Tracing
+Recently, I read paper "Circuit Tracing". And, that is corresponding with my problem which my user said "we want to know the inner reason of AI".
+I have a trial of implement and experiment.
+
+- **Goal**: Visualize and verify which internal features of BERT causally contribute to which outputs.
+- **Core steps**:
+  1. **SAE**: Decompose BERT’s MLP activations into sparse “concept features.”
+  2. **CLT**: Linearly reconstruct higher-layer outputs from lower-layer features, approximating inter-layer information flow.
+  3. **Local Replacement Model**: Fix attention patterns and LayerNorm denominators, treating the rest as a linear approximation.
+  4. **Attribution Graph**: Connect features, tokens, and logits as nodes, weighted by linear contributions (activation × gradient).
+  5. **Graph Pruning**: Keep only high-contribution edges, extracting key circuits.
+  6. **Feature Inhibition**: Suppress or inject important features and observe output changes to test causal contribution.
+- **What you get**:
+  - You can trace, in human-interpretable circuits, how BERT uses which tokens, layers, and features to make its decisions.
+
+<img src="https://cdn-ak.f.st-hatena.com/images/fotolife/y/yoshishinnze/20260501/20260501081009.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+the code exists: https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/evaluate_method/circuit_tracing
+the article of this experiment: https://yoshishinnze.hatenablog.com/entry/2026/05/02/053000
+
+
+## Network Architecture
+
 ### NewArchitecture
 
 Now thinking new architecture.
@@ -386,7 +410,7 @@ LLM-learning:
 
 VLMs (Vision-Language Models) enable the execution of visual recognition tasks by combining Large Language Models (LLMs) with multimodal models such as CLIP. In this repository, we confirmed that visual recognition can be achieved by training the integration of LLMs and CLIP through mechanisms like Q-Formers or MLP Adapters.
 
-![1774083511417](vlm/src/mlp_adapter/image/README/1774083511417.png)
+<img src="vlm/src/mlp_adapter/image/README/1774083511417.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
 
 ```
  with A dog looking the master
