@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x4eca;&#x56de;&#x5b9f;&#x9a13;&#x76ee;&#x7684;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <p>先日の記事では学習データが少なかったので、実力が少し分かりづらかったです。
+このため、今度はある程度の分量の学習データで学習してみて、整った文章を出力できるようになるかについて確認しました。</p>
+<p>前回記事は以下をご参考下さい。
+Mambaのモデルで、少数文章で学習して文章生成が出来るかについて確認する、という内容のものです。</p>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/04/26/100821">https://yoshishinnze.hatenablog.com/entry/2026/04/26/100821</a></p>
+<h2 id="今回実験目的">今回実験目的</h2>
+<p>前回実験ではとりあえず文章をそれっぽく生成する能力を持つことが出来るかについて確認しました。
+過去LSTMで同じ実験をやったときは、正直ダメだったので、違いが分かるか程度を期待していました。
+結果、それっぽい文章を作れそうということが見れました。</p>
+<p>今回は学習用データを増やして、文章生成の能力が確認できるかについて確認します。</p>
+<h2 id="実装">実装</h2>
+<p>これまでの内容を踏まえて、Mamba風モデルを組んで学習するまでの手順を整理します。</p>
+<p>実際の実装は以下レポジトリをご参考下さい。
+<a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/llm/mamba/src/mamba_v2">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/llm/mamba/src/mamba_v2</a></p>
+<h3 id="1-モデル定義">1. モデル定義</h3>
+<p>モデルの全体イメージは以下のような感じです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\mamba\src\mamba_v2\doc\image\trial_v2\1777698737600.png" alt="1777698737600"></p>
+<p><strong>(1) 基本ブロック（SimpleSSM）</strong></p>
+<p>時間方向の畳み込みを使った簡易 SSM ブロックです。
+この <code>SimpleSSM</code> ブロックは、**「時間方向の局所的な情報を混ぜつつ、情報を保ったまま特徴を更新する」**役割を持っています。</p>
+<p>もう少し分解すると、次のような働きがあります。</p>
+<p><strong>1. 時間方向の局所的な情報統合（Conv1d）</strong></p>
+<pre><code class="language-python">x = x.transpose(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
+x = self.conv(x)
+x = x.transpose(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
+</code></pre>
+<ul>
+<li>入力 <code>x</code> の形状は <code>[batch, seq_len, d_model]</code> です。</li>
+<li><code>transpose(1, 2)</code> で <code>[batch, d_model, seq_len]</code> にし、<code>Conv1d</code> を時間方向（seq_len 方向）にかけます。</li>
+<li><code>kernel_size=3, padding=1</code> なので、各タイムステップは「自分＋前後1ステップ」の情報を混ぜ合わせた値になります。</li>
+</ul>
+<p><strong>働き</strong>:</p>
+<ul>
+<li>近い位置のトークン同士の情報を混ぜる（局所的な文脈を捉える）</li>
+<li>RNN や SSM のように「時間方向に情報を伝える」簡易版として機能</li>
+</ul>
+<p><strong>2. 線形変換による特徴の再スケーリング・表現変換</strong></p>
+<pre><code class="language-python">x = self.linear1(x)
+...
+x = self.linear2(x)
+</code></pre>
+<ul>
+<li><code>linear1</code> で一度特徴を変換し、Conv で時間方向の混合を行い、<code>linear2</code> で再度変換します。</li>
+<li>これにより、単なる Conv ではなく、「どの特徴を強調し、どの特徴を弱めるか」を学習可能な形で調整できます。</li>
+</ul>
+<p><strong>働き</strong>:</p>
+<ul>
+<li>特徴空間での表現を柔軟に変形する</li>
+<li>モデルがデータに合わせて「どの情報を重視するか」を学習できる</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleSSM</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, d_model</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.linear1 = nn.Linear(d_model, d_model)
+        self.conv = nn.Conv1d(d_model, d_model, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-number">1</span>)
+        self.linear2 = nn.Linear(d_model, d_model)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        residual = x
+        x = self.linear1(x)
+
+        <span class="hljs-comment"># SSM 風の時間方向処理</span>
+        x = x.transpose(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
+        x = self.conv(x)
+        x = x.transpose(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)
+
+        x = self.linear2(x)
+        <span class="hljs-keyword">return</span> x + residual
+</code></pre>
+<p><strong>(2) 言語モデル本体（MambaLikeLM）</strong></p>
+<p>Embedding → 複数の SSM ブロック → LayerNorm → 出力層 という構成です。</p>
+<p>MambaLikeLM では、この SimpleSSM ブロックを複数積み重ねています。</p>
+<ul>
+<li>各ブロックが「時間方向の局所情報の混合＋特徴変換」を行う
+それを何層も重ねることで、入力トークン列から次トークンを予測するのに必要な表現を段階的に構築する</li>
+</ul>
+<p>SSMブロックにより時間方向の情報を少しずつ混ぜながら、層を重ねるごとに抽象的な言語表現を学習していく
+という、Transformer の Self-Attention ブロックに似た役割を、Conv ベースで簡易に実現したもの、と捉えることができます。</p>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MambaLikeLM</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, vocab_size, tokenizer=<span class="hljs-literal">None</span>, d_model=<span class="hljs-number">512</span>, n_layers=<span class="hljs-number">6</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.embed = nn.Embedding(vocab_size, d_model)
+        self.layers = nn.ModuleList([
+            SimpleSSM(d_model) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n_layers)
+        ])
+        self.norm = nn.LayerNorm(d_model)
+        self.head = nn.Linear(d_model, vocab_size)
+        self.device = torch.device(<span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)
+        <span class="hljs-keyword">if</span> tokenizer <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            self.tokenizer = tokenizer
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> AutoTokenizer
+            self.tokenizer = AutoTokenizer.from_pretrained(<span class="hljs-string">&quot;gpt2&quot;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        x = self.embed(x)
+        <span class="hljs-keyword">for</span> layer <span class="hljs-keyword">in</span> self.layers:
+            x = layer(x)
+        x = self.norm(x)
+        <span class="hljs-keyword">return</span> self.head(x)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">generate</span>(<span class="hljs-params">self, prompt, max_len=<span class="hljs-number">50</span>, temperature=<span class="hljs-number">0.7</span></span>):
+        self.<span class="hljs-built_in">eval</span>()
+        input_ids = self.tokenizer(prompt, return_tensors=<span class="hljs-string">&quot;pt&quot;</span>).input_ids.to(self.device)
+
+        <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(max_len):
+            <span class="hljs-keyword">with</span> torch.no_grad():
+                logits = self(input_ids)
+
+            next_token_logits = logits[:, -<span class="hljs-number">1</span>, :] / temperature
+            probs = torch.softmax(next_token_logits, dim=-<span class="hljs-number">1</span>)
+            next_token = torch.multinomial(probs, num_samples=<span class="hljs-number">1</span>)
+
+            input_ids = torch.cat([input_ids, next_token], dim=<span class="hljs-number">1</span>)
+
+        <span class="hljs-keyword">return</span> self.tokenizer.decode(input_ids[<span class="hljs-number">0</span>])
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">save_model</span>(<span class="hljs-params">self, path</span>):
+        torch.save(self.state_dict(), path)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Model saved to <span class="hljs-subst">{path}</span>&quot;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">load_model</span>(<span class="hljs-params">self, path, strict=<span class="hljs-literal">True</span></span>):
+        state_dict = torch.load(path, map_location=self.device)
+        self.load_state_dict(state_dict, strict=strict)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Model loaded from <span class="hljs-subst">{path}</span>&quot;</span>)
+</code></pre>
+<h3 id="2-データ準備wikipedia風コーパス">2. データ準備（Wikipedia風コーパス）</h3>
+<p>前回は少数文章をひたすら覚えるだけでした。
+今回は文章量も確保されている <code>wikitext-2</code> を用います。</p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> datasets <span class="hljs-keyword">import</span> load_dataset
+<span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> DataLoader
+
+<span class="hljs-comment"># トークナイザ</span>
+tokenizer = AutoTokenizer.from_pretrained(<span class="hljs-string">&quot;gpt2&quot;</span>)
+<span class="hljs-keyword">if</span> tokenizer.pad_token <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+    tokenizer.pad_token = tokenizer.eos_token
+
+<span class="hljs-comment"># データセット</span>
+dataset = load_dataset(<span class="hljs-string">&quot;wikitext&quot;</span>, <span class="hljs-string">&quot;wikitext-2-raw-v1&quot;</span>, split=<span class="hljs-string">&quot;train&quot;</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">tokenize_function</span>(<span class="hljs-params">examples</span>):
+    <span class="hljs-keyword">return</span> tokenizer(
+        examples[<span class="hljs-string">&quot;text&quot;</span>],
+        truncation=<span class="hljs-literal">True</span>,
+        padding=<span class="hljs-string">&quot;max_length&quot;</span>,
+        max_length=<span class="hljs-number">128</span>,
+    )
+
+tokenized_dataset = dataset.<span class="hljs-built_in">map</span>(
+    tokenize_function,
+    batched=<span class="hljs-literal">True</span>,
+    remove_columns=dataset.column_names,
+)
+tokenized_dataset.set_format(<span class="hljs-built_in">type</span>=<span class="hljs-string">&quot;torch&quot;</span>, columns=[<span class="hljs-string">&quot;input_ids&quot;</span>, <span class="hljs-string">&quot;attention_mask&quot;</span>])
+
+train_loader = DataLoader(
+    tokenized_dataset,
+    batch_size=<span class="hljs-number">8</span>,
+    shuffle=<span class="hljs-literal">True</span>,
+)
+</code></pre>
+<h3 id="3-学習ループ">3. 学習ループ</h3>
+<p>言語モデル（次トークン予測）として学習します。</p>
+<p>モデルは、前回Google Colab環境下でメモリ不足に悩まされたので、今回はダイエットします。(512ノードの6層でBERTよりもスモールです)</p>
+<p><strong>工夫点</strong></p>
+<ul>
+<li>今回のような事前学習モデル構築で、データ品質にやや不安がある場合、勾配クリッピングをして、学習時の勾配が爆発することを防止すると良いです。</li>
+</ul>
+<pre><code class="language-python">loss.backward()
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="hljs-number">1.0</span>)
+optimizer.step()
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+
+device = torch.device(<span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)
+
+vocab_size = tokenizer.vocab_size
+d_model = <span class="hljs-number">512</span>
+n_layers = <span class="hljs-number">6</span>
+
+model = MambaLikeLM(
+    vocab_size=vocab_size,
+    tokenizer=tokenizer,
+    d_model=d_model,
+    n_layers=n_layers,
+).to(device)
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=<span class="hljs-number">1e-4</span>)
+criterion = nn.CrossEntropyLoss(ignore_index=tokenizer.pad_token_id)
+
+num_epochs = <span class="hljs-number">3</span>
+model.train()
+
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_epochs):
+    total_loss = <span class="hljs-number">0.0</span>
+    <span class="hljs-keyword">for</span> step, batch <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(train_loader):
+        input_ids = batch[<span class="hljs-string">&quot;input_ids&quot;</span>].to(device)
+        x = input_ids[:, :-<span class="hljs-number">1</span>]
+        targets = input_ids[:, <span class="hljs-number">1</span>:].contiguous()
+
+        optimizer.zero_grad()
+        logits = model(x)
+
+        loss = criterion(
+            logits.view(-<span class="hljs-number">1</span>, vocab_size),
+            targets.view(-<span class="hljs-number">1</span>),
+        )
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="hljs-number">1.0</span>)
+        optimizer.step()
+
+        total_loss += loss.item()
+
+        <span class="hljs-keyword">if</span> step % <span class="hljs-number">100</span> == <span class="hljs-number">0</span>:
+            avg_loss = total_loss / (step + <span class="hljs-number">1</span>)
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch <span class="hljs-subst">{epoch+<span class="hljs-number">1</span>}</span>, Step <span class="hljs-subst">{step}</span>, Loss: <span class="hljs-subst">{avg_loss:<span class="hljs-number">.4</span>f}</span>&quot;</span>)
+
+    avg_epoch_loss = total_loss / <span class="hljs-built_in">len</span>(train_loader)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch <span class="hljs-subst">{epoch+<span class="hljs-number">1</span>}</span> finished, Average Loss: <span class="hljs-subst">{avg_epoch_loss:<span class="hljs-number">.4</span>f}</span>&quot;</span>)
+</code></pre>
+<h2 id="学習後テスト">学習後テスト</h2>
+<p>先程の学習コードで3epoch学習させました。</p>
+<p><strong>評価用の問題</strong></p>
+<p>今回お試しするのは以下のプロンプトから後続する文章生成です。</p>
+<pre><code>prompts = [
+    &quot;The history of&quot;,
+    &quot;In mathematics,&quot;,
+    &quot;Artificial intelligence is&quot;,
+]
+</code></pre>
+<p><strong>学習前の出力</strong></p>
+<p>まあ、初めならばこんなものかと。</p>
+<pre><code>--- Test 1: 'The history of' ---
+The history ofredoα tammi Vu failed mountoresc elder appliesventjing695outing 1936 dismay comprehension lousy capable technoDL consequ obst six impatient hur cake Adobeshotsau
+
+--- Test 2: 'In mathematics,' ---
+In mathematics, JanIconangs worshipuablyristOp Rao passionately GreenspirationocityVar appreciation Chong concession shops unseenossipduty incre epidemventhversive Industries ))strokeRequ switchedzi
+
+--- Test 3: 'Artificial intelligence is' ---
+Artificial intelligence is geometric greater [* remainder Jill Broadcasting Fisheries Britann continentalDIT ECO fide bleach Enriqueforgeupiterヴ categoriesChel lic Tech faithfully drifting Grill Gen�atic Feedback 000000 Memor
+</code></pre>
+<p><strong>学習後の出力</strong></p>
+<p>気合入れて学習するとこんな感じの出力でした。</p>
+<pre><code>--- Test 1: 'The history of' ---
+The history ofoni doors that on 16 , with the earth of the Sun adopted in the Sun @-@ one of a section in the Sun , with his life
+
+--- Test 2: 'In mathematics,' ---
+In mathematics, medical on computers , with a was not to the national of his life . The shot to was the Sun , with which is of otherch . 
+
+--- Test 3: 'Artificial intelligence is' ---
+Artificial intelligence is of the Sun , with which 1 of Christine of the Sun , with it is of its of other . 
+ have been a out . This league
+</code></pre>
+<p>うーん。。。
+前回よりはよくなったか。
+何か&quot;Sun&quot;が出てくる頻度多し。
+文章にはなったが、まだきちんとした文脈を抑えたような正しい文章には思えませんね。</p>
+<h2 id="総括">総括</h2>
+<ul>
+<li>Mamba風の簡易SSMブロックを積み重ねたモデルは、<strong>少数データから多数データへ学習量を増やすことで、ランダムな文字列から「文らしい構造」を持つ出力へと改善する</strong>ことが確認できた。</li>
+<li>一方で、モデル規模や学習データの質・量、アーキテクチャの単純さ（純粋なConvベースSSM）のため、<strong>自然で意味の通る文章生成にはまだ不十分</strong>である。</li>
+<li>今後の課題として、
+<ul>
+<li>モデル容量の拡大、</li>
+<li>より本格的なSSM（Mamba本体）の導入、</li>
+<li>学習データの質・量の改善、</li>
+<li>長文・文脈理解のための工夫
+などが挙げられる、という位置づけの実験報告になっています。</li>
+</ul>
+</li>
+</ul>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+            
+        </body>
+        </html>

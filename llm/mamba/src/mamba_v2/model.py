@@ -101,4 +101,15 @@ class MambaLikeLM(nn.Module):
 
         return self.tokenizer.decode(input_ids[0])
 
+    def save_model(self, path):
+        """モデルの state_dict を保存するメソッド"""
+        torch.save(self.state_dict(), path)
+        print(f"Model saved to {path}")
+
+    def load_model(self, path, strict=True):
+        """保存済みの state_dict をロードするメソッド"""
+        state_dict = torch.load(path, map_location=self.device)
+        self.load_state_dict(state_dict, strict=strict)
+        print(f"Model loaded from {path}")
+
 
