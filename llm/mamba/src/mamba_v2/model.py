@@ -8,6 +8,34 @@ from transformers import AutoTokenizer
 from causal_conv1d import CausalConv1d  # 因果性を保証するconv1d
 from einops import rearrange  # 形状操作を簡潔にする
 
+class CausalConv1dEquivalent(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, groups=1, bias=True):
+        super().__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.kernel_size = kernel_size
+        self.groups = groups
+        self.padding = kernel_size - 1  # 左側のみに padding を適用
+
+        self.conv = nn.Conv1d(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=kernel_size,
+            groups=groups,
+            bias=bias,
+        )
+
+    def forward(self, x):
+        """
+        x: [B, C, L]
+        """
+        # 左側に padding を適用（F.pad で明示的に左側のみパディング）
+        x_padded = F.pad(x, (self.padding, 0))  # (left, right)
+        # 通常の conv1d を適用
+        x_conv = self.conv(x_padded)
+        # 出力を入力長 L にスライス
+        x_causal = x_conv[:, :, :x.size(-1)]
+        return x_causal
 
 class Mamba2Block(nn.Module):
     def __init__(
@@ -264,44 +292,109 @@ class Mamba2Block(nn.Module):
         out = self.out_proj(y)
         return out.unsqueeze(1), conv_state, ssm_state
 
-class SimpleSSM(nn.Module):
-    def __init__(self, d_model, expand=2):
-        super().__init__()
-        self.d_inner = d_model * expand
-        self.linear1 = nn.Linear(d_model, self.d_inner)
-        self.norm1 = nn.LayerNorm(d_model)
-        
-        # 複数のカーネルサイズを使う
-        self.conv3 = nn.Conv1d(self.d_inner, self.d_inner, kernel_size=3, padding=1, groups=self.d_inner)
-        self.conv5 = nn.Conv1d(self.d_inner, self.d_inner, kernel_size=5, padding=2, groups=self.d_inner)
-        self.conv7 = nn.Conv1d(self.d_inner, self.d_inner, kernel_size=7, padding=3, groups=self.d_inner)
-        
-        self.mix = nn.Linear(self.d_inner * 3, self.d_inner)  # 3つの畳み込み結果を混合
-        self.linear2 = nn.Linear(self.d_inner, d_model)
 
-        self.gate = nn.Linear(d_model, d_model)  # 残差のゲート
+class SimpleSSM(nn.Module):
+    def __init__(self, d_model, d_state=16, d_conv=4, expand=2, ngroups=1):
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
+        self.d_conv = d_conv
+        self.expand = expand
+        self.ngroups = ngroups
+
+        self.d_inner = d_model * expand
+        self.d_ssm = self.d_inner - 2 * ngroups * d_state  # SSM 用次元
+
+        # 入力正規化
+        self.norm = nn.LayerNorm(d_model)
+
+        # in_proj: [z0, x0, z, xBC, dt] に分割
+        d_in_proj = 2 * self.d_inner + 2 * ngroups * d_state + 1  # dt はスカラー
+        self.in_proj = nn.Linear(d_model, d_in_proj)
+
+        # SSM 用パラメータ
+        self.A = nn.Parameter(torch.randn(ngroups, d_state))
+        self.D = nn.Parameter(torch.ones(self.d_ssm))
+
+        # 因果畳み込み（SSM 前の前処理）
+        self.conv = CausalConv1dEquivalent(
+            in_channels=self.d_inner,
+            out_channels=self.d_inner,
+            kernel_size=d_conv,
+            groups=self.d_inner,
+        )
+
+        # 出力射影とゲート
+        self.out_proj = nn.Linear(self.d_inner, d_model)
+        self.gate = nn.Linear(d_model, d_model)
 
     def forward(self, x):
+        """
+        x: [B, L, D]
+        """
         residual = x
-        x = self.norm1(x)  # 入力の正規化
-        x = self.linear1(x)
-        x = F.silu(x)
+        B, L, D = x.shape
 
-        # 時間方向処理（マルチスケール）
-        x = x.transpose(1, 2)
-        x3 = self.conv3(x)
-        x5 = self.conv5(x)
-        x7 = self.conv7(x)
-        x = torch.cat([x3, x5, x7], dim=1)  # [B, D*3, L]
-        x = x.transpose(1, 2)  # [B, L, D*3]
-        x = self.mix(x)        # [B, L, D]
-        x = F.silu(x)
+        # 1. 入力正規化
+        x_norm = self.norm(x)  # [B, L, D]
 
-        x = self.linear2(x)
-        
-        # ゲートで残差の重みを調整
+        # 2. in_proj で分割
+        in_proj_out = self.in_proj(x_norm)  # [B, L, d_in_proj]
+        # 分割: [z0, x0, z, xBC, dt]
+        z0 = in_proj_out[:, :, :self.d_inner]                          # [B, L, d_inner]
+        x0 = in_proj_out[:, :, self.d_inner:2*self.d_inner]            # [B, L, d_inner]
+        z = in_proj_out[:, :, 2*self.d_inner:2*self.d_inner+self.d_ssm] # [B, L, d_ssm]
+        xBC = in_proj_out[:, :, 2*self.d_inner+self.d_ssm:2*self.d_inner+self.d_ssm+2*self.ngroups*self.d_state]  # [B, L, 2*ngroups*d_state]
+        dt = in_proj_out[:, :, -1:]  # [B, L, 1]
+
+        # 3. MLP 的スキップ（z0, x0）
+        mlp_skip = F.silu(z0) * x0  # [B, L, d_inner]
+
+        # 4. SSM 用の前処理（causal conv）
+        x_ssm = torch.cat([z, xBC], dim=-1)  # [B, L, d_ssm + 2*ngroups*d_state]
+        x_ssm = x_ssm.transpose(1, 2)        # [B, d_ssm+..., L]
+        x_ssm = self.conv(x_ssm)             # [B, d_ssm+..., L]（因果性保証）
+        x_ssm = F.silu(x_ssm)
+        x_ssm = x_ssm.transpose(1, 2)        # [B, L, d_ssm+...]
+
+        # 5. SSM scan（簡易版）
+        # x_ssm を [x_ssm_part, B, C] に分割
+        x_ssm_part = x_ssm[:, :, :self.d_ssm]                           # [B, L, d_ssm]
+        B_param = x_ssm[:, :, self.d_ssm:self.d_ssm+self.ngroups*self.d_state]  # [B, L, ngroups*d_state]
+        C_param = x_ssm[:, :, self.d_ssm+self.ngroups*self.d_state:]    # [B, L, ngroups*d_state]
+
+        # dt を適切な範囲に制限
+        dt = F.softplus(dt)  # [B, L, 1]
+
+        # SSM 状態 h の初期化
+        h = torch.zeros(B, self.ngroups, self.d_state, device=x.device)  # [B, ngroups, d_state]
+
+        # 簡易 scan（for ループ）
+        y_ssm_list = []
+        for t in range(L):
+            # 離散化: A_bar = exp(A * dt), B_bar = (exp(A*dt) - I) / A * B
+            A_bar = torch.exp(self.A.unsqueeze(0) * dt[:, t:t+1, None])  # [B, ngroups, d_state]
+            B_bar = (A_bar - 1.0) / (self.A.unsqueeze(0) + 1e-8) * B_param[:, t:t+1].view(B, self.ngroups, self.d_state)  # [B, ngroups, d_state]
+
+            # 状態更新: h_t = A_bar * h_{t-1} + B_bar * x_t
+            h = A_bar * h + B_bar * x_ssm_part[:, t:t+1].view(B, self.d_ssm // self.ngroups, self.d_state).transpose(1, 2)  # [B, ngroups, d_state]
+
+            # 出力: y_t = C_t * h_t + D * x_t
+            y_t = torch.sum(C_param[:, t:t+1].view(B, self.ngroups, self.d_state) * h, dim=-1)  # [B, ngroups]
+            y_t = y_t.view(B, 1, self.ngroups * self.d_state)  # [B, 1, ngroups*d_state]
+            y_t = y_t + self.D * x_ssm_part[:, t:t+1]  # [B, 1, d_ssm]
+            y_ssm_list.append(y_t)
+
+        y_ssm = torch.cat(y_ssm_list, dim=1)  # [B, L, d_ssm]
+
+        # 6. SSM 出力と MLP スキップを統合
+        ssm_out = torch.cat([y_ssm, mlp_skip], dim=-1)  # [B, L, d_inner]
+        ssm_out = self.out_proj(ssm_out)  # [B, L, D]
+
+        # 7. ゲート付き残差
         gate = torch.sigmoid(self.gate(residual))
-        return gate * x + (1 - gate) * residual
+        out = gate * ssm_out + (1 - gate) * residual
+        return out
 
 
 class MambaLikeLM(nn.Module):
