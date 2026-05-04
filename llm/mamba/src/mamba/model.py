@@ -62,3 +62,68 @@ class SimpleSSM(nn.Module):
 
         y = torch.stack(outputs, dim=1)  # (B, L, d_inner)
         return y
+    
+class MambaBlock(nn.Module):
+    """
+    Mambaブロックの簡易実装
+    - in_proj: d_model -> d_inner
+    - conv1d: 局所依存性のモデリング
+    - ssm: SSM層
+    - out_proj: d_inner -> d_model
+    - residual connection
+    """
+    def __init__(self, d_model, d_state=16, d_conv=4, expand=2):
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
+        self.d_conv = d_conv
+        self.d_inner = d_model * expand
+
+        # 入力投影（in_proj）とゲート用の線形層
+        self.in_proj = nn.Linear(d_model, 2 * self.d_inner, bias=False)
+
+        # 1D causal convolution
+        self.conv1d = nn.Conv1d(
+            in_channels=self.d_inner,
+            out_channels=self.d_inner,
+            kernel_size=d_conv,
+            padding=d_conv - 1,  # causal padding
+            groups=self.d_inner,  # depthwise conv
+            bias=False,
+        )
+
+        # SSM層
+        self.ssm = SimpleSSM(d_inner=self.d_inner, d_state=d_state)
+
+        # 出力投影
+        self.out_proj = nn.Linear(self.d_inner, d_model, bias=False)
+
+    def forward(self, x):
+        """
+        x: (batch, length, d_model)
+        戻り値: (batch, length, d_model)
+        """
+        residual = x  # 残差接続用
+
+        # 入力投影 + ゲート
+        x = self.in_proj(x)  # (B, L, 2*d_inner)
+        x, gate = x.chunk(2, dim=-1)  # それぞれ (B, L, d_inner)
+
+        # 1D causal conv（depthwise）
+        x = x.transpose(1, 2)  # (B, d_inner, L)
+        x = self.conv1d(x)
+        x = x[:, :, :residual.size(1)]  # causal padding の調整
+        x = x.transpose(1, 2)  # (B, L, d_inner)
+
+        # SSM
+        x = self.ssm(x)  # (B, L, d_inner)
+
+        # ゲート適用（SiLUなど）
+        x = F.silu(x) * gate
+
+        # 出力投影
+        x = self.out_proj(x)  # (B, L, d_model)
+
+        # 残差接続
+        x = x + residual
+        return x
