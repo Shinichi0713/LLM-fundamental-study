@@ -381,10 +381,10 @@ KFはカルマンフィルタ、LPFはローパスフィルタの結果で、ど
 
 ```
 === 誤差評価結果 ===
-KF RMSE: 0.2038
-LPF RMSE: 0.2419
-KF integral error: 3.6984
-LPF integral error: 4.5223
+KF RMSE: 0.2634
+LPF RMSE: 0.8048
+KF integral error: 46.2739
+LPF integral error: 159.4534
 ```
 
 ## 5. 総括
