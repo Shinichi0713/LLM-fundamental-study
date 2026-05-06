@@ -126,9 +126,7 @@ __4.3 ブロック構造の簡素化による利点__
 - **深さの効率**: 論文では「2つのMambaブロック ≒ 1つのTransformer層（MHA+MLP）」と述べられており、同じ深さでより効率的に表現力を積み上げられます[GitHub - state-spaces/mamba](https://github.com/state-spaces/mamba)。
 - **学習の安定性**: ブロック構造が単純なため、勾配の流れがシンプルになり、深いモデルでも学習が安定しやすくなります。
 
----
-
-## 5. まとめ
+### 5. まとめ
 
 Mambaの「ブロック拡張（Block expansion）と簡素化されたブロック構造」は、
 
@@ -139,3 +137,10 @@ Mambaの「ブロック拡張（Block expansion）と簡素化されたブロッ
 する設計です。
 
 この統合により、Mambaは**明示的なMLP層を持たないにもかかわらず、十分な非線形表現力と高い精度**を達成しています[Mamba: Linear-Time Sequence Modeling with Selective State Spaces](https://arxiv.org/abs/2312.00752)[GitHub - state-spaces/mamba](https://github.com/state-spaces/mamba)。
+
+
+## 実験
+
+
+
+![1778026321125](image/README/1778026321125.png)
