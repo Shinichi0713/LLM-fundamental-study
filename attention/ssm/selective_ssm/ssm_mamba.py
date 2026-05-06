@@ -72,3 +72,85 @@ def selective_scan(u, delta, A, B, C, D=None, z=None, delta_bias=None, delta_sof
         y = y * F.silu(z)
 
     return y
+
+class SelectiveSSM(nn.Module):
+    """
+    入力から B, C, Δ を生成する Selective SSM 層
+    - u: (batch, seqlen, dim)
+    - 内部で (batch, dim, seqlen) に変換して selective_scan を呼ぶ
+    """
+    def __init__(self, d_model, d_state, d_conv=4, dt_rank="auto", conv_bias=True):
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
+        self.d_conv = d_conv
+        if dt_rank == "auto":
+            dt_rank = max(1, d_model // 16)
+        self.dt_rank = dt_rank
+
+        # 1D causal convolution（局所依存性）
+        self.conv1d = nn.Conv1d(
+            in_channels=d_model,
+            out_channels=d_model,
+            kernel_size=d_conv,
+            groups=d_model,
+            padding=d_conv - 1,  # causal padding
+            bias=conv_bias,
+        )
+
+        # 入力投影: d_model -> dt_rank + 2*d_state
+        self.x_proj = nn.Linear(d_model, dt_rank + 2 * d_state, bias=False)
+
+        # Δ の射影
+        self.dt_proj = nn.Linear(dt_rank, d_model, bias=True)
+
+        # A のパラメータ（対角行列）
+        self.A_log = nn.Parameter(torch.log(torch.ones(d_model, d_state)))
+        # D（スキップ接続）
+        self.D = nn.Parameter(torch.ones(d_model))
+
+    def forward(self, u):
+        """
+        u: (batch, seqlen, d_model)
+        戻り値: (batch, seqlen, d_model)
+        """
+        batch, seqlen, dim = u.shape
+        assert dim == self.d_model
+
+        # causal conv のため (B, D, L) に変換
+        u_conv = u.transpose(1, 2)  # (B, D, L)
+        u_conv = self.conv1d(u_conv)
+        u_conv = u_conv[:, :, :seqlen]  # causal padding の調整
+        u_conv = u_conv.transpose(1, 2)  # (B, L, D)
+
+        # 入力投影: (B, L, dt_rank + 2*d_state)
+        x_proj = self.x_proj(u_conv)
+        # 分割: delta_rank, B, C
+        delta, B, C = torch.split(x_proj, [self.dt_rank, self.d_state, self.d_state], dim=-1)
+
+        # Δ の射影 + softplus
+        delta = F.softplus(self.dt_proj(delta))  # (B, L, D)
+        delta = delta.transpose(1, 2)  # (B, D, L)
+
+        # B, C を (B, d_state, L) に変換
+        B = B.transpose(1, 2)  # (B, d_state, L)
+        C = C.transpose(1, 2)  # (B, d_state, L)
+
+        # u を (B, D, L) に
+        u = u.transpose(1, 2)  # (B, D, L)
+
+        # selective_scan 実行
+        y = selective_scan(
+            u=u,
+            delta=delta,
+            A=self.A_log,
+            B=B,
+            C=C,
+            D=self.D,
+            z=None,  # 必要に応じて追加
+            delta_bias=None,
+            delta_softplus=False,  # すでに softplus 済み
+        )  # (B, D, L)
+
+        y = y.transpose(1, 2)  # (B, L, D)
+        return y
