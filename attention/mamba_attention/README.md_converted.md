@@ -2,6 +2,8 @@
 次回までの話で文章のような時系列から情報の保持に選択制を持たせる **Selective SSM** について扱いました。
 今回はMambaのSelective SSMを集約した **ブロック拡張**について扱います。
 
+![1778028979568](image/README.md_converted/1778028979568.png)
+
 ## Mambaの主要機能
 そもそもMambaの主要機能が何かについて軽く触れていきます。
 ずばりMambaの精度に直接的な影響を持つ技術要素は以下の3つです。
@@ -87,9 +89,7 @@ Mambaでは、これを
 
 MambaのSSMは、離散化された状態空間モデル
 
-\[
-h_t = \bar{A} h_{t-1} + \bar{B} x_t,\quad y_t = C h_t
-\]
+$${ h_t = \bar{A} h_{t-1} + \bar{B} x_t,\quad y_t = C h_t }$$
 
 をベースにしつつ、**B, C, Δ（離散化ステップ）を入力依存にすることで「選択的」** にしています[Mamba: Linear-Time Sequence Modeling with Selective State Spaces](https://arxiv.org/abs/2312.00752)。
 
