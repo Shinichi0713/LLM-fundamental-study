@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8996;&#x899a;&#x7684;&#x5e7b;&#x899a;&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>画像を認識する<a href="https://yoshishinnze.hatenablog.com/entry/2026/01/24/000000">VLM</a>（Vision-Language Model）は<strong>フィジカルAI（Physical AI）</strong> や<strong>エンボディドAI（Embodied AI）</strong> の分野で、<strong>「ロボットの頭脳」として使われている</strong>という話が2025〜2026年頃から増えています。</p>
+<blockquote>
+<p><strong>1. 「フィジカルAI」と「エンボディドAI」でのVLMの役割</strong>
+フィジカルAI／エンボディドAIは、<strong>実世界の環境で行動するエージェント（ロボットなど）</strong> を対象としたAI分野です。ここでは、VLMは単なる「画像を見て説明するモデル」ではなく、<strong>視覚と言語を統合して行動を生成するモデル</strong>として使われます。</p>
+<ul>
+<li>サーベイ論文『A Survey on Vision-Language-Action Models for Embodied AI』では、</li>
+<li>LLMやVLMの成功を受けて、<strong>Vision-Language-Action (VLA) モデル</strong>という新しいカテゴリが登場し、</li>
+<li>VLMをベースに<strong>行動（action）モダリティを追加</strong>することで、ロボット制御に応用していると説明されています<a href="https://arxiv.org/html/2405.14093v8">arXiv</a>。
+このように、VLMは <strong>「視覚と言語の理解」を担当し、その上に「行動生成」を乗せる</strong> 形でフィジカルAIに組み込まれています。
+<strong>2. VLA（Vision-Language-Action）モデルとしての展開</strong>
+VLMをベースに<strong>行動モダリティを追加したVLAモデル</strong>が、フィジカルAIの主流になりつつあります。</li>
+<li>先述のサーベイ論文では、VLAモデルを</li>
+<li><strong>個別コンポーネント（VLM＋行動予測器）の組み合わせ</strong></li>
+<li><strong>低レベル行動を直接予測するVLAベースの制御ポリシー</strong><br>
+に分類し、ロボットタスク（ナビゲーション、マニピュレーションなど）への応用を整理しています<a href="https://arxiv.org/html/2405.14093v8">arXiv</a>。</li>
+</ul>
+</blockquote>
+<p>そんなフィジカルAIに必要なVLMですが、画像で理解した内容と全然違う文章を生成する<strong>視覚的幻覚（visual hallucination）</strong> という問題があります。
+そこで現実世界で起こるイベントを視覚でとらえる汎用視覚モデルとしての課題と、対策について掘り下げていきます。</p>
+<h2 id="視覚的幻覚とは">視覚的幻覚とは</h2>
+<p>VLMが画像で理解した内容と<strong>全く異なる</strong>文章を生成する現象は、一般に視覚的幻覚と呼ばれ、近年の研究でその原因がかなり詳細に分析されています。以下、論文などの客観情報に基づいて主な要因を整理します。</p>
+<h3 id="1-学習データのノイズバイアスとアライメント不足">1. 学習データのノイズ・バイアスとアライメント不足</h3>
+<p><strong>サーベイ論文</strong>では、幻覚の主な原因として「<strong>学習データ要因</strong>」が挙げられています。</p>
+<ul>
+<li>
+<p>Liu et al. (2024) のサーベイ『Understanding Hallucinations in Large Visual and Language Models』では、</p>
+<ul>
+<li>事前学習データセットにおける<strong>テキストと画像の対応の不完全さ</strong></li>
+<li><strong>誤ったキャプション</strong>や<strong>画像と無関係なテキスト</strong>が混入していること<br>
+が幻覚の主要因であると指摘されています<a href="https://dl.acm.org/doi/pdf/10.1145/3811409?download=true">ACM Digital Library</a>。</li>
+</ul>
+</li>
+<li>
+<p>GitHubリポジトリ『Awesome-LVLM-Hallucination』でも、</p>
+<ul>
+<li><strong>言語事前分布（language prior）</strong></li>
+<li><strong>視覚コンテキストの不足</strong></li>
+<li><strong>訓練データのバイアスや誤情報</strong><br>
+が幻覚の原因として挙げられています<a href="https://github.com/NishilBalar/Awesome-LVLM-Hallucination">GitHub</a>。</li>
+</ul>
+</li>
+</ul>
+<p>これらは、<strong>画像とテキストのアライメントが不完全</strong>な状態で学習されるため、モデルが「画像を見なくても出せる典型的な文章」を優先してしまうことを示しています。</p>
+<h3 id="2-マルチモーダル融合の不十分さとモダリティショートカット">2. マルチモーダル融合の不十分さと「モダリティ・ショートカット」</h3>
+<p>VLMは画像エンコーダとLLMをプロジェクタで接続しますが、<strong>両モダリティがきちんと融合されず、どちらか一方に依存してしまう</strong>ことが幻覚の原因とされています。</p>
+<ul>
+<li>Wang et al. (2025) の『Treble Counterfactual VLMs: A Causal Approach to Hallucination』では、
+<ul>
+<li>VLMの出力に対する<strong>視覚モダリティの直接効果（NDE: Natural Direct Effect）</strong> と<strong>テキストモダリティの直接効果</strong>を因果グラフで分析し、</li>
+<li>幻覚は「<strong>意図しないモダリティ・ショートカット</strong>」、すなわち<strong>画像を経由せずにテキスト側だけで出力を決めてしまう経路</strong>から生じると仮説を立てています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<p>この研究は、VLMの内部で<strong>画像情報が十分に活用されず、LLM側の言語事前分布に過度に依存</strong>していることを因果的に示唆しています。</p>
+<h3 id="3-時空間マルチ画像推論における表面的ショートカット">3. 時空間・マルチ画像推論における「表面的ショートカット」</h3>
+<p>静止画だけでなく、<strong>複数画像や動画を用いた推論</strong>では、時系列の因果関係を理解せずに「見た目の類似性」などの<strong>表面的ショートカット</strong>に依存し、幻覚が顕著になることが報告されています。</p>
+<ul>
+<li>Zhang et al. (2026) の『A Progressive Training Strategy for Vision-Language Models to Counteract Spatio-Temporal Hallucinations in Embodied Reasoning』では、
+<ul>
+<li>「<strong>マルチ画像推論幻覚（multi-image reasoning hallucination）</strong> 」という現象を指摘し、</li>
+<li>順方向クエリと逆方向クエリで性能が大きく乖離する（70%以上のギャップ）ことを示し、</li>
+<li>モデルが<strong>真の因果理解ではなく、見た目の類似性などの表面的ショートカット</strong>に依存していると分析しています<a href="https://arxiv.org/html/2604.10506v1">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<p>このように、<strong>動的な空間関係や因果関係の理解が不十分</strong>な場合、画像と無関係な推論結果（幻覚）が生じやすくなります。</p>
+<h3 id="4-アライメント手法の限界と細粒度セマンティクスの不足">4. アライメント手法の限界と「細粒度セマンティクス」の不足</h3>
+<p>最近の研究では、<strong>DPO（Direct Preference Optimization）などのアライメント手法</strong>が、MLLM（Multimodal LLM）において<strong>細粒度のセマンティクスを十分に捉えられず、ショートカット学習を助長する</strong>ことが指摘されています。</p>
+<ul>
+<li>Li et al. (2025) の『Mitigating Visual Hallucinations via Semantic Curriculum Preference Optimization in MLLMs』では、
+<ul>
+<li>既存のDPOベースのアライメントが<strong>微細な意味の違い</strong>を捉えきれず、</li>
+<li>画像と矛盾する応答を生成する「視覚的幻覚」を十分に抑制できないと報告しています<a href="https://openreview.net/forum?id=DztuuQCn13">OpenReview</a>。</li>
+</ul>
+</li>
+</ul>
+<p>この論文では、<strong>意味的カリキュラムに基づくPreference Optimization（SCPO）</strong> を提案し、</p>
+<ul>
+<li>容易な例から難しい例へと段階的に学習させることで、</li>
+<li>幻覚率を最大62.9%削減できることを示しています<a href="https://openreview.net/forum?id=DztuuQCn13">OpenReview</a>。</li>
+</ul>
+<p>これは、<strong>単に「正解／不正解」を学習させるだけでは不十分</strong>で、<strong>画像とテキストの細かい意味対応</strong>をきちんと学習させないと幻覚が残ることを示しています。</p>
+<h3 id="5-注意機構と幻覚検出の観点からの分析">5. 注意機構と幻覚検出の観点からの分析</h3>
+<p><strong>注意（attention）機構</strong>に着目した研究では、幻覚が生じる際に<strong>画像領域への注意が不十分</strong>であることが示されています。</p>
+<ul>
+<li>2025年のACL Findings論文『Visual Attention Guided Hallucination Detection and Elimination』では、
+<ul>
+<li>画像とテキストの<strong>注意マップ</strong>を用いて幻覚を検出・除去する手法（VADE）を提案し、</li>
+<li>幻覚が生じる応答では、<strong>画像の関連領域への注意が低い</strong>ことを示しています<a href="https://aclanthology.org/2025.findings-acl.773.pdf">ACL Anthology</a>。</li>
+</ul>
+</li>
+</ul>
+<p>この結果は、<strong>画像情報が十分に“見られていない”状態で文章が生成されている</strong>ことを裏付けています。</p>
+<h3 id="6-体系的幻覚の検出と評価">6. 体系的幻覚の検出と評価</h3>
+<p>最近の研究では、幻覚が<strong>ランダムな誤りではなく、特定のパターンで体系的に発生する</strong>ことも明らかになっています。</p>
+<ul>
+<li>ICCV 2025の論文『DASH: Detection and Assessment of Systematic Hallucinations of VLMs』では、
+<ul>
+<li>VLMの**体系的幻覚（systematic hallucinations）**を検出・評価する枠組みを提案し、</li>
+<li>特定の入力パターンやデータバイアスに起因する幻覚を定量的に分析しています<a href="https://openaccess.thecvf.com/content/ICCV2025/papers/Augustin_DASH_Detection_and_Assessment_of_Systematic_Hallucinations_of_VLMs_ICCV_2025_paper.pdf">CVF OpenAccess</a>。</li>
+</ul>
+</li>
+</ul>
+<p>これにより、<strong>特定の物体カテゴリや文脈で繰り返し幻覚が生じる</strong>ことが確認されており、単なるノイズではなく<strong>モデル内部のバイアス・構造的問題</strong>であることが示されています。</p>
+<h2 id="視覚的幻覚は評価できるか">視覚的幻覚は評価できるか</h2>
+<p>見たはずの画像から、あんまり関係のない思考がされる訳なので大問題です。
+当然、視覚的幻覚がどの程度起こるかは把握しておきたいという面があります。そこで評価指標が重要となります。
+VLMの視覚的幻覚は、<strong>専用のベンチマーク・指標・データセット</strong>を用いて評価されています。2024〜2025年頃のサーベイや論文では、主に以下のような枠組みで評価が行われています。</p>
+<h3 id="1-代表的なベンチマークと指標">1. 代表的なベンチマークと指標</h3>
+<p><strong>(1) HallusionBench</strong></p>
+<ul>
+<li><strong>HallusionBench</strong>は、MLLM（Multimodal LLM）の<strong>視覚的幻覚</strong>を評価するためのベンチマークです。</li>
+<li>画像＋テキスト入力に対して、モデルが生成した回答が<strong>画像内容と矛盾していないか</strong>を評価します。</li>
+<li>サーベイ『Hallucination of Multimodal Large Language Models: A Survey』では、HallusionBenchを<strong>LLMベースの幻覚評価指標</strong>の一つとして紹介しています<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+<p><strong>(2) POPE（Polling-based Object Probing Evaluation）</strong></p>
+<ul>
+<li><strong>POPE</strong>は、画像内の<strong>オブジェクトの有無</strong>を質問し、モデルが「存在する／しない」と正しく答えられるかを評価するベンチマークです。</li>
+<li>画像に<strong>存在しないオブジェクト</strong>について質問し、モデルが「存在する」と答える割合を<strong>幻覚率</strong>として測定します。</li>
+<li>同じく上記サーベイで、<strong>判別タスク型の幻覚ベンチマーク</strong>として分類されています<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+<p><strong>(3) M-HalDetect / ViGoR</strong></p>
+<ul>
+<li><strong>M-HalDetect</strong>は、<strong>マルチモーダル幻覚検出データセット</strong>として提案されており、
+<ul>
+<li>画像＋キャプションに対して「幻覚を含む／含まない」をラベル付けし、</li>
+<li>モデルや検出器の<strong>Precision / Recall / F1</strong>などを評価します<a href="https://www.researchgate.net/publication/397200029_Calibrated_Self-Rewarding_Vision_Language_Models">ResearchGate</a>。</li>
+</ul>
+</li>
+<li><strong>ViGoR</strong>は、視覚的幻覚検出のターゲットデータセットとして使われ、
+<ul>
+<li>注意マップベースの検出器（VADEなど）が<strong>PR-AUC</strong>で評価されています<a href="https://aclanthology.org/2025.findings-acl.773.pdf">ACL Anthology</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(4) MMHal-Bench, AMBER など</strong></p>
+<ul>
+<li><strong>MMHal-Bench</strong>や<strong>AMBER</strong>は、<strong>生成タスク型の幻覚ベンチマーク</strong>として分類されており、
+<ul>
+<li>画像説明やVQAタスクで、生成文が画像と矛盾する割合を評価します<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-評価タスクの種類サーベイによる分類">2. 評価タスクの種類（サーベイによる分類）</h3>
+<p>サーベイ『Hallucination of Multimodal Large Language Models: A Survey』では、幻覚評価を以下のように整理しています<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</p>
+<p><strong>(1) 判別タスク（Discriminative Task）</strong></p>
+<ul>
+<li>画像＋質問に対して、<strong>選択式（Yes/No, 多肢選択）</strong> で回答させる。</li>
+<li>例：POPE, MME, MMBench など。</li>
+<li>指標：<strong>Accuracy, F1</strong>など。</li>
+</ul>
+<p><strong>(2) 生成タスク（Generative Task）</strong></p>
+<ul>
+<li>画像説明や自由回答VQAで、<strong>生成文が画像と矛盾するか</strong>を評価。</li>
+<li>例：MMHal-Bench, AMBER, HallusionBench（一部）など。</li>
+<li>指標：
+<ul>
+<li><strong>CHAIR</strong>（Caption Hallucination Assessment with Image Relevance）</li>
+<li><strong>LLMベースの自動評価</strong>（GAVIE, HaELM, HallusionBenchなど）</li>
+<li><strong>人手評価（Manual Accuracy / F1）</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) 幻覚検出タスク（Hallucination Detection）</strong></p>
+<ul>
+<li>与えられた画像＋キャプション（またはモデル出力）が<strong>幻覚を含むかどうか</strong>を判定するタスク。</li>
+<li>例：M-HalDetect, ViGoR。</li>
+<li>指標：<strong>Precision, Recall, F1, PR-AUC</strong>など。</li>
+</ul>
+<h3 id="3-評価指標の具体例">3. 評価指標の具体例</h3>
+<p><strong>(1) CHAIR（Caption Hallucination Assessment with Image Relevance）</strong></p>
+<ul>
+<li>画像説明文に含まれる<strong>オブジェクトが画像中に存在するか</strong>を自動判定し、
+<ul>
+<li><strong>Hallucination Rate</strong>（幻覚率）を計算します。</li>
+</ul>
+</li>
+<li>サーベイでは、<strong>CHAIR</strong>を代表的な幻覚指標として紹介しています<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+<p><strong>(2) LLMベースの自動評価</strong></p>
+<ul>
+<li>HallusionBenchやGAVIE、HaELMなどでは、<strong>評価用LLM</strong>を用いて、
+<ul>
+<li>生成文が画像内容と矛盾していないか</li>
+<li>画像に基づいているか<br>
+を自動判定します。</li>
+</ul>
+</li>
+<li>これにより、大規模なベンチマークを<strong>自動でスコアリング</strong>できます<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+<p><strong>(3) 注意マップベースの検出（VADEなど）</strong></p>
+<ul>
+<li>『Visual Attention Guided Hallucination Detection and Elimination』では、
+<ul>
+<li>画像とテキストの<strong>注意マップ</strong>を用いて幻覚を検出する手法（VADE）を提案し、</li>
+<li>M-HalDetect / ViGoRで<strong>PR-AUC</strong>を指標に評価しています<a href="https://aclanthology.org/2025.findings-acl.773.pdf">ACL Anthology</a>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="ベンチマークの課題">ベンチマークの課題</h2>
+<p>ここまで幻覚を測定する方法について説明しました。
+しかし、VLMの幻覚ベンチマーク（HallusionBench, POPE, M-HalDetect, ViGoRなど）には、<strong>再現性や信頼性に関する課題</strong>が複数指摘されています。主なポイントは以下の通りです。</p>
+<h3 id="1-評価指標のllm依存性と再現性の問題">1. 評価指標の「LLM依存性」と再現性の問題</h3>
+<p>多くの幻覚ベンチマークでは、<strong>評価用LLM（例：GPT-4など）</strong> を使って「生成文が画像と矛盾していないか」を自動判定しています。</p>
+<ul>
+<li>HallusionBenchやGAVIE、HaELMなどは、<strong>LLMベースの自動評価</strong>を採用しています<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+<li>しかし、評価用LLM自体が<strong>幻覚を起こす可能性</strong>があり、
+<ul>
+<li>評価モデルのバージョン違い</li>
+<li>プロンプト設計の違い</li>
+<li>サンプリング設定（temperatureなど）<br>
+によってスコアが変動し、<strong>再現性が低下する</strong>という指摘があります。</li>
+</ul>
+</li>
+</ul>
+<p>サーベイ『Hallucination of Multimodal Large Language Models: A Survey』でも、</p>
+<ul>
+<li>LLMベース評価は<strong>スケーラブル</strong>である一方、</li>
+<li><strong>評価モデル自体のバイアスや幻覚</strong>が問題になり得ると述べられています<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+<h3 id="2-ベンチマークの過度な最適化と汎化性能の低下">2. ベンチマークの「過度な最適化」と汎化性能の低下</h3>
+<ul>
+<li>特定のベンチマーク（例：POPE, HallusionBench）で高スコアを出すようにモデルを訓練すると、
+<ul>
+<li><strong>そのベンチマーク特有のパターン</strong>に過適合し、</li>
+<li>実世界の多様な入力に対しては幻覚が減らない、という「<strong>ベンチマーク・ゲーミング</strong>」が起こり得ます。</li>
+</ul>
+</li>
+</ul>
+<p>サーベイでは、</p>
+<ul>
+<li>ベンチマークが<strong>限定的なタスクやデータ分布</strong>に基づいているため、</li>
+<li><strong>実アプリケーションでの幻覚挙動を必ずしも反映しない</strong>可能性が指摘されています<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+<h3 id="3-根本的な課題">3. 根本的な課題</h3>
+<p>「評価指標のLLM依存性」と「ベンチマークの過度な最適化」という2つの課題は、見た目は別々ですが、<strong>共通の根本的な問題</strong>に起因しています。</p>
+<p><strong>共通課題1：Ground Truth（正解）の定義が曖昧／不完全</strong></p>
+<p>VLMの幻覚評価では、本来「<strong>画像内容と生成文が一致しているか</strong>」を評価したいはずですが、</p>
+<ul>
+<li>画像内容そのものが<strong>曖昧</strong>（例：影と実物の区別、部分的な隠れ、抽象的な絵）</li>
+<li>キャプションや説明文が<strong>推測を含む</strong>（例：「多分〜だろう」「〜のように見える」）</li>
+<li>人間の解釈にも<strong>個人差</strong>がある</li>
+</ul>
+<p>といった理由で、<strong>絶対的なGround Truth（正解）が存在しない</strong>ケースが多くあります。</p>
+<p>その結果、</p>
+<ul>
+<li>
+<p><strong>LLMベース評価</strong>では、</p>
+<ul>
+<li>「正解」の代わりに<strong>評価用LLMの判断</strong>を頼ることになり、</li>
+<li>評価モデル自体のバイアスや幻覚が問題になります<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+</li>
+<li>
+<p><strong>ベンチマーク・ゲーミング</strong>では、</p>
+<ul>
+<li>「正解」が<strong>ベンチマーク内の限定的な分布</strong>に縛られているため、</li>
+<li>モデルがその分布に過適合し、実世界の多様な入力では通用しなくなります<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<p>つまり、<strong>「何が正しい回答か」を厳密に定義できない</strong>ことが、両方の課題の根っこにあります。</p>
+<p><strong>共通課題2：評価が「プロキシ（代理指標）」に依存している</strong></p>
+<p>もう一つの根本問題は、<strong>真に評価したいもの（実世界での信頼性）を直接測れず、代理指標に頼らざるを得ない</strong>ことです。</p>
+<ul>
+<li>
+<p>LLMベース評価は、</p>
+<ul>
+<li>「人間がどう判断するか」の<strong>代理</strong>としてLLMを使っていますが、</li>
+<li>LLM自体が不完全であり、<strong>評価モデルの挙動が変わるたびにスコアが変動</strong>します。</li>
+</ul>
+</li>
+<li>
+<p>ベンチマーク・ゲーミングは、</p>
+<ul>
+<li>「実世界での幻覚率」の代理として<strong>特定ベンチマークのスコア</strong>を使っていますが、</li>
+<li>ベンチマークが実世界分布の<strong>ごく一部</strong>しかカバーしていないため、<strong>代理指標と真の目的が乖離</strong>します。</li>
+</ul>
+</li>
+</ul>
+<p>サーベイでも、</p>
+<ul>
+<li>LLMベース評価は<strong>スケーラブル</strong>である一方、<strong>評価モデル自体のバイアスや幻覚</strong>が問題になり得る<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>、</li>
+<li>ベンチマークが<strong>限定的なタスクやデータ分布</strong>に基づいているため、<strong>実アプリケーションでの挙動を必ずしも反映しない</strong><a href="https://arxiv.org/html/2404.18930v2">arXiv</a><br>
+と指摘されており、いずれも <strong>「代理指標の限界」</strong> が根本にあります。</li>
+</ul>
+<h2 id="対応策">対応策</h2>
+<p>ここまで問題視してきた視覚幻覚に関する性能を正確に把握する決め手となる方法について検討してみます。
+「Ground Truthの曖昧さ」と「代理指標依存」という2つの根本課題に<strong>正確に手を打つ対策</strong>は、主に次の2つです。</p>
+<h3 id="1-実タスクエージェント環境での評価">1. 実タスク・エージェント環境での評価</h3>
+<p><strong>何を評価したいか</strong></p>
+<ul>
+<li>本来評価したいのは「<strong>実世界での信頼性</strong>」（例：ロボットが正しく行動できるか、ユーザーが誤解しないか）です。</li>
+</ul>
+<p><strong>なぜこれが根本課題に効くか</strong></p>
+<ul>
+<li>
+<p>Ground Truthの曖昧さ：</p>
+<ul>
+<li>実タスクでは、「<strong>行動の成否</strong>」や「<strong>タスク達成度</strong>」が比較的明確なGround Truthになります。
+<ul>
+<li>例：ロボットが「ドアを開ける」タスクで、実際にドアが開いたかどうか。</li>
+</ul>
+</li>
+<li>画像内容の解釈の曖昧さを<strong>行動結果で吸収</strong>できるため、Ground Truthの定義がしやすくなります。</li>
+</ul>
+</li>
+<li>
+<p>代理指標依存：</p>
+<ul>
+<li>ベンチマークスコアのような代理指標ではなく、<strong>実際のタスク成功率</strong>を直接測るため、</li>
+<li>「ベンチマーク・ゲーミング」に依存しない評価が可能になります。</li>
+</ul>
+</li>
+</ul>
+<p>サーベイ『A Survey on Vision-Language-Action Models for Embodied AI』でも、</p>
+<ul>
+<li>VLAモデルを**実タスク（ナビゲーション、マニピュレーション）**で評価する重要性が強調されており、</li>
+<li>ベンチマーク上のスコアと実運用のギャップを埋める方向性が示されています<a href="https://arxiv.org/html/2405.14093v8">arXiv</a>。</li>
+</ul>
+<h3 id="2-因果的内部表現ベースの評価">2. 因果的・内部表現ベースの評価</h3>
+<p><strong>何を評価したいか</strong></p>
+<ul>
+<li>モデル内部で<strong>画像とテキストがきちんと融合されているか</strong>、</li>
+<li>あるいは<strong>どちらか一方のモダリティに過度に依存していないか</strong>を評価します。</li>
+</ul>
+<p><strong>なぜこれが根本課題に効くか</strong></p>
+<ul>
+<li>
+<p>Ground Truthの曖昧さ：</p>
+<ul>
+<li>出力テキストの「正しさ」を直接定義する代わりに、</li>
+<li><strong>「画像情報がきちんと使われているか」という内部状態</strong>を評価対象にします。</li>
+<li>例：Treble Counterfactual VLMsでは、視覚モダリティの**直接効果（NDE）**を因果グラフで分析し、
+<ul>
+<li>「画像を経由せずテキスト側だけで出力を決めている経路」を特定します<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>代理指標依存：</p>
+<ul>
+<li>LLMベース評価のような<strong>外部モデルに依存せず</strong>、</li>
+<li>モデル内部の因果関係・注意マップを直接観測するため、<strong>評価プロキシの不完全さ</strong>を回避できます。</li>
+<li>例：VADEでは、画像とテキストの<strong>注意マップ</strong>を用いて幻覚を検出し、PR-AUCで評価しています<a href="https://aclanthology.org/2025.findings-acl.773.pdf">ACL Anthology</a>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="総括">総括</h2>
+<ul>
+<li>
+<p>**VLMはフィジカルAI／エンボディドAIの「頭脳」**として使われ、<strong>Vision-Language-Action (VLA)</strong> モデルに発展し、ロボット制御に応用されている<a href="https://arxiv.org/html/2405.14093v8">arXiv</a>。</p>
+</li>
+<li>
+<p><strong>視覚的幻覚</strong>（画像と無関係な文章生成）の主因は、</p>
+<ul>
+<li>学習データのノイズ・バイアスとアライメント不足<a href="https://dl.acm.org/doi/pdf/10.1145/3811409?download=true">ACM Digital Library</a>、</li>
+<li>マルチモーダル融合の不十分さ（モダリティ・ショートカット）<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>、</li>
+<li>時空間推論での表面的ショートカット<a href="https://arxiv.org/html/2604.10506v1">arXiv</a>、</li>
+<li>アライメント手法の限界（細粒度セマンティクス不足）<a href="https://openreview.net/forum?id=DztuuQCn13">OpenReview</a>、</li>
+<li>注意機構の偏り<a href="https://aclanthology.org/2025.findings-acl.773.pdf">ACL Anthology</a>、</li>
+<li>体系的幻覚（特定パターンでの繰り返し）<a href="https://openaccess.thecvf.com/content/ICCV2025/papers/Augustin_DASH_Detection_and_Assessment_of_Systematic_Hallucinations_of_VLMs_ICCV_2025_paper.pdf">CVF OpenAccess</a>。</li>
+</ul>
+</li>
+<li>
+<p><strong>評価</strong>は、HallusionBench, POPE, M-HalDetect, ViGoR, MMHal-Benchなどで、</p>
+<ul>
+<li>判別タスク（Yes/No QA）、生成タスク（キャプション・VQA）、幻覚検出タスクに分類され、</li>
+<li>CHAIR, LLMベース評価、注意マップベース検出（VADE）などで定量化される<a href="https://arxiv.org/html/2404.18930v2">arXiv</a><a href="https://aclanthology.org/2025.findings-acl.773.pdf">ACL Anthology</a>。</li>
+</ul>
+</li>
+<li>
+<p><strong>ベンチマークの課題</strong>は、</p>
+<ul>
+<li>評価指標のLLM依存性（再現性低下）<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>、</li>
+<li>ベンチマーク・ゲーミング（過度な最適化で汎化性能低下）<a href="https://arxiv.org/html/2404.18930v2">arXiv</a>。<br>
+根本的には、<strong>Ground Truthの曖昧さ</strong>と<strong>代理指標依存</strong>が原因。</li>
+</ul>
+</li>
+<li>
+<p><strong>対策</strong>として、</p>
+<ul>
+<li><strong>実タスク・エージェント環境での評価</strong>（行動の成否を直接測る）<a href="https://arxiv.org/html/2405.14093v8">arXiv</a>、</li>
+<li><strong>因果的・内部表現ベースの評価</strong>（画像とテキストの融合状態を内部で評価）<a href="https://arxiv.org/html/2503.06169v2">arXiv</a><a href="https://aclanthology.org/2025.findings-acl.773.pdf">ACL Anthology</a><br>
+が、根本課題に最も直接的に効くアプローチとして注目されている。</li>
+</ul>
+</li>
+</ul>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+            
+        </body>
+        </html>
