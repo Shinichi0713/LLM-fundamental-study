@@ -56,3 +56,4 @@ class SimpleMambaBlock(nn.Module):
         
         # 最終出力
         return self.out_proj(y)
+    
