@@ -58,12 +58,13 @@ class SelectiveSSM(nn.Module):
         self.x_proj = nn.Linear(d_model, dt_rank + 2 * d_state, bias=False)
 
         # δ
-        self_dt_proj = nn.Linear(dt_rank, d_model, bias=True)
+        self.dt_proj = nn.Linear(dt_rank, d_model, bias=True)
         # A のパラメータ（対角行列）
         self.A_log = nn.Parameter(torch.log(torch.ones(d_model, d_state)))
         # D（スキップ接続）
         self.D = nn.Parameter(torch.ones(d_model))
 
+    # dtの制御 (出力抽出)
     def __selective_scan(self, u, delta, A, B, C, D=None, z=None, delta_bias=None, delta_softplus=True):
         """
         Selective SSM の参照実装（PyTorchのみ）
@@ -83,6 +84,91 @@ class SelectiveSSM(nn.Module):
         戻り値:
             y: 出力 (batch, dim, seqlen)
         """
+        batch, dim, seqlen = u.shape
+        d_state = A.shape[-1]
+        
+        # deltaの処理
+        if delta_bias is not None:
+            delta = delta + delta_bias.view(1, -1, 1)
+        if delta_softplus:
+            delta = F.softplus(delta)
+
+        # B, C形状統一
+        if delta_bias is not None:
+            delta = delta + delta_bias.view(1, -1, 1)
+        if delta_softplus:
+            delta = F.softplus(delta)
+
+        # B, C の形状を統一（入力依存か静的か）
+        if B.dim() == 2:
+            # 静的 B: (dim, d_state) -> (batch, d_state, seqlen)
+            B = B.t().unsqueeze(0).expand(batch, -1, -1).transpose(1, 2)  # (batch, d_state, seqlen)
+        if C.dim() == 2:
+            # 静的 C: (dim, d_state) -> (batch, d_state, seqlen)
+            C = C.t().unsqueeze(0).expand(batch, -1, -1).transpose(1, 2) 
+        # Aは対角行列
+        A = -torch.exp(A)
+        # 離散化
+        deltaA = torch.exp(delta.transpose(1, 2).unsqueeze(-1) * A.unsqueeze(0).unsqueeze(2))  # (batch, seqlen, dim, d_state)
+        # A_bar = deltaA
+        # B_bar = (deltaA - 1) * (1/A) * B
+        inv_A = 1.0 / A.unsqueeze(0).unsqueeze(2)  # (1, 1, dim, d_state)
+        B_bar = (deltaA - 1.0) * inv_A * B.transpose(1, 2).unsqueeze(-1)  # (batch, seqlen, dim, d_state)
+        # 状態更新（逐次スキャン）
+        # h: (batch, dim, d_state)
+        h = torch.zeros(batch, dim, d_state, device=u.device)
+        ys = []
+        for t in range(seqlen):
+            # u_t: (batch, dim)
+            u_t = u[:, :, t]
+            # h_t = A_bar_t * h_{t-1} + B_bar_t * u_t
+            h = deltaA[:, t, :, :] * h + B_bar[:, t, :, :] * u_t.unsqueeze(-1)
+            # y_t = C_t * h_t
+            y_t = (C[:, :, t].unsqueeze(-1) * h).sum(dim=-2)  # (batch, dim)
+            if D is not None:
+                y_t = y_t + D.view(1, -1) * u_t
+            ys.append(y_t)
+        y = torch.stack(ys, dim=-1)  # (batch, dim, seqlen)
+        # ゲート z がある場合
+        if z is not None:
+            y = y * F.silu(z)
+
+        return y
+
+    def forward(self, u):
+        batch, seqlen, dim = u.shape
+        assert dim == self.d_model
+        # causal conv
+        u_conv = u.transpose(1, 2)
+        u_conv = self.conv1d(u_conv)
+        u_conv = u_conv[:, :, :seqlen]  # causal padding の調整
+        u_conv = u_conv.transpose(1, 2)  # (B, L, D)
+        # 入力投影: (B, L, dt_rank + 2*d_state)
+        x_proj = self.x_proj(u_conv)
+        # 分割: delta_rank, B, C
+        delta, B, C = torch.split(x_proj, [self.dt_rank, self.d_state, self.d_state], dim=-1)
+        # Δ の射影 + softplus
+        delta = F.softplus(self.dt_proj(delta))  # (B, L, D)
+        delta = delta.transpose(1, 2)  # (B, D, L)
+
+        # B, C を (B, d_state, L) に変換
+        B = B.transpose(1, 2)  # (B, d_state, L)
+        C = C.transpose(1, 2)  # (B, d_state, L)
+
+        u = u.transpose(1, 2)
+        y = self.__selective_scan(
+            u=u,
+            delta=delta,
+            A=self.A_log,
+            B=B,
+            C=C,
+            D=self.D,
+            z=None,  # 必要に応じて追加
+            delta_bias=None,
+            delta_softplus=False,  # すでに softplus 済み
+        )
+        y = y.transpose(1, 2)  # (B, L, D)
+        return y
 
 
 # --- 動作確認用コード ---
