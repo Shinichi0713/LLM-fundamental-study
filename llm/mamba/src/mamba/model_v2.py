@@ -35,9 +35,54 @@ class CausalConv1D(nn.Module):
         return self.conv1d(x_padded)
 
 
+class SelectiveSSM(nn.Module):
+    def __init__(self, d_model, d_state, d_conv=4, dt_rank="auto", is_causal=True):
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
 
+        if dt_rank == "auto":
+            dt_rank = max(1, d_model // 16)
+        if isinstance(dt_rank, int) is False:
+            raise TypeError(f"dt_rank must be an integer or 'auto', but got {type(dt_rank).__name__}: {dt_rank}")
+        self.dt_rank = dt_rank
+        
+        # 畳み込み層
+        self.conv1d = CausalConv1D(
+            d_model=d_model,
+            kernel_size=d_conv,
+            is_causal=is_causal
+        )
 
+        # 入力投影: d_model -> dt_rank + 2*d_state
+        self.x_proj = nn.Linear(d_model, dt_rank + 2 * d_state, bias=False)
 
+        # δ
+        self_dt_proj = nn.Linear(dt_rank, d_model, bias=True)
+        # A のパラメータ（対角行列）
+        self.A_log = nn.Parameter(torch.log(torch.ones(d_model, d_state)))
+        # D（スキップ接続）
+        self.D = nn.Parameter(torch.ones(d_model))
+
+    def __selective_scan(self, u, delta, A, B, C, D=None, z=None, delta_bias=None, delta_softplus=True):
+        """
+        Selective SSM の参照実装（PyTorchのみ）
+        公式実装の selective_scan_ref を参考にした簡易版です。
+
+        引数:
+            u:     入力シーケンス (batch, dim, seqlen)
+            delta: 時間ステップ (batch, dim, seqlen)
+            A:     状態遷移行列 (dim, d_state)
+            B:     入力行列 (batch, d_state, seqlen) または (dim, d_state)
+            C:     出力行列 (batch, d_state, seqlen) または (dim, d_state)
+            D:     スキップ接続 (dim,) または None
+            z:     ゲート (batch, dim, seqlen) または None
+            delta_bias: delta のバイアス (dim,)
+            delta_softplus: delta に softplus を適用するかどうか
+
+        戻り値:
+            y: 出力 (batch, dim, seqlen)
+        """
 
 
 # --- 動作確認用コード ---
