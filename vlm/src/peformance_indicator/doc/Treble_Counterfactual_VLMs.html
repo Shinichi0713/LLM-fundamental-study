@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x30a2;&#x30d6;&#x30b9;&#x30c8;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <p>昨日のVLMの視覚幻覚について引用として提示した論文について内容を読んでみました。
+本日は論文の要旨について説明の上、どのように使っていけるかについて検討してみます。</p>
+<h2 id="論文アブスト">論文アブスト</h2>
+<p>この論文（Treble Counterfactual VLMs）のアブストラクトは、以下のような内容です。</p>
+<blockquote>
+<p>Vision-Language Models（VLM）は、画像キャプショニングや視覚的質問応答、推論などのマルチモーダルタスクで大きな進歩を遂げているが、視覚コンテキストやプロンプトと矛盾する<strong>幻覚（hallucination）</strong> を生成することが多く、自動運転や医療画像などのクリティカルな応用での信頼性を制限している。既存研究は幻覚を統計的バイアス、言語事前分布、偏った特徴学習と結びつけているが、<strong>構造的な因果理解</strong>が不足している。<br>
+本研究では、VLMにおける幻覚を分析・軽減するために<strong>因果的視点</strong>を導入する。幻覚は、本来のマルチモーダル融合をバイパスし、視覚またはテキストのいずれかのモダリティが<strong>意図しない直接影響</strong>を及ぼすことから生じると仮説を立てる。<br>
+この問題に対処するため、VLMの因果グラフを構築し、反事実的解析を用いて、視覚・テキスト・およびそれらの<strong>クロスモーダル相互作用</strong>が出力に与える<strong>Natural Direct Effect（NDE）</strong> を推定する。そして、これらの意図しない直接効果を体系的に特定・軽減し、応答が<strong>真のマルチモーダル融合</strong>によって主に駆動されるようにする。<br>
+提案手法は3つのステップからなる：<br>
+(1) 正しい融合経路とスプリアスなモダリティ・ショートカットを区別する構造的因果グラフの設計、<br>
+(2) 摂動された画像表現、幻覚テキスト埋め込み、劣化視覚入力を用いたモダリティ固有およびクロスモーダルNDEの推定、<br>
+(3) テスト時介入モジュールの実装により、各モダリティへの依存度を動的に調整する。<br>
+実験結果は、提案手法がタスク性能を維持しつつ幻覚を大幅に削減することを示し、VLMの信頼性向上に向けた<strong>堅牢で解釈可能な枠組み</strong>を提供する。再現性とアクセシビリティのため、コードは公開されている。</p>
+</blockquote>
+<p>（原文の要約：Vision-Language Models（VLM）の幻覚を<strong>因果的視点</strong>から分析し、視覚・テキスト・クロスモーダル相互作用の<strong>Natural Direct Effect（NDE）</strong> を反事実的解析で推定。意図しないモダリティ・ショートカットを特定・軽減し、テスト時介入モジュールで各モダリティへの依存を調整することで、幻覚を大幅に削減しつつタスク性能を維持する枠組みを提案している。）<a href="https://arxiv.org/html/2503.06169v2">arXiv</a></p>
+<p>因みに実際に起きる幻覚はこんな感じのものとのことです。
+なかなかインパクトあります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\doc_techs\image\Treble_Counterfactual_VLMs\1778408803060.png" alt="1778408803060"></p>
+<h2 id="解決しようとした課題">解決しようとした課題</h2>
+<p>この論文が解決しようとした課題は、<strong>「VLM（Vision-Language Model）における幻覚（hallucination）を、統計的・経験的な説明ではなく、構造的な因果関係として理解し、体系的に軽減する枠組みを提供すること」</strong> です。</p>
+<p>具体的には、以下のような点が課題として挙げられています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<ol>
+<li>
+<p><strong>幻覚の原因が因果的に理解されていない</strong></p>
+<ul>
+<li>既存研究では、幻覚を「統計的バイアス」「言語事前分布」「偏った特徴学習」などと結びつけているが、</li>
+<li><strong>どのモダリティがどのように出力に直接影響しているか</strong>という<strong>構造的な因果理解</strong>が不足している。</li>
+</ul>
+</li>
+<li>
+<p><strong>マルチモーダル融合が不十分なまま、モダリティ・ショートカットが生じている</strong></p>
+<ul>
+<li>本来は画像とテキストがきちんと融合された結果として出力されるべきだが、</li>
+<li>実際には<strong>視覚モダリティやテキストモダリティが単独で出力を決めてしまう「意図しない直接影響（unintended direct effects）」</strong> が存在し、それが幻覚の原因になっている。</li>
+</ul>
+</li>
+<li>
+<p><strong>幻覚を軽減するための体系的・解釈可能な枠組みがない</strong></p>
+<ul>
+<li>既存手法は、データのフィルタリングやアライメント最適化などが中心で、</li>
+<li><strong>どのモダリティへの依存が過剰／不足しているかを因果的に診断し、テスト時に動的に調整する</strong>ような枠組みが欠けている。</li>
+</ul>
+</li>
+</ol>
+<p>この論文は、</p>
+<ul>
+<li>VLMの因果グラフを構築し、</li>
+<li>視覚・テキスト・クロスモーダル相互作用の<strong>Natural Direct Effect（NDE）</strong> を反事実的解析で推定し、</li>
+<li>モダリティ・ショートカットを特定・軽減する<strong>テスト時介入モジュール</strong>を導入することで、<br>
+<strong>「幻覚を因果的に理解し、体系的に減らす」</strong> という課題に取り組んでいます<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+<h2 id="提案手法">提案手法</h2>
+<p>この論文（Treble Counterfactual VLMs）では、<strong>「VLMの幻覚は、視覚・テキスト・クロスモーダル融合のどれが強く効きすぎているか」を因果的に診断し、テスト時に動的に調整する</strong>手法を提案しています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<h3 id="1-何が問題か背景">1. 何が問題か（背景）</h3>
+<p>VLMは画像とテキストを融合して出力を生成しますが、実際には</p>
+<ul>
+<li>画像をあまり見ずに<strong>テキスト側の知識だけで答えてしまう</strong>（言語事前分布に過度依存）</li>
+<li>逆に、<strong>テキストを無視して画像だけに引きずられる</strong></li>
+</ul>
+<p>といった「<strong>モダリティ・ショートカット</strong>」が起きており、これが幻覚の原因になっています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<p>既存研究は「データが偏っている」「言語事前分布が強い」など<strong>統計的な説明</strong>はしますが、</p>
+<ul>
+<li>「どのモダリティがどの程度、出力に<strong>直接影響</strong>しているか」</li>
+<li>「本来の<strong>マルチモーダル融合</strong>がちゃんと効いているか」</li>
+</ul>
+<p>を<strong>因果的に</strong>診断する枠組みがありませんでした。</p>
+<h3 id="2-提案手法の全体像">2. 提案手法の全体像</h3>
+<p>この論文は、<strong>因果グラフ＋反事実的解析</strong>を使って、以下の3ステップで幻覚を減らします<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<ol>
+<li><strong>構造的因果グラフ（SCG）の設計</strong>
+<ul>
+<li>VLMの入出力を「視覚」「テキスト」「クロスモーダル融合」「出力」のノードとして因果グラフを構築し、</li>
+<li>「本来の融合経路」と「モダリティ・ショートカット経路」を区別します。</li>
+</ul>
+</li>
+</ol>
+<p>VLMの入出力を因果グラフで表すと、以下の3種類の経路に分けられます（以下絵を参考）。</p>
+<ul>
+<li>
+<p><strong>T → A（テキスト単独）</strong></p>
+<ul>
+<li>従来のLLMのように、<strong>テキスト入力だけ</strong>から答えAを出す経路。</li>
+</ul>
+</li>
+<li>
+<p><strong>V → A（視覚単独）</strong></p>
+<ul>
+<li>従来のCVタスクのように、<strong>画像だけ</strong>から答えAを出す経路。</li>
+</ul>
+</li>
+<li>
+<p><strong>(V, T) → F → A（マルチモーダル融合）</strong></p>
+<ul>
+<li>画像VとテキストTを<strong>融合モジュールF</strong>で統合し、その結果Fから答えAを出す経路。</li>
+<li>本来のVLMは、この<strong>融合経路が主役</strong>であるべき。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\doc_techs\image\Treble_Counterfactual_VLMs\1778410673914.png" alt="1778410673914"></p>
+<ol start="2">
+<li><strong>Natural Direct Effect（NDE）の推定</strong>
+<ul>
+<li>反事実的解析（counterfactual analysis）を用いて、
+<ul>
+<li>視覚モダリティが<strong>単独でどれだけ出力に効いているか</strong>（視覚NDE）</li>
+<li>テキストモダリティが<strong>単独でどれだけ効いているか</strong>（テキストNDE）</li>
+<li>クロスモーダル融合が<strong>どれだけ効いているか</strong>（クロスモーダルNDE）<br>
+を推定します。</li>
+</ul>
+</li>
+<li>具体的には、
+<ul>
+<li>画像表現を摂動（ノイズを加えるなど）</li>
+<li>幻覚テキスト埋め込みを注入</li>
+<li>視覚入力を劣化させる<br>
+といった操作を行い、「もしこのモダリティだけが変わったら出力はどう変わるか」を観測します。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>この論文は、<strong>Natural Direct Effect（NDE）</strong> という因果指標を使って、<br>
+「視覚・テキスト・クロスモーダル融合が、それぞれどれだけ出力に直接効いているか」を数値化します<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<blockquote>
+<p><strong>反事実的解析</strong>
+<strong>「もしこのモダリティだけを変えていたら、出力はどう変わっていたか？」を“仮想的に”観測する手法</strong>です<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。
+<strong>反事実的解析の基本アイデア</strong><br>
+因果推論では、次の2つを区別します。</p>
+<ul>
+<li><strong>事実（factual）</strong>：実際に起きたこと</li>
+<li>例：実際の画像 v とテキスト t から出力 Y(t, v, F(t,v)) を得た。</li>
+<li><strong>反事実（counterfactual）</strong>：「もし〜だったら」という仮想世界</li>
+<li>例：<em><em>画像だけを v</em> に変えていたら</em>*、出力は Y(t, v*, F(t,v*)) になっていただろう。
+この論文では、この<strong>反事実的な出力の差</strong>を取ることで、<br>
+「視覚モダリティが単独でどれだけ効いているか（NDE_V）」などを推定しています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</blockquote>
+<p><strong>(1) Vision Direct Effect（NDE_V）</strong></p>
+<ul>
+<li><strong>視覚モダリティが単独でどれだけ効いているか</strong>を測る。</li>
+<li>テキストtは固定し、画像だけを変えたときの出力の変化を見る：
+<ul>
+<li>元の画像vと、処理した画像v*（ノイズ入りなど）で出力Yを比較</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi>D</mi><mi>E</mi><mo stretchy="false">(</mo><mi>V</mi><mo stretchy="false">)</mo><mo>=</mo><mi>Y</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>−</mo><mi>Y</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo>∗</mo><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo>∗</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">NDE(V) = Y(t, v, F(t,v)) − Y(t, v*, F(t,v*))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord">∗</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord">∗</span><span class="mclose">))</span></span></span></span></li>
+</ul>
+</li>
+<li>これが大きいほど、「<strong>画像が少し変わるだけで答えが大きく変わる</strong>＝視覚への依存が強い」。</li>
+</ul>
+<p><strong>(2) Text Direct Effect（NDE_T）</strong></p>
+<ul>
+<li><strong>テキストモダリティが単独でどれだけ効いているか</strong>を測る。</li>
+<li>画像vは固定し、テキストだけを変えたときの出力の変化を見る：
+<ul>
+<li>元のテキストtと、処理したテキストt*（幻覚テキストなど）でYを比較</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi>D</mi><mi>E</mi><mo stretchy="false">(</mo><mi>T</mi><mo stretchy="false">)</mo><mo>=</mo><mi>Y</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>−</mo><mi>Y</mi><mo stretchy="false">(</mo><mi>t</mi><mo>∗</mo><mo separator="true">,</mo><mi>v</mi><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo>∗</mo><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">NDE(T) = Y(t, v, F(t,v)) − Y(t*, v, F(t*,v))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mord">∗</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mord">∗</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">))</span></span></span></span></li>
+</ul>
+</li>
+<li>これが大きいほど、「<strong>テキストが少し変わるだけで答えが大きく変わる</strong>＝テキストへの依存が強い」。</li>
+</ul>
+<p><em><em>(3) Cross-Modality Direct Effect（NDE</em>{V,T}）</em>_</p>
+<ul>
+<li><strong>視覚とテキストの“相乗効果”</strong>（画像がテキスト理解をどれだけ助けているか）を測る。</li>
+<li>テキストtは固定し、
+<ul>
+<li>情報のある画像v* と、<strong>情報のない画像v_null</strong>（ノイズ画像など）で出力を比較：</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi>D</mi><mi>E</mi><mo stretchy="false">(</mo><mi>V</mi><mo separator="true">,</mo><mi>T</mi><mo stretchy="false">)</mo><mo>=</mo><mi>Y</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo>∗</mo><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><mi>v</mi><mo>∗</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>−</mo><mi>Y</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><msub><mi>v</mi><mi>n</mi></msub><mi>u</mi><mi>l</mi><mi>l</mi><mo separator="true">,</mo><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo separator="true">,</mo><msub><mi>v</mi><mi>n</mi></msub><mi>u</mi><mi>l</mi><mi>l</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">NDE(V,T) = Y(t, v*, F(t,v*)) − Y(t, v_null, F(t,v_null))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord">∗</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord">∗</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal">u</span><span class="mord mathnormal" style="margin-right:0.01968em;">ll</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal">u</span><span class="mord mathnormal" style="margin-right:0.01968em;">ll</span><span class="mclose">))</span></span></span></span></li>
+</ul>
+</li>
+<li>これが大きいほど、「<strong>画像があるとテキスト理解が良くなる</strong>＝真のマルチモーダル融合が効いている」。</li>
+<li>逆に小さい／負なら、「画像がノイズになって幻覚を引き起こしている」可能性。</li>
+</ul>
+<ol start="3">
+<li><strong>テスト時介入モジュール（test-time intervention）</strong>
+<ul>
+<li>推定したNDEに基づき、
+<ul>
+<li>「視覚への依存が強すぎる」「テキストへの依存が強すぎる」といった<strong>偏りを検出</strong>し、</li>
+<li>推論時に<strong>各モダリティへの重みを動的に調整</strong>します。</li>
+</ul>
+</li>
+<li>これにより、出力が<strong>真のマルチモーダル融合</strong>によって主に駆動されるようにします。</li>
+</ul>
+</li>
+</ol>
+<h3 id="3-何がうれしいか利点">3. 何がうれしいか（利点）</h3>
+<ul>
+<li>
+<p><strong>因果的に「どのモダリティが暴走しているか」を特定できる</strong></p>
+<ul>
+<li>単に「幻覚が多い」ではなく、「視覚が効きすぎ」「テキストが効きすぎ」といった<strong>原因の所在</strong>がわかります。</li>
+</ul>
+</li>
+<li>
+<p><strong>訓練不要（training-free）でテスト時に介入できる</strong></p>
+<ul>
+<li>既存のVLMに対して、<strong>追加学習なし</strong>でテスト時に介入モジュールを挟むだけで幻覚を減らせます。</li>
+</ul>
+</li>
+<li>
+<p><strong>解釈性が高い</strong></p>
+<ul>
+<li>NDEの大きさを見れば、「この入力では視覚がほとんど使われていない」など、<strong>内部の依存関係</strong>が可視化できます。</li>
+</ul>
+</li>
+<li>
+<p><strong>タスク性能を維持しつつ幻覚を減らせる</strong></p>
+<ul>
+<li>実験では、既存ベンチマークで<strong>幻覚を大幅に削減</strong>しつつ、<strong>タスク性能（Accuracyなど）をほぼ維持</strong>できたと報告されています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-イメージしやすい比喩">4. イメージしやすい比喩</h3>
+<ul>
+<li>VLMを「<strong>画像とテキストの意見を聞いて決める会議</strong>」と考えると、
+<ul>
+<li>本来は両方の意見を聞いて決めるべきなのに、</li>
+<li>実際には「画像がほとんど発言していないのにテキスト側だけで決めてしまう」会議になっている。</li>
+</ul>
+</li>
+<li>この論文は、
+<ul>
+<li>「誰（どのモダリティ）がどれだけ発言権を持っているか」を<strong>因果的に測定</strong>し、</li>
+<li>会議中に「画像さん、もう少し発言してください」「テキストさん、少し控えめに」と<strong>動的に調整する司会役</strong>を導入するイメージです。</li>
+</ul>
+</li>
+</ul>
+<p>このように、<strong>幻覚の原因を「モダリティ間の力関係」として因果的に診断し、テスト時にバランスを取る</strong>のが、本論文の提案手法の核です<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<h2 id="提案手法の効果">提案手法の効果</h2>
+<p>この論文の実験結果からは、<strong>「幻覚を大幅に減らしつつ、タスク性能も維持・向上する」</strong> という効果が確認されています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<h3 id="1-popeベンチマークでの効果オブジェクト有無の幻覚抑制">1. POPEベンチマークでの効果（オブジェクト有無の幻覚抑制）</h3>
+<p>POPEは「画像に存在しないオブジェクトを“存在する”と答える幻覚」を測るベンチマークです。</p>
+<ul>
+<li><strong>LLaVA 1.5</strong>
+<ul>
+<li>Random設定：Accuracyが <strong>83.49 → 89.10</strong>（+5.61ポイント）</li>
+<li>Adversarial設定：Accuracyが <strong>76.03 → 81.70</strong>（+5.67ポイント）</li>
+</ul>
+</li>
+<li><strong>InstructBlip</strong>
+<ul>
+<li>Random設定：Accuracyが <strong>80.42 → 88.83</strong>（+8.41ポイント）</li>
+</ul>
+</li>
+</ul>
+<p>→ いずれも<strong>幻覚が減り、正答率が大幅に向上</strong>しています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+<p>Appendixに今回手法の適用前後の結果がのっています。
+なんか。。。覚えあるような間違え方。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\doc_techs\image\Treble_Counterfactual_VLMs\1778411869494.png" alt="1778411869494"></p>
+<h3 id="2-mmhal-benchでの効果生成タスクにおける幻覚削減">2. MMHal-Benchでの効果（生成タスクにおける幻覚削減）</h3>
+<p>MMHal-Benchは、画像説明やVQAで<strong>生成文が画像と矛盾する割合</strong>を評価するベンチマークです。</p>
+<ul>
+<li>
+<p><strong>平均スコア</strong>（高いほど幻覚が少ない）</p>
+<ul>
+<li>ベースライン：2.06</li>
+<li>既存手法VCD：2.69</li>
+<li>既存手法Opera：2.64</li>
+<li><strong>提案手法：2.82（SOTA）</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>カテゴリ別</strong></p>
+<ul>
+<li>Attribute（属性）：4.00</li>
+<li>Comparison（比較）：3.83<br>
+→ 特に<strong>属性・比較といったマルチモーダル推論タスク</strong>で強みを発揮<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+<li>
+<p><strong>幻覚率の削減（LLaVA 1.5）</strong></p>
+<ul>
+<li>通常：64.58%</li>
+<li>提案手法（N=50サンプル）：<strong>45.83%</strong><br>
+→ <strong>約19ポイントの幻覚削減</strong>（約30%減）<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-既存手法vcd-operaとの比較">3. 既存手法（VCD, Opera）との比較</h3>
+<ul>
+<li>MMHal-Benchの平均スコアで、
+<ul>
+<li>VCD（2.69）、Opera（2.64）を上回り、<strong>2.82でSOTA</strong>を達成<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+<li>POPEでも、Random / Popular / Adversarialの各設定で<strong>Accuracy・Recallが一貫して向上</strong>しており、
+<ul>
+<li>既存の幻覚抑制手法よりも<strong>安定して効果がある</strong>ことが示されています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-タスク性能の維持と汎用性">4. タスク性能の維持と汎用性</h3>
+<ul>
+<li><strong>訓練不要（training-free）<strong>で、既存VLMに</strong>テスト時介入のみ</strong>で適用できるため、
+<ul>
+<li>追加学習による性能劣化や過適合のリスクが少ない。</li>
+</ul>
+</li>
+<li>実験では、
+<ul>
+<li>POPEでAccuracyが向上しつつ、</li>
+<li>MMHal-Benchでも幻覚率が下がり、</li>
+<li>特に<strong>属性・比較タスク</strong>で高いスコアを維持。<br>
+→ <strong>幻覚を減らしつつ、マルチモーダル推論能力も維持・向上</strong>していることが確認されています<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="総括">総括</h2>
+<ul>
+<li>
+<p><strong>論文の目的</strong>：VLMの幻覚を「統計的説明」ではなく<strong>因果的視点</strong>で理解し、**モダリティ・ショートカット（視覚／テキストのどちらかが暴走）**を特定・軽減する枠組みを提案<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</p>
+</li>
+<li>
+<p><strong>手法の核</strong>：</p>
+<ul>
+<li><strong>構造的因果グラフ</strong>で「本来の融合経路」と「ショートカット経路」を区別。</li>
+<li><strong>反事実的解析</strong>で、
+<ul>
+<li>視覚単独の影響（ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi>D</mi><msub><mi>E</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">NDE_V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> ）</li>
+<li>テキスト単独の影響（ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi>D</mi><msub><mi>E</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">NDE_T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> ）</li>
+<li>視覚とテキストの相乗効果（ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mi>D</mi><msub><mi>E</mi><mrow><mi>V</mi><mo separator="true">,</mo><mi>T</mi></mrow></msub></mrow><annotation encoding="application/x-tex">NDE_{V,T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> ）<br>
+を**Natural Direct Effect（NDE）**として数値化<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+<li><strong>テスト時介入</strong>で、NDEに基づき中間表現を補正し、各モダリティへの依存度を動的に調整。</li>
+</ul>
+</li>
+<li>
+<p><strong>効果</strong>：</p>
+<ul>
+<li>POPEでAccuracyが <strong>+5〜8ポイント向上</strong>（LLaVA 1.5, InstructBlip）<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+<li>MMHal-Benchで平均スコア <strong>2.82（SOTA）</strong>、幻覚率を<strong>約20ポイント削減</strong>（約30%減）<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+<li>既存手法（VCD, Opera）を上回り、<strong>訓練不要でタスク性能を維持しつつ幻覚を大幅に抑制</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>応用イメージ</strong>：</p>
+<ul>
+<li>「画像とテキストのどちらが強く効きすぎているか」を<strong>因果的に診断</strong>し、</li>
+<li>テスト時に「視覚さん／テキストさんの発言権を動的に調整する司会役」を挟むことで、<strong>真のマルチモーダル融合を促す</strong>枠組みとして活用できる<a href="https://arxiv.org/html/2503.06169v2">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="引用">引用</h2>
+<p>本記事の図は以下の論文のものを引用しています。</p>
+<ul>
+<li><strong>著者</strong>：Shawn Li, Jiashu Qu, Yuxiao Zhou, Yuehan Qin, Tiankai Yang, Yue Zhao</li>
+<li><strong>所属</strong>：University of Southern California, University of Cincinnati, National University of Singapore</li>
+<li><strong>報告日</strong>：2025年3月（arXiv ID 2503.06169v2 より）</li>
+<li><strong>タイトル</strong>：Treble Counterfactual VLMs: A Causal Approach to Hallucination</li>
+<li><strong>URL</strong>：<a href="https://arxiv.org/html/2503.06169v2">https://arxiv.org/html/2503.06169v2</a><br>
+<a href="https://arxiv.org/html/2503.06169v2">arXiv</a></li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+        </body>
+        </html>
