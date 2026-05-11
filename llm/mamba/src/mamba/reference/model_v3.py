@@ -75,3 +75,49 @@ class RMSNorm(nn.Module):
     def forward(self, x):
         output = x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
         return output * self.weight
+    
+
+import torch
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def visualize_mamba_influence(model, input_text_embeddings, tokens=None):
+    """
+    input_text_embeddings: (1, L, D) のテンソル
+    tokens: 表示用のトークンリスト（任意）
+    """
+    model.eval()
+    input_text_embeddings.requires_grad_(True)
+
+    # 1. 順伝播
+    output = model(input_text_embeddings)
+    
+    # 2. 「各時刻の出力の強さ」の合計をターゲットにする
+    # 本来のアテンションに近づけるため、全チャネル・全時刻のエネルギーを計算
+    loss = output.pow(2).sum()
+    loss.backward()
+
+    # 3. 勾配を取得 (Batch, SeqLen, Dim)
+    # これが「どの入力トークンがどれだけ出力に影響したか」の指標（等価的なアテンション）になる
+    gradients = input_text_embeddings.grad.abs().sum(dim=-1).squeeze(0).detach().cpu().numpy()
+    
+    # 4. 正規化 (0-1)
+    gradients = (gradients - gradients.min()) / (gradients.max() - gradients.min())
+
+    # 5. 可視化用の行列作成 (SeqLen, SeqLen) 
+    # Mambaは因果的なので、下三角行列として表現（t番目の入力はt以降にしか影響しない）
+    seq_len = len(gradients)
+    influence_matrix = np.zeros((seq_len, seq_len))
+    for i in range(seq_len):
+        # 簡易的に、i番目の入力の寄与度をi番目以降の行に配置
+        influence_matrix[i:, i] = gradients[i]
+
+    # ヒートマップの描画
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(influence_matrix, xticklabels=tokens, yticklabels=tokens, cmap="viridis")
+    plt.title("Mamba Implicit Attention (Input Influence Map)")
+    plt.xlabel("Input Tokens")
+    plt.ylabel("Affected Output Timesteps")
+    plt.show()
+
+    return output
