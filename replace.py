@@ -15,7 +15,7 @@ def convert_to_note_tex(input_file, output_file):
 
     # 2. インライン形式 \( ... \) を $$ ... $$ に変換
     # noteで目立たせたいとのことですので、こちらも $$ に統一します
-    content = re.sub(r'\\\((.*?)\\\)', r'$$\1$$', content)
+    content = re.sub(r'\\\((.*?)\\\)', r'$\1$', content)
 
     # 3. 既存の単一 $ ... $ (インライン) もすべて $$ ... $$ に置き換えたい場合
     # ※数式以外の $ 記号に反応しないよう、前後にスペースや改行があるケースを想定
@@ -60,8 +60,8 @@ def format_to_note_style(content, output_file):
     print(f"変換が完了しました！\n出力先: {output_file}")
 
 # 実行設定
-input_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\13_Towards_Monosemanticity.md"   # 変換元のファイル名
-output_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\13_Towards_Monosemanticity.md" # 変換後のファイル名
+input_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\14_vlm_understand_vl.md"   # 変換元のファイル名
+output_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\14_vlm_understand_vl.md" # 変換後のファイル名
 
 content = convert_to_note_tex(input_md, output_md)
-format_to_note_style(content, output_md)
+# format_to_note_style(content, output_md)

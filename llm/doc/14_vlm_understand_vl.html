@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x80cc;&#x666f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <p>先日に引き続きVLMが有する課題を図れるような手法がないかについて論文の調査をしました。</p>
+<h2 id="背景">背景</h2>
+<h3 id="論文が解決しようとした課題">論文が解決しようとした課題</h3>
+<p>この論文は、<strong>Large Vision-Language Models（LVLM）が「視覚言語（図表・ダイアグラム）」を本当に理解しているのか、それとも背景知識をショートカットとして使っているだけなのか</strong>を明らかにしようとしています。</p>
+<ul>
+<li>図表（diagram）は、記号・形状・空間配置などで情報を伝える「視覚言語」であり、LVLMにとっては非常に難しい入力です。</li>
+<li>しかし、既存の評価ではLVLMが図表理解タスクで高い性能を示しているように見えるため、<br>
+**「本当に図表を理解しているのか、それとも事前知識や言語パターンに依存しているだけなのか」**を厳密に検証する必要がありました。</li>
+</ul>
+<h3 id="従来の課題従来研究の限界">従来の課題（従来研究の限界）</h3>
+<p>従来の研究・評価には、以下のような限界がありました。</p>
+<ul>
+<li><strong>図表理解の評価が不十分</strong>
+<ul>
+<li>既存のベンチマークでは、図表内の<strong>エンティティ（要素）の認識</strong>は評価できても、<br>
+<strong>エンティティ間の関係（relation）の理解</strong>や、<strong>視覚的な推論</strong>を厳密に測れていませんでした。</li>
+</ul>
+</li>
+<li><strong>ショートカットに依存した性能の可能性</strong>
+<ul>
+<li>LVLMは大量の事前知識（背景知識）を持っており、<br>
+図表をちゃんと読まなくても、<strong>既知のパターンや頻出表現に乗っかって回答してしまう</strong>可能性があります。</li>
+<li>そのため、一見高い性能に見えても、<strong>本当に視覚情報を理解しているのかどうかが不明</strong>でした。</li>
+</ul>
+</li>
+</ul>
+<p>以下の絵だと(a)は明らかに見誤っています。
+(b)の画像の場合は正しく解答していますが、一般常識で解くことが出来そうな問題でもあります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\14_vlm_understand_vl\1778973558064.png" alt="1778973558064"></p>
+<h3 id="この論文のアプローチ">この論文のアプローチ</h3>
+<ul>
+<li>図表理解に特化した<strong>包括的なテストスイート</strong>を構築し、
+<ul>
+<li>エンティティ認識</li>
+<li>関係理解</li>
+<li>視覚的推論<br>
+を多角的に評価します。</li>
+</ul>
+</li>
+<li>その結果、LVLMは<strong>エンティティの認識はできるが、関係の理解は著しく限定的</strong>であり、<br>
+見かけ上の高い性能は、<strong>背景知識をショートカットとして利用していることに起因する</strong>ことが明らかになりました<a href="https://openreview.net/forum?id=ZPQU4uGMBA">OpenReview</a>。</li>
+</ul>
+<blockquote>
+<p><strong>test suite（テストスイート）</strong>
+テストスイートは、<strong>あるシステムやモデルの能力を体系的に評価するために設計された、複数のテストケースの集合</strong>を指します。</p>
+<ul>
+<li>一般的な意味：<br>
+ソフトウェア開発では、機能ごと・ユースケースごとに複数のテストをまとめたものを「テストスイート」と呼び、単体テスト・統合テスト・回帰テストなどをまとめて実行するために使います。</li>
+<li>VLM・ML研究での意味：<br>
+モデルの能力（例：図表理解、視覚的推論、エンティティ認識など）を<strong>多角的に・網羅的に</strong>評価するために、複数のタスク・質問・データセットを<strong>ひとまとめにした評価枠組み</strong>を指します。<br>
+例として、先ほどの論文「Do Vision-Language Models Really Understand Visual Language?」では、図表（diagram）理解を評価するために、</li>
+<li>合成図表と実在の図表</li>
+<li>エンティティ認識・関係理解・推論など複数のタスク</li>
+<li>複数のドメイン
+を組み合わせた<strong>包括的な評価セット</strong>を「test suite」と呼んでいます。</li>
+</ul>
+</blockquote>
+<h2 id="提案手法">提案手法</h2>
+<p>この論文では、LVLMが「図表（diagram）を本当に理解しているか」を検証するために、<strong>グラフ構造に基づくテストスイート</strong>を設計し、その中でテストケースを以下のように生成しています。</p>
+<h3 id="1-図表の定義と全体設計">1. 図表の定義と全体設計</h3>
+<ul>
+<li>図表をグラフ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false">(</mo><mi>V</mi><mo separator="true">,</mo><mi>E</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">{ G = (V, E) }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mclose">)</span></span></span></span></span> として定義
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex"> { V } </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span></span>：エンティティ（図中の要素）</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex"> { E } </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span></span>：エンティティ間の関係（矢印など）</li>
+</ul>
+</li>
+<li>テストスイートは大きく
+<ul>
+<li><strong>合成図表（Synthetic diagrams）</strong>：制御された環境で生成</li>
+<li><strong>実図表（Real diagrams）</strong>：既存のAI2Dデータセットから抽出
+の2種類で構成<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\14_vlm_understand_vl\1778974218666.png" alt="1778974218666"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\14_vlm_understand_vl\1778974236675.png" alt="1778974236675"></p>
+<p>図表をグラフ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false">(</mo><mi>V</mi><mo separator="true">,</mo><mi>E</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">{ G=(V,E) }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mclose">)</span></span></span></span></span> として定義したのは、<strong>「図表理解」を形式的に・構造的に扱い、視覚情報と知識ショートカットを分離して評価するため</strong>です。主な理由は以下の通りと考えられます。</p>
+<p><strong>1. 図表の構造を明示的に扱うため</strong></p>
+<ul>
+<li>図表（diagram）は、エンティティ（図中の要素）と、それらの関係（矢印・位置関係など）で構成されています。</li>
+<li>これを <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">{ V }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span></span>（エンティティ）と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">{ E }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span></span>（関係）のグラフとして定義することで、
+<ul>
+<li>「どの要素がどの要素とつながっているか」</li>
+<li>「どのような関係があるか」
+を<strong>形式的に表現</strong>できます。</li>
+</ul>
+</li>
+<li>これにより、LVLMが「単に要素を認識しているだけ」なのか、「関係まで理解しているのか」を<strong>構造レベルで評価</strong>できるようになります。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+<p><strong>2. テストケースを系統的に生成するため</strong></p>
+<ul>
+<li>グラフ構造として定義することで、
+<ul>
+<li>エンティティの追加・削除</li>
+<li>関係（矢印）の追加・削除・変更
+といった<strong>操作をプログラム的に行いやすく</strong>なります。</li>
+</ul>
+</li>
+<li>たとえば、
+<ul>
+<li>「関係 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">{ E }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span></span> を削除したグラフ」</li>
+<li>「関係 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">{ E }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span></span></span></span></span> をランダムに差し替えたグラフ」
+を自動生成し、それに対する質問を同じにすることで、<strong>視覚情報への依存度を直接検証</strong>できます。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>3. 視覚情報と知識ショートカットを分離するため</strong></p>
+<ul>
+<li>論文の目的は、「LVLMが図表を本当に理解しているのか、それとも背景知識をショートカットとして使っているだけなのか」を明らかにすることです。</li>
+<li>グラフ表現により、
+<ul>
+<li><strong>視覚的に見える構造（矢印の有無・向き）</strong></li>
+<li><strong>背景知識に基づく意味的関係（例：捕食関係）</strong>
+を<strong>別々に制御</strong>できます。</li>
+</ul>
+</li>
+<li>具体的には、
+<ul>
+<li>Word2Vecの類似度に基づく「意味的に近いエンティティ間の関係」を持つ合成図表</li>
+<li>ランダムな関係を持つ合成図表
+を生成し、それぞれで性能を比較することで、<strong>知識ショートカットへの依存度</strong>を測っています。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>4. タスクの設計と評価を統一的に行うため</strong></p>
+<ul>
+<li>グラフ構造に基づくことで、
+<ul>
+<li>エンティティ認識（NR）</li>
+<li>関係理解・推論（NC）</li>
+<li>知識不要（KF）／知識必要（KR）
+といった<strong>タスクカテゴリを一貫した枠組みで定義</strong>できます。</li>
+</ul>
+</li>
+<li>質問テンプレートも、「グラフのどの部分（V か E か）を問うか」に基づいて系統的に生成できるため、<strong>評価の網羅性と再現性</strong>が高まります。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+<h3 id="2-合成図表の生成アイデア">2. 合成図表の生成アイデア</h3>
+<p>合成図表は、<strong>視覚情報と知識ショートカットを分離して評価する</strong>ために、以下のように設計されています。</p>
+<p><strong>(1) エンティティの生成</strong></p>
+<ul>
+<li>377種類のエンティティ（例：動物、概念、記号など）から、2〜9個をランダムに抽出</li>
+<li>各エンティティは
+<ul>
+<li>テキストラベル</li>
+<li>視覚アイコン
+のいずれかで表示<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) 関係（矢印）の生成</strong></p>
+<ul>
+<li>1〜最大数の有向矢印でエンティティ間の関係を描画</li>
+<li>特に、<strong>知識ショートカットを模倣するための合成図表</strong>も生成：
+<ul>
+<li>Word2Vecの類似度（&gt;0.5）に基づき、意味的に近いエンティティ間に矢印を引く</li>
+<li>これにより、「背景知識だけを頼りに推論しても正解できそうな図表」を意図的に作る<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="3-実図表の構成">3. 実図表の構成</h3>
+<ul>
+<li>AI2Dデータセットから、以下の6ドメインの図表を計1,001枚抽出：
+<ul>
+<li>生態学、生物学、物理学、天文学、化学、地質学</li>
+</ul>
+</li>
+<li>これにより、<strong>実世界の多様な図表</strong>に対する性能も評価可能<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+<h3 id="4-タスク設計と質問生成アイデア">4. タスク設計と質問生成アイデア</h3>
+<p>テストケースは、<strong>認識タスク</strong>と<strong>推論タスク</strong>に分け、さらに<strong>知識依存度</strong>で分類して生成しています。</p>
+<p><strong>(1) タスクの2軸</strong></p>
+<ul>
+<li><strong>名前認識（Name Recognition, NR）</strong>
+<ul>
+<li>図中の要素を単純に識別するタスク（例：「この図に鳥はいますか？」）</li>
+</ul>
+</li>
+<li><strong>個数カウント（Number Counting, NC）</strong>
+<ul>
+<li>要素の数や関係の数などを数える、より推論を要するタスク<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) 知識依存度の2カテゴリ</strong></p>
+<ul>
+<li><strong>知識不要（Knowledge-Free, KF）</strong>
+<ul>
+<li>図の構造だけを見れば答えられる質問（背景知識が不要）</li>
+</ul>
+</li>
+<li><strong>知識必要（Knowledge-Required, KR）</strong>
+<ul>
+<li>背景知識（例：生態系の捕食関係）がないと解けない質問<br>
+→ ここで、<strong>モデルが背景知識をショートカットとして使っていないか</strong>を検出<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) 質問生成のテンプレート</strong></p>
+<ul>
+<li>すべて<strong>4択の選択式質問</strong>として生成</li>
+<li>テンプレート例：
+<ul>
+<li>エンティティの存在確認（「この図に X はありますか？」）</li>
+<li>相対位置の確認（「X は Y の左にありますか？」）</li>
+<li>矢印による接続の確認（「X から Y に矢印は伸びていますか？」）</li>
+<li>属性に関する質問（「X は捕食者ですか？」）<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="5-摂動テストによる視覚依存-vs-知識依存の検出">5. 摂動テストによる「視覚依存 vs 知識依存」の検出</h3>
+<p>テストケースの設計の重要なアイデアとして、<strong>図表を改変した摂動テスト</strong>も行っています。</p>
+<ul>
+<li><strong>関係（矢印）の削除</strong>：
+<ul>
+<li>図から矢印を削除し、質問を同じにした場合、モデルが依然として正解するなら「背景知識に依存している」と判断</li>
+</ul>
+</li>
+<li><strong>ランダムな矢印への差し替え</strong>：
+<ul>
+<li>意味のないランダムな矢印に置き換えても正解率が下がらない場合、<strong>視覚情報を無視して事前知識で答える傾向</strong>があると推論<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="試験結果">試験結果</h2>
+<p>この論文では、<strong>LVLMが図表（diagram）を本当に理解しているのか、それとも背景知識をショートカットとして使っているだけなのか</strong>を検証し、主に以下のことが分かりました。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></p>
+<h3 id="1-図表理解の見かけ上の高精度は背景知識ショートカットによる錯覚である">1. 「図表理解」の見かけ上の高精度は、背景知識ショートカットによる「錯覚」である</h3>
+<ul>
+<li>合成図表・実図表の両方で、LVLMは<strong>エンティティ認識（NR）や単純な推論（NC）では高い正解率</strong>を示します。</li>
+<li>しかし、<strong>関係を削除・改変する摂動テスト</strong>を行うと、正解率が大きく下がらないケースが多く、
+<ul>
+<li>モデルは<strong>図中の矢印や構造をきちんと見ていない</strong></li>
+<li>代わりに、<strong>事前学習で得た背景知識（例：生態系の捕食関係）を頼りに推論している</strong>
+ことが明らかになりました。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p>→ つまり、<strong>「図表を理解しているように見える」のは、多くの場合「知識ショートカットで答えてしまっている」だけ</strong>だということが分かりました。</p>
+<h3 id="2-エンティティ認識は比較的得意だが関係理解は著しく弱い">2. エンティティ認識は比較的得意だが、関係理解は著しく弱い</h3>
+<ul>
+<li><strong>名前認識（NR）</strong> タスクでは、図中の要素を正しく識別する能力は比較的高い。</li>
+<li>一方で、<strong>個数カウント（NC）</strong> や、<strong>エンティティ間の関係を問うタスク</strong>では性能が大きく低下。</li>
+<li>特に、<strong>「知識不要（KF）」かつ「関係理解が必要なタスク」</strong> では、モデルが苦戦することが確認されました。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+<p>→ LVLMは「何が描かれているか」はある程度分かるが、<strong>「どうつながっているか」「構造的にどうなっているか」を視覚から読み取る能力はまだ限定的</strong>であることが示されました。</p>
+<h3 id="3-知識ショートカットへの依存が強い">3. 知識ショートカットへの依存が強い</h3>
+<ul>
+<li>Word2Vecの類似度に基づく「意味的に近いエンティティ間の関係」を持つ合成図表では、
+<ul>
+<li>モデルは<strong>背景知識だけで正解を推測できてしまう</strong>ため、図の構造を無視しても高い正解率を出します。</li>
+</ul>
+</li>
+<li>一方で、<strong>ランダムな関係を持つ合成図表</strong>や、<strong>関係を削除した図表</strong>では、
+<ul>
+<li>視覚情報を無視すると正解できないはずなのに、実際には<strong>知識に依存した回答を続ける</strong>傾向が見られました。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p>→ これにより、<strong>LVLMは「図を見て理解する」よりも「知識で補完する」方を優先している</strong>ことが分かりました。</p>
+<h3 id="4-実世界の図表ai2dでも同様の傾向">4. 実世界の図表（AI2D）でも同様の傾向</h3>
+<ul>
+<li>6ドメイン（生態学、生物学、物理学、天文学、化学、地質学）の実図表（AI2D）でも、
+<ul>
+<li>エンティティ認識は比較的良好</li>
+<li>関係理解・構造推論は弱い</li>
+<li>知識ショートカットへの依存が顕著
+という傾向が再現されました。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+</li>
+</ul>
+<p>→ 合成データだけでなく、<strong>実世界の図表でも「図表理解の錯覚」が起きている</strong>ことが確認されました。</p>
+<h3 id="5-結論lvlmは視覚言語を本当には理解していない">5. 結論：LVLMは「視覚言語」を本当には理解していない</h3>
+<ul>
+<li>著者らは、LVLMが
+<ul>
+<li>図表の<strong>視覚的な構造</strong>を十分に活用できていない</li>
+<li>代わりに<strong>事前知識をショートカットとして利用</strong>している
+ことを示し、</li>
+</ul>
+</li>
+<li><strong>「LVLMは視覚言語（visual language）を本当には理解していない」</strong> と結論づけています。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>この論文は、<strong>LVLMが図表（視覚言語）を本当に理解しているのか、それとも背景知識をショートカットとして使っているだけなのか</strong>を検証しています。</p>
+<ul>
+<li><strong>背景</strong>：図表理解タスクでLVLMは高い性能を示すが、既存評価では「関係理解」や「視覚的推論」が十分に測れず、<strong>知識ショートカットに依存した性能の可能性</strong>が残されていた。</li>
+<li><strong>手法</strong>：図表をグラフ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy="false">(</mo><mi>V</mi><mo separator="true">,</mo><mi>E</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">G=(V,E)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mclose">)</span></span></span></span> として定義し、合成図表と実図表（AI2D）からなるテストスイートを構築。
+<ul>
+<li>エンティティ認識（NR）と個数カウント（NC）のタスク</li>
+<li>知識不要（KF）／知識必要（KR）のカテゴリ</li>
+<li>矢印の削除・ランダム化などの摂動テスト<br>
+により、<strong>視覚情報への依存度と知識ショートカットの有無</strong>を分離して評価した。</li>
+</ul>
+</li>
+<li><strong>結果</strong>：
+<ul>
+<li>LVLMはエンティティ認識は比較的得意だが、<strong>関係理解・構造推論は著しく弱い</strong>。</li>
+<li>見かけ上の高精度は、<strong>背景知識をショートカットとして使っている「錯覚」</strong>　であることが多い。</li>
+<li>合成・実図表の両方で、<strong>視覚情報を十分に使わず、事前知識に依存する傾向</strong>が確認された。</li>
+</ul>
+</li>
+<li><strong>結論</strong>：LVLMは<strong>視覚言語（図表）を本当には理解しておらず</strong>、評価には「視覚依存度」と「知識ショートカット」の検証が不可欠である。<a href="https://arxiv.org/pdf/2410.00193.pdf">arXiv</a></li>
+</ul>
+<h2 id="引用">引用</h2>
+<p>本記事の図は以下の論文のものを引用しています。</p>
+<ul>
+<li>著者：Yifan Hou, Buse Giledereli, Yilei Tu, Mrinmaya Sachan</li>
+<li>所属：ETH Zurich（Computer Science）</li>
+<li>報告日：2024年9月30日（arXiv v1 公開日）</li>
+<li>タイトル：Do Vision-Language Models Really Understand Visual Language?</li>
+<li>URL：<a href="https://arxiv.org/abs/2410.00193">https://arxiv.org/abs/2410.00193</a></li>
+</ul>
+<p>（ICML 2025 採択論文）</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+        </body>
+        </html>
