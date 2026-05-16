@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30a2;&#x30d6;&#x30b9;&#x30c8;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>LLMで出力を得た際、LLMがなぜどの出力をしたかが気になっています。
+今回はそんな出力選択を考察した論文について読解してみました。</p>
+<h2 id="アブスト">アブスト</h2>
+<p>この論文は、<strong>「LLMの内部状態を、人間が理解しやすい“単一の意味を持つ特徴（monosemantic features）”に分解する」</strong> ことを目指した研究です。</p>
+<h3 id="背景ニューロンは多義的すぎる">背景：ニューロンは「多義的」すぎる</h3>
+<p>通常、LLMの内部は多数のニューロン（あるいは隠れユニット）で構成されています。<br>
+しかし、1つのニューロンはしばしば</p>
+<ul>
+<li>猫の顔</li>
+<li>車のフロント</li>
+<li>人の顔の一部</li>
+</ul>
+<p>など、<strong>全く関係ない複数の概念に反応</strong>します。<br>
+このように「1つのニューロンが複数の意味を担う」状態を <strong>polysemantic（多義的）</strong> と呼びます。</p>
+<p>多義的だと、人間が「このニューロンは何を表しているか？」を理解するのが難しくなります。</p>
+<h3 id="この論文の狙いmonosemantic単義的な特徴を見つける">この論文の狙い：monosemantic（単義的）な特徴を見つける</h3>
+<p>そこでこの論文では、</p>
+<blockquote>
+<p>「ニューロンよりも良い“分析の単位”があるのではないか？」</p>
+</blockquote>
+<p>という仮説を立てます。<br>
+その単位を <strong>feature（特徴）</strong> と呼び、<strong>それぞれのfeatureが1つの概念だけを表す（monosemantic）ように分解する</strong>ことを目指します。</p>
+<p>具体的には、</p>
+<ul>
+<li>1つの層のニューロン活性（例：512次元のベクトル）を入力として</li>
+<li><strong>スパースオートエンコーダ（sparse autoencoder）</strong> という「辞書学習（dictionary learning）」の手法を使い</li>
+<li>512次元よりもはるかに多い <strong>4000個以上のfeature</strong> に分解します。</li>
+</ul>
+<h3 id="得られたfeatureの例">得られたfeatureの例</h3>
+<p>分解して得られたfeatureは、例えば次のような「単一の概念」に対応します。</p>
+<ul>
+<li>DNA配列</li>
+<li>法律用語</li>
+<li>HTTPリクエスト</li>
+<li>ヘブライ語のテキスト</li>
+<li>栄養に関する記述</li>
+</ul>
+<p>など、<strong>人間が直感的に理解できる概念</strong>が、それぞれ独立したfeatureとして現れます。</p>
+<h3 id="評価本当により解釈しやすいのか">評価：本当に「より解釈しやすい」のか？</h3>
+<p>論文では、このfeatureが本当にニューロンより解釈しやすいかを検証しています。</p>
+<ul>
+<li><strong>ブラインド評価</strong>：人間の評価者に「ニューロンの説明」と「featureの説明」を見せ、どちらが分かりやすいかを点数付けしてもらう。</li>
+<li><strong>自動解釈（autointerpretability）</strong>：<br>
+大きなLLMに「このfeatureは何を表しているか？」を説明させ、その説明から元のfeatureの活性をどれだけ予測できるかで、説明の質を測る。</li>
+</ul>
+<p>その結果、<strong>featureの方がニューロンよりずっと解釈しやすい</strong>ことが示されています。</p>
+<h2 id="問題設定">問題設定</h2>
+<p>この論文の <strong>Problem Setup（問題設定）</strong> は、ざっくり言うと</p>
+<blockquote>
+<p>「LLMの内部状態は高次元すぎて人間には読めないので、<br>
+それを“独立した、人間が理解できる部品（feature）”に分解する問題を定義する」</p>
+</blockquote>
+<p>というものです。
+もう少し詳しく分解すると、次のような流れになっています。</p>
+<h3 id="1-次元の呪いcurse-of-dimensionality">1. 次元の呪い（curse of dimensionality）</h3>
+<ul>
+<li>LLMの内部状態は、ニューロン（あるいは隠れユニット）の活性ベクトルとして表現されます。</li>
+<li>モデルが大きくなるほど、この<strong>内部状態の空間（latent space）の次元数が増え、体積が指数的に膨れ上がる</strong>ため、人間が直接理解・探索・列挙することは現実的ではありません。</li>
+<li>著者らは、この空間を<strong>独立な成分に分解し、それぞれを個別に理解できる形にしない限り、解釈は不可能</strong>だと主張します。</li>
+</ul>
+<h3 id="2-なぜ単純な1層transformermlpを対象にするのか">2. なぜ「単純な1層Transformer＋MLP」を対象にするのか</h3>
+<ul>
+<li>著者らは、<strong>「attention-only」の1層Transformer</strong>については、以前の論文（A Mathematical Framework for Transformer Circuits）で、内部状態を直接扱わずに解析できる方法を示しました。</li>
+<li>しかし、<strong>MLP層（ReLU活性化付きの全結合層）を含む、ごく標準的な1層Transformer</strong>になると、そのような回避策は使えません。</li>
+<li>このモデルは構造としては非常に単純ですが、<strong>MLPの内部状態を分解しないと、その挙動を本質的に理解できない</strong>ため、
+<ul>
+<li>「最も単純な、しかし我々が“深く理解できていない”言語モデル」
+として、この論文の研究対象に選ばれています。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-解きたい問題mlp活性をfeatureに分解する">3. 解きたい問題：MLP活性を「feature」に分解する</h3>
+<p>この論文が設定する具体的な問題は：</p>
+<blockquote>
+<p>「1層TransformerのMLP層の活性ベクトルを、<br>
+人間が解釈可能な“feature”の集合に分解せよ」</p>
+</blockquote>
+<p>というものです。</p>
+<p>ここでいう <strong>feature</strong> とは：</p>
+<ul>
+<li>ニューロン活性の線形結合（パターン）として表される</li>
+<li>それぞれが<strong>単一の概念</strong>（例：DNA配列、法律用語、HTTPリクエストなど）に対応する</li>
+<li>互いに<strong>独立な成分</strong>として扱える</li>
+</ul>
+<p>ような「解釈の基本単位」です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\13_Towards_Monosemanticity\1778913479251.png" alt="1778913479251"></p>
+<h3 id="4-なぜそれが重要なのか">4. なぜそれが重要なのか</h3>
+<ul>
+<li>もしMLP層の活性を、このような <strong>monosemantic（単義的）なfeature</strong> に分解できれば、
+<ul>
+<li>「このfeatureがオンになっているとき、モデルは“DNA配列”を考えている」</li>
+<li>「このfeatureを消すと、モデルはDNA関連の出力をしなくなる」
+といった<strong>因果的な理解</strong>が可能になります。</li>
+</ul>
+</li>
+<li>これにより、LLMの内部状態を「人間が読めるアルゴリズム」に近い形で記述する道が開ける、というのがこの論文のProblem Setupの核心です。</li>
+</ul>
+<h2 id="提案手法">提案手法</h2>
+<p>この論文の提案手法は、ざっくり言うと</p>
+<blockquote>
+<p>「LLMの内部状態（MLP層の活性）を、ニューロン単位ではなく、<br>
+<strong>“feature”という人間が読める部品の線形結合（分解）として見る」</strong></p>
+</blockquote>
+<h3 id="1-なぜ分解が必要なのか">1. なぜ「分解」が必要なのか</h3>
+<ul>
+<li>LLMのMLP層は、例えば512個のニューロンを持つとします。</li>
+<li>しかし、1つのニューロンはしばしば
+<ul>
+<li>猫の顔</li>
+<li>車のフロント</li>
+<li>人の顔の一部
+など、<strong>全く関係ない複数の概念に反応</strong>します（polysemantic）。</li>
+</ul>
+</li>
+<li>このままでは「このニューロンは何を表しているか？」が分からず、<br>
+モデルの内部状態を人間が読むことができません。</li>
+</ul>
+<p>そこで著者らは、</p>
+<blockquote>
+<p>「ニューロンよりも良い“分析の単位”があるのではないか？」</p>
+</blockquote>
+<p>と考えます。それが <strong>feature</strong> です。</p>
+<h3 id="2-features-as-a-decomposition-のイメージ">2. Features as a Decomposition のイメージ</h3>
+<p><strong>“Features as a Decomposition”</strong> とは、次のような見方です。</p>
+<ul>
+<li>
+<p>MLP層の活性ベクトル（例：512次元）を <strong>x</strong> とします。</p>
+</li>
+<li>
+<p>この <strong>x</strong> を、多数の <strong>featureベクトル</strong> の線形結合として表します：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>x</mi><mo>≈</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>f</mi><mi>i</mi></msub><mo>⋅</mo><msub><mtext>feature</mtext><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">{ x \approx \sum_{i} f_i \cdot \text{feature}_i }
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.3277em;vertical-align:-1.2777em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord text"><span class="mord">feature</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+</li>
+</ul>
+<p>ここで、</p>
+<ul>
+<li>各 <strong>feature</strong> はニューロン空間上のベクトル（ニューロンの線形結合）です。</li>
+<li>featureの数はニューロン数より<strong>はるかに多い</strong>（例：512ニューロン → 4000以上のfeature）。</li>
+<li>つまり、featureの集合はニューロン空間の <strong>overcomplete basis（過完備基底）</strong> になっています。</li>
+</ul>
+<p>このように、</p>
+<blockquote>
+<p>「MLPの活性 = featureたちの重み付き和」</p>
+</blockquote>
+<p>と<strong>分解</strong>して見るのが、“Features as a Decomposition” の核心です。</p>
+<h3 id="3-なぜこの分解が意味を持つのかsuperposition-との関係">3. なぜこの分解が意味を持つのか（superposition との関係）</h3>
+<ul>
+<li>著者らは、以前の論文「Toy Models of Superposition」で、
+<ul>
+<li>ニューラルネットは<strong>ニューロン数より多くの独立なfeature</strong>を表現しようとする</li>
+<li>その結果、1つのニューロンが複数のfeatureを“重ね合わせ（superposition）”して表現する
+という現象を理論的に示しました。</li>
+</ul>
+</li>
+<li>つまり、**ニューロンはfeatureの“混ざり物”**であり、<br>
+そのままでは人間には読めない。</li>
+<li>そこで、<strong>dictionary learning（スパースオートエンコーダ）</strong> を使って、
+<ul>
+<li>MLP活性を <strong>少数のfeatureの和</strong> に分解し</li>
+<li>各featureが**単一の概念（monosemantic）**に対応するようにする
+というアプローチを取ります。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\13_Towards_Monosemanticity\1778913711179.png" alt="1778913711179"></p>
+<h3 id="4-具体的には何をしているか">4. 具体的には何をしているか</h3>
+<p>論文では、1層TransformerのMLP層に対して：</p>
+<ol>
+<li>MLPの活性ベクトル <strong>x</strong> を入力として、</li>
+<li><strong>スパースオートエンコーダ（SAE）</strong> を学習し、</li>
+<li><strong>x ≈ W_dec · f</strong> という形で、<strong>f</strong>（feature活性）に分解します。</li>
+</ol>
+<p>ここで、</p>
+<ul>
+<li><strong>f</strong> はスパース（ほとんどの成分が0）で、</li>
+<li>0でない成分が「その瞬間にオンになっているfeature」を表します。</li>
+<li>各featureは、例えば
+<ul>
+<li>DNA配列</li>
+<li>法律用語</li>
+<li>HTTPリクエスト</li>
+<li>ヘブライ語テキスト
+など、<strong>人間が読める単一の概念</strong>に対応します。</li>
+</ul>
+</li>
+</ul>
+<p>このように、</p>
+<blockquote>
+<p>「MLP活性を、monosemanticなfeatureの集合に分解する」</p>
+</blockquote>
+<p>というのが、“Features as a Decomposition” の具体的な内容です。</p>
+<h2 id="良い分解の定義">良い分解の定義</h2>
+<p>この論文では、「MLP活性をfeatureに分解する」とき、<strong>どのような分解が“良い分解”なのか</strong>を、いくつかの基準で定義しています。</p>
+<p>主な基準は次の6つです。</p>
+<h3 id="1-monosemanticity単義性">1. Monosemanticity（単義性）</h3>
+<ul>
+<li><strong>意味</strong>：各featureが<strong>単一の、はっきりした概念</strong>にだけ反応すること。</li>
+<li><strong>対義語</strong>：polysemantic（多義的）＝1つのニューロンが複数の無関係な概念に反応する状態。</li>
+<li><strong>例</strong>：
+<ul>
+<li>「DNA配列」featureは、DNA配列が出てくるときだけオンになる。</li>
+<li>「HTTPリクエスト」featureは、HTTPリクエストっぽいテキストのときだけオンになる。</li>
+</ul>
+</li>
+<li><strong>なぜ重要か</strong>：<br>
+人間が「このfeatureは何を表しているか？」を理解するには、<strong>1つの意味に絞られている</strong>必要があるからです。</li>
+</ul>
+<h3 id="2-interpretability解釈可能性">2. Interpretability（解釈可能性）</h3>
+<ul>
+<li><strong>意味</strong>：学習されたfeatureの<strong>大部分が、人間にとって理解しやすい</strong>こと。</li>
+<li>論文では：
+<ul>
+<li>人間評価者によるブラインド評価</li>
+<li>LLMによる自動説明（autointerpretability）
+などで、「featureの方がニューロンよりずっと解釈しやすい」ことを定量的に示しています。</li>
+</ul>
+</li>
+<li><strong>なぜ重要か</strong>：<br>
+内部状態を“読む”ことが目的なので、<strong>人間が読める説明がつくfeature</strong>が多数必要です。</li>
+</ul>
+<h3 id="3-causal-steerability因果的な操作可能性">3. Causal Steerability（因果的な操作可能性）</h3>
+<ul>
+<li><strong>意味</strong>：featureが**“機能的に特定された因果単位”**として使えること。</li>
+<li>つまり：
+<ul>
+<li>あるfeatureを<strong>強制的にオン</strong>にしたら、モデルの出力がその概念に沿って変化する。</li>
+<li>あるfeatureを**消す（ablate）**と、その概念に関連する出力が消える。</li>
+</ul>
+</li>
+<li><strong>例</strong>：
+<ul>
+<li>「base64」featureをオンにすると、モデルがbase64っぽいテキストを生成しやすくなる。</li>
+<li>「法律用語」featureを消すと、法律文書の生成がうまくいかなくなる。</li>
+</ul>
+</li>
+<li><strong>なぜ重要か</strong>：<br>
+featureが<strong>単なる説明ではなく、実際に挙動を制御できる因果的なハンドル</strong>になっていないと、真の“内部状態の理解”にはならないからです。</li>
+</ul>
+<h3 id="4-universality普遍性">4. Universality（普遍性）</h3>
+<ul>
+<li><strong>意味</strong>：<strong>異なるモデル間で、似たfeatureが現れる</strong>こと。</li>
+<li>例：
+<ul>
+<li>小さいモデルで見つかった「DNA feature」が、大きいモデルでも似た形で現れる。</li>
+</ul>
+</li>
+<li><strong>なぜ重要か</strong>：<br>
+もし「この分解はこのモデルだけの特殊事情」だと、<strong>一般性のある理解</strong>にはつながらないからです。</li>
+</ul>
+<h3 id="5-feature-splittingfeatureの分割細分化">5. Feature Splitting（featureの分割・細分化）</h3>
+<ul>
+<li><strong>意味</strong>：オートエンコーダのサイズ（feature数）を増やすと、<br>
+同じ概念が<strong>より細かい、しかし依然として解釈可能な役割</strong>に分割されること。</li>
+<li>例：
+<ul>
+<li>小さい辞書では「法律用語」という1つのfeatureだったものが、</li>
+<li>大きい辞書では「契約書」「判例」「法律条文」など、より細かいfeatureに分かれる。</li>
+</ul>
+</li>
+<li><strong>なぜ重要か</strong>：<br>
+分解が<strong>スケールしても一貫して解釈可能</strong>であること、<br>
+かつ、<strong>より詳細な概念レベルまで掘り下げられる</strong>ことを示すためです。</li>
+</ul>
+<h3 id="6-explanatory-power説明力">6. Explanatory Power（説明力）</h3>
+<ul>
+<li><strong>意味</strong>：この分解が、<strong>MLP層の活性の“無視できない部分”を説明できる</strong>こと。</li>
+<li>具体的には：
+<ul>
+<li>スパースオートエンコーダによる再構成誤差が小さい</li>
+<li>featureの活性が、元のMLP活性の大部分を説明している</li>
+</ul>
+</li>
+<li><strong>なぜ重要か</strong>：<br>
+もしfeatureが「ごく一部の特殊ケース」しか説明しないなら、<br>
+モデル全体の挙動を理解するための基盤としては弱いからです。</li>
+</ul>
+<h2 id="スパースオートエンコーダ">スパースオートエンコーダ</h2>
+<blockquote>
+<p>「LLMのアーキテクチャ自体を変えて“単義的なニューロン”を作るのではなく、<br>
+既存のモデルに対して“後付けのレンズ”として辞書学習（スパースオートエンコーダ）を使うのはなぜか？」</p>
+</blockquote>
+<p>という問いに答えています。</p>
+<p>主な理由は次の3つです。</p>
+<h3 id="1-アーキテクチャ的なスパース化だけでは不十分insufficiency">1. アーキテクチャ的なスパース化だけでは不十分（Insufficiency）</h3>
+<ul>
+<li>著者らは以前の研究（Toy Models of Superposition）で、<br>
+「アーキテクチャ的にスパースなモデルを作る」というアプローチ（approach 1）を検討しました。</li>
+<li>しかし、<strong>カウンター例（反例）</strong> を見つけ、
+<ul>
+<li>ニューロン数を増やしたり、活性をスパースに制限したりするだけでは、</li>
+<li><strong>polysemanticity（多義性）を完全には防げない</strong>
+ことを確認しました。</li>
+</ul>
+</li>
+<li>つまり、「アーキテクチャをいじれば自動的にmonosemanticになる」という期待は<strong>成り立たない</strong>と結論づけています。</li>
+</ul>
+<h3 id="2-既存の高性能モデルに適用したいapplicability">2. 既存の高性能モデルに適用したい（Applicability）</h3>
+<ul>
+<li>著者らのゴールは、
+<ul>
+<li>「特別なアーキテクチャを持つ“解釈用モデル”」を理解することではなく、</li>
+<li><strong>人々が実際に使っている、標準的な高性能LLM</strong>を理解することです。</li>
+</ul>
+</li>
+<li>もし「monosemanticにするためにアーキテクチャを変える」必要があると、
+<ul>
+<li>GPT-4やClaudeのような<strong>既存の大規模モデル</strong>には適用できません。</li>
+</ul>
+</li>
+<li>一方、<strong>辞書学習（スパースオートエンコーダ）は後付けのツール</strong>なので、
+<ul>
+<li>既存モデルの重みを変えずに</li>
+<li>内部状態を分解・解釈できる
+という利点があります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-モデルの性能を損なわずにレンズとして使えるflexibility">3. モデルの性能を損なわずに“レンズ”として使える（Flexibility）</h3>
+<ul>
+<li>アーキテクチャ変更は、多くの場合
+<ul>
+<li>モデルの表現力や性能に影響を与えます。</li>
+</ul>
+</li>
+<li>それに対し、辞書学習は
+<ul>
+<li>元のモデルの挙動を変えずに</li>
+<li>内部状態を**“別の基底（feature）”で見るレンズ**として機能します。</li>
+</ul>
+</li>
+<li>つまり、
+<ul>
+<li><strong>モデルはそのまま高性能を維持しつつ</strong></li>
+<li><strong>人間はfeatureを通じて内部状態を読む</strong>
+という二重のメリットがあります。</li>
+</ul>
+</li>
+</ul>
+<h2 id="成果">成果</h2>
+<p>この論文の主な研究成果は、ざっくり言うと</p>
+<blockquote>
+<p><strong>「LLMの内部状態を、人間が読める“単一の意味を持つfeature”に分解できること」を、具体的な実験で示した</strong></p>
+</blockquote>
+<p>という点にあります。</p>
+<p>もう少し細かく分解すると、次のような成果があります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\13_Towards_Monosemanticity\1778915748788.png" alt="1778915748788"></p>
+<h3 id="1-monosemantic単義的なfeatureを大量に抽出できた">1. monosemantic（単義的）なfeatureを大量に抽出できた</h3>
+<ul>
+<li>1層TransformerのMLP層（512ニューロン）に対して、<strong>スパースオートエンコーダ（SAE）</strong> を適用。</li>
+<li>512次元の活性ベクトルを、<strong>4000個以上のfeature</strong> に分解。</li>
+<li>各featureは、例えば
+<ul>
+<li>DNA配列</li>
+<li>法律用語</li>
+<li>HTTPリクエスト</li>
+<li>ヘブライ語テキスト</li>
+<li>栄養に関する記述
+など、<strong>単一の概念（monosemantic）</strong> に対応することを示しました。<a href="https://transformer-circuits.pub/2023/monosemantic-features">Transformer Circuits Thread</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="2-featureはニューロンよりずっと解釈しやすいことを定量的に示した">2. featureはニューロンよりずっと解釈しやすいことを定量的に示した</h3>
+<ul>
+<li><strong>人間によるブラインド評価</strong>：
+<ul>
+<li>ニューロンの説明とfeatureの説明を評価者に見せ、どちらが分かりやすいかを採点。</li>
+<li>結果、<strong>featureの方がニューロンより有意に解釈しやすい</strong>ことが示されました。</li>
+</ul>
+</li>
+<li><strong>自動解釈（autointerpretability）</strong>：
+<ul>
+<li>大きなLLMに「このfeatureは何を表しているか？」を説明させ、その説明から元のfeatureの活性を予測するタスクを設定。</li>
+<li>featureの説明が<strong>ニューロンの説明より高い予測性能</strong>を示し、より情報量の多い説明になっていることを確認しました。</li>
+</ul>
+</li>
+</ul>
+<p>これにより、「featureがニューロンより良い“分析の単位”である」という仮説を<strong>定量的に裏付け</strong>ています。</p>
+<h3 id="3-featureがモデルの挙動に因果的に関わることを示した">3. featureがモデルの挙動に因果的に関わることを示した</h3>
+<ul>
+<li>feature活性とロジット出力の関係がほぼ線形である1層モデルを利用し、
+<ul>
+<li>特定のfeatureを<strong>強制的にオン</strong>にすると、関連トークンの確率が上がる</li>
+<li>featureを<strong>消す（ablate）<strong>と、その概念に関連する出力が弱まる
+といった</strong>因果的な操作</strong>を実験。</li>
+</ul>
+</li>
+<li>例：
+<ul>
+<li>「base64」featureをオンにすると、base64っぽいテキストが生成されやすくなる。</li>
+<li>「法律用語」featureを消すと、法律文書の生成がうまくいかなくなる。</li>
+</ul>
+</li>
+<li>これにより、featureは<strong>単なる説明ではなく、モデルの挙動を実際に制御できる因果的なハンドル</strong>であることを示しました。</li>
+</ul>
+<h3 id="4-featureの普遍性universalityを確認した">4. featureの普遍性（universality）を確認した</h3>
+<ul>
+<li>同じハイパーパラメータ・同じデータセットで、<strong>初期化シードだけが異なる2つのモデル（AとB）</strong> を学習。</li>
+<li>両方に対して同じ辞書学習を行い、featureを比較。</li>
+<li>結果、<strong>似た概念に対応するfeatureが両モデルに現れる</strong>ことを確認し、
+<ul>
+<li>featureが「そのモデルだけの特殊事情」ではなく、</li>
+<li><strong>ある程度普遍的な構造</strong>として現れることを示しました。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-辞書サイズを増やすとfeatureが分割されるfeature-splittingことを示した">5. 辞書サイズを増やすとfeatureが“分割”される（feature splitting）ことを示した</h3>
+<ul>
+<li>辞書サイズ（feature数）を増やすと、
+<ul>
+<li>同じ概念が<strong>より細かい、しかし依然として解釈可能な役割</strong>に分割されることを観察。</li>
+</ul>
+</li>
+<li>例：
+<ul>
+<li>小さい辞書では「法律用語」という1つのfeatureだったものが、</li>
+<li>大きい辞書では「契約書」「判例」「法律条文」など、より細かいfeatureに分かれる。</li>
+</ul>
+</li>
+<li>これにより、<strong>分解がスケールしても一貫して解釈可能</strong>であること、<br>
+かつ<strong>より詳細な概念レベルまで掘り下げられる</strong>ことを示しました。</li>
+</ul>
+<h3 id="6-mlp層の活性のかなりの部分を説明できるexplanatory-power">6. MLP層の活性のかなりの部分を説明できる（explanatory power）</h3>
+<ul>
+<li>SAEによる再構成誤差が小さく、</li>
+<li>featureの活性が<strong>MLP層の活性の“無視できない部分”を説明している</strong>ことを確認。</li>
+<li>これにより、feature分解が<strong>モデル全体の挙動を理解するための有効な基盤</strong>になりうることを示しました。</li>
+</ul>
+<h3 id="7-実用的な探索インターフェースを公開">7. 実用的な探索インターフェースを公開</h3>
+<ul>
+<li>すべてのfeatureについて、
+<ul>
+<li>どのような入力で活性化するか</li>
+<li>ロジット出力にどう影響するか</li>
+<li>ablationするとどうなるか
+などをブラウズできる<strong>インタラクティブな可視化ツール</strong>を公開。<a href="https://transformer-circuits.pub/2023/monosemantic-features/vis/index.html">Feature Visualization</a></li>
+</ul>
+</li>
+<li>これにより、研究者が実際にfeatureを“読む”体験ができるようになり、<br>
+機構的解釈可能性（mechanistic interpretability）の実践的な基盤を提供しました。</li>
+</ul>
+<h2 id="引用">引用</h2>
+<p>本記事の図は以下の論文のものを引用しています。</p>
+<p>著者：Trenton Bricken, Adly Templeton, Jonathan Batson, Brian Chen, Adam Jermyn, Tom Conerly, Nicholas Turner, Cem Anil, Carson Denison, Amanda Askell, Robert Lasenby, Yifan Wu, Shailee Jain, Tom Henighan, Deep Ganguli, Christopher Olah, Nicholas Schiefer
+所属：Anthropic
+報告日：2023年10月6日（Transformer Circuits Thread の公開日より）
+タイトル：Towards Monosemanticity: Decomposing Language Models With Dictionary Learning
+URL：<a href="https://transformer-circuits.pub/2023/monosemantic-features">https://transformer-circuits.pub/2023/monosemantic-features</a></p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+        </body>
+        </html>
