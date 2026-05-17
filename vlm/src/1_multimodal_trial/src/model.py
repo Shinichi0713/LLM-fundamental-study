@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from transformers import CLIPModel, CLIPProcessor, AutoModelForCausalLM, AutoTokenizer
+from PIL import Image
 
 class SimpleLLaVA(nn.Module):
     """
@@ -145,3 +146,26 @@ class SimpleLLaVA(nn.Module):
 
         return generated_text
 
+
+
+# モデルの初期化（実際には事前学習済みチェックポイントをロード）
+model = SimpleLLaVA(
+    vision_model_name="openai/clip-vit-large-patch14",
+    language_model_name="meta-llama/Llama-2-7b-chat-hf"  # 実際にはLLaVA用のLLMを使う
+)
+model.eval()
+model.to("cuda" if torch.cuda.is_available() else "cpu")
+
+# 画像読み込み
+image_path = "example.jpg"
+image = Image.open(image_path).convert("RGB")
+
+# プロンプト
+prompt = "Describe this image in detail."
+
+# 生成
+with torch.no_grad():
+    response = model.generate(images=[image], prompt=prompt, max_new_tokens=100)
+
+print("Prompt:", prompt)
+print("Response:", response)
