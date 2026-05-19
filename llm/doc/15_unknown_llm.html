@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <p>LLMはこの知識を知っているのだろうか？
+というような疑問を持つことが多く、実際のこの点について研究している論文について読んでみました。</p>
+<h2 id="概要">概要</h2>
+<p>この論文は、<strong>LLMの「マシンアンラーニング（machine unlearning）」が本当に安全で信頼できるか</strong>を検証し、<strong>隠れた知識の穴（hidden knowledge holes）</strong> を明らかにすることを目的としています。</p>
+<h3 id="1-問題設定何を解決しようとしているか">1. 問題設定（何を解決しようとしているか）</h3>
+<ul>
+<li><strong>背景</strong>：LLMは事前学習で大量の知識を吸収するが、その中には不適切・有害な知識も含まれる。</li>
+<li><strong>マシンアンラーニング</strong>：<br>
+特定の知識だけを<strong>再学習なしで選択的に削除</strong>する技術として注目されている。</li>
+<li><strong>課題</strong>：<br>
+アンラーニング後も標準ベンチマークでは性能が維持されているように見えるが、<br>
+<strong>本当に「望ましくない知識だけ」が消えているのか</strong>、<br>
+<strong>有益な知識まで失われていないか</strong>が不明確だった。</li>
+</ul>
+<h3 id="2-従来の限界なぜ新しい評価が必要か">2. 従来の限界（なぜ新しい評価が必要か）</h3>
+<ul>
+<li>既存のアンラーニング手法は、<strong>標準的なベンチマーク</strong>（例：一般的なQAタスク）では性能を維持しているように見える。</li>
+<li>しかし、著者らは以下の問題を指摘します：
+<ul>
+<li><strong>ナレッジホール（knowledge holes）</strong>：<br>
+アンラーニングの過程で、<strong>削除対象ではない有益な知識まで意図せず失われる</strong>現象が起きている。</li>
+<li><strong>静的なベンチマークでは検出不能</strong>：<br>
+既存の評価は固定的なタスクに依存しており、<br>
+「削除された知識の周辺」や「広範な失敗領域」を十分にカバーできていない。</li>
+</ul>
+</li>
+<li>結果として、<strong>見かけ上は安全に見えるが、実際には知識の穴だらけのモデル</strong>が生まれるリスクがある。</li>
+</ul>
+<h3 id="3-この論文の貢献何をしたか">3. この論文の貢献（何をしたか）</h3>
+<p><strong>(1) テストケース生成フレームワークの提案</strong></p>
+<ul>
+<li>アンラーニング済みモデルが<strong>どこで知識を失っているか</strong>を明らかにするため、
+<ul>
+<li>削除されたコンテンツの<strong>直近の近傍（immediate neighbors）</strong></li>
+<li>より<strong>広範な潜在的失敗領域</strong>
+を探索する<strong>テストケース生成フレームワーク</strong>を提案<a href="https://openreview.net/forum?id=TFidSatsOC">OpenReview</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) 隠れたコストの実証</strong></p>
+<ul>
+<li>アンラーニング済みモデルを評価した結果、
+<ul>
+<li><strong>最大98.7%のテストケース</strong>で、<br>
+元の事前学習モデルなら答えられたはずの質問に対して、<br>
+<strong>無意味・無関係な回答</strong>を生成することが判明<a href="https://openreview.net/forum?id=TFidSatsOC">OpenReview</a>。</li>
+</ul>
+</li>
+<li>これは、**標準ベンチマークでは見えない「隠れた性能劣化」**が存在することを示す。</li>
+</ul>
+<p><strong>(3) 知識保持評価の再考</strong></p>
+<ul>
+<li>著者らは、<strong>標準ベンチマークに依存した評価だけでは不十分</strong>であると主張し、
+<ul>
+<li>アンラーニング後の<strong>知識保持</strong>をより厳密に評価する</li>
+<li><strong>ナレッジホールを検出できる動的・探索的な評価枠組み</strong>の必要性
+を提唱しています<a href="https://openreview.net/forum?id=TFidSatsOC">OpenReview</a>。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\15_unknown_llm\1778981757042.png" alt="1778981757042"></p>
+<h2 id="知識の穴を検出する方法">知識の穴を検出する方法</h2>
+<p>本論文で提唱されている<strong>LLMのアンラーニング（特定知識の削除）後に生じる「知識の穴（knowledge holes）」を検出・分析する枠組み</strong>については以下通りに言及されています。</p>
+<h3 id="1-何をprobing探査しているか">1. 何を「Probing（探査）」しているか</h3>
+<ul>
+<li><strong>アンラーニング済みLLM</strong>が、
+<ul>
+<li>削除対象の知識だけでなく、</li>
+<li>その<strong>周辺の有益な知識</strong>まで失っていないか</li>
+</ul>
+</li>
+<li>を、<strong>テストケース生成とプロービング</strong>によって探査しています。</li>
+</ul>
+<h3 id="2-knowledge-holes知識の穴とは何か">2. 「Knowledge Holes（知識の穴）」とは何か</h3>
+<ul>
+<li>アンラーニングの副作用として、
+<ul>
+<li>本来は保持すべき<strong>有益な知識（benign knowledge）</strong> が、</li>
+<li>意図せず失われてしまう現象を指します。</li>
+</ul>
+</li>
+<li>これは<strong>標準ベンチマークでは見えない</strong>ため、「隠れたコスト」として問題になります。</li>
+</ul>
+<h3 id="3-どうやって検出するか">3. どうやって検出するか</h3>
+<ul>
+<li><strong>テストケース生成フレームワーク</strong>を提案し、
+<ul>
+<li>削除されたコンテンツの<strong>直近の近傍（immediate neighbors）</strong></li>
+<li>より<strong>広範な潜在的失敗領域</strong>
+を探索するテストケースを自動生成します。</li>
+</ul>
+</li>
+<li>これにより、
+<ul>
+<li>事前学習モデルなら答えられるが、</li>
+<li>アンラーニング済みモデルでは<strong>無意味・無関係な回答</strong>になるケースを特定し、</li>
+<li><strong>どこに知識の穴が開いているか</strong>を明らかにします。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-結果として分かったこと">4. 結果として分かったこと</h3>
+<ul>
+<li>アンラーニング済みモデルでは、
+<ul>
+<li><strong>最大98.7%のテストケース</strong>で、<br>
+事前学習モデルなら答えられたはずの質問に対して、<br>
+<strong>無意味・無関係な回答</strong>を生成することが判明しました<a href="https://openreview.net/forum?id=TFidSatsOC">OpenReview</a>。</li>
+</ul>
+</li>
+<li>これは、<strong>標準ベンチマークでは見えない「隠れた知識の穴」</strong> が広範囲に存在することを示しています。</li>
+</ul>
+<h2 id="検出法詳細">検出法詳細</h2>
+<p>この節は、<strong>「潜在的な知識の穴（latent knowledge holes）」を探査するための強化学習（RL）ベースの手法</strong>を説明しています。</p>
+<h3 id="1-何をしたいのか目的">1. 何をしたいのか（目的）</h3>
+<ul>
+<li><strong>隣接知識の穴（adjacent knowledge hole）</strong>：
+<ul>
+<li>削除対象データ（forgetting dataset）の<strong>近くの知識</strong>が失われていないかを調べる。</li>
+</ul>
+</li>
+<li><strong>潜在的な知識の穴（latent knowledge holes）</strong>：
+<ul>
+<li>アンラーニング手法ごとに<strong>モデル依存で勝手に知識が抜け落ちる領域</strong>が生じる。</li>
+<li>これは<strong>標準ベンチマークや事前定義データセットでは検出できない</strong>。</li>
+</ul>
+</li>
+</ul>
+<p>→ そこで、<strong>RLで「モデルが答えられない質問」を自動生成するポリシー</strong>を学習し、<br>
+<strong>どこに知識の穴が開いているか</strong>を体系的に探査する、というのがこの節の目的です。</p>
+<h3 id="2-全体の流れざっくり">2. 全体の流れ（ざっくり）</h3>
+<ol>
+<li><strong>シードプロンプト</strong>（初期の質問例）からスタート。</li>
+<li><strong>ポリシーネットワーク（LLM）<strong>が、シードを元に</strong>テストケース（質問）</strong> を生成。</li>
+<li><strong>アンラーニング済みLLM</strong>がその質問に答える。</li>
+<li><strong>ジャッジLLM</strong>が「質問と回答のペア」を評価し、<strong>スコア J(q,r)</strong> を出す。</li>
+<li>そのスコアを<strong>報酬</strong>として、ポリシーネットワークを<strong>PPO（Proximal Policy Optimization）</strong> で学習。</li>
+<li>学習が進むと、<strong>「アンラーニング済みモデルが答えられない質問」をたくさん生成できるポリシー</strong>が得られる。</li>
+<li>その質問群（<strong>DRL</strong>）が、<strong>潜在的な知識の穴</strong>を可視化する。</li>
+</ol>
+<h3 id="3-登場人物記号の意味">3. 登場人物（記号の意味）</h3>
+<ul>
+<li><strong>s</strong>：シードプロンプト（初期の質問例）</li>
+<li><strong>π</strong>：ポリシーネットワーク（LLM）
+<ul>
+<li>s を受け取って、テストケース q を生成：q ∼ π(· | s)</li>
+</ul>
+</li>
+<li><strong>fu</strong>：アンラーニング済みターゲットLLM
+<ul>
+<li>q を受け取って、回答 r を生成：r ∼ fu(· | q)</li>
+</ul>
+</li>
+<li><strong>judge LLM</strong>：質問 q と回答 r のペアを評価し、スコア J(q,r) を出す
+<ul>
+<li>J(q,r) ∈ {0,1,...,10}</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-報酬設計knowledge-hole-related-reward">4. 報酬設計（Knowledge-hole-related reward）</h3>
+<p><strong>狙い</strong>：<br>
+「アンラーニング済みモデルが<strong>答えられない</strong>（＝知識の穴がある）質問」を生成するポリシーに高い報酬を与える。</p>
+<p><strong>ジャッジスコア J(q,r) のルール</strong></p>
+<ul>
+<li><strong>qvalid</strong>：質問 q が「有効かどうか」（意味のある質問か）</li>
+<li><strong>rgibberish</strong>：回答 r が「デタラメ（gibberish）かどうか」</li>
+</ul>
+<p>式：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>J</mi><mo stretchy="false">(</mo><mi>q</mi><mo separator="true">,</mo><mi>r</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mn>1</mn><mrow><mi>q</mi><mtext> </mtext><mi>v</mi><mi>a</mi><mi>l</mi><mi>i</mi><mi>d</mi></mrow></msub><mo>×</mo><msub><mn>1</mn><mrow><mi>r</mi><mtext> </mtext><mi>g</mi><mi>i</mi><mi>b</mi><mi>b</mi><mi>e</mi><mi>r</mi><mi>i</mi><mi>s</mi><mi>h</mi></mrow></msub><mo>×</mo><mn>10</mn><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mn>1</mn><mrow><mi>r</mi><mtext> </mtext><mi>g</mi><mi>i</mi><mi>b</mi><mi>b</mi><mi>e</mi><mi>r</mi><mi>i</mi><mi>s</mi><mi>h</mi></mrow></msub><mo stretchy="false">)</mo><mo>⋅</mo><mi>c</mi><mo stretchy="false">(</mo><mi>q</mi><mo separator="true">,</mo><mi>r</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">J(q,r) = 1_{q\ valid} \times 1_{r\ gibberish} \times 10 + (1 - 1_{r\ gibberish}) \cdot c(q,r)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9305em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9305em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">ibb</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">h</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">10</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">ibb</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">h</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">c</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><strong>最高報酬（10点）</strong>：
+<ul>
+<li>有効な質問で、かつ回答がデタラメ → <strong>知識の穴を突いた理想的なテストケース</strong></li>
+</ul>
+</li>
+<li><strong>最低報酬（0点）</strong>：
+<ul>
+<li>無効な質問（invalid test case）</li>
+</ul>
+</li>
+<li><strong>中間報酬 c(q,r) ∈ {0,...,9}</strong>：
+<ul>
+<li>有効な質問で、回答がデタラメではない場合。</li>
+<li>ただし、<strong>回答の質が悪いほど高い報酬</strong>（＝知識の穴に近いほど良い）。</li>
+</ul>
+</li>
+</ul>
+<p>→ つまり、<strong>「モデルがうまく答えられない質問」を生成するほど高得点</strong>になるように設計されています。</p>
+<h3 id="5-全体の目的関数rlのゴール">5. 全体の目的関数（RLのゴール）</h3>
+<p>ポリシー π の目的は：</p>
+<ul>
+<li><strong>アンラーニング済みモデルから低品質な回答を引き出すテストケース</strong>を生成しつつ、</li>
+<li><strong>テストケースの多様性</strong>も確保する。</li>
+</ul>
+<p>そのための報酬 R(s,π) は：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>s</mi><mo separator="true">,</mo><mi>π</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi mathvariant="double-struck">E</mi><mrow><mi>q</mi><mo>∼</mo><mi>π</mi><mo stretchy="false">(</mo><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi>s</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>r</mi><mo>∼</mo><msub><mi>f</mi><mi>u</mi></msub><mo stretchy="false">(</mo><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi>q</mi><mo stretchy="false">)</mo></mrow></msub><mi>J</mi><mo stretchy="false">(</mo><mi>q</mi><mo separator="true">,</mo><mi>r</mi><mo stretchy="false">)</mo><mo>+</mo><msub><mi>λ</mi><mrow><mi>n</mi><mi>g</mi></mrow></msub><msub><mi>N</mi><mrow><mi>n</mi><mi>g</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>+</mo><msub><mi>λ</mi><mi>s</mi></msub><msub><mi>N</mi><mi>s</mi></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mo>−</mo><mi>β</mi><msub><mi>D</mi><mrow><mi>K</mi><mi>L</mi></mrow></msub><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">(</mo><mi>π</mi><mo stretchy="false">(</mo><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi>s</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∥</mi><msub><mi>π</mi><mrow><mi>r</mi><mi>e</mi><mi>f</mi></mrow></msub><mo stretchy="false">(</mo><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi>s</mi><mo stretchy="false">)</mo><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">)</mo><mo>+</mo><msub><mi>λ</mi><mrow><mi>e</mi><mi>n</mi></mrow></msub><mi>H</mi><mo stretchy="false">(</mo><mi>π</mi><mo stretchy="false">(</mo><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi>s</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">R(s,\pi) = \mathbb{E}_{q\sim\pi(\cdot|s), r\sim f_u(\cdot|q)} J(q,r) + \lambda_{ng} N_{ng}(q) + \lambda_{s} N_{s}(q)
+- \beta D_{KL}\big(\pi(\cdot|s) \| \pi_{ref}(\cdot|s)\big)
++ \lambda_{en} H(\pi(\cdot|s))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathbb">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span><span class="mrel mtight">∼</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="mopen mtight">(</span><span class="mord mtight">⋅</span><span class="mord mtight">∣</span><span class="mord mathnormal mtight">s</span><span class="mclose mtight">)</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mrel mtight">∼</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.1076em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight">⋅</span><span class="mord mtight">∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="mord mathnormal mtight">L</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="delimsizing size1">(</span></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mopen">(</span><span class="mord">⋅</span><span class="mord">∣</span><span class="mord mathnormal">s</span><span class="mclose">)</span><span class="mord">∥</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">re</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord">⋅</span><span class="mord">∣</span><span class="mord mathnormal">s</span><span class="mclose">)</span><span class="mord"><span class="delimsizing size1">)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mopen">(</span><span class="mord">⋅</span><span class="mord">∣</span><span class="mord mathnormal">s</span><span class="mclose">))</span></span></span></span></span></p>
+<p>各項の意味：</p>
+<ul>
+<li><strong>J(q,r)</strong>：ジャッジスコア（回答の質が悪いほど高得点）</li>
+<li><strong>Nng(q), Ns(q)</strong>：
+<ul>
+<li>n-gram 多様性・意味的多様性（テストケースが似すぎないようにする）</li>
+</ul>
+</li>
+<li><strong>DKL(π || πref)</strong>：
+<ul>
+<li>ポリシーが<strong>参照ポリシー πref</strong>から大きく逸脱しすぎないようにするペナルティ（安定性のため）</li>
+</ul>
+</li>
+<li><strong>H(π(·|s))</strong>：
+<ul>
+<li>ポリシーのエントロピー（＝探索を促す：同じ質問ばかり生成しないようにする）</li>
+</ul>
+</li>
+</ul>
+<p>係数 λng, λs, β, λen は、<br>
+「回答の質の悪さ」「多様性」「安定性」「探索」のバランスを調整するハイパーパラメータです。</p>
+<h3 id="6-学習とデータセット構築">6. 学習とデータセット構築</h3>
+<ul>
+<li><strong>アルゴリズム</strong>：PPO（Proximal Policy Optimization）</li>
+<li><strong>ポリシーネットワーク</strong>：LLAMA-2-7B-BASE
+<ul>
+<li>多様な知識ドメインを理解できるようにするため。</li>
+</ul>
+</li>
+<li><strong>シードプロンプト</strong>：
+<ul>
+<li>Dadj(Df)（削除対象データの隣接知識）と</li>
+<li>Dadj(Dr)（残すべきデータの隣接知識）
+を組み合わせて初期化。</li>
+<li>Dadj(Df) からは「知識の穴」を見つけやすい報酬信号が得られ、</li>
+<li>Dadj(Dr) からは多様なテストケース探索が促される。</li>
+</ul>
+</li>
+<li><strong>学習中に生成されたテストケース</strong>をすべて収集し、
+<ul>
+<li>その中で <strong>J(q,r) = 10（最高得点）</strong> のものだけを選び、</li>
+<li><strong>高報酬潜在データセット DRL</strong> として定義。</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-この手法の位置づけ">7. この手法の位置づけ</h3>
+<ul>
+<li><strong>従来の静的ベンチマーク</strong>：
+<ul>
+<li>固定された質問セットにしか対応できず、</li>
+<li>モデル依存の「潜在的な知識の穴」を網羅的に探せない。</li>
+</ul>
+</li>
+<li><strong>本手法（Latent Knowledge Hole Probing）</strong>：
+<ul>
+<li>RLで**「モデルが苦手な質問」を自動生成**し、</li>
+<li>アンラーニング済みLLMの<strong>どこに知識の穴が開いているか</strong>を動的に探索する。</li>
+</ul>
+</li>
+<li>結果として、
+<ul>
+<li>標準ベンチマークでは見えない<strong>隠れた知識の穴</strong>を可視化し、</li>
+<li>アンラーニング手法の<strong>安全性・副作用</strong>をより厳密に評価できる。</li>
+</ul>
+</li>
+</ul>
+<h2 id="実験">実験</h2>
+<p><strong>「知識の穴（knowledge holes）」を評価する実験結果</strong>をまとめます。<br>
+主に以下の2つの観点で説明されています。</p>
+<ol>
+<li><strong>WMDP-Bio を使ったアンラーニング（RMU）の評価</strong></li>
+<li><strong>PKU-SafeRLHF を使った複数アンラーニング手法（LLMU, GAKL, NPOGD）の評価</strong></li>
+<li><strong>テストケースの多様性評価（Diversity evaluation）</strong></li>
+</ol>
+<h3 id="1-wmdp-bio-を使ったアンラーニングrmuの評価">1. WMDP-Bio を使ったアンラーニング（RMU）の評価</h3>
+<p><strong>実験設定</strong></p>
+<ul>
+<li><strong>データセット</strong>：WMDP-Bio（バイオセーフティ関連の有害知識を削除するためのデータ）</li>
+<li><strong>手法</strong>：RMU（特定の知識を削除するアンラーニング手法）</li>
+<li><strong>評価対象</strong>：
+<ul>
+<li><strong>DAP</strong>：削除対象知識の<strong>隣接知識</strong>をテストするデータセット</li>
+<li><strong>DLP</strong>：RLで生成した<strong>潜在的な知識の穴</strong>をテストするデータセット</li>
+<li>一般ベンチマーク：MMLU, TruthfulQA, MT-bench, ARC-easy など</li>
+</ul>
+</li>
+</ul>
+<p><strong>結果（標準ベンチマーク vs. DAP/DLP）</strong></p>
+<ul>
+<li>
+<p><strong>標準ベンチマーク</strong>：</p>
+<ul>
+<li>MT-bench, ARC-easy, MMLU などでは、アンラーニング後も<strong>性能低下はわずか</strong>。</li>
+<li>TruthfulQA では<strong>性能が維持されるか、むしろ改善</strong>することもある。</li>
+<li>→ 表面的には「アンラーニング後も性能は保たれている」ように見える。</li>
+</ul>
+</li>
+<li>
+<p><strong>DAP（隣接知識）</strong>：</p>
+<ul>
+<li>事前学習モデルとアンラーニング済みモデルの間に<strong>大きな知識ギャップ</strong>：
+<ul>
+<li>事前：7.848</li>
+<li>アンラーニング後：4.495</li>
+<li><strong>ギャップ：3.353</strong></li>
+</ul>
+</li>
+<li>→ 削除対象の<strong>近くの知識</strong>まで失われていることが分かる。</li>
+</ul>
+</li>
+<li>
+<p><strong>DLP（RLで生成した潜在テストケース）</strong>：</p>
+<ul>
+<li>知識ギャップがさらに拡大：
+<ul>
+<li>事前：7.747</li>
+<li>アンラーニング後：1.040</li>
+<li><strong>ギャップ：6.707</strong></li>
+</ul>
+</li>
+<li>→ RLフレームワークが、**より多くの「隠れた知識の穴」**を特定できた。</li>
+<li>例：<br>
+「ウイルス学は分子生物学・医学・生化学とどのように関連していますか？」<br>
+のような<strong>一般的で安全な質問</strong>に対しても、<br>
+アンラーニング済みモデルは<strong>一貫した回答を生成できなかった</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>結論（WMDP-Bio）</strong></p>
+<ul>
+<li><strong>標準ベンチマークだけに頼ると、アンラーニング後のモデル能力を過大評価してしまう</strong>。</li>
+<li><strong>DAP/DLP のような「知識の穴」を狙った評価</strong>が必要。</li>
+</ul>
+<h3 id="2-pku-saferlhf-を使ったアンラーニング手法の比較">2. PKU-SafeRLHF を使ったアンラーニング手法の比較</h3>
+<p><strong>実験設定</strong></p>
+<ul>
+<li><strong>データセット</strong>：PKU-SafeRLHF（有害な応答を削除するためのデータ）</li>
+<li><strong>手法</strong>：LLMU, GAKL, NPOGD（3つのアンラーニング手法）</li>
+<li><strong>評価</strong>：
+<ul>
+<li>有害出力の抑制（harmscore）</li>
+<li>有益な知識の保持（DAP/DLP）</li>
+<li>一般ベンチマーク（MT-bench, ARC-easy, MMLU, TruthfulQA）</li>
+</ul>
+</li>
+</ul>
+<p><strong>結果（有害性抑制 vs. 知識保持）</strong></p>
+<ul>
+<li>
+<p><strong>有害出力の抑制</strong>：</p>
+<ul>
+<li>3手法とも、あるステップで<strong>harmscore = 0</strong>（有害出力を完全に抑制）を達成。</li>
+<li>→ 有害コンテンツの削除には成功。</li>
+</ul>
+</li>
+<li>
+<p><strong>有益な知識の保持（DAP）</strong>：</p>
+<ul>
+<li>しかし、<strong>有益な知識まで失われる</strong>副作用が発生：
+<ul>
+<li>GAKL：知識ギャップ 5.006（最も大きい）</li>
+<li>LLMU：3.808</li>
+<li>NPOGD：3.603</li>
+</ul>
+</li>
+<li>→ 有害性を強く抑制するほど、<strong>有益な知識も失われやすい</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>DLP（RLで生成した潜在テストケース）</strong>：</p>
+<ul>
+<li>DAP よりも<strong>さらに知識ギャップが拡大</strong>。</li>
+<li>どのアンラーニング手法・どの削除データでも、<br>
+<strong>DLP ではモデルの回答が最低スコア（judgescore = 1）に近づく</strong>。</li>
+<li>→ RLベースの手法が、<strong>どの手法でも「潜在的な知識の穴」を効果的に可視化</strong>できている。</li>
+</ul>
+</li>
+</ul>
+<p><strong>一般ベンチマークの結果</strong></p>
+<ul>
+<li>MT-bench, ARC-easy, MMLU では、<br>
+事前学習モデルとアンラーニング済みモデルの差は<strong>わずか</strong>。</li>
+<li>TruthfulQA では、<strong>性能が改善</strong>することもある（保持データに含まれているため）。</li>
+<li>LLMU は DAP では劣化が小さいが、MT-bench では<strong>急激な性能低下</strong>が見られる。
+<ul>
+<li>著者らは、<strong>ランダムラベリングに依存するため、より広範な概念を誤って消してしまう</strong>可能性を指摘。</li>
+</ul>
+</li>
+<li>NPOGD は、<strong>一般ベンチマークと DAP の両方で、有益な知識の保持が最も優れている</strong>。</li>
+</ul>
+<p><strong>結論（PKU-SafeRLHF）</strong></p>
+<ul>
+<li><strong>有害コンテンツの削除と、広範なモデル能力の保持はトレードオフ</strong>。</li>
+<li>アンラーニングは**「望ましくない知識」だけでなく、周辺の有益な知識も巻き込んで消してしまう**ことがある。</li>
+<li>標準ベンチマークだけでは、この**副作用（collateral forgetting）**を十分に検出できない。</li>
+</ul>
+<h3 id="3-多様性評価diversity-evaluation">3. 多様性評価（Diversity evaluation）</h3>
+<p><strong>なぜ多様性を評価するか</strong></p>
+<ul>
+<li>RLでテストケースを生成するとき、
+<ul>
+<li><strong>同じ質問ばかり繰り返して高報酬を得る</strong>可能性がある。</li>
+<li>それでは「知識の穴」を広く探査したことにならない。</li>
+</ul>
+</li>
+<li>そこで、<strong>DAP と DLP の多様性</strong>を比較し、
+<ul>
+<li>DLP が<strong>単なる繰り返しではなく、多様なテストケース</strong>を生成できているかを確認。</li>
+</ul>
+</li>
+</ul>
+<p><strong>指標</strong></p>
+<ul>
+<li><strong>VENDI score</strong>：テストケース集合の多様性を測る指標（高いほど多様）</li>
+<li><strong>1 − avgSelfBLEU</strong>：
+<ul>
+<li>SelfBLEU は「各文が他の文とどれだけ似ているか」を測る指標。</li>
+<li>1 − avgSelfBLEU が高いほど、<strong>互いに似ていない（多様）</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>結果（Table 2）</strong></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\15_unknown_llm\1778984918093.png" alt="1778984918093"></p>
+<ul>
+<li>
+<p><strong>1 − avgSelfBLEU</strong>：</p>
+<ul>
+<li>DLP は、どの手法でも DAP より<strong>高いか同等のスコア</strong>：
+<ul>
+<li>LLMU：DLP 0.672 &gt; DAP 0.576</li>
+<li>GAKL：DLP 0.636 &gt; DAP 0.576</li>
+<li>NPOGD：DLP 0.583 &gt; DAP 0.576</li>
+<li>RMU：DLP 0.783 &gt; DAP 0.714</li>
+</ul>
+</li>
+<li>→ DLP は<strong>より多様なテストケース</strong>を生成できている。</li>
+</ul>
+</li>
+<li>
+<p><strong>VENDI score</strong>：</p>
+<ul>
+<li>LLMU, GAKL, NPOGD では、DLP の VENDI が約 0.35–0.38、DAP は約 0.33。</li>
+<li>RMU では、DAP と DLP の両方が約 0.43 で同程度。
+<ul>
+<li>これは、RMU が<strong>ドメイン固有の専門用語（Df）に集中して削除</strong>するため、
+<ul>
+<li>テストケースが<strong>意味的に似た領域</strong>に集中しやすいためと推測。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>外部データセットとの比較</strong>：</p>
+<ul>
+<li>TruthfulQA, MMLU などの外部データセットと比べても、</li>
+<li>生成した DLP の VENDI・1−avgSelfBLEU は<strong>同等かそれ以上</strong>の多様性を持つ。</li>
+</ul>
+</li>
+</ul>
+<p><strong>結論（多様性）</strong></p>
+<ul>
+<li>RLフレームワークは、<strong>単一の質問の繰り返しではなく、多様なテストケース</strong>を生成できている。</li>
+<li>これにより、アンラーニング済みモデルは**「新しい形で失敗」**することを強制され、<br>
+<strong>潜在的な知識の穴</strong>がより広く可視化される。</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>この論文は、<strong>LLMのアンラーニング（特定知識の削除）が本当に安全か</strong>を検証し、<strong>標準ベンチマークでは見えない「知識の穴（knowledge holes）」</strong> を明らかにした研究です。</p>
+<h3 id="1-何を問題にしているか">1. 何を問題にしているか</h3>
+<ul>
+<li>LLMの<strong>マシンアンラーニング</strong>は、不要な知識を再学習なしで削除する技術として注目されている。</li>
+<li>しかし、<strong>標準ベンチマークでは性能が保たれているように見える一方で</strong>、
+<ul>
+<li>削除対象ではない<strong>有益な知識まで失われる（ナレッジホール）</strong> ことがある。</li>
+</ul>
+</li>
+<li>従来の静的ベンチマークでは、この<strong>副作用（collateral forgetting）</strong> を十分に検出できない。</li>
+</ul>
+<h3 id="2-どうやって検出するか">2. どうやって検出するか</h3>
+<ul>
+<li><strong>テストケース生成フレームワーク</strong>を提案：
+<ul>
+<li><strong>隣接知識の穴（adjacent knowledge hole）</strong>：削除対象の近くの知識をテストする DAP。</li>
+<li><strong>潜在的な知識の穴（latent knowledge holes）</strong>：<br>
+RLで「モデルが答えられない質問」を自動生成するポリシーを学習し、<br>
+アンラーニング済みLLMの<strong>どこに知識の穴が開いているか</strong>を動的に探索（DLP）。</li>
+</ul>
+</li>
+<li><strong>報酬設計</strong>：
+<ul>
+<li>ジャッジLLMが「質問と回答」を評価し、<br>
+<strong>有効な質問で回答がデタラメなほど高報酬</strong>を与える。</li>
+<li>多様性・安定性・探索を考慮した目的関数で、<strong>多様なテストケース</strong>を生成。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-何が分かったか">3. 何が分かったか</h3>
+<ul>
+<li><strong>WMDP-Bio（RMU）</strong>：
+<ul>
+<li>標準ベンチマークでは性能低下はわずかだが、</li>
+<li>DAP/DLP では<strong>大きな知識ギャップ</strong>（最大6.707）が生じる。</li>
+<li>例：一般的で安全な質問に対しても、アンラーニング済みモデルは一貫した回答を生成できなかった。</li>
+</ul>
+</li>
+<li><strong>PKU-SafeRLHF（LLMU, GAKL, NPOGD）</strong>：
+<ul>
+<li>3手法とも有害出力を完全に抑制できるが、</li>
+<li><strong>有益な知識の保持</strong>では大きな劣化（知識ギャップ3.6〜5.0）が発生。</li>
+<li>DLP ではさらにギャップが拡大し、<strong>どの手法でも潜在的な知識の穴</strong>が可視化された。</li>
+</ul>
+</li>
+<li><strong>多様性評価</strong>：
+<ul>
+<li>DLP は DAP より<strong>高い多様性スコア</strong>（VENDI, 1−avgSelfBLEU）を示し、</li>
+<li>単なる繰り返しではなく、<strong>多様な形でモデルを失敗させるテストケース</strong>を生成できている。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-結論">4. 結論</h3>
+<ul>
+<li><strong>アンラーニングは「望ましくない知識」だけでなく、周辺の有益な知識も巻き込んで消してしまう</strong>。</li>
+<li>標準ベンチマークだけに頼ると、<strong>「安全に見えるが、実は知識の穴だらけ」のモデル</strong>を評価してしまう。</li>
+<li>本論文は、<strong>RLベースの動的評価枠組み</strong>によって、<br>
+アンラーニング後の<strong>隠れた知識の穴</strong>を体系的に可視化し、<br>
+<strong>より厳密な安全性評価の必要性</strong>を示しました。<a href="https://openreview.net/forum?id=TFidSatsOC">OpenReview</a></li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+        </body>
+        </html>
