@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30d9;&#x30f3;&#x30c1;&#x30de;&#x30fc;&#x30af;&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;dark&quot;,&quot;lightModeTheme&quot;:&quot;default&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/01/26/000000">過去VLMの性能指標</a>について調べました。
+少し時間が経過して今度は、&quot;使う前にどんな性能のVLMかしら&quot;を知りたいということで、実際にベンチマークを使ってVLMの性能評価をしたいと考えるようになりました。</p>
+<p><strong>本日の内容:</strong></p>
+<blockquote>
+<p>ベンチマークを用いてVLMの性能評価を実際に行ってみる。</p>
+</blockquote>
+<h2 id="ベンチマークとは">ベンチマークとは</h2>
+<h3 id="言葉の意味">言葉の意味</h3>
+<p>「ベンチマーク」は、<strong>「比較の基準」</strong> や <strong>「目標とする水準」</strong> を意味する言葉です。</p>
+<ul>
+<li>
+<p><strong>元々の意味</strong><br>
+測量で使う「基準点」のこと。そこを起点に高さや距離を測る目印です。</p>
+</li>
+<li>
+<p><strong>ビジネス・金融での意味</strong></p>
+<ul>
+<li>他社や業界平均などと<strong>比較するための基準</strong><br>
+例：「業界のベンチマークに合わせてコストを削減する」</li>
+<li>投資の世界では、<strong>市場全体の動きを表す指標</strong><br>
+例：日経平均株価やTOPIXは「日本株のベンチマーク」と呼ばれる</li>
+</ul>
+</li>
+<li>
+<p><strong>IT・技術での意味</strong></p>
+<ul>
+<li>性能を<strong>比較するためのテスト</strong><br>
+例：「CPUのベンチマークテストで性能を測る」「Webサイトの表示速度をベンチマークする」</li>
+</ul>
+</li>
+</ul>
+<p><strong>一言でいうと</strong><br>
+「自分の成果や性能を、<strong>他のものと比べるための基準・目安</strong>」のことです。</p>
+<h3 id="背景">背景</h3>
+<p>LLM/VLMのベンチマークが必要になった主なきっかけは、<strong>「どのモデルがどれだけ優れているかを、公平に比較できる共通の物差し」が欲しくなった</strong>からです。</p>
+<p>具体的には、次のような理由があります。</p>
+<ol>
+<li>
+<p><strong>モデルが急増し、性能差が分かりにくくなった</strong></p>
+<ul>
+<li>GPT系、LLaMA系、Gemini系など、さまざまなLLM/VLMが登場し、<br>
+「どのモデルが本当に強いのか」を比較する手段が必要になりました。</li>
+</ul>
+</li>
+<li>
+<p><strong>タスクごとの得意・不得意が複雑になった</strong></p>
+<ul>
+<li>同じ「文章生成」でも、
+<ul>
+<li>長文生成</li>
+<li>推論</li>
+<li>コード生成</li>
+<li>マルチモーダル（画像＋テキスト）<br>
+など、得意分野が異なるため、<strong>特定のタスクに特化した評価基準</strong>が必要になりました。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>研究・開発の進捗を客観的に測るため</strong></p>
+<ul>
+<li>新しいアーキテクチャや学習手法を提案しても、<br>
+「どれだけ性能が上がったか」を<strong>数値で示せる共通のテストセット</strong>がないと、説得力が弱くなります。</li>
+<li>そのため、MMLU、GSM8K、HumanEval、MMBench などのベンチマークが整備されました。</li>
+</ul>
+</li>
+<li>
+<p><strong>安全性・バイアス評価の必要性</strong></p>
+<ul>
+<li>モデルが有害な出力をしないか、偏った回答をしないか、といった<strong>安全性・公平性</strong>も評価する必要が出てきたため、<br>
+それらを測るためのベンチマーク（例：TruthfulQA、BOLD）も整備されました。</li>
+</ul>
+</li>
+</ol>
+<h2 id="公開されているベンチマーク">公開されているベンチマーク</h2>
+<p>代表的なVLMベンチマークを、<strong>公開状況・評価内容・Colabでの利用しやすさ</strong>の観点でまとめると、以下のようになります。</p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク</th>
+<th>公開状況</th>
+<th>評価している内容</th>
+<th>Google Colabでの利用しやすさ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MMBench</strong></td>
+<td>公開（GitHub・Hugging Face）</td>
+<td>画像＋テキストの多角的な理解（物体認識、OCR、行動認識、関係推論など20次元）<a href="https://mmbench.opencompass.org.cn">MMBench</a></td>
+<td>△ 中程度。データと評価コードはあるが、GPUが必要で、OpenCompassなどの評価フレームワークと組み合わせる必要がある。</td>
+</tr>
+<tr>
+<td><strong>MMMU / MMMU-Pro</strong></td>
+<td>公開（GitHub・Hugging Face）</td>
+<td>大学レベルの専門知識＋画像理解・推論（30分野・6分野）<a href="https://mmmu-benchmark.github.io">MMMU</a></td>
+<td>△ 中程度。MMMU評価コードとデータは公開されているが、GPU＋環境構築が必要。</td>
+</tr>
+<tr>
+<td><strong>VQAv2</strong></td>
+<td>公開（COCOベースのVQA）</td>
+<td>画像に関する自然言語質問への回答能力（常識・物体・属性など）<a href="https://learnopencv.com/vlm-evaluation-metrics">LearnOpenCV</a></td>
+<td>〇 比較的容易。データはCOCOとVQAv2で広く使われており、Colab上で簡単にダウンロードして評価できる。</td>
+</tr>
+<tr>
+<td><strong>TextVQA / DocVQA</strong></td>
+<td>公開</td>
+<td>画像中の文字（OCR）を読んで答える能力（看板・文書など）<a href="https://datature.com/glossary/vlm-benchmarks">Datature</a></td>
+<td>〇 比較的容易。Hugging Faceなどからデータを取得し、Colab上で評価コードを書くことが可能。</td>
+</tr>
+<tr>
+<td><strong>POPE</strong></td>
+<td>公開</td>
+<td>物体幻覚（存在しない物体を言い当てるか）の検出<a href="https://datature.com/glossary/vlm-benchmarks">Datature</a></td>
+<td>〇 比較的容易。データセットは小さめで、Colab上で簡単にロードして評価できる。</td>
+</tr>
+<tr>
+<td><strong>MM-Vet</strong></td>
+<td>公開</td>
+<td>OCR＋空間推論＋知識を統合した複合タスクの能力<a href="https://datature.com/glossary/vlm-benchmarks">Datature</a></td>
+<td>△ 中程度。評価コードとデータは公開されているが、やや複雑でGPU＋環境整備が必要。</td>
+</tr>
+<tr>
+<td><strong>SEED-Bench</strong></td>
+<td>公開</td>
+<td>生成的な理解（画像説明・対話など）を12次元で評価<a href="https://datature.com/glossary/vlm-benchmarks">Datature</a></td>
+<td>△ 中程度。データと評価コードはあるが、GPUとフレームワークの組み合わせが必要。</td>
+</tr>
+<tr>
+<td><strong>MMStar</strong></td>
+<td>公開</td>
+<td>視覚情報が必須な高難度サンプルによる多モーダル能力評価<a href="https://mmstar-benchmark.github.io">MMStar</a></td>
+<td>△ 中程度。評価コード・データは公開されているが、Colab単体ではやや手間がかかる。</td>
+</tr>
+<tr>
+<td><strong>AMBER</strong></td>
+<td>公開（GitHub）</td>
+<td>多モーダル幻覚（存在・属性・関係など）を8次元で評価するLLM-freeベンチマーク。生成タスクと識別タスクの両方をカバー<a href="https://github.com/junyangwang0410/AMBER">AMBER GitHub</a></td>
+<td>△ 中程度。データと<code>inference.py</code>が公開されており、Colab上でGPUを使って実行可能だが、環境構築とモデル準備が必要。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>まとめ</strong></p>
+<ul>
+<li><strong>公開されているか</strong>：上記はいずれもデータ・評価コードが公開されているベンチマークです。</li>
+<li><strong>評価内容</strong>：
+<ul>
+<li>一般的な画像理解（VQAv2、MMBench）</li>
+<li>専門知識＋推論（MMMU系）</li>
+<li>OCR・文書理解（TextVQA、DocVQA）</li>
+<li>安全性・幻覚（POPE、<strong>AMBER</strong>）</li>
+<li>統合能力（MM-Vet、SEED-Bench、MMStar）<br>
+といった多様な能力を測るよう設計されています。</li>
+</ul>
+</li>
+<li><strong>Google Colabでの利用しやすさ</strong>：
+<ul>
+<li>VQAv2、TextVQA、POPE などは比較的シンプルで、Colab上で試しやすいです。</li>
+<li>MMBench、MMMU、MM-Vet、SEED-Bench、MMStar、<strong>AMBER</strong> は、公開コードがあるものの、GPUと環境構築が必要で、Colab単体ではやや手間がかかります。</li>
+</ul>
+</li>
+</ul>
+<p>「Colabでとりあえず1つ試したい」場合は、<strong>VQAv2</strong> か <strong>TextVQA</strong> が入門として扱いやすく、<strong>AMBER</strong> は幻覚評価に特化したベンチマークとして追加で試すと良いかもしれません。</p>
+<p>そして一番容易なわけではありませんが、幻覚の指標に関心があったので、今回は <strong>AMBER</strong> のトライアルを行ってみます。</p>
+<h2 id="手順">手順</h2>
+<p>以下に、Colab で AMBER ベンチマークを使って VLM を評価する手順をまとめます。
+あくまでざっとした流れです。</p>
+<h3 id="1-準備">1. 準備</h3>
+<pre><code class="language-python"><span class="hljs-comment"># 1. AMBER リポジトリを取得</span>
+!git clone https://github.com/junyangwang0410/AMBER.git
+amber_dir = <span class="hljs-string">&quot;/content/AMBER&quot;</span>
+
+<span class="hljs-comment"># 2. 画像データをダウンロードして解凍</span>
+!gdown --<span class="hljs-built_in">id</span> 1MaCHgtupcZUjf007anNl4_MV0o4DjXvl -O /content/AMBER_images.<span class="hljs-built_in">zip</span>
+!unzip -q /content/AMBER_images.<span class="hljs-built_in">zip</span> -d /content/AMBER/data/
+
+<span class="hljs-comment"># 3. ライブラリのインストール</span>
+!pip install transformers accelerate torch pillow
+</code></pre>
+<h3 id="2-モデルとデータの読み込み">2. モデルとデータの読み込み</h3>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> Blip2Processor, Blip2ForConditionalGeneration
+<span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> json
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+<span class="hljs-keyword">import</span> os
+
+<span class="hljs-comment"># 1. BLIP-2 のロード</span>
+device = <span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>
+processor = Blip2Processor.from_pretrained(<span class="hljs-string">&quot;Salesforce/blip2-opt-2.7b&quot;</span>)
+model = Blip2ForConditionalGeneration.from_pretrained(
+    <span class="hljs-string">&quot;Salesforce/blip2-opt-2.7b&quot;</span>,
+    torch_dtype=torch.float16,
+    device_map=<span class="hljs-string">&quot;auto&quot;</span>
+)
+
+<span class="hljs-comment"># 2. 質問データの読み込み</span>
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;/content/AMBER/data/query/query_discriminative.json&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>, encoding=<span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:
+    queries = json.load(f)
+
+<span class="hljs-comment"># 3. アノテーションの読み込み</span>
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;/content/AMBER/data/annotations.json&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>, encoding=<span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:
+    annotations = json.load(f)
+annotation_dict = {item[<span class="hljs-string">&quot;id&quot;</span>]: item <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> annotations}
+</code></pre>
+<h3 id="3-画像ファイル名の解決">3. 画像ファイル名の解決</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">resolve_image_filename</span>(<span class="hljs-params">img_name</span>):
+    <span class="hljs-comment"># &quot;AMBER_0001.jpg&quot; -&gt; &quot;AMBER_1.jpg&quot;</span>
+    <span class="hljs-keyword">import</span> re
+    match = re.match(<span class="hljs-string">r&quot;AMBER_0*(\d+)\.jpg&quot;</span>, img_name)
+    <span class="hljs-keyword">if</span> match:
+        num = <span class="hljs-built_in">int</span>(match.group(<span class="hljs-number">1</span>))
+        <span class="hljs-keyword">return</span> <span class="hljs-string">f&quot;AMBER_<span class="hljs-subst">{num}</span>.jpg&quot;</span>
+    <span class="hljs-keyword">return</span> img_name
+</code></pre>
+<h3 id="4-推論実行">4. 推論実行</h3>
+<pre><code class="language-python">inference_data = []
+
+<span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> queries:
+    img_name = q[<span class="hljs-string">&quot;image&quot;</span>]
+    question = q[<span class="hljs-string">&quot;query&quot;</span>]
+    qid = q[<span class="hljs-string">&quot;id&quot;</span>]
+
+    <span class="hljs-comment"># 画像読み込み</span>
+    img_path = os.path.join(amber_dir, <span class="hljs-string">&quot;data&quot;</span>, <span class="hljs-string">&quot;image&quot;</span>, resolve_image_filename(img_name))
+    image = Image.<span class="hljs-built_in">open</span>(img_path).convert(<span class="hljs-string">&quot;RGB&quot;</span>)
+
+    <span class="hljs-comment"># BLIP-2 で推論</span>
+    inputs = processor(image, question, return_tensors=<span class="hljs-string">&quot;pt&quot;</span>).to(device, torch.float16)
+    out = model.generate(**inputs, max_new_tokens=<span class="hljs-number">10</span>)
+    response = processor.decode(out[<span class="hljs-number">0</span>], skip_special_tokens=<span class="hljs-literal">True</span>)
+
+    <span class="hljs-comment"># Yes/No に正規化</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;yes&quot;</span> <span class="hljs-keyword">in</span> response.lower():
+        response = <span class="hljs-string">&quot;Yes&quot;</span>
+    <span class="hljs-keyword">elif</span> <span class="hljs-string">&quot;no&quot;</span> <span class="hljs-keyword">in</span> response.lower():
+        response = <span class="hljs-string">&quot;No&quot;</span>
+    <span class="hljs-keyword">else</span>:
+        response = <span class="hljs-string">&quot;Yes&quot;</span>  <span class="hljs-comment"># デフォルト（必要に応じて調整）</span>
+
+    inference_data.append({<span class="hljs-string">&quot;id&quot;</span>: qid, <span class="hljs-string">&quot;response&quot;</span>: response})
+
+<span class="hljs-comment"># 結果を保存</span>
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;/content/inference_data.json&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>, encoding=<span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:
+    json.dump(inference_data, f, indent=<span class="hljs-number">2</span>, ensure_ascii=<span class="hljs-literal">False</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;推論完了。結果を /content/inference_data.json に保存しました。&quot;</span>)
+</code></pre>
+<h3 id="5-評価実行">5. 評価実行</h3>
+<pre><code class="language-bash"><span class="hljs-built_in">cd</span> /content/AMBER
+python inference.py \
+  --inference_data /content/inference_data.json \
+  --annotation data/annotations.json
+</code></pre>
+<p>これで、AMBER の公式スクリプトが Accuracy / Precision / Recall / F1 などを自動計算して表示します。</p>
+<h3 id="6-結果の確認">6. 結果の確認</h3>
+<p>必要に応じて、前回提示した「サマリ表示コード」を実行して、タスク種別ごとの詳細な指標を確認できます。</p>
+<h2 id="実装">実装</h2>
+<ol>
+<li>パッケージインストール</li>
+</ol>
+<pre><code>!pip install torch torchvision transformers accelerate pillow requests
+!python -m spacy download en_core_web_lg
+!pip install git+https://github.com/huggingface/transformers.git
+</code></pre>
+<ol start="2">
+<li>データDL</li>
+</ol>
+<p>結構要注意です。
+githubのレポジトリを読んでその通り進めても上手くいきませんでした。
+指定されたjsonファイルと、答えがのっているannotationファイルを結合して解答ファイルをつくります。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> json
+
+
+amber_dir = <span class="hljs-string">&quot;/content/AMBER&quot;</span>
+image_dir = os.path.join(amber_dir, <span class="hljs-string">&quot;data&quot;</span>, <span class="hljs-string">&quot;image&quot;</span>)
+
+<span class="hljs-comment"># 判別タスク用クエリファイル（例）</span>
+annotation_path = os.path.join(amber_dir, <span class="hljs-string">&quot;data&quot;</span>, <span class="hljs-string">&quot;query&quot;</span>, <span class="hljs-string">&quot;query_discriminative.json&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Image dir:&quot;</span>, image_dir)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Annotation file:&quot;</span>, annotation_path)
+
+
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(annotation_path, <span class="hljs-string">&quot;r&quot;</span>, encoding=<span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:
+    annotations = json.load(f)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Total samples: <span class="hljs-subst">{<span class="hljs-built_in">len</span>(annotations)}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Example annotation:&quot;</span>)
+<span class="hljs-built_in">print</span>(json.dumps(annotations[<span class="hljs-number">0</span>], indent=<span class="hljs-number">2</span>, ensure_ascii=<span class="hljs-literal">False</span>))
+</code></pre>
+<p>更に画像ファイルは別です。Google DriveからDLしてください。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> os
+
+image_dir = <span class="hljs-string">&quot;/content/AMBER/data/image&quot;</span>
+<span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.exists(image_dir):
+    os.makedirs(image_dir, exist_ok=<span class="hljs-literal">True</span>)
+
+image_files = os.listdir(image_dir)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Number of images in <span class="hljs-subst">{image_dir}</span>: <span class="hljs-subst">{<span class="hljs-built_in">len</span>(image_files)}</span>&quot;</span>)
+<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(image_files) &gt; <span class="hljs-number">0</span>:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;First few files:&quot;</span>, image_files[:<span class="hljs-number">5</span>])
+
+<span class="hljs-comment"># セル: 画像ダウンロード</span>
+<span class="hljs-keyword">import</span> gdown
+<span class="hljs-keyword">import</span> zipfile
+
+<span class="hljs-comment"># Google Drive の共有リンク（ファイル ID を抽出）</span>
+file_id = <span class="hljs-string">&quot;1MaCHgtupcZUjf007anNl4_MV0o4DjXvl&quot;</span>
+url = <span class="hljs-string">f&quot;https://drive.google.com/uc?id=<span class="hljs-subst">{file_id}</span>&quot;</span>
+output_zip = <span class="hljs-string">&quot;/content/AMBER_images.zip&quot;</span>
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Downloading images from Google Drive...&quot;</span>)
+gdown.download(url, output_zip, quiet=<span class="hljs-literal">False</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Extracting images...&quot;</span>)
+<span class="hljs-keyword">with</span> zipfile.ZipFile(output_zip, <span class="hljs-string">&quot;r&quot;</span>) <span class="hljs-keyword">as</span> zip_ref:
+    zip_ref.extractall(<span class="hljs-string">&quot;/content/AMBER/data/image&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Done.&quot;</span>)
+</code></pre>
+<ol start="3">
+<li>モデルロード</li>
+</ol>
+<p>性能さておきでとりあえず入出力が可能なモデルということで以下を選定しました。</p>
+<pre><code class="language-python"><span class="hljs-comment"># セル 4: BLIP-2 モデルのロード</span>
+<span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+<span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> Blip2Processor, Blip2ForConditionalGeneration
+
+device = <span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Using device:&quot;</span>, device)
+
+processor = Blip2Processor.from_pretrained(<span class="hljs-string">&quot;Salesforce/blip2-opt-2.7b&quot;</span>)
+model = Blip2ForConditionalGeneration.from_pretrained(
+    <span class="hljs-string">&quot;Salesforce/blip2-opt-2.7b&quot;</span>,
+    torch_dtype=torch.float16
+).to(device)
+</code></pre>
+<ol start="4">
+<li>推論</li>
+</ol>
+<p>性能評価＝VLMにテスト用データを入力して、解答合わせすることになります。</p>
+<pre><code class="language-python"><span class="hljs-comment"># セル: 推論ループ（画像パス解決付き）</span>
+<span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">resolve_image_filename</span>(<span class="hljs-params">img_field</span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    query_discriminative.json の &quot;image&quot; フィールドを実際のファイル名に変換
+    例: &quot;AMBER_0001.jpg&quot; -&gt; &quot;AMBER_1.jpg&quot;
+    &quot;&quot;&quot;</span>
+    <span class="hljs-keyword">if</span> img_field.startswith(<span class="hljs-string">&quot;AMBER_&quot;</span>) <span class="hljs-keyword">and</span> img_field.endswith(<span class="hljs-string">&quot;.jpg&quot;</span>):
+        num_part = img_field[<span class="hljs-number">6</span>:-<span class="hljs-number">4</span>]  <span class="hljs-comment"># &quot;0001&quot;</span>
+        <span class="hljs-keyword">try</span>:
+            num = <span class="hljs-built_in">int</span>(num_part)  <span class="hljs-comment"># 0001 -&gt; 1</span>
+            <span class="hljs-comment"># ゼロ埋めなし</span>
+            resolved = <span class="hljs-string">f&quot;AMBER_<span class="hljs-subst">{num}</span>.jpg&quot;</span>
+            <span class="hljs-keyword">return</span> resolved
+        <span class="hljs-keyword">except</span> ValueError:
+            <span class="hljs-keyword">pass</span>
+    <span class="hljs-keyword">return</span> img_field
+
+test_subset = queries[:<span class="hljs-number">50</span>]  <span class="hljs-comment"># 先頭 50 サンプルでテスト</span>
+inference_results = []
+annotation_dict = {item[<span class="hljs-string">&quot;id&quot;</span>]: item <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> annotations}
+
+<span class="hljs-keyword">for</span> i, q <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(tqdm(test_subset)):
+    qid = q[<span class="hljs-string">&quot;id&quot;</span>]
+    ann = annotation_dict.get(qid)
+
+    <span class="hljs-keyword">if</span> ann <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Warning: No annotation found for id <span class="hljs-subst">{qid}</span>&quot;</span>)
+        <span class="hljs-keyword">continue</span>
+
+    img_field = q[<span class="hljs-string">&quot;image&quot;</span>]
+    resolved_img = resolve_image_filename(img_field)
+    img_path = os.path.join(amber_dir, <span class="hljs-string">&quot;data&quot;</span>, <span class="hljs-string">&quot;image&quot;</span>, resolved_img)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.exists(img_path):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Warning: Image not found for id <span class="hljs-subst">{qid}</span>: <span class="hljs-subst">{img_path}</span>&quot;</span>)
+        <span class="hljs-keyword">continue</span>
+
+    question = q[<span class="hljs-string">&quot;query&quot;</span>]
+    task_type = ann.get(<span class="hljs-string">&quot;type&quot;</span>, <span class="hljs-string">&quot;unknown&quot;</span>)
+
+    <span class="hljs-keyword">try</span>:
+        response = vlm_predict(img_path, question, task_type=task_type)
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Error on sample <span class="hljs-subst">{qid}</span>: <span class="hljs-subst">{e}</span>&quot;</span>)
+        response = <span class="hljs-string">&quot;error&quot;</span>
+
+    inference_results.append({
+        <span class="hljs-string">&quot;id&quot;</span>: qid,
+        <span class="hljs-string">&quot;response&quot;</span>: response
+    })
+
+<span class="hljs-comment"># 結果保存</span>
+inference_data_path = <span class="hljs-string">&quot;/content/inference_data.json&quot;</span>
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(inference_data_path, <span class="hljs-string">&quot;w&quot;</span>, encoding=<span class="hljs-string">&quot;utf-8&quot;</span>) <span class="hljs-keyword">as</span> f:
+    json.dump(inference_results, f, indent=<span class="hljs-number">2</span>, ensure_ascii=<span class="hljs-literal">False</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Inference results saved to <span class="hljs-subst">{inference_data_path}</span>&quot;</span>)
+</code></pre>
+<ol start="5">
+<li>結果</li>
+</ol>
+<p>Colabのフォルダに<code>inference_data.json</code>に解答が出力されます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\vlm_scoring\1779595244243.png" alt="1779595244243"></p>
+<p>中身はVLMからの回答が入っています。
+全ての回答が<code>Yes</code>。。。目暗で全部はいと言ってきた感触。。。</p>
+<pre><code>  {
+    &quot;id&quot;: 1005,
+    &quot;response&quot;: &quot;Yes&quot;
+  },
+  {
+    &quot;id&quot;: 1006,
+    &quot;response&quot;: &quot;Yes&quot;
+  },
+  {
+    &quot;id&quot;: 1007,
+    &quot;response&quot;: &quot;Yes&quot;
+  },
+  {
+    &quot;id&quot;: 1008,
+    &quot;response&quot;: &quot;Yes&quot;
+  },
+  {
+    &quot;id&quot;: 1009,
+    &quot;response&quot;: &quot;Yes&quot;
+  },
+  {
+    &quot;id&quot;: 1010,
+    &quot;response&quot;: &quot;Yes&quot;
+  },
+</code></pre>
+<p>この後解答合わせすると全問題の中で正解が25。というかすべて<code>Yes</code>と答えてました。。。</p>
+<pre><code> 'qa_correct_num': 50,
+ 'qa_correct_score': 25,
+ 'qa_no_num': 25,
+ 'qa_no_score': 0,
+ 'qa_ans_no_num': 0,
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>以下に、Colab で AMBER ベンチマークを使って VLM を評価した内容を簡潔にまとめます。</p>
+<h3 id="1-ベンチマークとは">1. ベンチマークとは</h3>
+<ul>
+<li><strong>ベンチマーク</strong>とは、性能や成果を<strong>他と比較するための共通の物差し</strong>です。</li>
+<li>LLM/VLM の世界では、モデルごとの強み・弱みを公平に比較するために、<br>
+MMBench、MMMU、VQAv2、POPE、AMBER など、さまざまなベンチマークが整備されています。</li>
+<li>今回は、<strong>幻覚（hallucination）</strong> に特化したベンチマーク <strong>AMBER</strong> を使って、<br>
+VLM の「Yes/No 判別タスク」の性能を評価しました。</li>
+</ul>
+<h3 id="2-amber-を使った評価の流れcolab">2. AMBER を使った評価の流れ（Colab）</h3>
+<p>ざっと説明するとこの流れです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\vlm_scoring\1779595665262.png" alt="1779595665262"></p>
+<h3 id="3-結果の総括">3. 結果の総括</h3>
+<ul>
+<li>今回のテストでは、<strong>モデルがほぼすべての質問に対して「Yes」と回答</strong>していました。</li>
+<li>そのため、集計結果は以下のようになりました。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-string">&#x27;qa_correct_num&#x27;</span>: <span class="hljs-number">50</span>,      <span class="hljs-comment"># 全サンプル数</span>
+<span class="hljs-string">&#x27;qa_correct_score&#x27;</span>: <span class="hljs-number">25</span>,   <span class="hljs-comment"># 正解数（Yes/No のうち Yes 側が半分）</span>
+<span class="hljs-string">&#x27;qa_no_num&#x27;</span>: <span class="hljs-number">25</span>,          <span class="hljs-comment"># 正解が「No」のサンプル数</span>
+<span class="hljs-string">&#x27;qa_no_score&#x27;</span>: <span class="hljs-number">0</span>,         <span class="hljs-comment"># 「No」と正しく答えた数（0）</span>
+</code></pre>
+<ul>
+<li><strong>Accuracy</strong>：50.0%（全体の正解率）</li>
+<li><strong>Precision / Recall / F1</strong>：0.0%（「No」に関する指標が計算不能）</li>
+</ul>
+<p><strong>結論として</strong>、</p>
+<ul>
+<li>AMBER ベンチマークを使った VLM 評価の一連の流れは、Colab 上で問題なく実行できました。</li>
+<li>一方で、今回使用した BLIP-2 の設定では、<strong>「No」のケースをほとんど正しく認識できていない</strong>ことが明らかになりました。</li>
+<li>今後は、プロンプト設計や出力正規化の調整、あるいは別の VLM モデルを用いることで、<br>
+幻覚検出や Yes/No 判別の性能を改善していく必要があります。</li>
+</ul>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+
+            
+        </body>
+        </html>
