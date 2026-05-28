@@ -507,3 +507,158 @@ Google ColabでGraph RAGを無料でPoCするには、
   **Graph RAGの基本的な動作確認やデモ**には十分使えます。
 - 本格的なサービス化を目指す場合は、  
   **Neo4jや本番環境のLLM API**への移行を検討してください。
+
+
+## Ollama
+
+
+Ollamaは、**自分のPCやサーバー上で大規模言語モデル（LLM）を動かすためのプラットフォーム**です。  
+要するに、「ChatGPTのようなAIを**ローカル環境で無料で動かせる**ツール」です。
+
+公式サイト：https://ollama.com/  
+GitHub：https://github.com/ollama/ollama[Ollama公式サイト](https://ollama.com)
+
+---
+
+## 1. Ollamaの基本特徴
+
+### 1.1 ローカル実行が前提
+
+- OpenAIやAnthropicなどの**クラウドAPIを使わず**、  
+  自分のマシン（Windows / macOS / Linux）上でLLMを実行します。
+- モデルは**ローカルにダウンロード**されるため、
+  - インターネット接続がなくても使える
+  - データが外部に送信されない（プライバシー重視）
+
+### 1.2 モデル管理が簡単
+
+- `ollama pull` コマンドで、様々なLLMを簡単にインストールできます。
+- 例：
+  ```bash
+  ollama pull llama3.1:8b
+  ollama pull mistral:7b
+  ollama pull gemma2:2b
+  ```
+- モデルライブラリ：https://ollama.com/search[Ollama公式サイト](https://ollama.com)
+
+### 1.3 コマンドラインとAPIの両方から使える
+
+- **CLI（コマンドライン）**：
+  ```bash
+  ollama run llama3.1:8b "こんにちは"
+  ```
+- **HTTP API**：
+  - デフォルトで `http://localhost:11434` にサーバーが立ち上がり、  
+    REST API経由でLLMと対話できます。
+  - 例：`curl -X POST http://localhost:11434/api/generate -d '{"model": "llama3.1:8b", "prompt": "Hello"}'`
+
+---
+
+## 2. なぜGraph RAGやRAG開発で使われるのか
+
+### 2.1 無料で大量の推論ができる
+
+- クラウドLLM（GPT-4など）は、**APIコスト**がかかります。
+- Ollama＋ローカルLLMなら、
+  - PoCや実験で**何度も推論しても無料**
+  - RAGの「検索→リランキング→生成」を**コストを気にせず試せる**
+
+### 2.2 プライバシー保護
+
+- 機密文書や社内データをRAGで扱う場合、  
+  **クラウドにデータを送りたくない**ことが多いです。
+- Ollamaなら、**データはすべてローカル**で完結します。
+
+### 2.3 カスタマイズ性
+
+- モデルを差し替えたり、**独自のプロンプト設計**を自由に行えます。
+- RAGの「生成ステップ」を細かく制御したい場合に便利です。
+
+---
+
+## 3. 実際の使い方（イメージ）
+
+### 3.1 インストール
+
+公式サイトからダウンロード：https://ollama.com/download[Ollama公式サイト](https://ollama.com)
+
+- Windows / macOS：インストーラーを実行
+- Linux：`curl -fsSL https://ollama.com/install.sh | sh`
+
+### 3.2 モデルの取得
+
+```bash
+ollama pull llama3.1:8b
+```
+
+### 3.3 Pythonから使う（例）
+
+```python
+import requests
+import json
+
+def ask_ollama(prompt: str, model: str = "llama3.1:8b"):
+    url = "http://localhost:11434/api/generate"
+    data = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(url, json=data)
+    return response.json()["response"]
+
+answer = ask_ollama("こんにちは、自己紹介してください。")
+print(answer)
+```
+
+---
+
+## 4. 注意点・制約
+
+### 4.1 ハードウェア要件
+
+- **GPU（NVIDIAなど）**があると高速です。
+- CPUのみでも動きますが、**推論が遅い**です。
+- Mac（M1/M2など）でもネイティブ対応しています。
+
+### 4.2 モデルサイズとメモリ
+
+- 7B〜8Bパラメータモデル：**8〜16GBメモリ**が目安
+- 13B以上：**16GB以上のメモリ**推奨
+- 無料Colab（T4 GPU）では、**8B前後が現実的**です。
+
+### 4.3 モデルの品質
+
+- 無料のオープンモデル（Llama、Mistral、Gemmaなど）は、  
+  GPT-4ほど高性能ではありません。
+- ただし、**RAGの「生成ステップ」や「リランキング」**には十分使えるケースが多いです。
+
+---
+
+## 5. Graph RAGとの関係
+
+Graph RAGのPoCでOllamaを使うメリットは、
+
+1. **無料でLLMを何度も呼び出せる**
+2. **ローカル実行なので、機密データを安全に扱える**
+3. **Colabなどのクラウド環境でもGPUを活用できる**
+
+という点です。
+
+- Graph構築（spaCy＋NetworkX）はPythonで行い、
+- グラフ探索で得た文書を**OllamaのLLMに渡して回答生成**
+
+という構成が、**無料でGraph RAGを試す**のに向いています。
+
+---
+
+## 6. まとめ
+
+- Ollamaは、**ローカルでLLMを動かすためのプラットフォーム**です。
+- モデル管理が簡単で、**無料・プライバシー重視**のAI開発に適しています。
+- Graph RAGやRAGのPoCでは、
+  - コストを気にせずLLMを呼び出せる
+  - 機密データを外部に送らずに済む
+  という理由でよく使われます。
+
+公式ドキュメント：https://docs.ollama.com/[Ollama Docs](https://docs.ollama.com/)
