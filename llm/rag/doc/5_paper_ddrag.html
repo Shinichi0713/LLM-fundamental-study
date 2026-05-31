@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x80cc;&#x666f;&#x30fb;&#x8ab2;&#x984c;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>近日続いているRAGシステムに関する記事です。
+本日はICLRという学会で採択された論文に関して理解していこうと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>RAGが抱える、主要コンポーネント(生成器、検索機)が別々で、文脈整合がしないという課題を解決するシステムについて理解していく</p>
+</blockquote>
+<h2 id="背景課題">背景・課題</h2>
+<p>RAG-DDR 論文（Xinze Li et al., ICLR 2025）の背景と解決課題は、おおまかに次のように整理できます。</p>
+<h3 id="1-背景ragの普及と既存sftベース最適化の限界">1. 背景：RAGの普及と既存SFTベース最適化の限界</h3>
+<p><strong>(1) RAGの役割と一般的な最適化手法</strong></p>
+<ul>
+<li>Retrieval-Augmented Generation（RAG）は、外部知識ベースから文書を検索し、それをLLMの入力コンテキストに加えることで、
+<ul>
+<li>ハルシネーション（事実誤り）の抑制</li>
+<li>外部知識の更新（パラメータ更新なし）<br>
+を実現する枠組みとして広く使われています。<a href="https://proceedings.neurips.cc/paper_files/paper/2020/file/6b493230205f780e1bc26945df7481e5-Paper.pdf">Lewis et al., NeurIPS 2020</a></li>
+</ul>
+</li>
+<li>既存の多くのRAGシステムでは、LLM部分を<strong>教師あり微調整（Supervised Fine-Tuning, SFT）</strong> で最適化するのが一般的です。</li>
+</ul>
+<p><strong>(2) SFTベース最適化の限界（論文が指摘する点）</strong>
+RAG-DDR 論文は、SFTベースのRAG最適化には以下の問題があると指摘しています。いずれも結構昔から有名なものです。：</p>
+<ol>
+<li>
+<p><strong>過学習（overfitting）</strong></p>
+<ul>
+<li>訓練データのラベル（例：正解回答）に過度に適合し、汎化性能が落ちる。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>破滅的忘却（catastrophic forgetting）</strong></p>
+<ul>
+<li>RAG専用に微調整すると、LLMが元々持っていた汎用的な言語能力や知識を忘れてしまう。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>外部知識とパラメトリック知識の衝突（knowledge conflict）</strong></p>
+<ul>
+<li>検索された外部知識と、LLMの内部知識（パラメトリックメモリ）が矛盾することがあり、その「どちらを信じるか」の衝突が、生成モジュールを誤った方向に導くことがある。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>モジュール間のデータ選好の不一致</strong></p>
+<ul>
+<li>RAGシステムは通常、
+<ul>
+<li>検索・知識精錬モジュール（retriever / knowledge refinement）</li>
+<li>生成モジュール（generator）<br>
+から構成されますが、<strong>それぞれが好むデータ分布や評価指標が異なる</strong>ため、モジュール単位で最適化しても、システム全体としては最適にならないことが多い。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-解決しようとしている課題rag-ddrの狙い">2. 解決しようとしている課題（RAG-DDRの狙い）</h3>
+<p>論文が明示的に挙げている課題は、主に以下の3点です。</p>
+<p><strong>(1) RAGの生成モジュール自体の最適化</strong></p>
+<ul>
+<li>既存研究の多くは、<strong>検索モジュールの最適化</strong>に注力し、生成モジュールはそのまま（あるいはSFTで微調整）に留まることが多いと指摘しています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+<li>しかし、<strong>知識衝突やデータ選好の不一致は生成モジュールにも影響する</strong>ため、生成モジュール自体をRAGの文脈に合わせて最適化する必要がある、というのが論文の主張です。</li>
+</ul>
+<p><strong>(2) モジュール間のデータ選好の整合（alignment）</strong></p>
+<ul>
+<li>ここが本論文のキーポイントとなります。RAG-DDR は、RAGを<strong>マルチエージェントシステム</strong>とみなし、
+<ul>
+<li>知識精錬エージェント（knowledge refinement）</li>
+<li>生成エージェント（generation）<br>
+の<strong>データ選好（data preferences）を整合させる</strong>ことを目指します。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>これにより、
+<ul>
+<li>検索された文書から本当に重要な情報を抽出し</li>
+<li>LLMの内部知識と外部知識を適切に統合する<br>
+ことが期待されます。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) エンドツーエンドな最適化とスケールの小さいLLMへの適用</strong></p>
+<ul>
+<li>SFTはモジュールごとに最適化しがちですが、RAG-DDRは
+<ul>
+<li><strong>rollout（システム全体のシミュレーション）</strong> で各エージェントの影響を評価し</li>
+<li><strong>Direct Preference Optimization (DPO)</strong> を用いてエージェントを最適化する<br>
+ことで、<strong>エンドツーエンドにRAGシステムを訓練</strong>します。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>特に、<strong>スケールの小さいLLM</strong>において、
+<ul>
+<li>外部知識をうまく活用し</li>
+<li>内部知識とのバランスを取る<br>
+ことが難しいため、RAG-DDRの枠組みが有効であることを示しています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="提案手法">提案手法</h2>
+<p>RAG-DDR が提案する解決策の中心は、<strong>Differentiable Data Rewards（DDR）</strong> という枠組みです。<br>
+これは、RAGを<strong>マルチエージェントシステム</strong>として捉え、各エージェントの「データ選好（data preferences）」を<strong>エンドツーエンドで整合させる</strong>ことで、</p>
+<ul>
+<li>外部知識と内部知識の衝突</li>
+<li>モジュールごとの最適化によるシステム全体の非最適<br>
+といった問題を解決しようとするものです。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\5_paper_ddrag\1780188452337.png" alt="1780188452337"></p>
+<p>以下、原理をステップごとに説明します。</p>
+<h3 id="1-ragをマルチエージェントシステムとして定式化">1. RAGをマルチエージェントシステムとして定式化</h3>
+<p>RAG-DDR では、RAGを少なくとも次の2つのエージェントからなるシステムとみなします。</p>
+<ol>
+<li>
+<p><strong>知識精錬エージェント（Knowledge Refinement Agent）</strong></p>
+<ul>
+<li>入力：ユーザ質問＋検索された文書群</li>
+<li>出力：<strong>精錬された知識（refined knowledge）</strong></li>
+<li>役割：検索結果から、本当に重要な情報を抽出・要約・再構成する</li>
+</ul>
+</li>
+<li>
+<p><strong>生成エージェント（Generation Agent）</strong></p>
+<ul>
+<li>入力：ユーザ質問＋精錬された知識</li>
+<li>出力：最終的な回答テキスト</li>
+<li>役割：精錬された知識とLLMの内部知識を統合して回答を生成する</li>
+</ul>
+</li>
+</ol>
+<p>論文では、これらをそれぞれポリシー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>R</mi></msub><mo separator="true">,</mo><msub><mi>π</mi><mi>G</mi></msub></mrow><annotation encoding="application/x-tex">{ \pi_R, \pi_G }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> としてモデル化し、<br>
+<strong>「どのようなデータ（文書・知識）を好んで選ぶか」＝ data preferences</strong> を学習対象とします。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></p>
+<h3 id="2-rolloutシステム全体の影響を評価する">2. Rollout：システム全体の影響を評価する</h3>
+<p><strong>2.1 単一モジュール最適化の問題点</strong></p>
+<ul>
+<li>従来のSFTベースのRAG最適化では、
+<ul>
+<li>検索モジュールを「正解文書との類似度」で最適化</li>
+<li>生成モジュールを「正解回答とのクロスエントロピー」で最適化<br>
+のように、<strong>モジュールごとに別々の目的関数</strong>で訓練します。</li>
+</ul>
+</li>
+<li>しかし、実際のRAGシステムでは、
+<ul>
+<li>検索結果が生成モジュールの入力になり</li>
+<li>生成モジュールの出力がユーザに返る<br>
+という<strong>連鎖的なプロセス</strong>があるため、<br>
+モジュール単位の最適化では、<strong>システム全体としての性能が必ずしも高くならない</strong>という問題があります。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 Rolloutによる「システム全体の軌跡」の評価</strong>
+RAG-DDR では、<strong>rollout</strong> という概念を使います。</p>
+<ul>
+<li>ある入力質問 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">{ q }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span></span> に対して：
+<ol>
+<li>知識精錬エージェントが文書群から精錬知識 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">{ k }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span></span> を出力</li>
+<li>生成エージェントが <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">{ q }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span></span> と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">{ k }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span></span> から回答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">{ y }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span></span> を生成</li>
+<li>最終的な回答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">{ y }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span></span> に対して、<strong>システム全体の報酬 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">{ R(y) }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span></strong> を計算
+<ul>
+<li>例：正解との一致度、人間評価スコアなど</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p>この一連の流れを「rollout」と呼び、<strong>「各エージェントの選択（data preferences）が、最終的な回答品質にどう影響するか」</strong> を評価します。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></p>
+<h3 id="3-differentiable-data-rewardsddrの考え方">3. Differentiable Data Rewards（DDR）の考え方</h3>
+<p><strong>3.1 「データ選好」を微分可能な報酬として扱う</strong>
+RAG-DDR の核心は、<strong>「どのデータ（文書・知識）を選ぶか」という選好を、微分可能な報酬として扱う</strong>ことです。</p>
+<ul>
+<li>各エージェントは、
+<ul>
+<li>入力に対して複数の候補（文書・知識・回答）をサンプリングし</li>
+<li>それぞれの候補が「どれだけ好ましいか」をスコアリングする</li>
+</ul>
+</li>
+<li>このスコア（data reward）を、<strong>最終的なシステム報酬 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">{ R(y) }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span></strong> と結びつけることで、
+<ul>
+<li>「この候補を選ぶと最終回答が良くなる／悪くなる」<br>
+という関係を<strong>勾配として逆伝播</strong>できるようにします。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+<p>報酬を通常の強化学習のように+1や+2のように、状況に応じた±の場合は微分できません。
+スコアリングをニューラルネットワークより得ることで微分可能な報酬として得る、ということでシステム全体に応じて良いか、悪いかを微分を通じて議論できるようになる、ということです。</p>
+<p><strong>3.2 具体的な流れ（簡略化したイメージ）</strong></p>
+<ol>
+<li>入力質問 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">{ q }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span></span></span></span></span> に対して、知識精錬エージェントが複数の精錬知識候補 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><msub><mi>k</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>k</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mtext> </mtext><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">{ \{k_1, k_2, \dots\} }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mopen">{</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mclose">}</span></span></span></span></span> を生成</li>
+<li>各 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">{ k_i }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> に対して、生成エージェントが回答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">{ y_i }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> を生成</li>
+<li>各 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">{ y_i }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> に対してシステム報酬 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">{ R(y_i) }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span> を計算</li>
+<li>報酬の高い <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">{ y_i }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> に対応する <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">{ k_i }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> を「好ましいデータ」とみなし、<br>
+知識精錬エージェントのポリシー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">{ \pi_R }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> を更新</li>
+<li>同様に、生成エージェントも「どの知識を入力として受け取ると良い回答になるか」を学習</li>
+</ol>
+<p>このように、<strong>「データ選好」と「最終的な回答品質」を微分可能に結びつける</strong>のがDDRのポイントです。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></p>
+<h3 id="4-direct-preference-optimizationdpoによるエージェント最適化">4. Direct Preference Optimization（DPO）によるエージェント最適化</h3>
+<p><strong>4.1 DPOの役割</strong></p>
+<ul>
+<li>DDRでは、各エージェントのポリシー（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>R</mi></msub><mo separator="true">,</mo><msub><mi>π</mi><mi>G</mi></msub></mrow><annotation encoding="application/x-tex">{ \pi_R, \pi_G }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>）を更新するために、<br>
+<strong>Direct Preference Optimization (DPO)</strong> を用います。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+<li>DPOは、
+<ul>
+<li>「良い出力」と「悪い出力」のペア</li>
+<li>あるいは「より良い出力」と「より悪い出力」のペア<br>
+から、<strong>ポリシーが良い方を選ぶ確率を高める</strong>ように最適化する手法です。</li>
+</ul>
+</li>
+</ul>
+<p><strong>4.2 RAG-DDRでのDPOの使い方</strong>
+RAG-DDRでは、rolloutの結果から次のようなペアを作ります。</p>
+<ul>
+<li>
+<p>知識精錬エージェントに対して：</p>
+<ul>
+<li>良い精錬知識 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>k</mi><mo>+</mo></msup></mrow><annotation encoding="application/x-tex">{ k^+ }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7713em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">+</span></span></span></span></span></span></span></span></span></span></span></span>（高いシステム報酬に対応）</li>
+<li>悪い精錬知識 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>k</mi><mo>−</mo></msup></mrow><annotation encoding="application/x-tex">{ k^- }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7713em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">−</span></span></span></span></span></span></span></span></span></span></span></span>（低いシステム報酬に対応）<br>
+→ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>R</mi></msub></mrow><annotation encoding="application/x-tex">{ \pi_R }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.00773em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> が <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>k</mi><mo>+</mo></msup></mrow><annotation encoding="application/x-tex">{ k^+ }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7713em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">+</span></span></span></span></span></span></span></span></span></span></span></span> を選ぶ確率を高めるようにDPOで更新</li>
+</ul>
+</li>
+<li>
+<p>生成エージェントに対して：</p>
+<ul>
+<li>良い回答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>y</mi><mo>+</mo></msup></mrow><annotation encoding="application/x-tex">{ y^+ }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9658em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">+</span></span></span></span></span></span></span></span></span></span></span></span>（高いシステム報酬）</li>
+<li>悪い回答 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>y</mi><mo>−</mo></msup></mrow><annotation encoding="application/x-tex">{ y^- }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9658em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">−</span></span></span></span></span></span></span></span></span></span></span></span>（低いシステム報酬）<br>
+→ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mi>G</mi></msub></mrow><annotation encoding="application/x-tex">{ \pi_G }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> が <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>y</mi><mo>+</mo></msup></mrow><annotation encoding="application/x-tex">{ y^+ }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9658em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">+</span></span></span></span></span></span></span></span></span></span></span></span> を生成する確率を高めるようにDPOで更新</li>
+</ul>
+</li>
+</ul>
+<p>このとき、<strong>システム全体の報酬 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">{ R(y) }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span></strong> が直接DPOの「好ましさ」の指標になるため、<br>
+モジュールごとに別々の損失関数を設計する必要がなくなり、<strong>エンドツーエンドな最適化</strong>が可能になります。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></p>
+<h3 id="5-どのように課題を解決するか">5. どのように課題を解決するか</h3>
+<p>RAG-DDR の枠組みは、冒頭で挙げた課題に対して次のように作用します。</p>
+<ol>
+<li>
+<p><strong>SFTの過学習・破滅的忘却</strong></p>
+<ul>
+<li>SFTは「正解ラベルに近づく」ように訓練するため、特定タスクに過適合しやすく、汎用能力を失いがちです。</li>
+<li>DDR＋DPOは「システム全体の報酬が高い出力を好む」ように訓練するため、
+<ul>
+<li>正解ラベルに過度に縛られず</li>
+<li>LLMの元々の能力を活かしつつ、RAGの文脈に適応<br>
+することができます。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>外部知識と内部知識の衝突</strong></p>
+<ul>
+<li>rollout＋DDRにより、
+<ul>
+<li>「外部知識を無視して内部知識だけで答える」</li>
+<li>「外部知識に過度に依存して内部知識を無視する」<br>
+のどちらが最終的に良い回答になるかを、<strong>システム全体の報酬で評価</strong>できます。</li>
+</ul>
+</li>
+<li>その結果、<strong>知識精錬エージェントと生成エージェントが協調して、両者の知識をバランスよく統合する</strong>ように学習されます。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>モジュール間のデータ選好の不一致</strong></p>
+<ul>
+<li>DDRは、各エージェントの「どのデータを好むか」を<strong>同じシステム報酬基準で最適化</strong>するため、
+<ul>
+<li>知識精錬エージェントが「生成エージェントが使いやすい知識」を選ぶ</li>
+<li>生成エージェントが「精錬された知識をうまく活用する」<br>
+ように自然に整合します。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>小規模LLMでの有効性</strong></p>
+<ul>
+<li>小規模LLMは内部知識が乏しいため、外部知識の活用が重要ですが、<br>
+単純なSFTでは「どの知識を信じるか」の判断が難しいことが多いです。</li>
+<li>DDR＋DPOにより、<strong>「どの知識を選ぶと最終回答が良くなるか」を直接学習</strong>できるため、<br>
+小規模LLMでもRAGの恩恵を大きく受けられることが示されています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ol>
+<h3 id="6-まとめ">6. まとめ</h3>
+<p>RAG-DDR の解決策は、次の3つの要素を組み合わせたものです。</p>
+<ol>
+<li>
+<p><strong>RAGをマルチエージェントシステムとして定式化</strong></p>
+<ul>
+<li>知識精錬エージェントと生成エージェントの「データ選好」を明示的に扱う</li>
+</ul>
+</li>
+<li>
+<p><strong>Rolloutによるシステム全体の評価</strong></p>
+<ul>
+<li>各エージェントの選択が最終回答品質にどう影響するかを評価</li>
+</ul>
+</li>
+<li>
+<p><strong>Differentiable Data Rewards（DDR）＋DPOによるエンドツーエンド最適化</strong></p>
+<ul>
+<li>「データ選好」と「システム全体の報酬」を微分可能に結びつけ、<br>
+DPOで各エージェントを最適化する</li>
+</ul>
+</li>
+</ol>
+<p>これにより、</p>
+<ul>
+<li>SFTの過学習・破滅的忘却</li>
+<li>外部知識と内部知識の衝突</li>
+<li>モジュール間のデータ選好の不一致<br>
+といった既存RAGの課題を、<strong>統一的に最適化する枠組み</strong>を提案しています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+<h2 id="手法の効果">手法の効果</h2>
+<p>RAG-DDR 論文では、主に以下の観点で実験を行い、提案手法の効果を検証しています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></p>
+<ul>
+<li><strong>RAG-DDR vs SFTベースRAG</strong>（性能比較）</li>
+<li><strong>外部知識の活用能力</strong>（知識衝突シナリオでの挙動）</li>
+<li><strong>小規模LLMでの有効性</strong>（パラメータ数の少ないモデルでの改善）</li>
+<li><strong>Ablation study</strong>（rollout・DPO・DDRの各要素の寄与）</li>
+</ul>
+<p>以下、実験結果から導出される効果を整理します。</p>
+<h3 id="1-rag-ddr-vs-sftベースrag性能向上">1. RAG-DDR vs SFTベースRAG：性能向上</h3>
+<p><strong>1.1 主な評価タスクと指標</strong></p>
+<p>論文では、以下のような知識集約型タスクで評価しています。</p>
+<ul>
+<li><strong>Open-domain QA</strong>（例：Natural Questions, TriviaQA など）</li>
+<li><strong>知識集約型対話・要約タスク</strong></li>
+<li>評価指標：<strong>Exact Match (EM), F1, 人間評価スコア</strong> など</li>
+</ul>
+<p><strong>1.2 結果の概要</strong></p>
+<ul>
+<li><strong>RAG-DDR（提案手法）は、SFTで微調整したRAGモデルよりも一貫して高いスコア</strong>を達成しています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+<li>具体的には、
+<ul>
+<li>EM / F1 で数ポイントの改善</li>
+<li>人間評価では「事実性」「一貫性」「有用性」のいずれもSFT-RAGを上回る<br>
+といった結果が報告されています。</li>
+</ul>
+</li>
+</ul>
+<p><strong>導出される効果</strong>：</p>
+<ul>
+<li>SFTベースのRAG最適化よりも、<strong>DDR＋DPOによるエンドツーエンド最適化の方が、回答の正確さ・有用性を高める</strong>ことが実験的に示されています。</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\5_paper_ddrag\1780188861519.png" alt="1780188861519"></p>
+<h3 id="2-外部知識の活用能力知識衝突シナリオでの改善">2. 外部知識の活用能力：知識衝突シナリオでの改善</h3>
+<p><strong>2.1 実験設定</strong></p>
+<ul>
+<li>外部知識ベースに<strong>誤った情報や、LLMの内部知識と矛盾する情報</strong>を含ませ、
+<ul>
+<li>「外部知識に引きずられて誤答するか」</li>
+<li>「内部知識と外部知識を適切に統合できるか」<br>
+を評価します。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 結果の概要</strong></p>
+<ul>
+<li>SFT-RAGは、誤った外部知識に引きずられて<strong>ハルシネーションを起こすケースが多い</strong>一方、</li>
+<li>RAG-DDRは、
+<ul>
+<li>誤った外部知識を<strong>無視または低重みで扱い</strong></li>
+<li>内部知識を優先する、あるいは両者を<strong>よりバランスよく統合</strong>する<br>
+ことで、<strong>誤答率が有意に低い</strong>ことが示されています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>導出される効果</strong>：</p>
+<ul>
+<li>DDR＋DPOによるエンドツーエンド最適化により、
+<ul>
+<li>知識精錬エージェントが「誤った情報を精錬しない」</li>
+<li>生成エージェントが「誤った外部知識に依存しすぎない」<br>
+ように学習され、<strong>知識衝突シナリオでのロバスト性が向上</strong>します。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\5_paper_ddrag\1780188841956.png" alt="1780188841956"></p>
+<h3 id="3-小規模llmでの有効性パラメータ数の少ないモデルでの改善">3. 小規模LLMでの有効性：パラメータ数の少ないモデルでの改善</h3>
+<p><strong>3.1 実験設定</strong></p>
+<ul>
+<li>比較的小さなLLM（例：7Bクラス）を用いて、
+<ul>
+<li>ベースLLM（RAGなし）</li>
+<li>SFT-RAG</li>
+<li>RAG-DDR<br>
+の性能を比較します。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>3.2 結果の概要</strong></p>
+<ul>
+<li>小規模LLMでは、<strong>SFT-RAGはベースLLMより少し改善する程度</strong>であるのに対し、</li>
+<li>RAG-DDRは、<strong>ベースLLMやSFT-RAGを大きく上回る性能</strong>を示します。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+<li>特に、外部知識が必要なタスク（例：最新情報・専門知識）では、
+<ul>
+<li>SFT-RAG：外部知識をうまく活用できず、内部知識だけで答えてしまう</li>
+<li>RAG-DDR：外部知識を積極的に活用し、正答率が大幅に向上<br>
+という傾向が観察されています。</li>
+</ul>
+</li>
+</ul>
+<p><strong>導出される効果</strong>：</p>
+<ul>
+<li>RAG-DDRは、<strong>小規模LLMが外部知識をうまく活用する能力を大きく向上させる</strong>ことが実験的に示されています。</li>
+<li>これは、DDR＋DPOにより「どの知識を選ぶと最終回答が良くなるか」を直接学習できるため、<br>
+内部知識が乏しい小規模LLMでもRAGの恩恵を大きく受けられる、という論文の主張を裏付けています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+<h3 id="4-ablation-studyrolloutdpoddrの各要素の寄与">4. Ablation study：rollout・DPO・DDRの各要素の寄与</h3>
+<p><strong>4.1 比較対象</strong></p>
+<p>論文では、以下のようなアブレーションを行っています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></p>
+<ul>
+<li><strong>SFT-RAG</strong>：通常のSFTでRAGを最適化</li>
+<li><strong>RAG-DDR (w/o rollout)</strong>：rolloutを使わず、モジュール単位でDDR＋DPO</li>
+<li><strong>RAG-DDR (w/o DPO)</strong>：DDRを使わず、単純な報酬でSFT</li>
+<li><strong>Full RAG-DDR</strong>：rollout＋DDR＋DPO</li>
+</ul>
+<p><strong>4.2 結果の概要</strong></p>
+<ul>
+<li><strong>Full RAG-DDR</strong>が最も高い性能を示し、</li>
+<li><strong>rolloutを外すと</strong>：
+<ul>
+<li>モジュール単位の最適化に戻るため、システム全体の性能が落ちる</li>
+</ul>
+</li>
+<li><strong>DPOを外すと</strong>：
+<ul>
+<li>単純なSFTに近づき、過学習・知識衝突への弱さが再び現れる</li>
+</ul>
+</li>
+<li><strong>DDRを外すと</strong>：
+<ul>
+<li>「データ選好」と「最終報酬」の微分可能な結びつきが失われ、<br>
+エンドツーエンド最適化の効果が弱まる</li>
+</ul>
+</li>
+</ul>
+<p><strong>導出される効果</strong>：</p>
+<ul>
+<li>rollout・DDR・DPOの3要素が<strong>相補的に効いており、どれか1つを欠いても性能が低下する</strong>ことが示されています。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+<li>これにより、
+<ul>
+<li>モジュール単位最適化ではなく<strong>システム全体のrollout評価</strong></li>
+<li>「データ選好」を**微分可能な報酬（DDR）**として扱うこと</li>
+<li><strong>DPOによる好ましい出力への直接最適化</strong><br>
+の3つが揃って初めて、RAGの性能を最大限に引き出せる、という主張が実験的に裏付けられています。</li>
+</ul>
+</li>
+</ul>
+<h2 id="論文の結論">論文の結論</h2>
+<p>RAG-DDR 論文の結論は、おおまかに次のようにまとめられます。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></p>
+<h3 id="1-主要な貢献のまとめ">1. 主要な貢献のまとめ</h3>
+<ol>
+<li>
+<p><strong>Differentiable Data Rewards（DDR）の提案</strong></p>
+<ul>
+<li>RAGを<strong>マルチエージェントシステム</strong>（知識精錬エージェント＋生成エージェント）として定式化し、<br>
+「どのデータ（文書・知識）を選ぶか」という**データ選好（data preferences）**を、<br>
+<strong>微分可能な報酬</strong>として扱う枠組みを提案しました。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>rollout＋DPOによるエンドツーエンド最適化</strong></p>
+<ul>
+<li>rolloutでシステム全体の軌跡を評価し、<br>
+Direct Preference Optimization (DPO) を用いて各エージェントを最適化することで、<br>
+<strong>RAGシステム全体をエンドツーエンドに訓練</strong>する手法を提案しました。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>SFTベースRAGの限界を克服</strong></p>
+<ul>
+<li>実験により、
+<ul>
+<li>SFT-RAGよりも高い性能（EM/F1・人間評価）</li>
+<li>知識衝突シナリオでのロバスト性向上</li>
+<li>小規模LLMでの外部知識活用能力の大幅な改善<br>
+を示し、SFTベースのRAG最適化の限界を克服できることを実証しました。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-得られた知見意義">2. 得られた知見・意義</h3>
+<ul>
+<li>RAGを「retriever＋LLM」の単純な組み合わせではなく、<br>
+<strong>マルチエージェントシステムとして統一的に最適化する</strong>ことが重要である、という視点を提示しました。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+<li>特に、
+<ul>
+<li>モジュールごとの最適化ではなく、<strong>システム全体の報酬</strong>で最適化すること</li>
+<li>「データ選好」を明示的に扱い、<strong>知識精錬と生成の整合</strong>を図ること<br>
+が、RAGの性能向上に大きく寄与することを示しました。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="3-限界と今後の展望論文が示唆する方向性">3. 限界と今後の展望（論文が示唆する方向性）</h3>
+<p>論文は、以下のような限界と今後の方向性にも触れています。</p>
+<ol>
+<li>
+<p><strong>計算コスト・実装の複雑さ</strong></p>
+<ul>
+<li>rollout＋DDR＋DPOの組み合わせは、単純なSFTよりも計算コストが高く、<br>
+実装も複雑になるため、より効率的な近似手法やスケーリング手法の検討が必要です。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>タスク・ドメインの一般化</strong></p>
+<ul>
+<li>本論文では主に知識集約型QA・対話タスクを対象としていますが、<br>
+コード生成、マルチモーダルRAG、エージェントシステムなどへの拡張が今後の課題です。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+<li>
+<p><strong>より多様な報酬設計</strong></p>
+<ul>
+<li>現在は主にタスク固有のスコア（EM/F1など）や人間評価を報酬としていますが、<br>
+安全性、公平性、説明可能性など、多様な指標を組み込んだ報酬設計も今後の研究方向です。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+</li>
+</ol>
+<h2 id="総括">総括</h2>
+<p>RAG-DDR は、</p>
+<ul>
+<li>RAGをマルチエージェントシステムとして捉え直し</li>
+<li>「データ選好」を微分可能な報酬として扱い</li>
+<li>rollout＋DPOでエンドツーエンドに最適化する<br>
+という新しい枠組みを提案し、</li>
+<li>SFTベースRAGの限界（過学習・破滅的忘却・知識衝突）を克服し、</li>
+<li>特に小規模LLMでの外部知識活用能力を大幅に向上させる<br>
+ことを実験的に示しました。<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">RAG-DDR, ICLR 2025</a></li>
+</ul>
+<p>この枠組みは、今後のRAG研究・実装において、<br>
+<strong>「システム全体としての最適化」と「データ選好の明示的な扱い」</strong> を重視する方向性を示すものとして位置づけられています。</p>
+<h2 id="引用元">引用元</h2>
+<ul>
+<li>
+<p><strong>論文タイトル</strong>：<br>
+RAG-DDR: Optimizing Retrieval-Augmented Generation Using Differentiable Data Rewards</p>
+</li>
+<li>
+<p><strong>採択学会</strong>：<br>
+ICLR 2025（International Conference on Learning Representations）</p>
+</li>
+<li>
+<p><strong>著者</strong>：<br>
+Xinze Li, Sen Mei, Zhenghao Liu, Yukun Yan, Shuo Wang, Shi Yu, Zheni Zeng, Hao Chen, Ge Yu, Zhiyuan Liu, Maosong Sun, Chenyan Xiong</p>
+</li>
+<li>
+<p><strong>発表年</strong>：<br>
+2025年</p>
+</li>
+<li>
+<p><strong>論文URL</strong>：<br>
+<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf</a><br>
+<a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/1a87980b9853e84dfb295855b425c262-Paper-Conference.pdf">ICLR 2025 Proceedings</a></p>
+</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+        </body>
+        </html>

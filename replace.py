@@ -1,7 +1,7 @@
 import re
 import os
 
-def convert_to_note_tex(input_file, output_file):
+def convert_to_note_tex(input_file, output_file, is_note=False):
     if not os.path.exists(input_file):
         print(f"Error: {input_file} が見つかりません。")
         return
@@ -15,12 +15,16 @@ def convert_to_note_tex(input_file, output_file):
 
     # 2. インライン形式 \( ... \) を $$ ... $$ に変換
     # noteで目立たせたいとのことですので、こちらも $$ に統一します
-    content = re.sub(r'\\\((.*?)\\\)', r'$\1$', content)
+    if is_note:
+        content = re.sub(r'\\\((.*?)\\\)', r'$$\1$$', content)
+    else:
+        # noteでインラインはそのままにしたい場合は、以下の1行をコメントアウトしてください
+        content = re.sub(r'\\\((.*?)\\\)', r'$\1$', content)
 
     # 3. 既存の単一 $ ... $ (インライン) もすべて $$ ... $$ に置き換えたい場合
     # ※数式以外の $ 記号に反応しないよう、前後にスペースや改行があるケースを想定
     # 不要な場合は以下の1行をコメントアウトしてください
-    content = re.sub(r'(?<!\$)\$(?!\$)(.*?)(?<!\$)\$(?!\$)', r'$$\1$$', content)
+    # content = re.sub(r'(?<!\$)\$(?!\$)(.*?)(?<!\$)\$(?!\$)', r'$$\1$$', content)
 
     # 結果を書き出し
     with open(output_file, 'w', encoding='utf-8') as f:
@@ -60,8 +64,11 @@ def format_to_note_style(content, output_file):
     print(f"変換が完了しました！\n出力先: {output_file}")
 
 # 実行設定
-input_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\15_unknown_llm.md"   # 変換元のファイル名
-output_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\15_unknown_llm.md" # 変換後のファイル名
+input_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\5_paper_ddrag.md"   # 変換元のファイル名
+output_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\5_paper_ddrag.md" # 変換後のファイル名
+is_note = True
+
 
 content = convert_to_note_tex(input_md, output_md)
-# format_to_note_style(content, output_md)
+if is_note:
+    format_to_note_style(content, output_md)
