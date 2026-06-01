@@ -178,3 +178,135 @@ if __name__ == "__main__":
     
     print("\n--- LLMに渡される最終コンテキスト ---")
     print(final_context)
+
+import numpy as np
+import faiss
+import torch
+from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+# 日本語の分かち書き（BM25用）にMeCabを使用
+import MeCab
+wakati = MeCab.Tagger("-Owavati")
+
+def tokenize_japanese(text):
+    """日本語のテキストを単語リストに分割する（BM25用）"""
+    return wakati.parse(text).strip().split()
+
+# ---------------------------------------------------------
+# 1. テスト用ドキュメントデータの準備
+# ---------------------------------------------------------
+documents = [
+    "株式会社TECH-AIの福利厚生では、1年に1回、上限10万円までの旅行費補助が出る。申請は社内ポータルから行う。",
+    "スマートフォンの次世代通信規格「6G」は、2030年頃の商用化を目指して世界中で開発が進んでいる。",
+    "日本の新元号「未来（みらい）」は、2028年から施行される予定であるとの誤報が流れた。",
+    "TECH-AI社では、リモートワーク手当として毎月5,000円が全社員に支給される。",
+    "旅行費の補助金（出張旅費規程）に関する問い合わせは、総務部の佐藤さんまで連絡してください。"
+]
+
+print(f"データベースに {len(documents)} 件のドキュメントを登録中...")
+
+# ---------------------------------------------------------
+# 2. 検索インデックスの構築 (Dense & Sparse)
+# ---------------------------------------------------------
+# A. ベクトル検索 (Dense) の準備
+bi_encoder = SentenceTransformer('bzk/ja-sentence-transformer-v1')
+embeddings = bi_encoder.encode(documents)
+embeddings = np.array(embeddings).astype('float32')
+index = faiss.IndexFlatL2(embeddings.shape[1])
+index.add(embeddings)
+
+# B. キーワード検索 (Sparse / BM25) の準備
+tokenized_docs = [tokenize_japanese(doc) for doc in documents]
+bm25 = BM25Okapi(tokenized_docs)
+
+# C. 最先端リランカー (BGE-Reranker-v2-m3) の準備
+# ※非常に強力な多言語・日本語対応リランカーです
+reranker_name = "BAAI/bge-reranker-v2-m3"
+rerank_tokenizer = AutoTokenizer.from_pretrained(reranker_name)
+rerank_model = AutoModelForSequenceClassification.from_pretrained(reranker_name)
+rerank_model.eval()
+
+print("全ての検索インデックスとリランキングモデルの準備が完了しました。\n" + "="*50)
+
+# ---------------------------------------------------------
+# 3. 高精度ハイブリッド検索 ＆ リランキング関数
+# ---------------------------------------------------------
+def advanced_retrieve_and_rerank(query, top_k_pool=4, top_k_final=2):
+    """
+    query: ユーザーの質問
+    top_k_pool: 各検索手法から集める候補数（多めに取る）
+    top_k_final: リランキング後に最終的に残す件数
+    """
+    print(f"\n【ユーザーの質問】: {query}\n")
+    
+    # --- Step 3-1: ベクトル検索 (Dense Retrieval) ---
+    query_vector = bi_encoder.encode([query]).astype('float32')
+    _, dense_indices = index.search(query_vector, min(top_k_pool, len(documents)))
+    dense_candidates = [documents[idx] for idx in dense_indices[0] if idx != -1]
+    
+    # --- Step 3-2: キーワード検索 (BM25 / Sparse Retrieval) ---
+    tokenized_query = tokenize_japanese(query)
+    # BM25のスコアが高い順にドキュメントを取得
+    bm25_scores = bm25.get_scores(tokenized_query)
+    bm25_indices = np.argsort(bm25_scores)[::-1][:top_k_pool]
+    sparse_candidates = [documents[idx] for idx in bm25_indices if bm25_scores[idx] > 0]
+    
+    # --- Step 3-3: 候補の重複排除（マージ） ---
+    # 両方の検索結果を合わせ、重複のないユニークなプールを作る
+    candidate_pool = list(set(dense_candidates + sparse_candidates))
+    print(f"-> ベクトル検索候補: {len(dense_candidates)}件 / キーワード検索候補: {len(sparse_candidates)}件")
+    print(f"-> 重複排除後のリランク対象プール: {len(candidate_pool)}件")
+    
+    if not candidate_pool:
+        print("候補ドキュメントが1件も見つかりませんでした。")
+        return []
+
+    # --- Step 3-4: BGE-Rerankerによる厳密なリランキング ---
+    # 質問と候補文のペアを作成
+    pairs = [[query, candidate] for candidate in candidate_pool]
+    
+    inputs = rerank_tokenizer(
+        pairs, 
+        padding=True, 
+        truncation=True, 
+        return_tensors="pt",
+        max_length=512
+    )
+    
+    with torch.no_grad():
+        outputs = rerank_model(**inputs)
+        # BGE-Rerankerはlogitsの直値、またはシグモイドをかけた値がスコアになります
+        # ここでは順位比較のため、そのままの数値を採用
+        scores = outputs.logits.view(-1).tolist()
+    
+    # スコアで降順ソート
+    reranked_results = sorted(
+        zip(candidate_pool, scores), 
+        key=lambda x: x[1], 
+        reverse=True
+    )
+    
+    # --- Step 3-5: 結果の可視化 ---
+    print("\n【リランキング結果（スコア順）】")
+    for i, (doc, score) in enumerate(reranked_results):
+        marker = "★" if i < top_k_final else "  "
+        print(f"{marker} 順位 {i+1} (Score: {score:6.4f}): {doc}")
+        
+    return [doc for doc, score in reranked_results[:top_k_final]]
+
+# ---------------------------------------------------------
+# 4. 実行テスト
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    # テスト1: 「旅行費の補助」という文脈（意味）とキーワードの両方が絡む質問
+    # 「旅行費補助」のある福利厚生(1つ目)と、佐藤さんへの連絡(5つ目)のどちらが上位に来るか？
+    query_1 = "旅行の補助金について、申請はどこから行えばいいですか？"
+    final_docs_1 = advanced_retrieve_and_rerank(query_1, top_k_pool=3, top_k_final=1)
+    
+    print("\n" + "="*50)
+    
+    # テスト2: 「TECH-AI」という特定の固有名詞キーワードが重要な質問
+    query_2 = "TECH-AIのリモートワークの手当について教えて"
+    final_docs_2 = advanced_retrieve_and_rerank(query_2, top_k_pool=3, top_k_final=1)
