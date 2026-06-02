@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>RAGを行う場合、技術資料に掲載されている画像と関連する文章を両方参照したい(マルチモーダルRAGと呼ばれます)ということがあります。
+それも結構な頻度で。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>画像を含めてRAGを実現する方法について実現法を整理します</p>
+</blockquote>
+<h2 id="概要">概要</h2>
+<p>文章と画像を<strong>一緒に検索したい</strong>場合、代表的なアプローチは大きく次の4つに分けられます。</p>
+<h3 id="1-マルチモーダル埋め込みモデルを使うclip系">1. マルチモーダル埋め込みモデルを使う（CLIP系）</h3>
+<p><strong>CLIP</strong>（Contrastive Language-Image Pretraining）のような<strong>マルチモーダル埋め込みモデル</strong>を使う方法です。</p>
+<ul>
+<li>テキストと画像を<strong>同じベクトル空間</strong>に埋め込む</li>
+<li>テキストクエリで画像を検索したり、画像クエリでテキストを検索したりできる</li>
+<li>例：OpenAI CLIP、JinaCLIP、Apple DFN5B-H、Meta系モデルなど<a href="https://www.pinecone.io/learn/series/image-search/clip">Pinecone</a><a href="https://towardsdatascience.com/clip-model-overview-unlocking-the-power-of-multimodal-ai">Towards Data Science</a></li>
+</ul>
+<p><strong>RAGへの組み込みイメージ</strong></p>
+<ul>
+<li>文書中のテキストと画像をCLIPで埋め込み、同じベクトルDBに保存</li>
+<li>ユーザーのテキストクエリ → テキスト埋め込み → ベクトル検索 → テキスト・画像の両方を取得</li>
+<li>取得したテキスト＋画像をマルチモーダルLLM（GPT-4Vなど）に渡して回答生成</li>
+</ul>
+<p><strong>メリット</strong></p>
+<ul>
+<li>テキストと画像を<strong>同じ空間で比較</strong>できるため、セマンティックな検索が可能</li>
+<li>画像そのものをベクトルとして扱える</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li>モデルやインフラの準備が必要（CLIPのホスト、ベクトルDBなど）</li>
+</ul>
+<h3 id="2-画像をテキスト化してragに組み込む">2. 画像をテキスト化してRAGに組み込む</h3>
+<p>画像を<strong>テキストで記述</strong>し、それをRAGの文書として扱う方法です。</p>
+<ul>
+<li>GPT-4Vなどの<strong>画像理解モデル</strong>で画像を詳細に説明（キャプション生成）</li>
+<li>そのテキストを通常のテキストRAGパイプラインに流す</li>
+<li>検索時は「テキストクエリ vs 画像キャプション」で類似度を計算</li>
+</ul>
+<p><strong>RAGへの組み込みイメージ</strong></p>
+<ul>
+<li>画像 → GPT-4Vで説明文生成 → テキストとしてベクトル化・保存</li>
+<li>検索時はテキストクエリでキャプションを検索し、対応する画像も一緒に取得</li>
+<li>LLMに「テキスト＋画像URL」を渡して回答生成</li>
+</ul>
+<p><strong>メリット</strong></p>
+<ul>
+<li>既存のテキストRAGパイプラインをほぼそのまま流用できる</li>
+<li>画像専用の埋め込みモデルが不要</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li>画像の細かい視覚情報がテキスト化で失われる可能性</li>
+<li>GPT-4VのAPIコストがかかる</li>
+</ul>
+<h3 id="3-ハイブリッド検索テキスト画像のマルチベクトル">3. ハイブリッド検索（テキスト＋画像のマルチベクトル）</h3>
+<p><strong>マルチベクトル・リトリーバー</strong>のように、テキストと画像を<strong>別々に埋め込み</strong>、検索時に統合する方法です。</p>
+<ul>
+<li>テキスト用の埋め込み（例：OpenAI text-embedding-3-small）</li>
+<li>画像用の埋め込み（例：CLIP）</li>
+<li>それぞれをベクトルDBに保存し、検索時に<strong>スコアを統合</strong>（例：Reciprocal Rank Fusion）</li>
+</ul>
+<p>LangChainの「Multi-Vector Retriever」などがこの考え方に近いです<a href="https://www.langchain.com/blog/semi-structured-multi-modal-rag">LangChain Blog</a>。</p>
+<p><strong>メリット</strong></p>
+<ul>
+<li>テキストと画像で<strong>最適なモデルを選べる</strong></li>
+<li>スコアの重み付けを調整しやすい</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li>実装がやや複雑（複数の埋め込み・インデックス管理）</li>
+</ul>
+<h3 id="4-クラウドサービスのマルチモーダル検索機能を使う">4. クラウドサービスのマルチモーダル検索機能を使う</h3>
+<p><strong>Azure AI Search</strong>や<strong>OpenSearch</strong>など、マルチモーダル検索をネイティブにサポートするサービスを使う方法です。</p>
+<ul>
+<li>Azure AI Search：テキスト＋画像を含むドキュメントをインポートし、マルチモーダル埋め込みで検索<a href="https://learn.microsoft.com/en-us/azure/search/multimodal-search-overview">Microsoft Learn</a></li>
+<li>OpenSearch：Titan Multimodal Embeddingsなどを使い、テキスト・画像・（テキスト＋画像）クエリをサポート<a href="https://opensearch.org/blog/multimodal-semantic-search">OpenSearch Blog</a></li>
+</ul>
+<p><strong>メリット</strong></p>
+<ul>
+<li>インフラ構築が比較的簡単</li>
+<li>スケーラビリティや運用面の負担が少ない</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li>サービス固有の制約（料金、モデル選択の自由度など）</li>
+</ul>
+<h2 id="課題1-複数物体が映る画像の扱い">課題1: 複数物体が映る画像の扱い</h2>
+<p>CLIP系のマルチモーダル埋め込みは「画像全体」を一つのベクトルにまとめるため、<strong>画像内に複数の対象が写っていると、特定の対象だけを狙った検索が難しくなる</strong>という問題があります。</p>
+<h3 id="なぜclipだけでは弱いのか">なぜCLIPだけでは弱いのか</h3>
+<ul>
+<li>CLIPは<strong>画像全体を一つの埋め込みベクトル</strong>に圧縮します。</li>
+<li>そのため、「画像内のどの部分がクエリに対応しているか」を細かく制御できません。</li>
+<li>複数の対象が写っている画像では、
+<ul>
+<li>「犬と猫が写っている画像」に対して「犬だけ」を検索したい</li>
+<li>「複数の商品が写っている画像」に対して「特定の商品だけ」を検索したい
+といった<strong>部分的なマッチング</strong>が苦手になります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="対応策大きく分けて3つのアプローチ">対応策：大きく分けて3つのアプローチ</h3>
+<p><strong>1. 画像を分割して埋め込む（Region-level / Patch-level embedding）</strong></p>
+<p><strong>画像を領域ごとに分割し、それぞれを別々に埋め込む</strong>方法です。</p>
+<ul>
+<li>例：
+<ul>
+<li>グリッド分割（例：3×3や4×4のパッチ）</li>
+<li>物体検出（YOLOなど）で<strong>バウンディングボックスごとに切り出し</strong></li>
+</ul>
+</li>
+<li>各パッチ／領域をCLIPで埋め込み、<strong>複数のベクトルとして保存</strong>します。</li>
+<li>検索時は、クエリと<strong>各パッチのベクトル</strong>を比較し、最もスコアの高いパッチに対応する画像をヒットさせます。</li>
+</ul>
+<p><strong>メリット</strong></p>
+<ul>
+<li>「画像全体」ではなく「画像の一部」を対象にした検索が可能</li>
+<li>物体検出を使えば、<strong>意味のある領域単位</strong>で検索できる</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li>ベクトル数が増えるため、ストレージ・検索コストが増加</li>
+<li>どのように分割するか（グリッドサイズ・物体検出の閾値など）のチューニングが必要</li>
+</ul>
+<p><strong>2. マルチモーダルLLMで「対象ごとのキャプション」を生成する</strong></p>
+<p><strong>GPT-4VなどのマルチモーダルLLM</strong>を使って、</p>
+<ul>
+<li>「この画像に写っている各対象を、それぞれ詳しく説明して」</li>
+<li>「商品A、商品B、商品Cごとにキャプションを生成して」</li>
+</ul>
+<p>といった指示で、<strong>対象ごとのテキスト説明</strong>を生成します。</p>
+<p>その後、</p>
+<ul>
+<li>各キャプションをテキスト埋め込み（例：OpenAI text-embedding-3-small）でベクトル化</li>
+<li>検索時はクエリと<strong>各キャプションのベクトル</strong>を比較</li>
+</ul>
+<p>という形で、<strong>テキストベースのRAG</strong>として扱います。</p>
+<p><strong>メリット</strong></p>
+<ul>
+<li>対象ごとの「意味的な説明」をテキストで持てるため、検索精度が上がりやすい</li>
+<li>既存のテキストRAGパイプラインをほぼそのまま使える</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li>GPT-4VなどのAPIコストがかかる</li>
+<li>画像の細かい視覚情報がテキスト化で失われる可能性</li>
+</ul>
+<p><strong>3. マルチベクトル検索＋リランキング</strong></p>
+<p><strong>複数の埋め込み（画像全体・領域ごと・キャプションなど）を組み合わせる</strong>方法です。</p>
+<ul>
+<li>例：
+<ul>
+<li>画像全体のCLIP埋め込み</li>
+<li>物体ごとのCLIP埋め込み</li>
+<li>各物体のテキストキャプションの埋め込み</li>
+</ul>
+</li>
+<li>これらを<strong>別々のベクトルとして保存</strong>し、検索時に
+<ul>
+<li>各ベクトルに対してスコアを計算</li>
+<li>Reciprocal Rank Fusion（RRF）などで<strong>スコアを統合</strong></li>
+<li>必要に応じて**リランキング（クロスエンコーダなど）**で順位を調整</li>
+</ul>
+</li>
+</ul>
+<p><strong>メリット</strong></p>
+<ul>
+<li>「画像全体の文脈」と「特定の対象」の両方を考慮できる</li>
+<li>リランキングを組み合わせることで、より高精度な順位付けが可能</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li>実装がやや複雑（複数の埋め込み・インデックス管理）</li>
+</ul>
+<h2 id="課題2-画像と文章の埋め込み表現の不均一">課題2: 画像と文章の埋め込み表現の不均一</h2>
+<p>画像とテキストの埋め込みは、モデルや学習データが異なるため、<strong>同じベクトル空間でも「距離感」や「品質」が不均一</strong>になりがちです。この問題への対応策を、実務で使えるレベルまで整理します。</p>
+<h3 id="1-なぜ距離品質の不均一が起きるのか">1. なぜ「距離・品質の不均一」が起きるのか</h3>
+<ul>
+<li><strong>学習タスクの違い</strong><br>
+テキスト埋め込みは「文書検索・意味類似度」を主目的に学習されることが多く、<br>
+画像埋め込み（CLIPなど）は「画像–テキストの対応付け」を目的に学習されます。</li>
+<li><strong>スケール・分布の違い</strong><br>
+テキスト埋め込みと画像埋め込みで、
+<ul>
+<li>ベクトルのノルム分布</li>
+<li>類似度スコアのレンジ<br>
+が異なるため、<strong>同じ距離尺度で比較すると片方に偏る</strong>ことがあります。</li>
+</ul>
+</li>
+<li><strong>モデル間の性能差</strong><br>
+テキスト用の最新モデル（例：OpenAI text-embedding-3-large）と、<br>
+画像用のモデル（例：CLIP ViT-B/32）で<strong>性能差が大きい</strong>と、片方の埋め込みが「支配的」になり、検索結果が偏ります。</li>
+</ul>
+<h3 id="2-対応策正規化とスケーリングで距離感を揃える">2. 対応策①：正規化とスケーリングで「距離感」を揃える</h3>
+<p><strong>ベクトルの正規化（Normalization）</strong></p>
+<ul>
+<li>テキスト・画像の埋め込みを<strong>L2正規化</strong>して、
+<ul>
+<li>すべてのベクトルを単位球面上に配置</li>
+<li>内積＝コサイン類似度として扱う<br>
+ことで、<strong>ノルムの違いによる偏りを減らせます</strong><a href="https://cookbook.openai.com/examples/embedding_comparisons">OpenAI Cookbook</a>。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># 例：OpenAIのtext-embedding-3-small / CLIP埋め込みを正規化</span>
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">normalize</span>(<span class="hljs-params">emb</span>):
+    norm = np.linalg.norm(emb)
+    <span class="hljs-keyword">return</span> emb / norm <span class="hljs-keyword">if</span> norm &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">else</span> emb
+
+text_emb_norm = normalize(text_emb)
+image_emb_norm = normalize(image_emb)
+</code></pre>
+<p><strong>スコアのスケーリング（Score Scaling）</strong></p>
+<ul>
+<li>テキスト–テキスト、テキスト–画像の<strong>類似度スコアの分布</strong>を事前に計測し、
+<ul>
+<li>平均・分散を揃えるように線形変換（例：z-score scaling）</li>
+<li>あるいはmin–maxスケーリング<br>
+を行い、<strong>スコアのレンジを揃えます</strong>。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># 例：テキスト–テキスト / テキスト–画像スコアの分布を揃える</span>
+<span class="hljs-comment"># μ_tt, σ_tt: テキスト–テキストスコアの平均・標準偏差</span>
+<span class="hljs-comment"># μ_ti, σ_ti: テキスト–画像スコアの平均・標準偏差</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">scale_score</span>(<span class="hljs-params">score, source_mean, source_std, target_mean, target_std</span>):
+    z = (score - source_mean) / source_std
+    <span class="hljs-keyword">return</span> z * target_std + target_mean
+
+<span class="hljs-comment"># テキスト–画像スコアをテキスト–テキストの分布に合わせる</span>
+scaled_score = scale_score(
+    raw_ti_score, μ_ti, σ_ti, μ_tt, σ_tt
+)
+</code></pre>
+<h3 id="3-対応策マルチベクトル検索スコア統合">3. 対応策②：マルチベクトル検索＋スコア統合</h3>
+<p><strong>Reciprocal Rank Fusion（RRF）</strong></p>
+<ul>
+<li>テキスト検索結果と画像検索結果を<strong>別々にランキング</strong>し、<br>
+RRFで<strong>順位を統合</strong>します<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rrf.html">Elasticsearch Docs</a>。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># RRFの簡易実装例</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">rrf</span>(<span class="hljs-params">ranks_list, k=<span class="hljs-number">60</span></span>):
+    scores = {}
+    <span class="hljs-keyword">for</span> ranks <span class="hljs-keyword">in</span> ranks_list:
+        <span class="hljs-keyword">for</span> i, doc_id <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(ranks):
+            score = <span class="hljs-number">1.0</span> / (k + i + <span class="hljs-number">1</span>)
+            scores[doc_id] = scores.get(doc_id, <span class="hljs-number">0</span>) + score
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">sorted</span>(scores.keys(), key=<span class="hljs-keyword">lambda</span> x: -scores[x])
+</code></pre>
+<ul>
+<li>メリット：
+<ul>
+<li>テキスト・画像それぞれの<strong>スコアの絶対値に依存しない</strong></li>
+<li>「どちらが上位に来ているか」という<strong>相対的な順位</strong>だけを見るため、埋め込み品質の差に強い</li>
+</ul>
+</li>
+</ul>
+<p><strong>重み付きスコア統合</strong></p>
+<ul>
+<li>テキストと画像の<strong>重要度をドメインごとに調整</strong>します。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># 例：テキスト重み0.7、画像重み0.3</span>
+final_score = <span class="hljs-number">0.7</span> * text_score + <span class="hljs-number">0.3</span> * image_score
+</code></pre>
+<ul>
+<li>クエリの種類に応じて重みを変える（例：
+<ul>
+<li>「図を探して」→ 画像重みを高く</li>
+<li>「説明文を探して」→ テキスト重みを高く<br>
+）といった<strong>クエリタイプ別の重み付け</strong>も有効です<a href="https://learn.microsoft.com/en-us/azure/search/multimodal-search-overview">Azure AI Search Docs</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-対応策マルチモーダル埋め込みの統一joint-embedding">4. 対応策③：マルチモーダル埋め込みの統一（Joint Embedding）</h3>
+<p><strong>CLIP系の統一埋め込み</strong></p>
+<ul>
+<li>
+<p>CLIPは<strong>テキストと画像を同じベクトル空間に埋め込む</strong>ため、</p>
+<ul>
+<li>テキストクエリ ↔ 画像ドキュメント</li>
+<li>画像クエリ ↔ テキストドキュメント<br>
+を<strong>同じ距離尺度で比較</strong>できます<a href="https://arxiv.org/abs/2103.00020">OpenAI CLIP Paper</a>。</li>
+</ul>
+</li>
+<li>
+<p>テキストドキュメントもCLIPのテキストエンコーダで埋め込むことで、<br>
+<strong>テキスト–テキスト検索もCLIP空間で統一</strong>できます。</p>
+</li>
+</ul>
+<p><strong>専用のマルチモーダル埋め込みモデル</strong></p>
+<ul>
+<li>近年は、<strong>テキスト・画像・表などを統一的に扱うマルチモーダル埋め込みモデル</strong>も登場しています<a href="https://www.langchain.com/blog/semi-structured-multi-modal-rag">LangChain Blog</a>。</li>
+<li>例：
+<ul>
+<li>画像＋テキストを同時入力して一つの埋め込みを出力するモデル</li>
+<li>表形式データも含めて埋め込むモデル</li>
+</ul>
+</li>
+</ul>
+<p>これらを使うと、<strong>「テキストだけ」「画像だけ」という分断を減らし、距離の不均一を緩和</strong>できます。</p>
+<h3 id="5-対応策リランキングで最終順位を補正">5. 対応策④：リランキングで「最終順位」を補正</h3>
+<p><strong>クロスエンコーダ型リランキング</strong></p>
+<ul>
+<li>テキスト–テキスト、テキスト–画像の<strong>上位候補</strong>を対象に、
+<ul>
+<li>クエリとドキュメント（テキスト or 画像キャプション）を<strong>同時に入力</strong>するクロスエンコーダで再スコアリング</li>
+<li>テキスト・画像の違いを<strong>モデル側で吸収</strong>してもらう<br>
+というアプローチです<a href="https://www.sbert.net/examples/applications/cross-encoder/README.html">Sentence Transformers Docs</a>。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> sentence_transformers <span class="hljs-keyword">import</span> CrossEncoder
+
+model = CrossEncoder(<span class="hljs-string">&quot;cross-encoder/ms-marco-MiniLM-L-6-v2&quot;</span>)
+
+pairs = [(query, doc_text) <span class="hljs-keyword">for</span> doc_text <span class="hljs-keyword">in</span> candidate_texts]
+scores = model.predict(pairs)
+</code></pre>
+<ul>
+<li>メリット：
+<ul>
+<li>埋め込みの「距離感の違い」を<strong>後段で補正</strong>できる</li>
+<li>テキスト・画像どちらも<strong>テキスト化してから比較</strong>するため、モダリティ差を吸収しやすい</li>
+</ul>
+</li>
+</ul>
+<p><strong>LLMベースのリランキング</strong></p>
+<ul>
+<li>GPT-4などに
+<ul>
+<li>クエリ</li>
+<li>候補ドキュメント（テキスト＋画像キャプション）<br>
+を渡し、「最も関連性の高い順に並べ替えて」と指示する方法もあります。</li>
+</ul>
+</li>
+<li>LLMは<strong>意味的な関連性</strong>を判断できるため、<br>
+埋め込みの距離差による偏りを<strong>高レベルで補正</strong>できます<a href="https://www.pinecone.io/learn/series/rag/rerankers">Pinecone</a>。</li>
+</ul>
+<h3 id="6-対応策ドメイン適応ファインチューニング">6. 対応策⑤：ドメイン適応・ファインチューニング</h3>
+<p><strong>埋め込みモデルのファインチューニング</strong></p>
+<ul>
+<li>自社ドメインの<strong>テキスト＋画像ペアデータ</strong>を使って、<br>
+CLIPやテキスト埋め込みモデルを<strong>追加学習</strong>します。</li>
+<li>これにより、
+<ul>
+<li>テキスト–画像の対応関係が<strong>ドメイン特化</strong>に改善</li>
+<li>テキスト–テキスト、テキスト–画像の<strong>距離分布が近づく</strong><br>
+効果が期待できます<a href="https://huggingface.co/blog/fine-tune-clip">Hugging Face Blog</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>コントラスト学習（Contrastive Learning）</strong></p>
+<ul>
+<li>「同じ意味を持つテキスト–画像ペア」を近くに、<br>
+「異なる意味のペア」を遠くに配置するように学習することで、<br>
+<strong>テキストと画像の埋め込み空間をより整合的に</strong>できます。</li>
+</ul>
+<h3 id="7-評価とチューニングのポイント">7. 評価とチューニングのポイント</h3>
+<ul>
+<li>
+<p><strong>評価指標の設計</strong></p>
+<ul>
+<li>テキスト検索精度（nDCG@k）</li>
+<li>画像検索精度（Recall@k）</li>
+<li>マルチモーダル検索全体の精度<br>
+を<strong>別々に計測</strong>し、どのモダリティが弱いかを把握します<a href="https://www.meilisearch.com/blog/multimodal-rag">Meilisearch Blog</a>。</li>
+</ul>
+</li>
+<li>
+<p><strong>A/Bテストでの重み調整</strong></p>
+<ul>
+<li>テキスト重み vs 画像重み</li>
+<li>RRFのパラメータ（k値）</li>
+<li>リランキングの有無<br>
+を変えて、<strong>ユーザーフィードバックやクリック率</strong>で最適な設定を探ります。</li>
+</ul>
+</li>
+</ul>
+<h2 id="課題3-埋め込みモデルのファインチューニングが結構難しい">課題3: 埋め込みモデルのファインチューニングが結構難しい</h2>
+<p>RAGで使う埋め込みモデルのファインチューニングは、<strong>「なぜ難しいのか」が意外と整理されていない</strong>ことが多いです。主な理由を、技術面・データ面・評価面に分けて説明します。</p>
+<h3 id="1-技術的な難しさ">1. 技術的な難しさ</h3>
+<p><strong>(1) 埋め込みモデルは「中間表現」であり、直接の損失が定義しづらい</strong></p>
+<ul>
+<li>分類モデルや生成モデル（LLM）は、
+<ul>
+<li>「正解ラベルとのクロスエントロピー」</li>
+<li>「生成テキストとの損失」
+といった<strong>明確な損失関数</strong>があります。</li>
+</ul>
+</li>
+<li>一方、埋め込みモデルは
+<ul>
+<li>「意味的に近いものを近く、遠いものを遠く」という<strong>相対的な距離</strong>を学習するため、</li>
+<li>「どの程度近ければよいか」という<strong>絶対的な正解</strong>がありません。</li>
+</ul>
+</li>
+<li>そのため、<strong>目的関数（損失）の設計が難しい</strong>ことが多いです<a href="https://www.sbert.net/docs/training/overview.html">Sentence Transformers Docs</a>。</li>
+</ul>
+<p><strong>(2) コントラスト学習の設計が難しい</strong></p>
+<ul>
+<li>埋め込みのファインチューニングでは、<strong>コントラスト学習（Contrastive Learning）</strong> がよく使われますが、
+<ul>
+<li>「正例（似ているペア）」「負例（似ていないペア）」の選び方</li>
+<li>負例の数・質（Hard Negative Mining）
+が性能に大きく影響します<a href="https://huggingface.co/blog/how-to-train-sentence-embeddings">Hugging Face Blog</a>。</li>
+</ul>
+</li>
+<li>負例をランダムに選ぶと「簡単すぎる負例」ばかりになり、<br>
+<strong>モデルがほとんど学習しない</strong>ことがあります。</li>
+</ul>
+<p><strong>(3) モデルサイズと計算コスト</strong></p>
+<ul>
+<li>高品質な埋め込みモデル（例：<code>text-embedding-3-large</code>相当）はパラメータ数が多く、
+<ul>
+<li>ファインチューニングには<strong>大量のGPUメモリと計算時間</strong>が必要です。</li>
+</ul>
+</li>
+<li>一方で、RAG用途では<strong>低レイテンシ</strong>が求められるため、<br>
+モデルを軽量化しようとすると<strong>表現力が落ちる</strong>というトレードオフがあります。</li>
+</ul>
+<h3 id="2-データ面の難しさ">2. データ面の難しさ</h3>
+<p><strong>(1) 高品質な「類似ペア」データの不足</strong></p>
+<ul>
+<li>RAG用の埋め込みをファインチューニングするには、
+<ul>
+<li>「このクエリに対して、この文書が正解」</li>
+<li>「この文書とこの文書は意味的に近い」
+といった<strong>ラベル付きデータ</strong>が必要です。</li>
+</ul>
+</li>
+<li>しかし、実際の業務データでは
+<ul>
+<li>クエリログはあっても「どの文書を参照したか」が記録されていない</li>
+<li>人手でアノテーションするコストが高い<br>
+ため、<strong>十分な量の高品質データを用意するのが難しい</strong>です<a href="https://www.pinecone.io/learn/series/rag/fine-tuning-embeddings">Pinecone</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) ドメイン特化データの偏り</strong></p>
+<ul>
+<li>特定ドメイン（医療、法律、製造業など）では、
+<ul>
+<li>専門用語</li>
+<li>略語</li>
+<li>文脈依存の意味<br>
+が多く、<strong>汎用モデルでは捉えきれない</strong>ことがあります。</li>
+</ul>
+</li>
+<li>しかし、そのドメインの<strong>ラベル付きデータが少ない</strong>ため、<br>
+ファインチューニングしても<strong>過学習しやすい</strong>という問題があります。</li>
+</ul>
+<p><strong>(3) クエリ分布の変化</strong></p>
+<ul>
+<li>RAGのクエリ分布は、時間とともに変化します（新製品、新規制、トレンドなど）。</li>
+<li>一度ファインチューニングしたモデルが、<strong>数ヶ月後には古くなる</strong>可能性があり、<br>
+<strong>継続的な再学習が必要</strong>になりますが、その運用コストが高いです。</li>
+</ul>
+<h3 id="3-評価検証の難しさ">3. 評価・検証の難しさ</h3>
+<p><strong>(1) 評価指標と実務の乖離</strong></p>
+<ul>
+<li>埋め込みモデルの評価では、
+<ul>
+<li>nDCG@k</li>
+<li>Recall@k</li>
+<li>MRR（Mean Reciprocal Rank）
+などが使われますが、<br>
+<strong>「RAG全体としての回答品質」と直接結びつかない</strong>ことがあります<a href="https://www.meilisearch.com/blog/multimodal-rag">Meilisearch Blog</a>。</li>
+</ul>
+</li>
+<li>埋め込みの精度が上がっても、
+<ul>
+<li>LLMがうまく情報を統合できない</li>
+<li>コンテキスト長の制限で重要な情報が落ちる<br>
+といった<strong>他の要因で最終回答の品質が変わらない</strong>こともあります。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) オフライン評価とオンライン評価のギャップ</strong></p>
+<ul>
+<li>オフラインでは「テストセットに対するnDCG@10が改善した」としても、
+<ul>
+<li>実際のユーザークエリでは改善が見られない</li>
+<li>特定のクエリタイプで悪化する<br>
+といったことが起こりがちです。</li>
+</ul>
+</li>
+<li>オンライン評価（A/Bテスト）には
+<ul>
+<li>トラフィック分割</li>
+<li>ログ収集</li>
+<li>分析<br>
+の仕組みが必要で、<strong>運用コストが高い</strong>です。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-モデル選択ハイパーパラメータの難しさ">4. モデル選択・ハイパーパラメータの難しさ</h3>
+<p><strong>(1) どのモデルをファインチューニングするか</strong></p>
+<ul>
+<li>ベースモデルとして
+<ul>
+<li>汎用モデル（OpenAI系、Sentence-BERT系）</li>
+<li>ドメイン特化モデル（法律・医療向けなど）
+のどちらを選ぶかで、<strong>ファインチューニングの効果が大きく変わります</strong>。</li>
+</ul>
+</li>
+<li>汎用モデルは表現力が高いが<strong>ドメイン適応にデータが必要</strong>、<br>
+ドメイン特化モデルは初期性能は高いが<strong>追加学習の余地が小さい</strong>ことがあります。</li>
+</ul>
+<p><strong>(2) ハイパーパラメータの感度</strong></p>
+<ul>
+<li>学習率、バッチサイズ、エポック数、負例の数など、<br>
+<strong>ハイパーパラメータの影響が大きい</strong>です。</li>
+<li>特にコントラスト学習では、
+<ul>
+<li>学習率が高すぎると発散</li>
+<li>低すぎると収束が遅い<br>
+といった問題があり、<strong>チューニングに時間がかかります</strong><a href="https://www.sbert.net/docs/training/overview.html">Sentence Transformers Docs</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-代替手段との比較やらない選択肢の魅力">5. 代替手段との比較（「やらない」選択肢の魅力）</h3>
+<p><strong>(1) リランキングの方が簡単で効果的</strong></p>
+<ul>
+<li>埋め込みモデルをファインチューニングする代わりに、
+<ul>
+<li>汎用埋め込みで広く検索</li>
+<li>クロスエンコーダやLLMでリランキング<br>
+という<strong>二段階パイプライン</strong>にすると、</li>
+<li>実装が簡単</li>
+<li>追加学習なしで精度向上
+が期待できます<a href="https://www.pinecone.io/learn/series/rag/rerankers">Pinecone</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) プロンプトエンジニアリング・コンテキスト設計の方がコスパが良い</strong></p>
+<ul>
+<li>RAG全体の精度は、
+<ul>
+<li>埋め込み</li>
+<li>リランキング</li>
+<li>LLMのプロンプト設計</li>
+<li>コンテキストの切り出し方（チャンキング）<br>
+など、<strong>複数の要因に依存</strong>します。</li>
+</ul>
+</li>
+<li>埋め込みのファインチューニングにリソースを投じるより、<br>
+<strong>プロンプトやチャンキング戦略の改善の方が、少ないコストで大きな効果</strong>が出ることも多いです。</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>本日記事の要点をまとめると以下の通りです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\7_chart_rag\1780435196743.png" alt="1780435196743"></p>
+<ol>
+<li>
+<p><strong>基本アプローチ</strong></p>
+<ul>
+<li>CLIPなどで<strong>テキストと画像を同じ空間に埋め込む</strong></li>
+<li>画像を<strong>テキスト化（キャプション）してテキストRAGに流す</strong></li>
+<li>テキストと画像を<strong>別々に埋め込んでスコアを統合（RRFなど）</strong></li>
+<li>Azure AI Searchなど<strong>クラウドのマルチモーダル検索機能</strong>を使う</li>
+</ul>
+</li>
+<li>
+<p><strong>主な課題と対策</strong></p>
+<ul>
+<li><strong>複数物体が映る画像</strong>：
+<ul>
+<li>画像を<strong>分割して埋め込む</strong>（グリッド・物体検出）</li>
+<li>対象ごとに<strong>キャプション生成</strong>してテキストRAG化</li>
+</ul>
+</li>
+<li><strong>画像とテキストの埋め込みの不均一</strong>：
+<ul>
+<li><strong>正規化・スケーリング</strong>で距離感を揃える</li>
+<li><strong>RRFや重み付き統合</strong>でスコアを統合</li>
+<li><strong>CLIPで統一埋め込み</strong>し、<strong>リランキング</strong>で順位を補正</li>
+</ul>
+</li>
+<li><strong>埋め込みのファインチューニングが難しい</strong>：
+<ul>
+<li>損失設計・データ不足・評価の乖離・運用コストが高い</li>
+<li>実務では<strong>リランキングやプロンプト改善の方がコスパが良い</strong>ことが多い</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>実務の指針</strong></p>
+<ul>
+<li>まずは<strong>汎用埋め込み＋リランキング＋プロンプト改善</strong>で試す</li>
+<li>必要に応じて<strong>画像分割・キャプション生成・マルチベクトル検索</strong>を追加</li>
+<li>本格的なファインチューニングは<strong>評価・再学習体制が整ってから</strong>検討</li>
+</ul>
+</li>
+</ol>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+            
+        </body>
+        </html>

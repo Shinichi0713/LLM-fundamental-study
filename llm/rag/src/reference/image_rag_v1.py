@@ -165,3 +165,118 @@ if __name__ == "__main__":
     for res in search_results:
         print(f"ファイルパス: {res['image_path']}")
         print(f"生成されたメタデータ抜粋:\n{res['metadata'][:200]}...")
+
+
+import os
+import pickle
+import numpy as np
+import faiss
+from sentence_transformers import SentenceTransformer
+from openai import OpenAI
+from dotenv import load_dotenv
+
+# 環境変数の読み込みとOpenAIクライアントの初期化
+load_dotenv()
+client = OpenAI()
+
+# 1次検索用のベクトル埋め込みモデル
+print("埋め込みモデルをロード中...")
+bi_encoder = SentenceTransformer('bzk/ja-sentence-transformer-v1')
+
+# ---------------------------------------------------------
+# [事前準備] 前述のImage-to-Text関数
+# ---------------------------------------------------------
+def generate_image_metadata(image_path):
+    import base64
+    with open(image_path, "rb") as f:
+        base64_image = base64.b64encode(f.read()).decode('utf-8')
+    
+    prompt = "この画像に含まれるテキスト、数値、グラフのテーマ、特徴をRAG検索用インデックスとして詳細に言語化してください。"
+    
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{base64_image}"}}
+                ]
+            }
+        ],
+        max_tokens=600
+    )
+    return response.choices[0].message.content
+
+# ---------------------------------------------------------
+# 2. データベースの構築と永続化（ローカル保存）
+# ---------------------------------------------------------
+def build_and_save_database(image_paths, output_dir="rag_db"):
+    """
+    image_paths: 登録したい画像ファイルのパスのリスト
+    output_dir: データベースファイルを保存するディレクトリ
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    
+    generated_metadatas = []
+    valid_image_paths = []
+    
+    # Step 2-1: 各画像のテキストメタデータを生成
+    for path in image_paths:
+        if not os.path.exists(path):
+            print(f"スキップ (ファイル不在): {path}")
+            continue
+        try:
+            metadata = generate_image_metadata(path)
+            generated_metadatas.append(metadata)
+            valid_image_paths.append(path)
+            print(f"成功: {path} のメタデータを生成しました。")
+        except Exception as e:
+            print(f"エラー ({path}): {e}")
+            
+    if not valid_image_paths:
+        print("登録可能な画像がありませんでした。処理を中断します。")
+        return
+
+    # Step 2-2: テキストをベクトルに変換
+    print("\nテキストをベクトル化しています...")
+    embeddings = bi_encoder.encode(generated_metadatas)
+    embeddings = np.array(embeddings).astype('float32')
+    
+    # Step 2-3: FAISS インデックスの構築と保存
+    vector_dim = embeddings.shape[1]
+    faiss_index = faiss.IndexFlatL2(vector_dim)
+    faiss_index.add(embeddings)
+    
+    faiss_path = os.path.join(output_dir, "image_vectors.faiss")
+    faiss.write_index(faiss_index, faiss_path)
+    print(f"-> ベクトルDBを保存しました: {faiss_path}")
+    
+    # Step 2-4: 画像パスとメタデータテキストのペアを保存 (マッピング用)
+    # BM25のインデックスや最終結果の取得にこれを使用します
+    store_data = {
+        "image_paths": valid_image_paths,
+        "metadatas": generated_metadatas
+    }
+    store_path = os.path.join(output_dir, "image_store.pkl")
+    with open(store_path, "wb") as f:
+        pickle.dump(store_data, f)
+    print(f"-> メタデータストアを保存しました: {store_path}")
+    print("\nデータベースの構築がすべて完了しました！")
+
+# ---------------------------------------------------------
+# 3. 構築のテスト実行
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    # データベースに登録したい手元の画像ファイル名を指定してください
+    target_images = ["sales_chart_2025.png", "server_topology_v3.png"]
+    
+    # ダミーファイルの作成（テスト用）
+    from PIL import Image
+    for img in target_images:
+        if not os.path.exists(img):
+            Image.new('RGB', (100, 100), color = 'blue').save(img)
+            
+    build_and_save_database(target_images)
+
+    
