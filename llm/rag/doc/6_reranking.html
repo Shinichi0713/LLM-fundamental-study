@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30ea;&#x30e9;&#x30f3;&#x30ad;&#x30f3;&#x30b0;&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>RAGを行う中で重要な機能に<strong>リランキング（reranking）</strong> があります。
+実はRAGは検索した後もエンベディングモデルを使って再度埋め込み表現を再計算していたりします。
+著者も検索だけではダメなの？と考えてました。</p>
+<p>今日のテーマ：</p>
+<blockquote>
+<p>なぜRAGにリランキングが必要なのか？</p>
+</blockquote>
+<h2 id="リランキングとは">リランキングとは</h2>
+<p>RAG（Retrieval-Augmented Generation）における<strong>リランキング</strong> とは、<strong>「一度取得した文書候補を、クエリとの関連度に基づいて再度並べ替え、上位の文書を選び直す処理」</strong> のことです。</p>
+<h3 id="1-なぜリランキングが必要なのか">1. なぜリランキングが必要なのか</h3>
+<p>RAGでは通常、以下のような流れで文書を取得します。</p>
+<ol>
+<li><strong>Retriever（検索器）</strong>
+<ul>
+<li>ベクトル検索（embeddingのコサイン類似度など）やキーワード検索（BM25など）で、大量の文書から候補を絞り込む。</li>
+</ul>
+</li>
+<li><strong>Reranker（リランキングモデル）</strong>
+<ul>
+<li>その候補群に対して、より精密な「クエリと文書の関連度スコア」を計算し、順位を入れ替える。</li>
+</ul>
+</li>
+<li><strong>Generator（LLM）</strong>
+<ul>
+<li>リランキング後の上位k件をLLMに渡し、回答を生成する。</li>
+</ul>
+</li>
+</ol>
+<p>Retrieverだけだと、</p>
+<ul>
+<li>ベクトル検索は高速だが、意味的な類似度が粗い</li>
+<li>キーワード検索は表層的な一致に偏りがち</li>
+</ul>
+<p>といった問題があります。<br>
+その結果、「一見関連しそうだが、実は微妙な文書」が上位に来てしまうことがあります。</p>
+<p>そこで、<strong>リランキング</strong>を挟むことで、</p>
+<ul>
+<li>「本当にクエリに合っている文書」を上位に寄せる</li>
+<li>「ノイズになりそうな文書」を下位に落とす</li>
+</ul>
+<p>という調整を行い、LLMに渡す文書の質を高めます。</p>
+<h3 id="2-リランキングの典型的な手法">2. リランキングの典型的な手法</h3>
+<p>代表的なリランキングの方法は、主に以下の2種類です。</p>
+<p><strong>(1) クロスエンコーダ型のニューラルリランカー</strong></p>
+<ul>
+<li><strong>BERT系のクロスエンコーダモデル</strong>（例：<code>cross-encoder/ms-marco-MiniLM-L-6-v2</code> など）を使う。</li>
+<li>クエリと文書をペアで入力し、「関連度スコア」を直接出力する。</li>
+<li>メリット：
+<ul>
+<li>クエリと文書の相互作用をモデル内部で計算するため、<strong>精度が高い</strong>。</li>
+</ul>
+</li>
+<li>デメリット：
+<ul>
+<li>すべての候補ペアについて順次スコア計算が必要で、<strong>計算コストが高い</strong>。</li>
+<li>そのため、最初のRetrieverで候補を数十〜数百件に絞った後に適用するのが一般的です。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) 再スコアリング型（Re‑scoring）</strong></p>
+<ul>
+<li>ベクトル検索のスコアに加えて、別の特徴量（例：キーワード一致度、メタデータ、ドメイン特化のルールなど）を組み合わせて、<strong>総合スコア</strong>を再計算する。</li>
+<li>ニューラルモデルを使わない軽量な方法も含まれます。</li>
+<li>メリット：
+<ul>
+<li>実装が比較的シンプルで、計算負荷が低い。</li>
+</ul>
+</li>
+<li>デメリット：
+<ul>
+<li>ニューラルリランカーほどの高い精度は出にくい。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-リランキングがもたらす効果">3. リランキングがもたらす効果</h3>
+<ul>
+<li><strong>回答精度の向上</strong><br>
+LLMに渡す文書の質が上がるため、生成される回答の正確性・関連性が高まります。</li>
+<li><strong>ノイズ文書の抑制</strong><br>
+関連性の低い文書を下位に落とすことで、LLMが誤った情報を「補強」してしまうリスクを減らせます。</li>
+<li><strong>トークン使用量の削減</strong><br>
+上位k件だけをLLMに渡すため、kを小さくしても精度を維持しやすくなり、結果としてトークンコストを抑えられます。</li>
+</ul>
+<h3 id="4-実務上の注意点">4. 実務上の注意点</h3>
+<ul>
+<li><strong>計算コストとのトレードオフ</strong><br>
+リランキングは精度を上げる一方で、計算時間・コストが増えます。<br>
+そのため、<strong>「最初のRetrieverでどれだけ候補を絞るか」</strong> と <strong>「リランキングのモデル規模」</strong> のバランス設計が重要です。</li>
+<li><strong>モデル選定</strong><br>
+ドメイン（医療、法律、技術文書など）に応じて、適切なリランキングモデルを選ぶ必要があります。汎用モデルでも一定の効果はありますが、専用にファインチューニングされたモデルを使うとさらに精度が上がります。</li>
+</ul>
+<p>まとめると、RAGにおけるリランキングは、</p>
+<blockquote>
+<p>「最初の検索でざっくり取ってきた候補を、より精密な関連度計算で並べ替え、LLMに渡す文書の質を高めるステップ」</p>
+</blockquote>
+<p>であり、RAGの精度を大きく左右する重要なコンポーネントです。</p>
+<h2 id="なぜ必要か">なぜ必要か</h2>
+<p>RAG（Retrieval-Augmented Generation）において<strong>リランキングが必要な理由</strong>は、主に以下の3点に集約されます。</p>
+<ol>
+<li><strong>初期検索（ベクトル検索）だけでは「クエリと文書の微妙な関係」を十分に捉えられない</strong></li>
+<li><strong>LLMに渡すコンテキストは「質の高い少数の文書」に絞る必要がある</strong></li>
+<li><strong>RAGの元論文でも示されるように、「検索の質」が生成の質に直結する</strong></li>
+</ol>
+<p>以下、公式論文と解説記事を引用しながら説明します。</p>
+<h3 id="1-ragの元論文が示す検索の重要性">1. RAGの元論文が示す「検索の重要性」</h3>
+<p>LewisらによるRAGの元論文<br>
+<strong>“Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks”</strong>（arXiv:2005.11401）では、RAGを</p>
+<blockquote>
+<p>“models which combine pre-trained parametric and non-parametric memory for language generation”<br>
+（事前学習済みのパラメトリックメモリと非パラメトリックメモリを組み合わせた生成モデル）</p>
+</blockquote>
+<p>と定義し、<strong>外部知識（Wikipediaなど）を検索してLLMに渡す</strong>ことで、知識集約型タスクでSOTAを達成したと報告しています<a href="https://arxiv.org/abs/2005.11401">arXiv</a>。</p>
+<p>この論文では、RAGの性能は</p>
+<ul>
+<li><strong>Retriever（検索器）がどれだけ適切な文書を取ってこられるか</strong></li>
+<li><strong>Generator（LLM）がその文書をどれだけうまく利用できるか</strong></li>
+</ul>
+<p>の両方に依存することが示されています。<br>
+つまり、<strong>「検索の質」がRAG全体の精度を決める</strong>という前提があります。</p>
+<h3 id="2-ベクトル検索bi-encoderの限界とリランキングの必要性">2. ベクトル検索（bi-encoder）の限界とリランキングの必要性</h3>
+<p>多くのRAGシステムでは、最初の検索に<strong>bi-encoder型のベクトル検索</strong>を使います。</p>
+<ul>
+<li>クエリと文書を<strong>別々に</strong>エンコードしてベクトル化</li>
+<li>コサイン類似度などで類似度を計算</li>
+</ul>
+<p>しかし、この方式には次のような限界があります。</p>
+<p><strong>(1) 情報の圧縮による「ニュアンスの喪失」</strong></p>
+<p>Towards Data Scienceの記事では、bi-encoderについて次のように指摘しています。</p>
+<blockquote>
+<p>“bi-encoders … encode queries and documents independently into fixed-size vectors. This architecture ‘throws away the possibility of interaction signals’ because the model must compress all semantics into a single vector before comparison occurs.”<br>
+（bi-encoderはクエリと文書を独立に固定次元ベクトルにエンコードする。このアーキテクチャは、比較を行う前にすべての意味を単一のベクトルに圧縮しなければならず、<strong>クエリと文書の相互作用の信号を捨ててしまう</strong>）<a href="https://towardsdatascience.com/advanced-rag-retrieval-cross-encoders-reranking">Towards Data Science</a></p>
+</blockquote>
+<p>つまり、<strong>「クエリと文書の細かい関係」を事前に計算できない</strong>ため、</p>
+<ul>
+<li>論理的な矛盾（例：クエリ「安いホテル」 vs 文書「1泊500ドル」）</li>
+<li>微妙な言い換え（「cheap」と「budget」が同じ意味かどうか）</li>
+</ul>
+<p>といった<strong>トークンレベルの相互作用</strong>を十分に評価できません。</p>
+<p><strong>(2) 検索結果が「まあまあ」止まりになる</strong></p>
+<p>同じ記事では、RAGの結果が</p>
+<blockquote>
+<p>“the results are <em>okay</em> but not <em>great</em>”</p>
+</blockquote>
+<p>であるとき、<strong>埋め込みモデルを変えるよりも「リランキングステップを追加する」方が有効</strong>だと述べています<a href="https://towardsdatascience.com/advanced-rag-retrieval-cross-encoders-reranking">Towards Data Science</a>。</p>
+<p>つまり、<strong>初期検索だけでは「本当に最適な文書」を上位に持ってこれない</strong>ため、<br>
+追加の「再評価ステップ」としてリランキングが必要になります。</p>
+<h3 id="3-llmのコンテキスト制限とlost-in-the-middle">3. LLMのコンテキスト制限と「Lost in the Middle」</h3>
+<p>PineconeのRAG解説記事では、リランキングが必要なもう一つの理由として、<strong>LLMのコンテキストウィンドウと想起能力の問題</strong>を挙げています。</p>
+<blockquote>
+<p>“Because of this information loss, we often see that the top three (for example) vector search documents will miss relevant information. We cannot use context stuffing because this reduces the LLM’s <em>recall</em> performance — note that this is the LLM recall, which is different from the retrieval recall we have been discussing so far.”<br>
+（この情報損失のため、ベクトル検索の上位3件などに本当に必要な情報が含まれないことが多い。一方で、コンテキストを詰め込みすぎるとLLMの想起性能が低下する）<a href="https://www.pinecone.io/learn/series/rag/rerankers">Pinecone</a></p>
+</blockquote>
+<p>さらに同記事は、</p>
+<ul>
+<li>ベクトル検索は高速だが、<strong>情報の圧縮により精度に限界がある</strong></li>
+<li>LLMに大量の文書を渡すと、**“Lost in the Middle”**現象（文書の位置によって想起能力が落ちる）が起きる</li>
+<li>したがって、<strong>「高速な検索で候補を多めに取り、高精度なリランキングで少数の最適な文書に絞る」</strong> 二段階検索（Two-Stage Retrieval）が不可欠</li>
+</ul>
+<p>と説明しています<a href="https://www.pinecone.io/learn/series/rag/rerankers">Pinecone</a>。</p>
+<h3 id="4-クロスエンコーダによるリランキングの効果">4. クロスエンコーダによるリランキングの効果</h3>
+<p>リランキングの代表的な手法として、**クロスエンコーダ（cross-encoder）**があります。</p>
+<p>Towards Data Scienceの記事では、クロスエンコーダについて次のように説明されています。</p>
+<blockquote>
+<p>“Cross-encoders improve retrieval by concatenating the query and document into a single input sequence, allowing for ‘full self-attention across ALL tokens.’ This enables the model to build abstract relationships, perform contradiction detection, and capture semantic equivalence more effectively than bi-encoders.”<br>
+（クロスエンコーダは、クエリと文書を一つの入力系列として結合し、<strong>すべてのトークン間で自己注意を働かせる</strong>ことで検索を改善する。これにより、抽象的な関係の構築、矛盾検出、意味的等価性の把握をbi-encoderより効果的に行える）<a href="https://towardsdatascience.com/advanced-rag-retrieval-cross-encoders-reranking">Towards Data Science</a></p>
+</blockquote>
+<p>つまり、</p>
+<ul>
+<li><strong>bi-encoder（ベクトル検索）</strong> ：高速・スケーラブルだが、精度に限界</li>
+<li><strong>cross-encoder（リランキング）</strong> ：低速だが、クエリと文書を同時に読むため<strong>高精度</strong></li>
+</ul>
+<p>という特性があり、<br>
+RAGでは</p>
+<ol>
+<li>bi-encoderで<strong>候補を多めに（高リコールで）取得</strong></li>
+<li>cross-encoderで<strong>上位候補を再スコアリングし、最適な少数に絞る</strong></li>
+</ol>
+<p>という<strong>二段階パイプライン</strong>が推奨されています<a href="https://towardsdatascience.com/advanced-rag-retrieval-cross-encoders-reranking">Towards Data Science</a><a href="https://www.pinecone.io/learn/series/rag/rerankers">Pinecone</a>。</p>
+<h2 id="実現法">実現法</h2>
+<p>RAGにおけるリランキングを<strong>具体的に実装する方法</strong>は、大きく分けて次の3パターンがよく使われます。</p>
+<ol>
+<li><strong>Sentence TransformersのCross-Encoderを使う（ローカル実行）</strong></li>
+<li><strong>Cohere Rerank APIなど外部サービスを使う（クラウド）</strong></li>
+<li><strong>LLMそのものを使ってリランキングする（GPTなど）</strong></li>
+</ol>
+<p>以下、それぞれについてPythonコードの骨格とRAGパイプラインへの組み込み方を説明します。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\6_reranking\1780348024382.png" alt="1780348024382"></p>
+<h3 id="1-sentence-transformersのcross-encoderを使う方法">1. Sentence TransformersのCross-Encoderを使う方法</h3>
+<p><strong>概要</strong></p>
+<ul>
+<li><strong>Cross-Encoder</strong>は、クエリと文書を<strong>一つの入力系列として同時に処理</strong>し、関連度スコアを出すモデルです。</li>
+<li>代表的なモデル：<code>cross-encoder/ms-marco-MiniLM-L-6-v2</code>（MS MARCOで学習された検索向けモデル）<a href="https://huggingface.co/cross-encoder">Hugging Face</a>。</li>
+</ul>
+<p><strong>パイプラインの流れ</strong></p>
+<ol>
+<li>ベクトルDBなどで<strong>初期検索</strong>（例：top 50）</li>
+<li>Cross-Encoderで<strong>クエリ×各候補文書のペアをスコアリング</strong></li>
+<li>スコア順に<strong>再ソート</strong></li>
+<li>上位k件をLLMに渡す</li>
+</ol>
+<p><strong>Pythonコード例</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> sentence_transformers <span class="hljs-keyword">import</span> CrossEncoder
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+
+<span class="hljs-comment"># 1. モデル読み込み</span>
+model = CrossEncoder(<span class="hljs-string">&quot;cross-encoder/ms-marco-MiniLM-L-6-v2&quot;</span>)
+
+<span class="hljs-comment"># 2. 初期検索結果（例：ベクトル検索で取ってきた上位50件）</span>
+query = <span class="hljs-string">&quot;RAGにおけるリランキングの実装方法&quot;</span>
+documents = [
+    <span class="hljs-string">&quot;RAGではまずベクトル検索で候補を取得し、その後クロスエンコーダで再ランク付けします。&quot;</span>,
+    <span class="hljs-string">&quot;リランキングはRAGの精度を大きく向上させる重要なステップです。&quot;</span>,
+    <span class="hljs-string">&quot;LLMに渡すコンテキストは、リランキングで質の高い少数に絞るのが良いです。&quot;</span>,
+    <span class="hljs-comment"># ... 他47件</span>
+]
+
+<span class="hljs-comment"># 3. クエリ×文書ペアを作成</span>
+pairs = [(query, doc) <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> documents]
+
+<span class="hljs-comment"># 4. スコア計算（バッチ推奨）</span>
+scores = model.predict(pairs, batch_size=<span class="hljs-number">16</span>)
+
+<span class="hljs-comment"># 5. スコア順にソート</span>
+ranked_indices = np.argsort(scores)[::-<span class="hljs-number">1</span>]  <span class="hljs-comment"># 降順</span>
+reranked_docs = [documents[i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> ranked_indices]
+
+<span class="hljs-comment"># 6. 上位k件をLLMに渡す</span>
+top_k = <span class="hljs-number">5</span>
+context_for_llm = <span class="hljs-string">&quot;\n\n&quot;</span>.join(reranked_docs[:top_k])
+</code></pre>
+<p><strong>ポイント</strong></p>
+<ul>
+<li>Cross-Encoderは<strong>計算コストが高い</strong>ので、最初の検索で候補を数十〜数百件に絞ってから使うのが基本です<a href="https://www.sbert.net/examples/cross_encoder/applications/README.html">Sentence Transformers Docs</a>。</li>
+<li>モデルはHugging Face Hubから簡単にロードできます<a href="https://huggingface.co/cross-encoder">Hugging Face</a>。</li>
+</ul>
+<h3 id="2-cohere-rerank-apiを使う方法">2. Cohere Rerank APIを使う方法</h3>
+<p><strong>概要</strong></p>
+<ul>
+<li>Cohereの<strong>Rerankエンドポイント</strong>は、クエリと文書リストを渡すと、<strong>関連度スコア順に並べ替えて返す</strong>APIです<a href="https://docs.cohere.com/docs/reranking-with-cohere">Cohere Docs</a>。</li>
+<li>自前でモデルをホストせずに、クラウドサービスとして利用できます。</li>
+</ul>
+<p><strong>パイプラインの流れ</strong></p>
+<ol>
+<li>ベクトル検索などで<strong>候補文書リスト</strong>を取得</li>
+<li>Cohere Rerank APIに <code>query</code> と <code>documents</code> を送信</li>
+<li>返ってきた<strong>スコア順の結果</strong>をLLMに渡す</li>
+</ol>
+<p><strong>Pythonコード例</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> cohere
+
+<span class="hljs-comment"># APIキーは環境変数などから取得</span>
+co = cohere.Client(<span class="hljs-string">&quot;YOUR_COHERE_API_KEY&quot;</span>)
+
+<span class="hljs-comment"># 初期検索結果（例：ベクトル検索でtop 50）</span>
+query = <span class="hljs-string">&quot;RAGにおけるリランキングの実装方法&quot;</span>
+documents = [
+    <span class="hljs-string">&quot;RAGではまずベクトル検索で候補を取得し、その後クロスエンコーダで再ランク付けします。&quot;</span>,
+    <span class="hljs-string">&quot;リランキングはRAGの精度を大きく向上させる重要なステップです。&quot;</span>,
+    <span class="hljs-comment"># ... 他48件</span>
+]
+
+<span class="hljs-comment"># Rerank API呼び出し</span>
+response = co.rerank(
+    model=<span class="hljs-string">&quot;rerank-english-v3.0&quot;</span>,  <span class="hljs-comment"># モデル名は最新のものを指定</span>
+    query=query,
+    documents=documents,
+    top_n=<span class="hljs-number">10</span>,  <span class="hljs-comment"># 上位何件を返すか</span>
+)
+
+<span class="hljs-comment"># スコア順に並んだ結果を取得</span>
+reranked_docs = [r.document <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> response.results]
+
+<span class="hljs-comment"># LLMに渡すコンテキスト</span>
+context_for_llm = <span class="hljs-string">&quot;\n\n&quot;</span>.join(reranked_docs)
+</code></pre>
+<p><strong>ポイント</strong></p>
+<ul>
+<li>Cohere Rerankは<strong>キーワード検索・ベクトル検索のどちらにも適用可能</strong>で、既存の検索システムの上に「セマンティックなブースト」をかける用途に適しています<a href="https://docs.cohere.com/docs/reranking-with-cohere">Cohere Docs</a>。</li>
+<li>AWSやAzure Cosmos DBとの連携例も公式に公開されています<a href="https://aws.amazon.com/blogs/machine-learning/improve-rag-performance-using-cohere-rerank">AWS Blog</a><a href="https://techcommunity.microsoft.com/blog/azuredevcommunityblog/advanced-rag-with-azure-cosmos-db-and-cohere-rerank-3-5/4412392">Microsoft Community Hub</a>。</li>
+</ul>
+<h3 id="3-llmgptなどを使ったリランキング">3. LLM（GPTなど）を使ったリランキング</h3>
+<p><strong>概要</strong></p>
+<ul>
+<li>LLM自身に「<strong>このクエリに対して、どの文書が最も関連性が高いか順位付けして</strong>」と指示する方法です。</li>
+<li>OpenAIのCookbookでも、GPTを使ってリランキングを行う例が紹介されています<a href="https://developers.openai.com/cookbook/examples/search_reranking_with_cross-encoders">OpenAI Cookbook</a>。</li>
+</ul>
+<p><strong>パイプラインの流れ</strong></p>
+<ol>
+<li>初期検索で候補文書リストを取得</li>
+<li>LLMに「クエリと文書リスト」を渡し、<strong>文書IDの順位リスト</strong>を出力させる</li>
+<li>その順位に従って文書を並べ替え、LLMに再度渡す（あるいはそのまま回答生成）</li>
+</ol>
+<p><strong>プロンプト例</strong></p>
+<pre><code class="language-text">あなたは検索結果のリランキング専門モデルです。
+
+クエリ: {query}
+
+検索結果（文書IDと内容）:
+1. [doc1] {doc1_text}
+2. [doc2] {doc2_text}
+...
+10. [doc10] {doc10_text}
+
+上記の文書のうち、クエリに最も関連性が高いものから順に、
+文書IDをカンマ区切りで並べてください。
+例: doc3, doc1, doc7, ...
+
+出力:
+</code></pre>
+<p><strong>Pythonコード例（OpenAI API利用）</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> openai <span class="hljs-keyword">import</span> OpenAI
+
+client = OpenAI()
+
+query = <span class="hljs-string">&quot;RAGにおけるリランキングの実装方法&quot;</span>
+docs = {
+    <span class="hljs-string">&quot;doc1&quot;</span>: <span class="hljs-string">&quot;RAGではまずベクトル検索で候補を取得し、その後クロスエンコーダで再ランク付けします。&quot;</span>,
+    <span class="hljs-string">&quot;doc2&quot;</span>: <span class="hljs-string">&quot;リランキングはRAGの精度を大きく向上させる重要なステップです。&quot;</span>,
+    <span class="hljs-comment"># ...</span>
+}
+
+prompt = <span class="hljs-string">f&quot;&quot;&quot;
+あなたは検索結果のリランキング専門モデルです。
+
+クエリ: <span class="hljs-subst">{query}</span>
+
+検索結果（文書IDと内容）:
+&quot;&quot;&quot;</span> + <span class="hljs-string">&quot;\n&quot;</span>.join([<span class="hljs-string">f&quot;<span class="hljs-subst">{i+<span class="hljs-number">1</span>}</span>. [<span class="hljs-subst">{<span class="hljs-built_in">id</span>}</span>] <span class="hljs-subst">{text}</span>&quot;</span> <span class="hljs-keyword">for</span> i, (<span class="hljs-built_in">id</span>, text) <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(docs.items())]) + <span class="hljs-string">&quot;&quot;&quot;
+
+上記の文書のうち、クエリに最も関連性が高いものから順に、
+文書IDをカンマ区切りで並べてください。
+例: doc3, doc1, doc7, ...
+
+出力:
+&quot;&quot;&quot;</span>
+
+response = client.chat.completions.create(
+    model=<span class="hljs-string">&quot;gpt-4o&quot;</span>,
+    messages=[{<span class="hljs-string">&quot;role&quot;</span>: <span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;content&quot;</span>: prompt}],
+)
+
+<span class="hljs-comment"># 出力例: &quot;doc2, doc1, doc3, ...&quot;</span>
+ranked_ids = [<span class="hljs-built_in">id</span>.strip() <span class="hljs-keyword">for</span> <span class="hljs-built_in">id</span> <span class="hljs-keyword">in</span> response.choices[<span class="hljs-number">0</span>].message.content.split(<span class="hljs-string">&quot;,&quot;</span>)]
+reranked_docs = [docs[<span class="hljs-built_in">id</span>] <span class="hljs-keyword">for</span> <span class="hljs-built_in">id</span> <span class="hljs-keyword">in</span> ranked_ids]
+</code></pre>
+<p><strong>ポイント</strong></p>
+<ul>
+<li>LLMベースのリランキングは<strong>非常に柔軟</strong>で、ドメイン知識やビジネスルール（例：新しい文書を優先、特定サイトを優先など）を組み込めます。</li>
+<li>一方で<strong>コストとレイテンシが高い</strong>ため、候補数は少なめ（10〜20件程度）に抑えるのが現実的です。</li>
+</ul>
+<h3 id="4-ragパイプラインへの組み込み例疑似コード">4. RAGパイプラインへの組み込み例（疑似コード）</h3>
+<p>最後に、典型的なRAGパイプラインにリランキングを組み込む全体像を示します。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 1. 初期検索（ベクトルDBなど）</span>
+query = <span class="hljs-string">&quot;ユーザーの質問&quot;</span>
+initial_results = vector_db.similarity_search(query, k=<span class="hljs-number">50</span>)
+
+<span class="hljs-comment"># 2. リランキング（例：Cross-Encoder）</span>
+pairs = [(query, doc.page_content) <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> initial_results]
+scores = cross_encoder_model.predict(pairs)
+ranked_indices = np.argsort(scores)[::-<span class="hljs-number">1</span>]
+reranked_docs = [initial_results[i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> ranked_indices]
+
+<span class="hljs-comment"># 3. 上位k件をLLMに渡す</span>
+top_k_docs = reranked_docs[:<span class="hljs-number">10</span>]
+context = <span class="hljs-string">&quot;\n\n&quot;</span>.join([doc.page_content <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> top_k_docs])
+
+<span class="hljs-comment"># 4. LLMで回答生成</span>
+prompt = <span class="hljs-string">f&quot;&quot;&quot;
+以下の文書を参考に、ユーザーの質問に答えてください。
+
+文書:
+<span class="hljs-subst">{context}</span>
+
+質問:
+<span class="hljs-subst">{query}</span>
+&quot;&quot;&quot;</span>
+response = llm.generate(prompt)
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>LLMのハルシネーションを防ぐためにも、LLMが知らない知識を与えるということが必要です。
+そんな知識を与える仕組みの中に、よりよい情報を選択する方法があると、より正確な解答が期待できるようになります。</p>
+<ul>
+<li>RAGでは、<strong>「高速な初期検索＋高精度なリランキング」</strong> という二段階パイプラインが事実上の標準。</li>
+<li>リランキングを入れることで、
+<ul>
+<li>LLMに渡す文書の<strong>質</strong>が上がり，</li>
+<li>ノイズ文書を減らし，</li>
+<li>コンテキスト長を抑えつつ精度を維持できる。</li>
+</ul>
+</li>
+<li>実装は、Cross-Encoder・Cohere Rerank・LLMベースなど、<br>
+環境やコスト制約に応じて選べばよい。</li>
+</ul>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+            
+        </body>
+        </html>
