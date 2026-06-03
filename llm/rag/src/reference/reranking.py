@@ -222,3 +222,152 @@ if __name__ == "__main__":
     
     # 1次検索で4件抽出し、リランキングして最終的に最も適切な2件に絞り込む
     final_context = retrieve_and_rerank(user_query, top_k_initial=4, top_k_final=2)
+
+
+    import os
+import pickle
+import numpy as np
+import faiss
+from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer
+import MeCab
+
+# 分かち書き関数の定義
+wakati = MeCab.Tagger("-Owbakati")
+def tokenize_japanese(text):
+    return wakati.parse(text).strip().split()
+
+class LoadedHybridSearcher:
+    def __init__(self, db_dir="rag_db"):
+        print("データベースをロード中...")
+        # 1. 埋め込みモデルのロード
+        self.bi_encoder = SentenceTransformer('bzk/ja-sentence-transformer-v1')
+        
+        # 2. FAISS インデックスのロード
+        faiss_path = os.path.join(db_dir, "image_vectors.faiss")
+        self.faiss_index = faiss.read_index(faiss_path)
+        
+        # 3. メタデータストア（パスとテキスト）のロード
+        store_path = os.path.join(db_dir, "image_store.pkl")
+        with open(store_path, "rb") as f:
+            store_data = pickle.load(f)
+            
+        self.image_paths = store_data["image_paths"]
+        self.metadatas = store_data["metadatas"]
+        
+        # 4. ロードしたテキストからBM25インデックスをオンメモリで再構築
+        # （テキストデータ自体が軽量なため、起動時に構築するのが最もシンプルで柔軟です）
+        tokenized_docs = [tokenize_japanese(text) for text in self.metadatas]
+        self.bm25 = BM25Okapi(tokenized_docs)
+        print(f"ロード完了: {len(self.image_paths)} 件の画像が検索可能です。")
+
+    def query(self, search_text, top_k=1):
+        # A. ベクトル検索 (Dense)
+        query_vector = self.bi_encoder.encode([search_text]).astype('float32')
+        _, dense_indices = self.faiss_index.search(query_vector, min(top_k + 2, len(self.image_paths)))
+        dense_hits = [idx for idx in dense_indices[0] if idx != -1]
+        
+        # B. キーワード検索 (BM25)
+        tokenized_query = tokenize_japanese(search_text)
+        bm25_scores = self.bm25.get_scores(tokenized_query)
+        sparse_hits = np.argsort(bm25_scores)[::-1][:top_k + 2].tolist()
+        sparse_hits = [idx for idx in sparse_hits if bm25_scores[idx] > 0]
+        
+        # C. ハイブリッド統合（重複排除）
+        combined_hits = list(set(dense_hits + sparse_hits))
+        
+        # 検索結果の整形
+        results = []
+        for idx in combined_hits[:top_k]:
+            results.append({
+                "image_path": self.image_paths[idx],
+                "metadata": self.metadatas[idx]
+            })
+        return results
+
+# ---------------------------------------------------------
+# 検索のテスト実行
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    # 事前に build_vector_db.py を実行して "rag_db" がある状態で実行します
+    if not os.path.exists("rag_db"):
+        print("エラー: 先にデータベースを構築（build_vector_db.pyを実行）してください。")
+    else:
+        searcher = LoadedHybridSearcher(db_dir="rag_db")
+        
+        # 検索クエリの実行
+        user_query = "2025年の売上推移が書かれた青いグラフの画像を探して"
+        hits = searcher.query(user_query, top_k=1)
+        
+        print("\n=== 検索結果 ===")
+        for hit in hits:
+            print(f"【該当画像】: {hit['image_path']}")
+            print(f"【AIによる画像説明文】:\n{hit['metadata']}")
+
+import os
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+class GraphRAGChunker:
+    def __init__(self, chunk_size=800, chunk_overlap=150):
+        """
+        chunk_size: 1つのチャンクの最大文字数。
+                    GraphRAGではエンティティ抽出の密度を保つため、600〜800文字程度が推奨されます。
+        chunk_overlap: チャンク間の重複文字数。
+                       文をまたいだ関係性（リレーション）の途切れを防ぐために設定します。
+        """
+        # RecursiveCharacterTextSplitterは、セパレータの優先順位（改行 -> 句点など）に従って、
+        # 意味の切れ目を保ちながら指定した文字数に収まるよう賢く分割してくれます。
+        self.splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=len,
+            separators=["\n\n", "\n", "。", "、", " ", ""]
+        )
+
+    def chunk_file(self, file_path):
+        """ファイルを読み込んでチャンクに分割する"""
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"ファイルが見つかりません: {file_path}")
+            
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+            
+        # チャンキングの実行
+        chunks = self.splitter.split_text(text)
+        return chunks
+
+# ---------------------------------------------------------
+# 実行テスト
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    # テスト用の長文ドキュメントを作成
+    sample_doc_path = "company_history.txt"
+    sample_text = """
+    株式会社TECH-AIは、2022年に代表取締役の山田太郎によって東京で設立された。同社は設立当初からAI技術を活用した業務効率化ツールの開発に注力しており、2024年には独自のLLMファインチューニング基盤「NeuronFlow」を発表した。この「NeuronFlow」の開発には、CTOである佐藤次郎率いる開発チームが2年間の歳月を費やした。
+    
+    2025年、TECH-AI社はグローバル展開の第一歩として、アメリカのシリコンバレーに子会社「TECH-AI Global Inc.」を設立。現地でのCEOには、元大手テック企業のアレックス・スミス氏が就任した。さらに、同年10月には国内投資ファンドから総額5億円の資金調達を実施している。この資金は、主に次世代通信規格「6G」を活用したリアルタイムAI解析システムのR&D（研究開発）に投資される予定である。
+    
+    現在、TECH-AI社は総勢100名の従業員を抱え、そのうち約6割がエンジニアおよびデータサイエンティストで構成されている。社内では完全フルリモートワーク制度が導入されており、メンバーは日本全国、および海外から開発に参加している。
+    """
+    
+    with open(sample_doc_path, "w", encoding="utf-8") as f:
+        f.write(sample_text)
+
+    # チャンカーの初期化（分かりやすくするために少し小さめのサイズでテスト）
+    # 実際のGraphRAG（Microsoft推奨値など）では chunk_size=600〜800, overlap=100〜150 あたりがベストです。
+    chunker = GraphRAGChunker(chunk_size=200, chunk_overlap=40)
+    
+    try:
+        final_chunks = chunker.chunk_file(sample_doc_path)
+        
+        print(f"元のテキストを {len(final_chunks)} 個のチャンクに分割しました。\n")
+        
+        for i, chunk in enumerate(final_chunks):
+            print(f"--- [チャンク {i+1}] (文字数: {len(chunk)}) ---")
+            print(chunk)
+            print()
+            
+    finally:
+        # テストファイルのクリーンアップ
+        if os.path.exists(sample_doc_path):
+            os.remove(sample_doc_path)
