@@ -371,3 +371,120 @@ if __name__ == "__main__":
         # テストファイルのクリーンアップ
         if os.path.exists(sample_doc_path):
             os.remove(sample_doc_path)
+
+
+import openai  # または AzureOpenAI, anthropic, google.generativeai など
+from typing import List, Dict
+
+def generate_community_topic(
+    chunks: List[str],
+    model_name: str = "gpt-4o",  # または "gpt-4", "claude-3-sonnet", "gemini-1.5-flash" など
+    max_tokens: int = 500,
+) -> Dict[str, str]:
+    """
+    コミュニティ内のチャンク群から、トピックタイトルと説明文を生成する。
+    
+    Args:
+        chunks: コミュニティに属するチャンクのテキストリスト
+        model_name: 使用するLLMのモデル名
+        max_tokens: 生成トークン数の上限
+    
+    Returns:
+        {"title": str, "description": str}
+    """
+    
+    # チャンクを結合（コンテキスト長に注意）
+    # 実際には、コンテキスト長を超えないようにトリミングが必要
+    combined_text = "\n\n".join([f"- {chunk}" for chunk in chunks])
+    
+    # プロンプト設計
+    prompt = f"""
+以下の文書群は、あるトピックに関連するチャンクです。
+これらの内容を要約し、このトピックを表すタイトルと、
+200字程度の説明文を生成してください。
+
+チャンク:
+{combined_text}
+
+出力形式は以下のJSON形式でお願いします。
+{{
+  "title": "トピックのタイトル",
+  "description": "トピックの説明（200字程度）"
+}}
+"""
+    
+    # LLM呼び出し（OpenAIの場合）
+    client = openai.OpenAI(api_key="your-api-key")
+    response = client.chat.completions.create(
+        model=model_name,
+        messages=[
+            {"role": "system", "content": "あなたは専門的な文書を要約するアシスタントです。"},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=max_tokens,
+        temperature=0.1  # 事実ベースの要約なので低め
+    )
+    
+    # レスポンスからJSONをパース（簡易実装）
+    # 実際には、LLMがJSONを返すように設定するか、正規表現で抽出する
+    content = response.choices[0].message.content.strip()
+    
+    # ここでは簡易的に文字列を返す（実際にはJSONパース推奨）
+    return {
+        "title": "生成されたタイトル（パース処理が必要）",
+        "description": content  # 実際にはtitleとdescriptionを分離
+    }
+
+
+def generate_all_community_topics(
+    community_chunks: Dict[int, List[str]],
+    model_name: str = "gpt-4o",
+) -> Dict[int, Dict[str, str]]:
+    """
+    すべてのコミュニティについてトピック要約を生成する。
+    
+    Args:
+        community_chunks: {community_id: [chunk_texts]} の辞書
+        model_name: 使用するLLMのモデル名
+    
+    Returns:
+        {community_id: {"title": str, "description": str}}
+    """
+    community_topics = {}
+    
+    for community_id, chunks in community_chunks.items():
+        print(f"Processing community {community_id}...")
+        
+        # コンテキスト長の制限に対応（簡易版）
+        # 実際には、トークナイザで長さを計測し、長すぎる場合は要約を段階的に行うなどの工夫が必要
+        if len(chunks) > 50:  # 例: 50チャンク以上はサンプリング
+            chunks = chunks[:50]  # またはランダムサンプリング
+        
+        topic = generate_community_topic(chunks, model_name=model_name)
+        community_topics[community_id] = topic
+    
+    return community_topics
+
+
+# 例: コミュニティ0は「GraphRAGの概要」に関するチャンク群
+community_chunks = {
+    0: [
+        "GraphRAGは、文書をチャンクに分割し、埋め込み類似度からグラフを構築する。",
+        "グラフをクラスタリングしてコミュニティを抽出し、各コミュニティの要約を生成する。",
+        "コミュニティ要約は、トピック単位での検索や推論に活用される。",
+    ],
+    1: [
+        "埋め込みモデルは、テキストをベクトル空間に写像する。",
+        "コサイン類似度を用いて、チャンク間の類似度を計算する。",
+        "類似度が高いチャンク同士をエッジで結び、グラフを構築する。",
+    ],
+    # ... 他のコミュニティ
+}
+
+topics = generate_all_community_topics(community_chunks, model_name="gpt-4o")
+
+for cid, topic in topics.items():
+    print(f"Community {cid}:")
+    print(f"  Title: {topic['title']}")
+    print(f"  Description: {topic['description']}")
+    print()
