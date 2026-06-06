@@ -488,3 +488,73 @@ for cid, topic in topics.items():
     print(f"  Title: {topic['title']}")
     print(f"  Description: {topic['description']}")
     print()
+
+
+import os
+from llama_index.core import Document
+from llama_index.core.node_parser import SentenceSplitter
+
+class LlamaIndexGraphChunker:
+    def __init__(self, chunk_size=800, chunk_overlap=150):
+        """
+        LlamaIndexのSentenceSplitterを使用してチャンキングを行います。
+        
+        chunk_size: チャンクの最大トークン（または文字）数。
+                    GraphRAGのエンティティ抽出効率を最大化するため600〜800が推奨されます。
+        chunk_overlap: チャンク間の重複度。
+        """
+        # SentenceSplitterはデフォルトで文字数ではなく「トークン数」でカウントしますが、
+        # 日本語環境で厳密に文字数ベースで制御したい場合は、length_functionに len を指定します。
+        self.parser = SentenceSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=len
+        )
+
+    def process_text_to_nodes(self, text, doc_id="company_doc_001"):
+        """
+        テキストをLlamaIndexのドキュメントに変換し、
+        GraphRAGに最適な関係性情報を持つ『Node（ノード）』のリストに分割します。
+        """
+        # 1. プレーンテキストをLlamaIndexのDocumentオブジェクトにラップ
+        # （ここでファイル名や日付などのメタデータを付与することも可能です）
+        document = Document(
+            text=text, 
+            doc_id=doc_id,
+            metadata={"category": "company_history"}
+        )
+        
+        # 2. パサーを実行してNode（チャンク）に分割
+        # LlamaIndexのNodeは、自身のテキストだけでなく「前後のノードがどれか」という
+        # リレーション情報（next_node / prev_node）を自動で保持します。
+        nodes = self.parser.get_nodes_from_documents([document])
+        return nodes
+
+# ---------------------------------------------------------
+# 実行テスト
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    # テスト用の長文ドキュメント
+    sample_text = """
+    株式会社TECH-AIは、2022年に代表取締役の山田太郎によって東京で設立された。同社は設立当初からAI技術を活用した業務効率化ツールの開発に注力しており、2024年には独自のLLMファインチューニング基盤「NeuronFlow」を発表した。この「NeuronFlow」の開発には、CTOである佐藤次郎率いる開発チームが2年間の歳月を費やした。
+    
+    2025年、TECH-AI社はグローバル展開の第一歩として、アメリカのシリコンバレーに子会社「TECH-AI Global Inc.」を設立。現地でのCEOには、元大手テック企業のアレックス・スミス氏が就任した。さらに、同年10月には国内投資ファンドから総額5億円の資金調達を実施している。この資金は、主に次世代通信規格「6G」を活用したリアルタイムAI解析システムのR&D（研究開発）に投資される予定である。
+    """
+
+    # 挙動が分かりやすいように小さめのサイズ（200文字）で設定
+    chunker = LlamaIndexGraphChunker(chunk_size=200, chunk_overlap=40)
+    
+    # チャンキングの実行
+    nodes = chunker.process_text_to_nodes(sample_text)
+    
+    print(f"LlamaIndexにより、テキストが {len(nodes)} 個のノードに分割されました。\n")
+    
+    for i, node in enumerate(nodes):
+        print(f"--- [Node {i+1}] (Node ID: {node.node_id} / 文字数: {len(node.text)}) ---")
+        print(f"メタデータ: {node.metadata}")
+        print(f"本文:\n{node.text}")
+        
+        # LlamaIndex特有の機能：前後のノードとの関係性を保持しているか確認
+        if node.next_node:
+            print(f"-> 次のノードIDが存在します: {node.next_node.node_id}")
+        print()
