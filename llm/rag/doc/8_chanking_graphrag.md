@@ -302,6 +302,92 @@ __(1) コミュニティ要約を検索対象に含める__
 __(2) トピックベースのナビゲーション__
 - ユーザーが「このトピックについて詳しく知りたい」と言った場合、該当トピックのコミュニティ要約と関連チャンクを提示する、といった使い方も可能です。
 
+## 実装
+ここまで説明した中で、コミュニティ検出について実験してみようと思います。
+グラフ理論で実装されたレイデン法というアルゴリズムを用いて、複雑なグラフ構造からコミュニティを検知・識別する実装を行ってみます。
+
+### パッケージ
+
+必要なパッケージは以下の通りです。
+
+```
+!pip install leidenalg python-igraph cdlib graspologic
+```
+
+### 実装
+
+実験的に作成したノードを確率密度に従って結合します。
+そして出来上がったグラフ構造に対してレイデン法を適用してコミュニティ検出を行います。
+
+```python
+import matplotlib.pyplot as plt
+import networkx as nx
+from cdlib import algorithms
+
+# 1. 複雑なコミュニティを持つグラフの自動生成（LFRベンチマーク風）
+# 20人ずつのグループが3つ（計60人）あり、グループ内は高密度、グループ間は低密度で繋ぐ
+sizes = [20, 20, 20]
+# グループ内のつながる確率: 0.4 / グループ間のつながる確率: 0.03
+probs = [[0.4, 0.03, 0.03], 
+         [0.03, 0.4, 0.03], 
+         [0.03, 0.03, 0.4]]
+
+G = nx.stochastic_block_model(sizes, probs, seed=42)
+
+# 2. レイデン法（Leiden）を実行
+# cdlibのleidenアルゴリズムを呼び出します
+leiden_communities = algorithms.leiden(G)
+
+# 検出されたコミュニティ（グループのリスト）を取得
+# 例: [[0, 1, 2...], [20, 21, 22...], ...]
+communities = leiden_communities.communities
+print(f"レイデン法が検出したコミュニティ数: {len(communities)}個")
+
+# 3. ノードごとに色を割り振るためのカラーマップを作成
+# 何個のグループに分かれても対応できるように、Matplotlibのカラーグラデーション（cm）を使用
+cmap = plt.get_cmap("viridis", len(communities))
+color_map = {}
+
+for group_idx, community in enumerate(communities):
+    for node in community:
+        color_map[node] = cmap(group_idx)
+
+# ノードのID順に色を並び替えたリスト
+node_colors = [color_map[node] for node in sorted(G.nodes())]
+
+# 4. 美しく可視化
+plt.figure(figsize=(10, 10))
+
+# ネットワークをきれいに広げるためのレイアウト計算
+pos = nx.spring_layout(G, k=0.3, iterations=50, seed=42)
+
+nx.draw(
+    G,
+    pos,
+    with_labels=True,
+    node_color=node_colors,  # レイデン法が決めた色
+    node_size=300,
+    font_size=8,
+    font_color="white",
+    edge_color="gainsboro",  # 複雑な線を薄いグレーにして見やすくする
+    alpha=0.9
+)
+
+plt.title("Leiden Algorithm - Community Detection Experiment", fontsize=14)
+plt.show()
+```
+
+### 結果
+以下のようにコミュニティを3つに分離して、色分けした結果が表示されると思います。
+これもレイデン法により、グラフのノードとエッジの関係性から自動で生成された、ということになります。
+
+
+```
+レイデン法が検出したコミュニティ数: 3個
+```
+
+![1780713098774](image/8_chanking_graphrag/1780713098774.png)
+
 ## まとめ
 本日の重要なポイントはここでしょうか。
 Graph RAGのためのデータベースを作成する際にはトピックの選定と、テーマごとに関係があることを見抜くことが重要なポイントとなります。

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x691c;&#x7d22;&#x578b;RAG&#x3068;&#x306e;&#x9055;&#x3044;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日より話しているRAGシリーズです。
+<a href="https://yoshishinnze.hatenablog.com/entry/2026/06/01/043000">GraphRAGは因果関係を情報DB</a>から取得する上で、単純な検索型のRAGより高い検索性能を示します。</p>
+<p>検索に必要な情報を保持するDBについては、違いがつくのでしょうか。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>情報DBを作成する上で、GraphDBはどのような違いが生じるか。について整理しました。</p>
+</blockquote>
+<h2 id="検索型ragとの違い">検索型RAGとの違い</h2>
+<p>GraphRAGは、<strong>「データベース構築（インデックス構築）の段階」で従来のRAGと大きく異なる</strong>設計になっています。主な違いを整理します。</p>
+<h3 id="1-目的の違い検索-vs-構造理解">1. 目的の違い：検索 vs 構造理解</h3>
+<p><strong>従来のRAG（検索型）</strong></p>
+<ul>
+<li>目的：**「クエリに最も関連するチャンクを素早く見つける」**こと。</li>
+<li>データベース構築：
+<ul>
+<li>文書をチャンクに分割</li>
+<li>各チャンクを埋め込み、<strong>フラットなベクトルインデックス</strong>に保存</li>
+</ul>
+</li>
+<li>検索時：
+<ul>
+<li>クエリの埋め込みと<strong>k-NN検索</strong>でtop-kチャンクを取得</li>
+<li>LLMに渡して回答生成</li>
+</ul>
+</li>
+</ul>
+<p>→ <strong>「どのチャンクがクエリに近いか」だけを見る</strong>設計。</p>
+<p><strong>GraphRAG</strong></p>
+<ul>
+<li>目的：<strong>「データ全体の構造（トピック・関係性）を理解し、その上で推論する」</strong> こと。</li>
+<li>データベース構築：
+<ul>
+<li>チャンキング＋埋め込みは同じ</li>
+<li>さらに<strong>チャンク間の類似度からグラフを構築</strong></li>
+<li>グラフをクラスタリングして<strong>コミュニティ（トピック）を抽出</strong></li>
+<li>各コミュニティ内のチャンクから<strong>要約を生成</strong>（コミュニティ要約）</li>
+</ul>
+</li>
+<li>検索時：
+<ul>
+<li>クエリに対して、<strong>コミュニティ要約やチャンクを検索</strong></li>
+<li>LLMが<strong>グラフ構造（トピック間の関係）を考慮</strong>して回答生成</li>
+</ul>
+</li>
+</ul>
+<p>→ **「データ全体の構造を事前に理解しておく」**設計<a href="https://www.microsoft.com/en-us/research/blog/introducing-graphrag-unlocking-llm-reasoning-on-complex-private-data/">Microsoft Research</a>。</p>
+<h3 id="2-データベース構築時の処理の違い">2. データベース構築時の処理の違い</h3>
+<p><strong>(1) グラフ構築（Graph Construction）</strong></p>
+<ul>
+<li><strong>従来のRAG</strong>：
+<ul>
+<li>チャンクは<strong>独立したドキュメント</strong>として扱われ、相互関係は基本的に考慮されない。</li>
+</ul>
+</li>
+<li><strong>GraphRAG</strong>：
+<ul>
+<li>各チャンクを<strong>ノード</strong>とし、類似度が高いチャンク同士を<strong>エッジ</strong>で結ぶ。</li>
+<li>これにより、<strong>「どのチャンクがどのチャンクと関連しているか」というネットワーク</strong>が構築される。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) コミュニティ検出（Community Detection）</strong></p>
+<ul>
+<li><strong>従来のRAG</strong>：
+<ul>
+<li>コミュニティ検出は行わない（あるとしても検索時の後処理レベル）。</li>
+</ul>
+</li>
+<li><strong>GraphRAG</strong>：
+<ul>
+<li>グラフをクラスタリングアルゴリズム（例：Louvain法、Leiden法）で<strong>トピックごとのコミュニティに分割</strong>。</li>
+<li>各コミュニティは「関連するチャンクの集合」として扱われる。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) コミュニティ要約生成（Community Summarization）</strong></p>
+<ul>
+<li><strong>従来のRAG</strong>：
+<ul>
+<li>要約は基本的に<strong>検索時にLLMが行う</strong>（あるいは事前要約は別処理）。</li>
+</ul>
+</li>
+<li><strong>GraphRAG</strong>：
+<ul>
+<li>各コミュニティ内のチャンクをLLMに渡し、<strong>コミュニティ全体の要約</strong>を生成。</li>
+<li>この要約も<strong>検索対象の一部</strong>としてインデックスに保存される。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(4) メタデータ・属性の付与</strong></p>
+<ul>
+<li><strong>従来のRAG</strong>：
+<ul>
+<li>メタデータ（セクション、日付など）は<strong>フィルタリングやブースト</strong>に使われることが多い。</li>
+</ul>
+</li>
+<li><strong>GraphRAG</strong>：
+<ul>
+<li>メタデータは<strong>ノード属性</strong>としてグラフに組み込まれ、
+<ul>
+<li>コミュニティ検出時の特徴量</li>
+<li>検索時のフィルタリング<br>
+の両方に活用される。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-インデックスの構造の違い">3. インデックスの構造の違い</h3>
+<p><strong>従来のRAGのインデックス</strong></p>
+<ul>
+<li><strong>フラットなベクトルインデックス</strong>：
+<ul>
+<li>各チャンクが独立したエントリ</li>
+<li>クエリに対して<strong>k-NN検索</strong>でtop-kを取得</li>
+</ul>
+</li>
+<li>構造はシンプルで、<strong>検索速度は速い</strong>が、<strong>文書間の関係性は考慮されない</strong>。</li>
+</ul>
+<p><strong>GraphRAGのインデックス</strong></p>
+<ul>
+<li><strong>グラフ構造＋（場合によっては）ベクトルインデックス</strong>：
+<ul>
+<li>ノード：チャンク、コミュニティ要約など</li>
+<li>エッジ：チャンク間の類似関係、コミュニティ間の関係など</li>
+<li>コミュニティ要約も<strong>検索対象のノード</strong>として保存</li>
+</ul>
+</li>
+<li>構造は複雑だが、<strong>「トピック単位」「関係性単位」での検索・推論</strong>が可能。</li>
+</ul>
+<h3 id="4-検索推論時の挙動の違い">4. 検索・推論時の挙動の違い</h3>
+<p><strong>従来のRAG</strong></p>
+<ul>
+<li>検索：
+<ul>
+<li>クエリに近いチャンクを<strong>個別に</strong>取得。</li>
+</ul>
+</li>
+<li>推論：
+<ul>
+<li>LLMは<strong>渡されたチャンクの内容だけ</strong>を見て回答生成。</li>
+<li>文書間の関係性や全体構造は<strong>基本的に考慮されない</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>GraphRAG</strong></p>
+<ul>
+<li>検索：
+<ul>
+<li>クエリに対して、<strong>チャンクとコミュニティ要約の両方</strong>を検索。</li>
+<li>グラフ構造をたどって、<strong>関連するコミュニティやチャンク</strong>も探索できる。</li>
+</ul>
+</li>
+<li>推論：
+<ul>
+<li>LLMは<strong>コミュニティ要約やグラフ構造</strong>を参照し、
+<ul>
+<li>「どのトピックが関連しているか」</li>
+<li>「トピック間の関係はどうなっているか」<br>
+を考慮して回答生成できる。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>→ <strong>「点（チャンク）の集合」を見るか、「ネットワーク（グラフ）全体」を見るか</strong>の違い。</p>
+<h3 id="5-コスト複雑さの違い">5. コスト・複雑さの違い</h3>
+<p><strong>従来のRAG</strong></p>
+<ul>
+<li>構築コスト：比較的低い（チャンキング＋埋め込みのみ）</li>
+<li>検索コスト：低い（k-NN検索のみ）</li>
+<li>実装難易度：比較的低い</li>
+</ul>
+<p><strong>GraphRAG</strong></p>
+<ul>
+<li>構築コスト：高い
+<ul>
+<li>グラフ構築、コミュニティ検出、要約生成など<strong>追加処理が多い</strong></li>
+</ul>
+</li>
+<li>検索コスト：やや高い
+<ul>
+<li>グラフ探索やコミュニティ単位の検索が必要</li>
+</ul>
+</li>
+<li>実装難易度：高い
+<ul>
+<li>グラフアルゴリズム、LLMによる要約、インデックス設計などが必要</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-向き不向き">6. 向き不向き</h3>
+<p><strong>従来のRAGが向くケース</strong></p>
+<ul>
+<li>文書が<strong>独立した事実の集合</strong>である場合（FAQ、マニュアルなど）</li>
+<li><strong>単一の事実</strong>を素早く検索したい場合</li>
+<li>コストや実装のシンプルさを重視する場合</li>
+</ul>
+<p><strong>GraphRAGが向くケース</strong></p>
+<ul>
+<li>文書間に<strong>複雑な関係性</strong>がある場合（研究論文、企業の内部文書、会話ログなど）</li>
+<li><strong>全体像やトピック間の関係</strong>を理解したい場合</li>
+<li>「なぜ？」「どのように関連している？」といった<strong>推論的な質問</strong>が多い場合</li>
+</ul>
+<h2 id="関連するかの決め方">関連するかの決め方</h2>
+<p>GraphRAGにおける「関連するチャンク」の決め方は、<strong>基本的には類似度ベース</strong>ですが、それだけではなく、<strong>グラフアルゴリズムやコミュニティ検出</strong>も組み合わせて決めます。具体的な流れを整理します。</p>
+<h3 id="1-類似度ベースのエッジ生成基本">1. 類似度ベースのエッジ生成（基本）</h3>
+<p><strong>(1) チャンク間の類似度計算</strong></p>
+<ul>
+<li>各チャンクを埋め込みモデルでベクトル化します。</li>
+<li>すべてのチャンクペア（または近傍に限定）について、<strong>コサイン類似度</strong>などを計算します。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># 疑似コード例</span>
+<span class="hljs-keyword">for</span> i, emb_i <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(embeddings):
+    <span class="hljs-keyword">for</span> j, emb_j <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(embeddings):
+        <span class="hljs-keyword">if</span> i == j:
+            <span class="hljs-keyword">continue</span>
+        sim = cosine_similarity(emb_i, emb_j)
+        <span class="hljs-keyword">if</span> sim &gt; threshold:
+            add_edge(i, j, weight=sim)
+</code></pre>
+<p><strong>(2) 閾値（Threshold）によるエッジの選別</strong></p>
+<ul>
+<li><strong>類似度が一定以上</strong>のペアだけをエッジとして結びます。</li>
+<li>閾値の設定例：
+<ul>
+<li>固定値（例：0.7以上）</li>
+<li>上位k％（例：類似度が上位10％のペアのみ）</li>
+</ul>
+</li>
+<li>閾値が低すぎると<strong>グラフが密になりすぎ</strong>、高すぎると<strong>グラフが分断されすぎ</strong>るため、バランスが重要です。</li>
+</ul>
+<p>→ これが「<strong>類似度が一定以上なら関連する</strong>」という基本的な処理です。</p>
+<h3 id="2-グラフアルゴリズムによる間接的な関連の考慮">2. グラフアルゴリズムによる「間接的な関連」の考慮</h3>
+<p>類似度だけでなく、<strong>グラフの構造</strong>も使って「関連するチャンク」を決めます。</p>
+<p><strong>(1) コミュニティ検出（Community Detection）</strong></p>
+<ul>
+<li>Louvain法、Leiden法、Girvan–Newman法などの<strong>クラスタリングアルゴリズム</strong>で、グラフを<strong>トピックごとのコミュニティ</strong>に分割します。</li>
+<li>同じコミュニティに属するチャンクは、<strong>直接的には類似度が低くても、共通のトピックでつながっている</strong>と見なされます。</li>
+</ul>
+<p>→ 「<strong>同じコミュニティに属している＝関連する</strong>」という判断が加わります。</p>
+<p><strong>(2) 経路探索（Path Finding）</strong></p>
+<ul>
+<li>あるチャンクから別のチャンクへ、<strong>エッジをたどって到達できるか</strong>を確認します。</li>
+<li>例：
+<ul>
+<li>チャンクA → チャンクB（類似度0.8）</li>
+<li>チャンクB → チャンクC（類似度0.75）</li>
+<li>ならば、AとCは<strong>間接的に関連している</strong>と見なす。</li>
+</ul>
+</li>
+</ul>
+<p>→ 「<strong>類似度の連鎖</strong>」によって、直接の類似度が低くても<strong>グラフ上でつながっていれば関連</strong>と判断できます。</p>
+<h3 id="3-コミュニティ要約による高レベルな関連の定義">3. コミュニティ要約による「高レベルな関連」の定義</h3>
+<p>GraphRAGでは、各コミュニティ内のチャンクをLLMに渡して<strong>コミュニティ要約</strong>を生成します<a href="https://www.microsoft.com/en-us/research/blog/introducing-graphrag-unlocking-llm-reasoning-on-complex-private-data/">Microsoft Research</a>。</p>
+<ul>
+<li>コミュニティ要約は、<strong>そのトピック全体の要約</strong>として扱われます。</li>
+<li>検索時には、
+<ul>
+<li>クエリに対して<strong>コミュニティ要約そのもの</strong>を検索対象に含める</li>
+<li>コミュニティ要約がヒットした場合、<strong>そのコミュニティに属するすべてのチャンク</strong>を関連文書として扱う</li>
+</ul>
+</li>
+</ul>
+<p>→ 「<strong>同じコミュニティ要約を共有しているチャンクは関連する</strong>」という、より高レベルな関連性の定義が加わります。</p>
+<h3 id="4-メタデータ属性ベースの関連性">4. メタデータ・属性ベースの関連性</h3>
+<p>GraphRAGでは、メタデータも<strong>ノード属性</strong>としてグラフに組み込まれます。</p>
+<ul>
+<li>例：
+<ul>
+<li>同じセクションに属するチャンク</li>
+<li>同じ図表を参照するチャンク</li>
+<li>同じ日付範囲のチャンク</li>
+</ul>
+</li>
+<li>これらの属性に基づいて、
+<ul>
+<li><strong>属性が同じチャンク同士をエッジで結ぶ</strong></li>
+<li>コミュニティ検出時の特徴量として使う</li>
+</ul>
+</li>
+</ul>
+<p>→ 「<strong>メタデータが一致している＝関連する</strong>」というルールも追加できます。</p>
+<h3 id="5-実装上の工夫近傍探索で計算量を抑える">5. 実装上の工夫（近傍探索で計算量を抑える）</h3>
+<p>全チャンク同士の類似度を計算すると、**計算量がO(n²)**になり現実的でない場合があります。そのため、実際には以下のような工夫をします。</p>
+<p><strong>(1) k-NNベースのエッジ生成</strong></p>
+<ul>
+<li>各チャンクについて、<strong>上位k個の最近傍チャンク</strong>だけをエッジとして結びます。</li>
+<li>例：各ノードについて<strong>top-10の類似チャンク</strong>にのみエッジを張る。</li>
+</ul>
+<p><strong>(2) 近似最近傍探索（ANN）</strong></p>
+<ul>
+<li>FAISSやHNSWなどの<strong>近似最近傍探索</strong>を使い、高速に近傍を求める。</li>
+<li>これにより、大規模データでも現実的な時間でグラフ構築が可能になります。</li>
+</ul>
+<h2 id="トピックの決め方">トピックの決め方</h2>
+<p>GraphRAGにおける「コミュニティのトピック」は、<strong>グラフのクラスタリング結果をLLMに渡して要約させる</strong>ことで創出します。具体的な流れを整理します。</p>
+<h3 id="1-コミュニティ検出グラフのクラスタリング">1. コミュニティ検出（グラフのクラスタリング）</h3>
+<p>まず、チャンク間の類似度から構築したグラフを<strong>クラスタリングアルゴリズム</strong>で分割し、「コミュニティ」を抽出します。</p>
+<p><strong>代表的なアルゴリズム</strong></p>
+<ul>
+<li><strong>Louvain法</strong>：モジュラリティ最大化に基づく高速なコミュニティ検出<a href="https://en.wikipedia.org/wiki/Louvain_method">Wikipedia</a></li>
+<li><strong>Leiden法</strong>：Louvain法の改良版で、より安定した結果を出す<a href="https://www.nature.com/articles/s41592-019-0686-2">Nature Methods</a></li>
+<li><strong>Girvan–Newman法</strong>：エッジのbetweenness centralityに基づく分割</li>
+<li>その他：スペクトラルクラスタリング、Label Propagationなど</li>
+</ul>
+<p><strong>出力</strong></p>
+<ul>
+<li>各チャンクに「コミュニティID」が付与される</li>
+<li>例：コミュニティ1に属するチャンク群、コミュニティ2に属するチャンク群、…</li>
+</ul>
+<p>この段階では、<strong>「どのチャンクが同じグループか」は分かるが、そのグループが何を表すか（トピック名）はまだ不明</strong>です。</p>
+<h3 id="2-コミュニティ要約生成llmによるトピック創出">2. コミュニティ要約生成（LLMによるトピック創出）</h3>
+<p>次に、各コミュニティに属するチャンクをLLMに渡し、<strong>コミュニティ全体の要約（トピック説明）</strong> を生成させます。</p>
+<p><strong>プロンプトの例</strong></p>
+<pre><code class="language-text">以下の文書群は、あるトピックに関連するチャンクです。
+これらの内容を要約し、このトピックを表すタイトルと、
+200字程度の説明文を生成してください。
+
+チャンク:
+- [チャンク1のテキスト]
+- [チャンク2のテキスト]
+- ...
+</code></pre>
+<p><strong>出力例</strong></p>
+<ul>
+<li><strong>タイトル</strong>：GraphRAGにおけるコミュニティ検出と要約生成</li>
+<li><strong>説明文</strong>：GraphRAGでは、チャンク間の類似度からグラフを構築し、Louvain法などでコミュニティを抽出する。各コミュニティ内のチャンクをLLMに渡し、トピック要約を生成することで、データ全体の構造を理解する。</li>
+</ul>
+<p>→ これが <strong>「コミュニティのトピック」</strong> としてインデックスに保存されます。</p>
+<h3 id="3-トピックの階層化オプション">3. トピックの階層化（オプション）</h3>
+<p>大規模なデータセットでは、<strong>階層的なコミュニティ構造</strong>を作ることもあります。</p>
+<p><strong>例</strong></p>
+<ol>
+<li>第1段階：大きなコミュニティ（例：「機械学習」）</li>
+<li>第2段階：その中のサブコミュニティ（例：「深層学習」「強化学習」）</li>
+<li>各階層ごとにLLMで要約を生成</li>
+</ol>
+<p>これにより、<strong>マクロなトピックとミクロなトピック</strong>の両方を扱えるようになります。</p>
+<h3 id="4-トピックの命名整理後処理">4. トピックの命名・整理（後処理）</h3>
+<p>LLMが生成したトピック名は、場合によっては冗長だったり一貫性がなかったりします。そのため、以下のような後処理を行うことがあります。</p>
+<p><strong>(1) トピック名の正規化</strong></p>
+<ul>
+<li>類似したトピック名をマージ（例：「GraphRAGのコミュニティ検出」と「GraphRAGにおけるコミュニティ抽出」を統合）</li>
+<li>冗長な表現を短縮（例：「〜についての説明」を削除）</li>
+</ul>
+<p><strong>(2) トピック間の関係性の整理</strong></p>
+<ul>
+<li>LLMに「これらのトピックの関係を説明して」と指示し、<strong>トピック間のエッジ（関係）</strong> を定義する</li>
+<li>例：「深層学習」は「機械学習」のサブトピックである、など</li>
+</ul>
+<h3 id="5-検索時の活用">5. 検索時の活用</h3>
+<p><strong>(1) コミュニティ要約を検索対象に含める</strong></p>
+<ul>
+<li>クエリに対して、<strong>チャンクだけでなくコミュニティ要約も検索</strong>します。</li>
+<li>コミュニティ要約がヒットした場合、そのコミュニティに属するチャンク群を<strong>まとめて関連文書</strong>として扱います。</li>
+</ul>
+<p><strong>(2) トピックベースのナビゲーション</strong></p>
+<ul>
+<li>ユーザーが「このトピックについて詳しく知りたい」と言った場合、該当トピックのコミュニティ要約と関連チャンクを提示する、といった使い方も可能です。</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>ここまで説明した中で、コミュニティ検出について実験してみようと思います。
+グラフ理論で実装されたレイデン法というアルゴリズムを用いて、複雑なグラフ構造からコミュニティを検知・識別する実装を行ってみます。</p>
+<h3 id="パッケージ">パッケージ</h3>
+<p>必要なパッケージは以下の通りです。</p>
+<pre><code>!pip install leidenalg python-igraph cdlib graspologic
+</code></pre>
+<h3 id="実装-1">実装</h3>
+<p>実験的に作成したノードを確率密度に従って結合します。
+そして出来上がったグラフ構造に対してレイデン法を適用してコミュニティ検出を行います。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">import</span> networkx <span class="hljs-keyword">as</span> nx
+<span class="hljs-keyword">from</span> cdlib <span class="hljs-keyword">import</span> algorithms
+
+<span class="hljs-comment"># 1. 複雑なコミュニティを持つグラフの自動生成（LFRベンチマーク風）</span>
+<span class="hljs-comment"># 20人ずつのグループが3つ（計60人）あり、グループ内は高密度、グループ間は低密度で繋ぐ</span>
+sizes = [<span class="hljs-number">20</span>, <span class="hljs-number">20</span>, <span class="hljs-number">20</span>]
+<span class="hljs-comment"># グループ内のつながる確率: 0.4 / グループ間のつながる確率: 0.03</span>
+probs = [[<span class="hljs-number">0.4</span>, <span class="hljs-number">0.03</span>, <span class="hljs-number">0.03</span>], 
+         [<span class="hljs-number">0.03</span>, <span class="hljs-number">0.4</span>, <span class="hljs-number">0.03</span>], 
+         [<span class="hljs-number">0.03</span>, <span class="hljs-number">0.03</span>, <span class="hljs-number">0.4</span>]]
+
+G = nx.stochastic_block_model(sizes, probs, seed=<span class="hljs-number">42</span>)
+
+<span class="hljs-comment"># 2. レイデン法（Leiden）を実行</span>
+<span class="hljs-comment"># cdlibのleidenアルゴリズムを呼び出します</span>
+leiden_communities = algorithms.leiden(G)
+
+<span class="hljs-comment"># 検出されたコミュニティ（グループのリスト）を取得</span>
+<span class="hljs-comment"># 例: [[0, 1, 2...], [20, 21, 22...], ...]</span>
+communities = leiden_communities.communities
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;レイデン法が検出したコミュニティ数: <span class="hljs-subst">{<span class="hljs-built_in">len</span>(communities)}</span>個&quot;</span>)
+
+<span class="hljs-comment"># 3. ノードごとに色を割り振るためのカラーマップを作成</span>
+<span class="hljs-comment"># 何個のグループに分かれても対応できるように、Matplotlibのカラーグラデーション（cm）を使用</span>
+cmap = plt.get_cmap(<span class="hljs-string">&quot;viridis&quot;</span>, <span class="hljs-built_in">len</span>(communities))
+color_map = {}
+
+<span class="hljs-keyword">for</span> group_idx, community <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(communities):
+    <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> community:
+        color_map[node] = cmap(group_idx)
+
+<span class="hljs-comment"># ノードのID順に色を並び替えたリスト</span>
+node_colors = [color_map[node] <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> <span class="hljs-built_in">sorted</span>(G.nodes())]
+
+<span class="hljs-comment"># 4. 美しく可視化</span>
+plt.figure(figsize=(<span class="hljs-number">10</span>, <span class="hljs-number">10</span>))
+
+<span class="hljs-comment"># ネットワークをきれいに広げるためのレイアウト計算</span>
+pos = nx.spring_layout(G, k=<span class="hljs-number">0.3</span>, iterations=<span class="hljs-number">50</span>, seed=<span class="hljs-number">42</span>)
+
+nx.draw(
+    G,
+    pos,
+    with_labels=<span class="hljs-literal">True</span>,
+    node_color=node_colors,  <span class="hljs-comment"># レイデン法が決めた色</span>
+    node_size=<span class="hljs-number">300</span>,
+    font_size=<span class="hljs-number">8</span>,
+    font_color=<span class="hljs-string">&quot;white&quot;</span>,
+    edge_color=<span class="hljs-string">&quot;gainsboro&quot;</span>,  <span class="hljs-comment"># 複雑な線を薄いグレーにして見やすくする</span>
+    alpha=<span class="hljs-number">0.9</span>
+)
+
+plt.title(<span class="hljs-string">&quot;Leiden Algorithm - Community Detection Experiment&quot;</span>, fontsize=<span class="hljs-number">14</span>)
+plt.show()
+</code></pre>
+<h3 id="結果">結果</h3>
+<p>以下のようにコミュニティを3つに分離して、色分けした結果が表示されると思います。
+これもレイデン法により、グラフのノードとエッジの関係性から自動で生成された、ということになります。</p>
+<pre><code>レイデン法が検出したコミュニティ数: 3個
+</code></pre>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\8_chanking_graphrag\1780713098774.png" alt="1780713098774"></p>
+<h2 id="まとめ">まとめ</h2>
+<p>本日の重要なポイントはここでしょうか。
+Graph RAGのためのデータベースを作成する際にはトピックの選定と、テーマごとに関係があることを見抜くことが重要なポイントとなります。</p>
+<h3 id="関連するチャンクの決め方">関連するチャンクの決め方</h3>
+<ol>
+<li><strong>類似度ベース</strong>：埋め込み類似度が高いチャンク同士をエッジで結び、「直接関連」と見なす。</li>
+<li><strong>グラフアルゴリズム</strong>：コミュニティ検出で同じグループに入ったチャンクを「関連」と見なす。経路探索で間接的につながるチャンクも関連と判断。</li>
+<li><strong>コミュニティ要約</strong>：LLMで生成したコミュニティ要約がヒットしたら、そのコミュニティ内の全チャンクを関連文書として扱う。</li>
+<li><strong>メタデータ</strong>：同じセクション・図表・日付などのチャンクを関連と見なす。</li>
+<li><strong>計算量対策</strong>：k-NNや近似最近傍探索（ANN）でエッジ生成を効率化。</li>
+</ol>
+<h3 id="トピックの決め方-1">トピックの決め方</h3>
+<ol>
+<li><strong>クラスタリング</strong>：グラフをクラスタリングしてコミュニティ（チャンクのグループ）を抽出。</li>
+<li><strong>LLM要約</strong>：各コミュニティ内のチャンクをLLMに渡し、タイトル＋説明文のトピック要約を生成。</li>
+<li><strong>階層化・整理</strong>：大規模データでは階層構造を作り、トピック名を正規化・統合。</li>
+<li><strong>検索活用</strong>：コミュニティ要約も検索対象に含め、ヒットしたコミュニティのチャンク群をまとめて利用。</li>
+</ol>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\8_chanking_graphrag\1780606703070.png" alt="1780606703070"></p>
+
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+
+            
+        </body>
+        </html>
