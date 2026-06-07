@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Graph RAG&#x306b;&#x5fc5;&#x8981;&#x306a;&#x6a5f;&#x80fd;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>連日調べていたGraph RAGですが、検索のデモだけならばNeo4jでDBを作らなくても体験できそうなことが分かってきました。
+やはり、価値体験は実際に手元で試してみることが一番です。ということで。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>Google Colab上でGraph RAGのデモプレーをしてみる。</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="graph-ragに必要な機能">Graph RAGに必要な機能</h2>
+<p>Graph RAGを成立させるために必要な機能は、大きく分けて以下の4つです。今回 Colab で体験したコードの構造とも完全に一致しています。</p>
+<ul>
+<li><strong>1. ナレッジグラフ構築機能（Extract &amp; Build）</strong>
+テキストデータを読み込み、LLMやルールベースを用いて「エンティティ（実体）」と「リレーション（関係性）」を抽出して、点と線のネットワークを作る機能です。
+<em>(体験コードでの役割: <code>triplets</code> の定義と <code>nx.DiGraph()</code>)</em></li>
+<li><strong>2. ベクトル埋め込み機能（Vector Embedding）</strong>
+グラフ内のノード（単語）やエッジ（文章）を多次元のベクトルに変換し、コンピュータが「意味の近さ」を計算できるようにする機能です。
+<em>(体験コードでの役割: <code>SentenceTransformer</code>)</em></li>
+<li><strong>3. 構造化リトリーバル機能（Graph Retrieval / Search）</strong>
+質問に対して、まずベクトル検索で関連するノードを見つけ、そこから<strong>矢印（エッジ）を辿って周辺のつながり（サブグラフ）を芋づる式にまとめて引き出す</strong>機能です。
+<em>(体験コードでの役割: <code>retrieve_knowledge_graph</code> 関数)</em></li>
+<li><strong>4. コンテキスト融合・生成機能（Augmentation &amp; Generation）</strong>
+引き出した「主語 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 関係 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 目的語」の構造化されたデータ（ファクト）をプロンプトにはめ込み、LLMに渡して事実に基づいた正確な文章を作らせる機能です。
+<em>(体験コードでの役割: <code>GraphRAGSystem.ask</code> と <code>TinyLlama</code>)</em></li>
+</ul>
+<h2 id="ナレッジグラフの構築">ナレッジグラフの構築</h2>
+<p>先ほどColab上で体験した「ナレッジグラフ構築」において、特に重要となるキーポイントと、システムとして「何ができればゴール（成功）か」を簡潔にまとめました。</p>
+<h3 id="ナレッジグラフ構築の3つのキーポイント">ナレッジグラフ構築の3つのキーポイント</h3>
+<ul>
+<li><strong>エンティティの正規化（同一視化）</strong>
+テキスト内で「Google Colab」と「Colab」のように表記が揺れていても、データベース上では同じ1つの「ノード（点）」として統合・整理することが重要です。</li>
+<li><strong>関係性（エッジ）の方向性の維持</strong>
+Graph RAGでは情報の「主語」と「目的語」が命になるため、必ず矢印の向き（有向グラフ）を持たせ、「AがBを作った」という因果関係を固定する必要があります。</li>
+<li><strong>構造とベクトルのハイブリッド保持</strong>
+「点と線のつながり（グラフ構造）」のデータを持たせると同時に、それぞれの言葉の「意味（ベクトル埋め込み）」をノードに持たせることで、曖昧な質問からでも正しい知識にアクセスできるようになります。</li>
+</ul>
+<h3 id="構築において何が出来ればよいか">構築において「何が出来ればよいか」</h3>
+<p>ナレッジグラフ構築のステップとしては、以下の<strong>3つの自動化</strong>が綺麗に実現できればゴールです。</p>
+<ul>
+<li><strong>① テキストからの正確な「三つ組（トリプレット）」の抽出</strong>
+バラバラの生テキスト（文章）を読み込ませたときに、LLMなどを使って「主語・述語・目的語」の関係性をモレなく正確に抜き出せること。</li>
+<li><strong>② 重複のない「網の目（ネットワーク）」の自動結合</strong>
+新しく抽出した知識を、既存のグラフへ自動で繋ぎ合わせ、巨大な1つの知識マップへアップデートしていけること。</li>
+<li><strong>③ 意味ベースでの検索インデックス化</strong>
+構築したグラフに対して、「クラウド環境」と調べたら「Google Colab」のノードがきちんと引っかかるように、ベクトルインデックスが正しく紐付いていること。</li>
+</ul>
+<h3 id="実際に構築">実際に構築</h3>
+<p><strong>事前準備</strong></p>
+<p>Google Colabのセルで、まず必要なライブラリをインストールします。テキスト処理とベクトル計算のために <code>transformers</code> と <code>sentence-transformers</code> を使用します。</p>
+<pre><code class="language-bash">!pip install networkx sentence-transformers matplotlib
+
+</code></pre>
+<p><strong>Graph RAG サンプルデータベース構築</strong></p>
+<p>以下のコードを丸ごとColabのセルに貼り付けて実行してください。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">import</span> networkx <span class="hljs-keyword">as</span> nx
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> sentence_transformers <span class="hljs-keyword">import</span> SentenceTransformer
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 1. サンプルテキストデータ（ナレッジベースの元ネタ）</span>
+<span class="hljs-comment"># =====================================================================</span>
+documents = [
+    <span class="hljs-string">&quot;Google Colab is a cloud-based Python development environment created by Google.&quot;</span>,
+    <span class="hljs-string">&quot;Google Colab supports powerful GPUs like NVIDIA T4 for deep learning.&quot;</span>,
+    <span class="hljs-string">&quot;NetworkX is a Python library used for studying graphs and networks.&quot;</span>,
+    <span class="hljs-string">&quot;GraphRAG combines Knowledge Graphs with LLM retrieval to improve RAG systems.&quot;</span>,
+    <span class="hljs-string">&quot;GraphRAG heavily utilizes NetworkX or Neo4j to store structural data.&quot;</span>
+]
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 2. LLMの代わりにトリプレット（主語-述語-目的語）を定義</span>
+<span class="hljs-comment"># (※本来はLLMを使って自動抽出しますが、今回は確実なDB構築のため定義します)</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 形式: (主語, 目的語, 関係性)</span>
+triplets = [
+    (<span class="hljs-string">&quot;Google Colab&quot;</span>, <span class="hljs-string">&quot;Google&quot;</span>, <span class="hljs-string">&quot;created by&quot;</span>),
+    (<span class="hljs-string">&quot;Google Colab&quot;</span>, <span class="hljs-string">&quot;Python&quot;</span>, <span class="hljs-string">&quot;supports environment for&quot;</span>),
+    (<span class="hljs-string">&quot;Google Colab&quot;</span>, <span class="hljs-string">&quot;NVIDIA T4 GPU&quot;</span>, <span class="hljs-string">&quot;provides access to&quot;</span>),
+    (<span class="hljs-string">&quot;NVIDIA T4 GPU&quot;</span>, <span class="hljs-string">&quot;Deep Learning&quot;</span>, <span class="hljs-string">&quot;used for&quot;</span>),
+    (<span class="hljs-string">&quot;NetworkX&quot;</span>, <span class="hljs-string">&quot;Python&quot;</span>, <span class="hljs-string">&quot;is a library of&quot;</span>),
+    (<span class="hljs-string">&quot;NetworkX&quot;</span>, <span class="hljs-string">&quot;Graphs and Networks&quot;</span>, <span class="hljs-string">&quot;used for studying&quot;</span>),
+    (<span class="hljs-string">&quot;GraphRAG&quot;</span>, <span class="hljs-string">&quot;Knowledge Graphs&quot;</span>, <span class="hljs-string">&quot;combines&quot;</span>),
+    (<span class="hljs-string">&quot;GraphRAG&quot;</span>, <span class="hljs-string">&quot;LLM Retrieval&quot;</span>, <span class="hljs-string">&quot;integrates&quot;</span>),
+    (<span class="hljs-string">&quot;GraphRAG&quot;</span>, <span class="hljs-string">&quot;RAG Systems&quot;</span>, <span class="hljs-string">&quot;improves&quot;</span>),
+    (<span class="hljs-string">&quot;GraphRAG&quot;</span>, <span class="hljs-string">&quot;NetworkX&quot;</span>, <span class="hljs-string">&quot;utilizes&quot;</span>),
+    (<span class="hljs-string">&quot;GraphRAG&quot;</span>, <span class="hljs-string">&quot;Neo4j&quot;</span>, <span class="hljs-string">&quot;utilizes&quot;</span>),
+]
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 3. グラフデータベースの構築 (NetworkX)</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># Graph RAGのキモである有向グラフを作成</span>
+graph_db = nx.DiGraph()
+
+<span class="hljs-comment"># 埋め込みモデル（Embedding）のロード</span>
+<span class="hljs-comment"># ColabのCPUでも一瞬で動く軽量・高性能モデルを使用</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Loading Embedding Model...&quot;</span>)
+embed_model = SentenceTransformer(<span class="hljs-string">&quot;all-MiniLM-L6-v2&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Building Graph RAG Database...&quot;</span>)
+<span class="hljs-keyword">for</span> subject, obj, relation <span class="hljs-keyword">in</span> triplets:
+    <span class="hljs-comment"># ノードが未登録なら追加し、テキスト表現のベクトル（埋め込み）を計算して保存</span>
+    <span class="hljs-comment"># (これがGraph RAGにおける「エンティティ・ベクトル検索」の基盤になります)</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> graph_db.has_node(subject):
+        graph_db.add_node(subject, embedding=embed_model.encode(subject))
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> graph_db.has_node(obj):
+        graph_db.add_node(obj, embedding=embed_model.encode(obj))
+        
+    <span class="hljs-comment"># エッジ（関係性）を追加。関係性のテキストもベクトル化して保持可能</span>
+    graph_db.add_edge(subject, obj, relation=relation, embedding=embed_model.encode(relation))
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;データベース構築完了! ノード数: <span class="hljs-subst">{graph_db.number_of_nodes()}</span>, エッジ数: <span class="hljs-subst">{graph_db.number_of_edges()}</span>&quot;</span>)
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 4. 構築したデータベースの検索テスト（Vector Search on Graph）</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">search_graph_node</span>(<span class="hljs-params">query, graph, model, top_k=<span class="hljs-number">2</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;クエリに最も意味が近いノードをグラフから検索する&quot;&quot;&quot;</span>
+    query_vector = model.encode(query)
+    node_scores = []
+    
+    <span class="hljs-keyword">for</span> node, data <span class="hljs-keyword">in</span> graph.nodes(data=<span class="hljs-literal">True</span>):
+        node_vector = data[<span class="hljs-string">&quot;embedding&quot;</span>]
+        <span class="hljs-comment"># コサイン類似度の計算</span>
+        similarity = np.dot(query_vector, node_vector) / (np.linalg.norm(query_vector) * np.linalg.norm(node_vector))
+        node_scores.append((node, similarity))
+        
+    <span class="hljs-comment"># スコア順にソート</span>
+    node_scores.sort(key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">1</span>], reverse=<span class="hljs-literal">True</span>)
+    <span class="hljs-keyword">return</span> node_scores[:top_k]
+
+<span class="hljs-comment"># テスト検索</span>
+query = <span class="hljs-string">&quot;What runs on cloud hardware?&quot;</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;\n検索クエリ: &#x27;<span class="hljs-subst">{query}</span>&#x27;&quot;</span>)
+matched_nodes = search_graph_node(query, graph_db, embed_model)
+
+<span class="hljs-keyword">for</span> rank, (node, score) <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(matched_nodes, <span class="hljs-number">1</span>):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{rank}</span>位のヒットノード: <span class="hljs-subst">{node}</span> (類似度: <span class="hljs-subst">{score:<span class="hljs-number">.4</span>f}</span>)&quot;</span>)
+    <span class="hljs-comment"># ヒットしたノードから伸びている「関係性（エッジ）」を抽出</span>
+    neighbors = graph_db.successors(node)
+    <span class="hljs-keyword">for</span> nbr <span class="hljs-keyword">in</span> neighbors:
+        rel = graph_db[node][nbr][<span class="hljs-string">&quot;relation&quot;</span>]
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;  $\rightarrow$ 関連知識: [<span class="hljs-subst">{node}</span>] --(<span class="hljs-subst">{rel}</span>)--&gt; [<span class="hljs-subst">{nbr}</span>]&quot;</span>)
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 5. 構築したデータベースの可視化</span>
+<span class="hljs-comment"># =====================================================================</span>
+plt.figure(figsize=(<span class="hljs-number">12</span>, <span class="hljs-number">8</span>))
+pos = nx.spring_layout(graph_db, k=<span class="hljs-number">1.0</span>, seed=<span class="hljs-number">42</span>)
+
+<span class="hljs-comment"># ノードと線の描画</span>
+nx.draw(graph_db, pos, with_labels=<span class="hljs-literal">True</span>, node_color=<span class="hljs-string">&quot;lightblue&quot;</span>, node_size=<span class="hljs-number">2500</span>, font_size=<span class="hljs-number">9</span>, font_weight=<span class="hljs-string">&quot;bold&quot;</span>, arrowsize=<span class="hljs-number">15</span>, connectionstyle=<span class="hljs-string">&quot;arc3,rad=0.1&quot;</span>)
+
+<span class="hljs-comment"># エッジのラベル（関係性）を描画</span>
+edge_labels = nx.get_edge_attributes(graph_db, <span class="hljs-string">&quot;relation&quot;</span>)
+nx.draw_networkx_edge_labels(graph_db, pos, edge_labels=edge_labels, font_size=<span class="hljs-number">8</span>, font_color=<span class="hljs-string">&quot;red&quot;</span>)
+
+plt.title(<span class="hljs-string">&quot;Graph RAG Sample Database Structure in Colab&quot;</span>)
+plt.show()
+
+</code></pre>
+<p><strong>実行結果</strong></p>
+<p>上記コードを実行すると以下のようなグラフが表示されます。
+これが<code>triplets</code>より生成された構造体です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\9_demo_play\1780797486703.png" alt="1780797486703"></p>
+<p><strong>このコードで構築される「Graph RAG DB」のポイント</strong></p>
+<ol>
+<li><strong>ハイブリッドなデータ保持（構造＋ベクトル）</strong>
+単なるテキストのつながり（NetworkXのグラフ構造）だけでなく、各ノードに <code>embedding=embed_model.encode(...)</code> として<strong>高次元のベクトルデータが格納</strong>されています。</li>
+<li><strong>Graph RAGの「検索フェーズ」の再現</strong>
+「4. 検索テスト」の部分を見てみてください。ユーザーが「cloud hardware」という直接DBに存在しない言葉で質問しても、ベクトル検索によって「Google Colab」や「NVIDIA T4 GPU」といった近しいノードがヒットします。</li>
+<li><strong>知識のイテレーション（マルチホップ）</strong>
+ノードがヒットしたあと、<code>graph_db.successors(node)</code> を使って「その先につながっている別のノードや関係性」を芋づる式に抽出しています。LLMはこの抽出された「主語-関係-目的語」のセット（コンテキスト）を読み込むことで、正確な回答を生成できるようになります。</li>
+</ol>
+<h2 id="rag検索生成">RAG(検索→生成)</h2>
+<p>先ほどGoogle Colab上に構築したサンプルのグラフデータベースを使って、実際にGraph RAGの「検索（Retrieval）から生成（Generation）」までを行うコードを実装します。
+本格的なGraph RAGの「グローバル検索（コミュニティごとの要約を使う手法）」のエッセンスを取り入れ、以下のステップで回答を生成するコードを作成しました。</p>
+<ol>
+<li><strong>クエリのベクトル化とノード検索</strong>: ユーザーの質問に関連する中心ノードをベクトル類似度で見つける。</li>
+<li><strong>サブグラフ（周辺知識）の抽出</strong>: 見つかったノードから直接つながっている関係性（トリプレット）を芋づる式に集める。</li>
+<li><strong>プロンプトの構築とLLMによる生成</strong>: 抽出した「構造化された知識」をコンテキストとしてLLM（今回はColab上で手軽に動く軽量モデル、またはモック）に渡し、根拠に基づいた正確な回答を作らせる。</li>
+</ol>
+<h3 id="graph-rag-実行コード">Graph RAG 実行コード</h3>
+<p>実際のコードは以下のように組みました。（LLMの推論をシミュレートするため、今回はHugging Faceの軽量なテキスト生成パイプライン、またはプロンプトの可視化を組み込んでいます）</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> pipeline
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 1. グラフ検索（Retrieval）関数の定義</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">retrieve_knowledge_graph</span>(<span class="hljs-params">query, graph, model, top_k=<span class="hljs-number">2</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    ユーザーのクエリから、関連するグラフの「部分（サブグラフ）」を抽出する
+    &quot;&quot;&quot;</span>
+    query_vector = model.encode(query)
+    node_scores = []
+    
+    <span class="hljs-comment"># 全ノードとの類似度を計算</span>
+    <span class="hljs-keyword">for</span> node, data <span class="hljs-keyword">in</span> graph.nodes(data=<span class="hljs-literal">True</span>):
+        node_vector = data[<span class="hljs-string">&quot;embedding&quot;</span>]
+        similarity = np.dot(query_vector, node_vector) / (np.linalg.norm(query_vector) * np.linalg.norm(node_vector))
+        node_scores.append((node, similarity))
+        
+    <span class="hljs-comment"># 上位のノードを取得</span>
+    node_scores.sort(key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">1</span>], reverse=<span class="hljs-literal">True</span>)
+    top_nodes = [node <span class="hljs-keyword">for</span> node, score <span class="hljs-keyword">in</span> node_scores[:top_k]]
+    
+    <span class="hljs-comment"># 抽出された知識をテキスト（ナレッジ事実）に変換</span>
+    extracted_facts = []
+    <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> top_nodes:
+        <span class="hljs-comment"># パターンA: 自分が主語の関係（自分から伸びる矢印）</span>
+        <span class="hljs-keyword">for</span> successor <span class="hljs-keyword">in</span> graph.successors(node):
+            relation = graph[node][successor][<span class="hljs-string">&quot;relation&quot;</span>]
+            extracted_facts.append(<span class="hljs-string">f&quot;- <span class="hljs-subst">{node}</span> -&gt; (<span class="hljs-subst">{relation}</span>) -&gt; <span class="hljs-subst">{successor}</span>&quot;</span>)
+        
+        <span class="hljs-comment"># パターンB: 自分が目的語の関係（自分に向かってくる矢印）</span>
+        <span class="hljs-keyword">for</span> predecessor <span class="hljs-keyword">in</span> graph.predecessors(node):
+            relation = graph[predecessor][node][<span class="hljs-string">&quot;relation&quot;</span>]
+            extracted_facts.append(<span class="hljs-string">f&quot;- <span class="hljs-subst">{predecessor}</span> -&gt; (<span class="hljs-subst">{relation}</span>) -&gt; <span class="hljs-subst">{node}</span>&quot;</span>)
+            
+    <span class="hljs-comment"># 重複を削除して返す</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">list</span>(<span class="hljs-built_in">set</span>(extracted_facts))
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 2. Graph RAG 実行パイプラインの定義</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GraphRAGSystem</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, graph_db, embed_model</span>):
+        self.graph_db = graph_db
+        self.embed_model = embed_model
+        
+        <span class="hljs-comment"># Colabの無料環境(CPU)でも高速に動く英語の軽量テキスト生成モデルを準備</span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Loading local LLM for Generation...&quot;</span>)
+        self.llm = pipeline(
+            <span class="hljs-string">&quot;text-generation&quot;</span>, 
+            model=<span class="hljs-string">&quot;FilippoMedia/TinyLlama-1.1B-Chat-v1.0-miniguanaco&quot;</span>, <span class="hljs-comment"># 超軽量1Bモデル</span>
+            max_new_tokens=<span class="hljs-number">100</span>,
+            temperature=<span class="hljs-number">0.1</span>
+        )
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">ask</span>(<span class="hljs-params">self, question</span>):
+        <span class="hljs-comment"># 1. グラフデータベースから関連知識を検索</span>
+        facts = retrieve_knowledge_graph(question, self.graph_db, self.embed_model, top_k=<span class="hljs-number">2</span>)
+        context_str = <span class="hljs-string">&quot;\n&quot;</span>.join(facts)
+        
+        <span class="hljs-comment"># 2. グラフ構造を埋め込んだ専用のプロンプトを構築</span>
+        prompt = <span class="hljs-string">f&quot;&quot;&quot;[INST] You are a helpful assistant. Answer the question based ONLY on the provided Knowledge Graph facts.
+If the facts do not contain the answer, say &quot;I don&#x27;t know&quot;.
+
+[Knowledge Graph Facts]
+<span class="hljs-subst">{context_str}</span>
+
+[Question]
+<span class="hljs-subst">{question}</span> [/INST]
+[Answer]&quot;&quot;&quot;</span>
+        
+        <span class="hljs-comment"># 3. LLMによるテキスト生成</span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n--- [Internal] Constructed Graph-Augmented Prompt ---&quot;</span>)
+        <span class="hljs-built_in">print</span>(prompt)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;----------------------------------------------------\n&quot;</span>)
+        
+        outputs = self.llm(prompt)
+        <span class="hljs-comment"># 生成されたテキストの回答部分だけを抽出</span>
+        generated_text = outputs[<span class="hljs-number">0</span>][<span class="hljs-string">&quot;generated_text&quot;</span>]
+        answer = generated_text.split(<span class="hljs-string">&quot;[Answer]&quot;</span>)[-<span class="hljs-number">1</span>].strip()
+        
+        <span class="hljs-keyword">return</span> answer
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 3. 実際にGraph RAGを実行してみる</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># システムの初期化（前回のセルで作成した graph_db と embed_model を引き継ぎます）</span>
+rag_sys = GraphRAGSystem(graph_db, embed_model)
+
+<span class="hljs-comment"># 質問例1: グラフの繋がり（複数ホップ）を知らないと解けない質問</span>
+question_1 = <span class="hljs-string">&quot;Explain the relationship between GraphRAG and Python.&quot;</span>
+response_1 = rag_sys.ask(question_1)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;=== Final GraphRAG Answer ===\n<span class="hljs-subst">{response_1}</span>\n&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;=&quot;</span>*<span class="hljs-number">60</span>)
+
+<span class="hljs-comment"># 質問例2: ハードウェアに関する質問</span>
+question_2 = <span class="hljs-string">&quot;What kind of GPU can I use on Google Colab for deep learning?&quot;</span>
+response_2 = rag_sys.ask(question_2)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;=== Final GraphRAG Answer ===\n<span class="hljs-subst">{response_2}</span>\n&quot;</span>)
+
+</code></pre>
+<p><strong>結果</strong></p>
+<p>実行結果は以下のように得られます。</p>
+<ol>
+<li>Explain the relationship between GraphRAG and Python.</li>
+</ol>
+<pre><code>--- [Internal] Constructed Graph-Augmented Prompt ---
+
+[Knowledge Graph Facts]
+- NetworkX -&gt; (is a library of) -&gt; Python
+- GraphRAG -&gt; (improves) -&gt; RAG Systems
+- GraphRAG -&gt; (combines) -&gt; Knowledge Graphs
+- GraphRAG -&gt; (utilizes) -&gt; NetworkX
+- GraphRAG -&gt; (utilizes) -&gt; Neo4j
+- GraphRAG -&gt; (integrates) -&gt; LLM Retrieval
+- Google Colab -&gt; (supports environment for) -&gt; Python
+&lt;/s&gt;
+
+
+=== Final GraphRAG Answer ===
+GraphRAG is a Python library that improves the performance of graph-based algorithms by utilizing the power of the NetworkX library. NetworkX is a popular library for creating and manipulating graphs in Python. GraphRAG is designed to work with NetworkX, allowing users to leverage its powerful graph algorithms and functionality.
+
+In other words, GraphRAG is a Python library that enables users to leverage the power of NetworkX to improve the performance of graph-based algorithms. By integrating NetworkX with GraphRAG, users can create and manipulate graphs more efficiently and effectively, leading to faster and more accurate results.
+
+Overall, the relationship between GraphRAG and Python is a mutually beneficial one.
+</code></pre>
+<ol>
+<li>
+<p>ユーザーから「GraphRAGとPythonの関係性は？」と聞かれたシステムは、データベース（有向グラフ）の中から関連する知識を検索。</p>
+</li>
+<li>
+<p>元の文章（生テキスト）には「GraphRAGとPythonの直接の関係」は一言も書かれていませんでした。しかしグラフの矢印を辿ったことで、「GraphRAG <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> NetworkX <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> Python」という隠れたネットワーク（架け橋）を自動で見つけ出し、それをLLMへ知識を渡した。</p>
+</li>
+<li>
+<p>GraphRAGは、Pythonのライブラリの関係性を回答</p>
+</li>
+<li>
+<p>What kind of GPU can I use on Google Colab for deep learning?</p>
+</li>
+</ol>
+<pre><code>--- [Internal] Constructed Graph-Augmented Prompt ---
+
+[Knowledge Graph Facts]
+- Google Colab -&gt; (supports environment for) -&gt; Python
+- Google Colab -&gt; (created by) -&gt; Google
+- NVIDIA T4 GPU -&gt; (used for) -&gt; Deep Learning
+- Google Colab -&gt; (provides access to) -&gt; NVIDIA T4 GPU
+&lt;/s&gt;
+
+=== Final GraphRAG Answer ===
+You can use NVIDIA T4 GPU on Google Colab for deep learning. NVIDIA T4 is a high-performance GPU designed for deep learning workloads. It has a Tensor Core architecture, which provides a high level of parallelism and low latency for training deep neural networks. The T4 GPU is compatible with Google Colab and can be easily installed using the Colab GPU installer.
+</code></pre>
+<ol>
+<li>グラフ構造において、「Google Colab」という中心ノード（ハブ）から外側に向かって伸びている矢印を同時に探索したことで、「Colabが提供しているハードウェア（T4）」と「そのハードウェアの用途（Deep Learning）」という、隣り合う2つの重要なファクトを取得</li>
+<li>LLM（TinyLlama）に上記ファクトを渡して回答生成</li>
+</ol>
+<h3 id="従来のragと何が違うのか">従来のRAGと何が違うのか？</h3>
+<p>実行すると、内部でLLMに渡されているプロンプトと、最終的な回答が出力されます。ここで注目してほしいのが、<strong>LLMに渡されている <code>[Knowledge Graph Facts]</code> の形</strong>です。</p>
+<p>通常のRAG（Vector RAG）では、元データの文章がそのまま「一塊の文章（チャンク）」として渡されます。しかし、Graph RAGでは以下のように整理整頓された「事実の繋がり」がコンテキストとして渡されます。</p>
+<pre><code class="language-text">[Knowledge Graph Facts]
+- GraphRAG -&gt; (utilizes) -&gt; NetworkX
+- NetworkX -&gt; (is a library of) -&gt; Python
+- GraphRAG -&gt; (improves) -&gt; RAG Systems
+
+</code></pre>
+<h3 id="なぜこれが強力なのか">なぜこれが強力なのか？</h3>
+<p>質問1の「GraphRAGとPythonの関係」を思い出してください。元のドキュメント（文章）では、これらは別々のページや文に分かれて書かれていました。
+通常のRAGだと、キーワードが分散しているため正しい文を同時にヒットさせられない「リトリーバル漏れ」が起きやすいのです。</p>
+<p>しかしGraph RAGなら、</p>
+<ol>
+<li>「GraphRAG」という言葉からノードを検索する</li>
+<li>そのノードの矢印を辿ると「NetworkX」が見つかる</li>
+<li>「NetworkX」の矢印をさらに辿ると「Python」に到達する（マルチホップ）</li>
+</ol>
+<p>この「点と点を繋ぐルート」を自動的にプロンプトに組み込めるため、LLMは「GraphRAGはNetworkXを利用しており、そのNetworkXはPythonのライブラリです」という、<strong>バラバラの知識を組み合わせた高度な回答</strong>を嘘（ハルシネーション）なく完璧に出力できるという結果につながります。</p>
+<h2 id="総括">総括</h2>
+<ul>
+<li>
+<p><strong>Graph RAGの本質</strong></p>
+<ul>
+<li>テキストを「主語 → 関係 → 目的語」の<strong>トリプレット</strong>に分解し、<strong>有向グラフ（ナレッジグラフ）</strong> として構造化する。</li>
+<li>グラフ上のノード・エッジに<strong>ベクトル埋め込み</strong>を持たせ、意味ベースで検索できるようにする。</li>
+<li>質問に対して、ベクトル検索で関連ノードを見つけ、<strong>エッジを辿って周辺のサブグラフ（関連トリプレット群）を集める</strong>。</li>
+<li>その「構造化された事実の繋がり」をLLMに渡し、<strong>事実に基づいた回答</strong>を生成する。</li>
+</ul>
+</li>
+<li>
+<p><strong>従来RAGとの違い</strong></p>
+<ul>
+<li>従来RAG：テキストをチャンクに分け、そのままベクトル検索 → 文単位で拾うため、<strong>分散した知識を同時に拾いにくい</strong>。</li>
+<li>Graph RAG：グラフ構造で<strong>マルチホップ探索</strong>が可能（例：GraphRAG → NetworkX → Python）。
+<ul>
+<li>バラバラの知識を<strong>自動的に統合</strong>してLLMに渡せるため、<strong>ハルシネーションを抑えつつ、複雑な関係性を正確に説明できる</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>実装上のポイント</strong></p>
+<ul>
+<li>エンティティの<strong>正規化</strong>（表記揺れを同一ノードに）。</li>
+<li>エッジの<strong>方向性を維持</strong>した有向グラフ。</li>
+<li>グラフ構造とベクトル埋め込みの<strong>ハイブリッド保持</strong>。</li>
+<li>トリプレット抽出・グラフマージ・ベクトルインデックス化の<strong>自動化</strong>。</li>
+</ul>
+</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/-c1q0iJJMcw?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
