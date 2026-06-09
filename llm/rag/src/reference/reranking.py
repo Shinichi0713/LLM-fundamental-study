@@ -558,3 +558,266 @@ if __name__ == "__main__":
         if node.next_node:
             print(f"-> 次のノードIDが存在します: {node.next_node.node_id}")
         print()
+
+
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+def search_graph_nodes(query, graph, embed_model, top_k=5):
+    """
+    Graph RAGにおける「グラフ上のノード（エンティティ）検索」の実装
+    
+    クエリのベクトルに最も近いノードを、グラフ内の全ノードから検索して返します。
+    
+    Args:
+        query (str): ユーザーの質問文（例: "What runs on cloud hardware?"）
+        graph (nx.DiGraph): NetworkXの有向グラフ（ノードに embedding 属性を持つ）
+        embed_model: SentenceTransformer などの埋め込みモデル
+        top_k (int): 返す上位ノード数
+    
+    Returns:
+        list: [(node_name, similarity_score), ...] のリスト（類似度降順）
+    """
+    # 1. クエリをベクトル化
+    query_vector = embed_model.encode(query)
+    
+    # 2. 全ノードとの類似度を計算
+    node_scores = []
+    for node, data in graph.nodes(data=True):
+        # ノードの埋め込みベクトルを取得
+        node_vector = data["embedding"]
+        
+        # コサイン類似度の計算
+        similarity = np.dot(query_vector, node_vector) / (
+            np.linalg.norm(query_vector) * np.linalg.norm(node_vector)
+        )
+        node_scores.append((node, similarity))
+    
+    # 3. 類似度で降順ソートし、上位 top_k 件を返す
+    node_scores.sort(key=lambda x: x[1], reverse=True)
+    return node_scores[:top_k]
+
+
+# ==================================================
+# 使用例（前回のコードと組み合わせる場合）
+# ==================================================
+if __name__ == "__main__":
+    # 埋め込みモデルのロード（例）
+    embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+    
+    # 既存の graph_db を利用（前回のセルで構築したもの）
+    # graph_db = nx.DiGraph() ...（省略）
+    
+    # クエリ例
+    query = "What runs on cloud hardware?"
+    
+    # ノード検索の実行
+    top_nodes = search_graph_nodes(query, graph_db, embed_model, top_k=3)
+    
+    print(f"クエリ: '{query}'")
+    for rank, (node, score) in enumerate(top_nodes, 1):
+        print(f"{rank}位: {node} (類似度: {score:.4f})")
+
+import numpy as np
+import networkx as nx
+from sentence_transformers import SentenceTransformer
+from transformers import pipeline
+
+# =====================================================================
+# 1. ノード検索（ベクトル類似度）
+# =====================================================================
+def search_graph_nodes(query, graph, embed_model, top_k=10):
+    """
+    クエリに最も近いノードをグラフから検索（ベクトル類似度ベース）
+    """
+    query_vector = embed_model.encode(query)
+    node_scores = []
+    
+    for node, data in graph.nodes(data=True):
+        node_vector = data["embedding"]
+        similarity = np.dot(query_vector, node_vector) / (
+            np.linalg.norm(query_vector) * np.linalg.norm(node_vector)
+        )
+        node_scores.append((node, similarity))
+    
+    node_scores.sort(key=lambda x: x[1], reverse=True)
+    return node_scores[:top_k]
+
+
+# =====================================================================
+# 2. LLMによるノードリランキング
+# =====================================================================
+def rerank_nodes_with_llm(query, candidate_nodes, llm, top_k=3):
+    """
+    LLMを使って、クエリとの関連度でノードをリランキングする
+    """
+    # 候補ノードをテキストに変換
+    nodes_text = "\n".join([f"- {node}" for node, _ in candidate_nodes])
+    
+    prompt = f"""
+[Instruction]
+You are a reranking model. Given a user query and a list of candidate nodes from a knowledge graph,
+output the top {top_k} nodes that are most relevant to the query, in order of relevance.
+
+[Query]
+{query}
+
+[Candidate Nodes]
+{nodes_text}
+
+[Output Format]
+Return only a numbered list of node names, like:
+1. NodeName1
+2. NodeName2
+...
+"""
+
+    outputs = llm(prompt, max_new_tokens=200, temperature=0.0)
+    generated_text = outputs[0]["generated_text"]
+    
+    # 生成されたテキストからノード名を抽出（簡易実装）
+    # 実際には正規表現やJSON出力など、より堅牢なパースを推奨
+    lines = generated_text.strip().split("\n")
+    reranked_nodes = []
+    for line in lines:
+        line = line.strip()
+        if line and line[0].isdigit():
+            # "1. NodeName" のような形式を想定
+            parts = line.split(".", 1)
+            if len(parts) == 2:
+                node_name = parts[1].strip()
+                reranked_nodes.append(node_name)
+    
+    # 上位 top_k に絞る
+    return reranked_nodes[:top_k]
+
+
+# =====================================================================
+# 3. リランキング済みノードからサブグラフを抽出
+# =====================================================================
+def retrieve_subgraph_from_nodes(nodes, graph, max_hops=1):
+    """
+    リランキング済みのノードリストから、周辺のサブグラフ（トリプレット）を抽出する
+    max_hops: 中心ノードから何ホップ先まで辿るか（1なら直接の隣接ノードまで）
+    """
+    extracted_facts = set()
+    
+    for node in nodes:
+        # BFS的にエッジを辿る（簡易版）
+        visited = set([node])
+        queue = [(node, 0)]  # (current_node, hop_count)
+        
+        while queue:
+            current, hop = queue.pop(0)
+            if hop > max_hops:
+                continue
+            
+            # 自分が主語の関係（自分 → 他ノード）
+            for successor in graph.successors(current):
+                if successor not in visited:
+                    visited.add(successor)
+                    relation = graph[current][successor]["relation"]
+                    extracted_facts.add(f"- {current} -> ({relation}) -> {successor}")
+                    queue.append((successor, hop + 1))
+            
+            # 自分が目的語の関係（他ノード → 自分）
+            for predecessor in graph.predecessors(current):
+                if predecessor not in visited:
+                    visited.add(predecessor)
+                    relation = graph[predecessor][current]["relation"]
+                    extracted_facts.add(f"- {predecessor} -> ({relation}) -> {current}")
+                    queue.append((predecessor, hop + 1))
+    
+    return list(extracted_facts)
+
+
+# =====================================================================
+# 4. Graph RAG + リランキング システム
+# =====================================================================
+class GraphRAGWithRerankingSystem:
+    def __init__(self, graph_db, embed_model):
+        self.graph_db = graph_db
+        self.embed_model = embed_model
+        
+        # リランキング用の軽量LLM（例）
+        self.rerank_llm = pipeline(
+            "text-generation",
+            model="FilippoMedia/TinyLlama-1.1B-Chat-v1.0-miniguanaco",
+            max_new_tokens=200,
+            temperature=0.0  # リランキングは温度0推奨
+        )
+        
+        # 回答生成用のLLM（例）
+        self.answer_llm = pipeline(
+            "text-generation",
+            model="FilippoMedia/TinyLlama-1.1B-Chat-v1.0-miniguanaco",
+            max_new_tokens=150,
+            temperature=0.1
+        )
+
+    def ask(self, question, top_k_search=10, top_k_rerank=3, max_hops=1):
+        """
+        Graph RAG + リランキングの一連の流れ
+        """
+        # 1. ノード検索（ベクトル類似度）
+        candidate_nodes = search_graph_nodes(question, self.graph_db, self.embed_model, top_k=top_k_search)
+        print(f"[1. Node Search] 候補ノード（類似度順）:")
+        for node, score in candidate_nodes:
+            print(f"  - {node} (score: {score:.4f})")
+        
+        # 2. LLMによるリランキング
+        reranked_nodes = rerank_nodes_with_llm(
+            question,
+            candidate_nodes,
+            self.rerank_llm,
+            top_k=top_k_rerank
+        )
+        print(f"\n[2. Reranking] リランキング結果（上位{top_k_rerank}件）:")
+        for i, node in enumerate(reranked_nodes, 1):
+            print(f"  {i}. {node}")
+        
+        # 3. リランキング済みノードからサブグラフ抽出
+        facts = retrieve_subgraph_from_nodes(reranked_nodes, self.graph_db, max_hops=max_hops)
+        print(f"\n[3. Subgraph Retrieval] 抽出されたトリプレット数: {len(facts)}")
+        for fact in facts:
+            print(f"  {fact}")
+        
+        # 4. LLMによる回答生成
+        context_str = "\n".join(facts)
+        prompt = f"""[INST] You are a helpful assistant. Answer the question based ONLY on the provided Knowledge Graph facts.
+If the facts do not contain the answer, say "I don't know".
+
+[Knowledge Graph Facts]
+{context_str}
+
+[Question]
+{question} [/INST]
+[Answer]"""
+        
+        outputs = self.answer_llm(prompt)
+        generated_text = outputs[0]["generated_text"]
+        answer = generated_text.split("[Answer]")[-1].strip()
+        
+        return answer
+
+
+# =====================================================================
+# 使用例
+# =====================================================================
+if __name__ == "__main__":
+    # 事前に graph_db, embed_model を構築済みと仮定
+    # graph_db = nx.DiGraph() ...（前回のコードを参照）
+    # embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+    
+    rag_sys = GraphRAGWithRerankingSystem(graph_db, embed_model)
+    
+    question = "Explain the relationship between GraphRAG and Python."
+    answer = rag_sys.ask(
+        question,
+        top_k_search=10,
+        top_k_rerank=3,
+        max_hops=1  # 中心ノードから1ホップ先まで探索
+    )
+    
+    print("\n=== Final Answer ===")
+    print(answer)
