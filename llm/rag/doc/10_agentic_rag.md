@@ -120,7 +120,107 @@ Googleの説明によると、Agentic RAGフレームワークでは以下のよ
 
 これらは、前回説明した「Agentic RAG」の定義（自律的な計画・反復・自己修正）と完全に一致しています。
 
+>__サブクエリ__  
+>**サブクエリ（subquery）**は、**「大きな問い合わせを分解した、より小さな問い合わせ」** のことです。
+>文脈によって少し意味が変わりますが、ここでは特に**Agentic RAGやRAG全般で使われる「サブクエリ」** に絞って説明します。
+>__1. Agentic RAGにおけるサブクエリのイメージ__
+>Agentic RAGでは、ユーザーからの**複雑な質問を、LLM（エージェント）が複数の小さな問い合わせに分解**します。この**小さな問い合わせ一つひとつ**が「サブクエリ」です。
+>例：  
+>ユーザーの質問：「Project Xで使われたサーバーのスペックは？」
+>これをAgentic RAGが分解すると：
+>- **サブクエリ1**：Project Xの文書から「サーバーID」を探す  
+>  （例：`「Project X サーバー ID」` のような検索クエリ）
+>- **サブクエリ2**：そのサーバーIDを使って、別のDBから「スペック情報」を検索  
+>  （例：`「サーバーID: SVR-123 スペック」`）
+>このように、**一つの大きな質問を、複数のサブクエリに分割して順番に実行する**のが、Agentic RAGの特徴です。
+>__2. なぜサブクエリが必要なのか__
+>- **情報が分散している場合**  
+>  1つの検索クエリでは、必要な情報を一度に取り出せないことが多いです。
+>- **マルチホップ推論が必要な場合**  
+>  「AからBを見つけ、そのBからCを見つける」という**2段階以上の検索**が必要なケース。
+>- **Agentic RAGの強み**  
+>  LLMが自律的に「どのサブクエリをどの順番で実行するか」を決め、**必要に応じてサブクエリを追加・修正しながら検索を繰り返す**ことで、従来RAGでは取りこぼしていた情報も拾えるようになります。
 
+## Agentic RAGの動作原理
+
+Agentic RAGの動作原理は、**「LLMが自律的に計画しながら、必要に応じて検索を繰り返し、結果を評価・修正する」** というエージェント的なループ構造にあります。
+
+以下、ステップごとに説明します。
+
+### 1. 従来RAGとの比較から見る「何が変わったか」
+
+__従来RAG（Traditional RAG）__
+- **クエリ → 検索（Retrieval） → 生成（Generation）** の**単発・直線パス**。
+- 一度の検索で得たコンテキストをLLMに渡し、そのまま回答を生成。
+- 検索戦略は固定（例：ベクトル類似度上位K件）。
+
+__Agentic RAG__
+- **エージェント（LLM）が「何を・どの順番で・何回検索するか」を自律的に決める**。
+- 検索結果を評価し、**不足があれば再検索・クエリ修正**を行う。
+- 必要に応じて**複数のツールやデータソースを跨いで検索**する。
+
+MicrosoftのAIエージェント入門では、これを「**LLMが自身の推論プロセスを所有し、ステップの順序を自律的に決定する**」パラダイムと説明しています[Microsoft AI Agents for Beginners](https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md)。
+
+### 2. Agentic RAGの基本動作ステップ
+
+NVIDIAやIBM、Google Researchの説明を統合すると、典型的なAgentic RAGの動作は以下のようなループになります[NVIDIA Developer Blog](https://developer.nvidia.com/blog/traditional-rag-vs-agentic-rag-why-ai-agents-need-dynamic-knowledge-to-get-smarter)[IBM Think](https://www.ibm.com/think/topics/agentic-rag)[Google Research Blog](https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag)。
+
+__ステップ1：問題の理解と計画（Planning）__
+- ユーザーのクエリを受け取り、LLMが **「何を知る必要があるか」を分解**します。
+- 例：「Project Xで使われたサーバーのスペックは？」  
+  → 「Project Xの文書からサーバーIDを探す」「そのIDで別のDBからスペックを検索する」など、**複数のサブタスクに分割**。
+
+__ステップ2：ツール選択とクエリ生成（Tool Selection & Query Generation）__
+- 利用可能なツール（ベクトルDB、SQL DB、API、検索エンジンなど）の中から、**どのツールをどの順番で使うかを決定**。
+- 各ツールに対して、**具体的な検索クエリを生成**します。
+- IBMはこれを「Routing agents」「Query planning agents」などの役割分担で実現すると説明しています[IBM Think](https://www.ibm.com/think/topics/agentic-rag)。
+
+__ステップ3：検索の実行（Retrieval）__
+- 生成したクエリに基づき、実際に外部ソースから情報を取得。
+- 1回で終わらず、**必要に応じて複数ソース・複数回の検索**を行う。
+
+__ステップ4：結果の評価（Evaluation / Sufficient Context Check）__
+- 取得した情報が**「質問に答えるのに十分か」をLLMが評価**します。
+- Google Researchは、これを「Sufficient Context Agent」という専用エージェントで行うと説明しています[Google Research Blog](https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag)。
+- 不足があれば、**どの情報が足りないかを特定し、ステップ2に戻る**。
+
+__ステップ5：再計画・再検索（Re-planning & Re-retrieval）__
+- 評価結果に基づき、**クエリの修正や別ツールの利用を決定**。
+- 例：  
+  - 「サーバーIDは見つかったが、スペックが見つからない」  
+  → 「サーバーIDを使って別のDBを検索する」という新たなサブタスクを追加。
+
+__ステップ6：十分なコンテキストが揃ったら生成（Generation）__
+- 十分な情報が揃ったと判断された時点で、**LLMが最終回答を生成**。
+- 必要に応じて、**回答の根拠（どの情報から導かれたか）も一緒に提示**。
+
+### 3. 「エージェント的」であることの本質
+
+Microsoftの説明では、Agentic RAGを「エージェント的」たらしめる要素として以下を挙げています[Microsoft AI Agents for Beginners](https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md)。
+
+1. **自律的な計画（Autonomous Planning）**  
+   - 外部から「この順番で検索しろ」と指示されるのではなく、**LLM自身がステップの順序を決める**。
+
+2. **反復的なメイカー・チェッカー・ループ（Iterative Maker-Checker Loops）**  
+   - 「検索 → 評価 → 修正」を**ループとして繰り返す**。
+   - 一度の失敗で終わらず、**自己修正しながら目標に近づく**。
+
+3. **メモリと状態管理（Memory & State）**  
+   - 過去の検索結果や行動を保持し、**次のステップの判断材料にする**。
+
+4. **自己修正（Self-Correction）**  
+   - 不適切なクエリや無関係な結果を検出し、**再クエリや別ツールの利用で修正**する。
+
+### 4. 具体例：GoogleのAgentic RAGフレームワーク
+
+Google ResearchのAgentic RAGフレームワーク（Gemini Enterprise Agent Platform向け）は、この原理を**マルチエージェント・ワークフロー**として実装しています[Google Research Blog](https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag)。
+
+- **クエリ分解エージェント**：複雑な問い合わせをサブクエリに分解。
+- **検索エージェント**：各サブクエリに対応する検索を実行。
+- **Sufficient Context Agent**：取得した情報が十分かどうかを評価。
+- **再検索エージェント**：不足があれば、クエリを修正して再検索。
+
+これにより、**「情報があるのに見つけられない」という従来RAGの失敗モードを減らし、事実性の高い回答を生成できる**と報告されています[MarkTechPost](https://www.marktechpost.com/2026/06/08/google-research-adds-agentic-rag-to-gemini-enterprise-agent-platform-with-a-sufficient-context-agent-for-multi-hop-queries)。
 
 
 
