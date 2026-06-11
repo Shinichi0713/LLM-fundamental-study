@@ -211,6 +211,8 @@ Microsoftの説明では、Agentic RAGを「エージェント的」たらしめ
 4. **自己修正（Self-Correction）**  
    - 不適切なクエリや無関係な結果を検出し、**再クエリや別ツールの利用で修正**する。
 
+![1781211379141](image/10_agentic_rag/1781211379141.png)
+
 ### 4. 具体例：GoogleのAgentic RAGフレームワーク
 
 Google ResearchのAgentic RAGフレームワーク（Gemini Enterprise Agent Platform向け）は、この原理を**マルチエージェント・ワークフロー**として実装しています[Google Research Blog](https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag)。
@@ -221,6 +223,232 @@ Google ResearchのAgentic RAGフレームワーク（Gemini Enterprise Agent Pla
 - **再検索エージェント**：不足があれば、クエリを修正して再検索。
 
 これにより、**「情報があるのに見つけられない」という従来RAGの失敗モードを減らし、事実性の高い回答を生成できる**と報告されています[MarkTechPost](https://www.marktechpost.com/2026/06/08/google-research-adds-agentic-rag-to-gemini-enterprise-agent-platform-with-a-sufficient-context-agent-for-multi-hop-queries)。
+
+## サブクエリ設計
+
+以下では、
+
+1. **サブクエリの設計方針（Agentic RAGでの考え方）**
+2. **Graph RAGと組み合わせた場合のサブクエリ具体例**
+
+の順に説明します。
+
+### 1. サブクエリの設計方針（Agentic RAGでの考え方）
+
+Agentic RAGにおけるサブクエリ設計は、**「LLMに質問を分解させ、小さな検索タスクに落とし込む」** ことが基本です。
+
+__1-1. サブクエリ設計の基本ステップ__
+
+1. **質問の理解と分解（Planning）**
+   - LLMに「この質問を答えるには、どんな情報が必要か？」を考えさせる。
+   - 例：  
+     - 質問：「Project Xで使われたサーバーのスペックは？」  
+     - 必要な情報：
+       - Project Xの文書から「サーバーID」を特定
+       - そのサーバーIDを使って「スペック情報」を検索
+
+2. **サブクエリの生成（Subquery Generation）**
+   - 必要な情報ごとに、**具体的な検索クエリ（自然言語 or 構造化クエリ）**を生成。
+   - 例：
+     - サブクエリ1：`「Project X サーバー ID」`
+     - サブクエリ2：`「サーバーID: SVR-123 スペック」`
+
+3. **ツールへのマッピング（Tool Mapping）**
+   - 各サブクエリを、どのツール（ベクトルDB、Graph DB、APIなど）に投げるかを決める。
+   - 例：
+     - サブクエリ1 → 社内文書のベクトルDB
+     - サブクエリ2 → サーバー管理DB（SQL or API）
+
+4. **実行順序の決定（Execution Order）**
+   - 依存関係に基づき、**どのサブクエリを先に実行するか**を決める。
+   - 上記例では、「サーバーID」が先に必要なので、サブクエリ1 → サブクエリ2の順。
+
+5. **評価と再計画（Evaluation & Re-planning）**
+   - 各サブクエリの結果を評価し、不足があれば**新しいサブクエリを追加**する。
+   - 例：サーバーIDが見つからなかった → 「Project X ハードウェア構成」で再検索、など。
+
+__1-2. サブクエリ設計のコツ__
+
+- **粒度を小さく保つ**  
+  1つのサブクエリで「複数のことを同時にやろうとしない」。
+- **依存関係を明確にする**  
+  「Aの結果を使ってBを検索する」といった依存関係をLLMに意識させる。
+- **ツールごとのクエリ形式を意識する**  
+  - ベクトルDB：自然言語クエリ（例：`「GraphRAGとPythonの関係」`）
+  - Graph DB：ノード名や関係性を意識したクエリ（例：`「GraphRAG」ノードから「utilizes」関係を辿る`）
+  - SQL DB：構造化クエリ（例：`SELECT spec FROM servers WHERE id = 'SVR-123'`）
+
+### 2. Graph RAGと組み合わせた場合のサブクエリ例
+
+Graph RAGでは、**「ノード検索 → グラフ探索（エッジを辿る）」**が基本フローです。  
+Agentic RAGと組み合わせる場合、**サブクエリは「どのノードを起点に、どの方向にグラフを探索するか」を指示するもの**になります。
+
+__2-1. Graph RAG向けサブクエリの設計パターン__
+
+__パターンA：中心ノードを特定するサブクエリ__
+
+**目的**：質問に関連する「中心ノード（ハブ）」を見つける。
+
+- 質問：「GraphRAGとPythonの関係は？」
+- サブクエリ例：
+  - `「GraphRAG」ノードを検索`
+  - `「Python」ノードを検索`
+
+**実装イメージ（LLMへの指示プロンプト）**  
+```text
+ユーザーの質問: 「GraphRAGとPythonの関係は？」
+
+この質問に答えるために、GraphRAGのナレッジグラフから関連する中心ノードを特定したい。
+以下の形式で、検索すべきノード名を列挙せよ。
+
+[出力形式]
+- ノード名1
+- ノード名2
+...
+```
+
+LLMの出力例：
+```text
+- GraphRAG
+- Python
+```
+
+これをGraph RAGの `search_graph_nodes` 関数に渡して、ベクトル類似度でノードを検索します。
+
+__パターンB：グラフ探索の方向を決めるサブクエリ__
+
+**目的**：中心ノードから「どの関係（エッジ）を辿るか」を決める。
+
+- 質問：「GraphRAGとPythonの関係は？」
+- すでに「GraphRAG」「Python」ノードが見つかっている前提。
+
+**サブクエリ例（LLMへの指示）**  
+```text
+現在、ナレッジグラフ上で以下のノードがヒットしています。
+- GraphRAG
+- Python
+
+ユーザーの質問「GraphRAGとPythonの関係は？」に答えるために、
+GraphRAGノードからどのような関係（エッジ）を辿るべきか、関係の種類を列挙せよ。
+
+[出力形式]
+- 関係名1
+- 関係名2
+...
+```
+
+LLMの出力例：
+```text
+- utilizes
+- is a library of
+```
+
+これをGraph RAGの探索関数に渡し、  
+`graph_db.successors("GraphRAG")` や `graph_db.predecessors("Python")` から、  
+関係名が `"utilizes"` や `"is a library of"` のエッジだけを抽出します。
+
+__パターンC：マルチホップ探索のためのサブクエリ__
+
+**目的**：2ホップ以上離れたノード間の関係を明らかにする。
+
+- 質問：「GraphRAGとPythonの関係は？」
+- グラフ構造：  
+  `GraphRAG -> utilizes -> NetworkX -> is a library of -> Python`
+
+**サブクエリ例（LLMへの指示）**  
+```text
+ユーザーの質問「GraphRAGとPythonの関係は？」に答えるために、
+ナレッジグラフ上で「GraphRAG」ノードから「Python」ノードに到達する経路を探索したい。
+
+以下の形式で、探索すべき関係のシーケンスを提案せよ。
+
+[出力形式]
+- 開始ノード: GraphRAG
+  - 辿る関係1: [関係名]
+  - 辿る関係2: [関係名]
+  ...
+- 開始ノード: Python
+  - 辿る関係1: [関係名]
+  ...
+```
+
+LLMの出力例：
+```text
+- 開始ノード: GraphRAG
+  - 辿る関係1: utilizes
+- 開始ノード: NetworkX
+  - 辿る関係1: is a library of
+```
+
+これを元に、Graph RAGの探索関数で  
+1. `GraphRAG` → `utilizes` → `NetworkX`  
+2. `NetworkX` → `is a library of` → `Python`  
+という**マルチホップ経路**を自動的に探索します。
+
+__2-2. 実装イメージ（コードスニペット）__
+
+Graph RAG + Agentic RAG のサブクエリ設計を、簡易コードで示すと以下のようになります。
+
+```python
+def plan_subqueries_for_graphrag(question, llm):
+    """
+    LLMを使って、GraphRAG向けのサブクエリ（ノード検索・関係探索）を計画する
+    """
+    prompt = f"""
+ユーザーの質問: {question}
+
+この質問に答えるために、GraphRAGのナレッジグラフから情報を取得したい。
+以下の2種類のサブクエリを計画せよ。
+
+1. 検索すべき中心ノード名（例: GraphRAG, Python）
+2. 探索すべき関係の種類（例: utilizes, is a library of）
+
+[出力形式]
+中心ノード:
+- ノード名1
+- ノード名2
+...
+
+探索関係:
+- 関係名1
+- 関係名2
+...
+"""
+    outputs = llm(prompt, max_new_tokens=200, temperature=0.0)
+    text = outputs[0]["generated_text"]
+    
+    # 簡易パース（実際は正規表現やJSON出力推奨）
+    lines = text.strip().split("\n")
+    nodes = []
+    relations = []
+    section = None
+    
+    for line in lines:
+        line = line.strip()
+        if "中心ノード:" in line:
+            section = "nodes"
+        elif "探索関係:" in line:
+            section = "relations"
+        elif line.startswith("- "):
+            item = line[2:].strip()
+            if section == "nodes":
+                nodes.append(item)
+            elif section == "relations":
+                relations.append(item)
+    
+    return nodes, relations
+
+# 使用例
+question = "GraphRAGとPythonの関係は？"
+nodes_to_search, relations_to_follow = plan_subqueries_for_graphrag(question, llm)
+
+print("検索すべきノード:", nodes_to_search)
+print("辿るべき関係:", relations_to_follow)
+
+# これをGraphRAGの検索・探索関数に渡す
+# search_graph_nodes(nodes_to_search, ...)
+# retrieve_subgraph_from_nodes(nodes_to_search, relations=relations_to_follow, ...)
+```
 
 
 

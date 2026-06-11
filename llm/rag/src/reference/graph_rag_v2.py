@@ -448,3 +448,220 @@ final_nodes = reranker.postprocess_nodes(initial_nodes, query_str=user_query)
 print("【2次検索：リランキング（BGE-Reranker）適用後の結果】")
 for i, node in enumerate(final_nodes):
     print(f"★ 順位 {i+1} (Score: {node.score:.4f}): {node.text}")
+
+def plan_subqueries_for_graphrag(question, llm):
+    """
+    LLMを使って、GraphRAG向けのサブクエリ（ノード検索・関係探索）を計画する
+    """
+    prompt = f"""
+ユーザーの質問: {question}
+
+この質問に答えるために、GraphRAGのナレッジグラフから情報を取得したい。
+以下の2種類のサブクエリを計画せよ。
+
+1. 検索すべき中心ノード名（例: GraphRAG, Python）
+2. 探索すべき関係の種類（例: utilizes, is a library of）
+
+[出力形式]
+中心ノード:
+- ノード名1
+- ノード名2
+...
+
+探索関係:
+- 関係名1
+- 関係名2
+...
+"""
+    outputs = llm(prompt, max_new_tokens=200, temperature=0.0)
+    text = outputs[0]["generated_text"]
+    
+    # 簡易パース（実際は正規表現やJSON出力推奨）
+    lines = text.strip().split("\n")
+    nodes = []
+    relations = []
+    section = None
+    
+    for line in lines:
+        line = line.strip()
+        if "中心ノード:" in line:
+            section = "nodes"
+        elif "探索関係:" in line:
+            section = "relations"
+        elif line.startswith("- "):
+            item = line[2:].strip()
+            if section == "nodes":
+                nodes.append(item)
+            elif section == "relations":
+                relations.append(item)
+    
+    return nodes, relations
+
+# 使用例
+question = "GraphRAGとPythonの関係は？"
+nodes_to_search, relations_to_follow = plan_subqueries_for_graphrag(question, llm)
+
+print("検索すべきノード:", nodes_to_search)
+print("辿るべき関係:", relations_to_follow)
+
+# これをGraphRAGの検索・探索関数に渡す
+# search_graph_nodes(nodes_to_search, ...)
+# retrieve_subgraph_from_nodes(nodes_to_search, relations=relations_to_follow, ...)
+
+
+import json
+import re
+
+# 簡易的なLLM呼び出し関数（実際はAPIやローカルモデルに置き換え）
+def call_llm(prompt, max_tokens=500):
+    # ここではダミー実装（実際はOpenAI API, Llama.cpp, vLLMなど）
+    # 実際には、`llm.generate(prompt, max_new_tokens=max_tokens)` のような形
+    pass
+
+# ツールの実装（ダミー）
+def search_knowledge_graph(query, top_k=5):
+    """
+    ナレッジグラフからノードを検索する（Graph RAGのノード検索）
+    """
+    print(f"[search_knowledge_graph] query={query}, top_k={top_k}")
+    # 実際にはベクトル類似度検索など
+    return {
+        "nodes": [
+            {"id": "GraphRAG", "score": 0.95},
+            {"id": "Python", "score": 0.88},
+        ]
+    }
+
+def explore_graph(node_ids, relations=None, max_hops=2):
+    """
+    指定したノードから関係を辿ってサブグラフを取得する（Graph RAGの探索）
+    """
+    print(f"[explore_graph] node_ids={node_ids}, relations={relations}, max_hops={max_hops}")
+    # 実際にはnetworkxやneo4jなどでグラフ探索
+    return {
+        "subgraph": [
+            {"from": "GraphRAG", "relation": "utilizes", "to": "NetworkX"},
+            {"from": "NetworkX", "relation": "is a library of", "to": "Python"},
+        ]
+    }
+
+def final_answer(answer):
+    """
+    最終回答を出力する
+    """
+    print(f"[final_answer] {answer}")
+    return {"status": "completed", "answer": answer}
+
+# ReActエージェントのメインループ
+def run_agentic_rag(question, max_steps=10):
+    # 観測結果の蓄積
+    observations = []
+    
+    # ReActプロンプトテンプレート
+    react_prompt_template = """
+あなたはエージェンティックRAGエージェントです。
+ユーザーの質問に答えるために、以下の形式で「思考」と「行動」を交互に書いてください。
+
+## 思考
+まず、ユーザーの質問を理解し、答えるために必要な情報を分解します。
+- 質問の意味は？
+- どのようなサブクエリが必要か？
+- どの順番で実行すべきか？
+
+## 行動
+次に、以下の形式で実行する行動を記述します。
+
+Action: <ツール名>
+Action Input: <ツールへの入力（JSON形式）>
+
+利用可能なツール:
+- search_knowledge_graph: ナレッジグラフからノードを検索する
+  - 入力: {{"query": "検索クエリ（自然言語）", "top_k": 5}}
+- explore_graph: 指定したノードから関係を辿ってサブグラフを取得する
+  - 入力: {{"node_ids": ["ノード1", "ノード2"], "relations": ["関係1", "関係2"], "max_hops": 2}}
+- final_answer: 最終回答を生成する
+  - 入力: {{"answer": "回答本文"}}
+
+## 制約
+- 一度に1つのActionのみを書くこと。
+- Action Inputは必ずJSON形式で書くこと。
+- 必要な情報が揃ったら、final_answerを実行すること。
+
+## 現在の状況
+ユーザーの質問: {question}
+これまでの観測結果: {observations_str}
+
+## 次に、あなたの「思考」と「行動」を書いてください。
+"""
+    
+    for step in range(max_steps):
+        # 観測結果を文字列化
+        observations_str = "\n".join([
+            f"- {obs['tool']}: {obs['result']}" for obs in observations
+        ])
+        
+        # ReActプロンプトを生成
+        prompt = react_prompt_template.format(
+            question=question,
+            observations_str=observations_str
+        )
+        
+        # LLM呼び出し
+        response = call_llm(prompt, max_tokens=500)
+        # ここではダミーで固定のテキストを返す
+        response_text = """
+## 思考
+ユーザーの質問「GraphRAGとPythonの関係は？」に答えるためには、
+まずGraphRAGとPythonに関連するノードをナレッジグラフから検索する必要がある。
+その後、それらのノード間の関係をグラフ探索で辿る。
+
+## 行動
+Action: search_knowledge_graph
+Action Input: {"query": "GraphRAGとPythonの関係", "top_k": 5}
+"""
+        
+        # Action部分を抽出（簡易パース）
+        action_match = re.search(r"Action: (\w+)\s*\nAction Input: (\{.*?\})", response_text, re.DOTALL)
+        if not action_match:
+            # Actionが見つからない場合はエラー or 再試行
+            print("Actionが見つかりませんでした。")
+            break
+        
+        tool_name = action_match.group(1)
+        action_input_str = action_match.group(2)
+        
+        try:
+            action_input = json.loads(action_input_str)
+        except json.JSONDecodeError:
+            print("Action InputのJSON解析に失敗しました。")
+            break
+        
+        # ツール実行
+        if tool_name == "search_knowledge_graph":
+            query = action_input.get("query")
+            top_k = action_input.get("top_k", 5)
+            result = search_knowledge_graph(query, top_k=top_k)
+            observations.append({"tool": tool_name, "result": result})
+        
+        elif tool_name == "explore_graph":
+            node_ids = action_input.get("node_ids", [])
+            relations = action_input.get("relations")
+            max_hops = action_input.get("max_hops", 2)
+            result = explore_graph(node_ids, relations=relations, max_hops=max_hops)
+            observations.append({"tool": tool_name, "result": result})
+        
+        elif tool_name == "final_answer":
+            answer = action_input.get("answer", "")
+            result = final_answer(answer)
+            observations.append({"tool": tool_name, "result": result})
+            break  # 終了
+        
+        else:
+            print(f"未知のツール: {tool_name}")
+            break
+    
+    return observations
+
+# 実行例
+question = "GraphRAGとPythonの関係は？"
+observations = run_agentic_rag(question)
