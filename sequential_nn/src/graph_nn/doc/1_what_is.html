@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>最近因果推論関係の話で情報を集めています。
+職場でグラフニューラルネットワークの使用を聞いて、実態が何か知りたくなりました。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>グラフニューラルネットワークが何か調べて、使えそうな用途について想像してみる</p>
+</blockquote>
+<p>グラフニューラルネットワーク（Graph Neural Network, GNN）は、<strong>グラフ構造（ノードとエッジの集合）を入力として扱えるニューラルネットワーク</strong>の総称です。</p>
+<h2 id="概要">概要</h2>
+<p>そもそもGNNとは何でしょうか。
+ということについて説明します。</p>
+<h3 id="グラフとは何か">グラフとは何か</h3>
+<p>グラフは「ノード（頂点）」と「エッジ（辺）」で構成されるデータ構造です。</p>
+<ul>
+<li><strong>ノード</strong>：データの単位（例：ユーザー、分子の原子、論文）</li>
+<li><strong>エッジ</strong>：ノード間の関係（例：友達関係、化学結合、引用関係）</li>
+</ul>
+<p>ソーシャルネットワーク、分子構造、交通ネットワーク、知識グラフなど、多くの現実世界のデータは自然にグラフとして表現できます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\1_what_is\1781322438873.png" alt="1781322438873"></p>
+<h3 id="gnnの基本的な考え方">GNNの基本的な考え方</h3>
+<p>GNNの主なアイデアは、<strong>「近傍の情報を集めてノードの特徴を更新する」</strong> ことです。</p>
+<ol>
+<li>各ノードは初期の特徴ベクトル（例：ユーザーの属性、原子の種類など）を持ちます。</li>
+<li>各ステップで、ノードは「自分の近傍（隣接ノード）」から情報を集めます。</li>
+<li>集めた情報と自分自身の特徴を組み合わせて、新しい特徴ベクトルに更新します。</li>
+<li>これを何回か繰り返すことで、各ノードは「周囲の構造」を反映した表現（埋め込み）を獲得します。</li>
+</ol>
+<p>この「近傍から情報を集める」操作を<strong>メッセージパッシング（message passing）</strong> と呼びます。</p>
+<h3 id="代表的なgnnモデル">代表的なGNNモデル</h3>
+<p>GNNモデルにはバリュエーションがあります。
+上記の考え方に則るネットワーク構造は派生形も存在するということになります。</p>
+<p><strong>1. GCN（Graph Convolutional Network）</strong></p>
+<ul>
+<li>各ノードが、隣接ノードの特徴を平均的に集めて更新するタイプのGNNです。</li>
+<li>比較的シンプルで、多くのタスクでよく使われます。</li>
+</ul>
+<p><strong>2. GAT（Graph Attention Network）</strong></p>
+<ul>
+<li>隣接ノードからの情報を「同じ重み」ではなく、「重要度（アテンション）」に応じて重み付けして集めます。</li>
+<li>どの近傍が重要かを学習できるため、より柔軟な表現が可能です。</li>
+</ul>
+<p><strong>3. GraphSAGE</strong></p>
+<ul>
+<li>近傍からランダムサンプリングして情報を集める方式で、大規模グラフにもスケールしやすい設計です。</li>
+</ul>
+<p><strong>4. MPNN（Message Passing Neural Network）</strong></p>
+<ul>
+<li>「メッセージパッシング」の枠組みを一般化したモデル群で、多くのGNNはこの枠組みに含まれます。</li>
+</ul>
+<h3 id="gnnでできることタスクの例">GNNでできること（タスクの例）</h3>
+<p><strong>ノードレベルタスク</strong></p>
+<ul>
+<li>例：ソーシャルネットワークでの「ユーザーの興味分類」「不正アカウント検出」</li>
+<li>各ノード（ユーザー）ごとにラベルを予測します。</li>
+</ul>
+<p><strong>エッジレベルタスク</strong></p>
+<ul>
+<li>例：推薦システムでの「ユーザーと商品の関係予測」「リンク予測」</li>
+<li>どのノード間にエッジが存在すべきかを予測します。</li>
+</ul>
+<p><strong>グラフレベルタスク</strong></p>
+<ul>
+<li>例：分子の性質予測（毒性、溶解度など）、プログラムのバグ検出</li>
+<li>グラフ全体を1つのベクトルにまとめ、そのグラフ全体の性質を予測します。</li>
+</ul>
+<h2 id="gnnの構造">GNNの構造</h2>
+<p>GNNの構造的な特徴は、主に「<strong>グラフ構造を直接扱う</strong>」という点に集約されます。以下に代表的な特徴を挙げます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\1_what_is\1781325954399.png" alt="1781325954399"></p>
+<h3 id="1-入力がノードエッジのグラフ構造">1. 入力が「ノード＋エッジ」のグラフ構造</h3>
+<ul>
+<li>通常のニューラルネットワークは、画像（グリッド）やテキスト（系列）など<strong>規則的な構造</strong>を前提とします。</li>
+<li>GNNは、<strong>ノード（頂点）とエッジ（辺）で表される不規則なグラフ</strong>を直接入力とします。</li>
+<li>各ノードは特徴ベクトルを持ち、エッジは関係性（有向・無向、重み付きなど）を表現します。</li>
+</ul>
+<h3 id="2-メッセージパッシング近傍集約が基本構造">2. メッセージパッシング（近傍集約）が基本構造</h3>
+<ul>
+<li>GNNのコアは「<strong>近傍から情報を集めてノードを更新する</strong>」操作です。</li>
+<li>各層で、各ノードは
+<ol>
+<li>隣接ノードからメッセージ（特徴）を受け取る</li>
+<li>それらを集約する</li>
+<li>自分の特徴と組み合わせて新しい特徴に更新する</li>
+</ol>
+</li>
+<li>このプロセスを<strong>メッセージパッシング</strong>と呼び、GNNの構造の中心です。</li>
+</ul>
+<h3 id="3-層の役割局所構造から大域構造へ">3. 層の役割：局所構造から大域構造へ</h3>
+<ul>
+<li>浅い層：<strong>近傍（1-hop）</strong> の情報を反映した表現を学習します。</li>
+<li>深い層：<strong>より広い範囲（k-hop）</strong> の情報を集約し、局所だけでなくグラフ全体の構造も反映した表現を獲得します。</li>
+<li>ただし、層を深くしすぎると<strong>過平滑化（over-smoothing）</strong> という問題が起きやすく、各ノードの特徴が似通ってしまう傾向があります。</li>
+</ul>
+<h3 id="4-パラメータ共有ノード間で同じ変換を使う">4. パラメータ共有（ノード間で同じ変換を使う）</h3>
+<ul>
+<li>多くのGNNでは、<strong>すべてのノードに対して同じ重みの変換（線形層など）を適用</strong>します。</li>
+<li>これにより、ノード数が変わっても同じモデルが使え、<strong>位置不変性（どのノードでも同じ関係性を同じように扱う）</strong> が保たれます。</li>
+</ul>
+<h3 id="5-グラフ全体の表現を得るための読み出しreadout構造">5. グラフ全体の表現を得るための「読み出し（readout）」構造</h3>
+<ul>
+<li>ノードレベルのタスクだけでなく、<strong>グラフ全体の性質</strong>を予測する場合があります（例：分子の毒性予測）。</li>
+<li>その場合、すべてのノード表現を<strong>集約（sum, mean, max poolingなど）</strong> して1つのベクトルにまとめる「readout層」が構造に含まれます。</li>
+<li>より高度なモデルでは、アテンションを用いた集約も使われます。</li>
+</ul>
+<h3 id="6-スケーラビリティとサンプリング構造">6. スケーラビリティとサンプリング構造</h3>
+<ul>
+<li>大規模グラフでは、全ノード・全エッジを一度に扱うと計算量・メモリが膨大になります。</li>
+<li>そのため、<strong>サブグラフ抽出</strong>や<strong>近傍サンプリング</strong>を行う構造がよく使われます。</li>
+<li>例：GraphSAGEでは、各ノードごとに近傍をランダムサンプリングしてメッセージパッシングを行います。</li>
+</ul>
+<h3 id="7-エッジ特徴や異種グラフへの拡張">7. エッジ特徴や異種グラフへの拡張</h3>
+<ul>
+<li>基本のGNNは「ノード特徴＋エッジの有無」を扱いますが、拡張として
+<ul>
+<li><strong>エッジ特徴</strong>（関係の種類・重みなど）を扱う構造</li>
+<li><strong>異種グラフ（heterogeneous graph）</strong> で、ノードタイプ・エッジタイプごとに異なる変換を行う構造
+などがあります。</li>
+</ul>
+</li>
+</ul>
+<h2 id="gnnの特徴">GNNの特徴</h2>
+<p>GNNとTransformerはどちらも「関係性を扱う」モデルですが、<strong>扱うデータ構造の前提</strong>が異なります。その違いから、メリット・デメリットが生まれます。</p>
+<h3 id="1-扱うデータ構造の違い">1. 扱うデータ構造の違い</h3>
+<p><strong>GNN（Graph Neural Network）</strong></p>
+<ul>
+<li><strong>前提</strong>：グラフ構造（ノードとエッジ）</li>
+<li>例：ソーシャルネットワーク、分子構造、交通ネットワーク、知識グラフ</li>
+<li><strong>接続関係が明示的に与えられる</strong>データに向いています。</li>
+</ul>
+<p><strong>Transformer</strong></p>
+<ul>
+<li><strong>前提</strong>：系列（sequence）構造</li>
+<li>例：テキスト、時系列データ、画像（パッチ列として扱う）</li>
+<li>**順序（位置）**を前提とし、すべての要素間の関係を潜在的に学習します。</li>
+</ul>
+<h3 id="2-gnnのメリットtransformerと比較して">2. GNNのメリット（Transformerと比較して）</h3>
+<p><strong>(1) グラフ構造を自然に扱える</strong></p>
+<ul>
+<li>GNNは「<strong>どのノードがどのノードとつながっているか</strong>」を直接入力として扱います。</li>
+<li>分子構造やソーシャルネットワークなど、<strong>接続関係が本質的なデータ</strong>では、GNNの方が自然で強い表現力を持ちます。</li>
+</ul>
+<p><strong>(2) スパースな関係性を効率的に扱える</strong></p>
+<ul>
+<li>多くの現実のグラフはスパース（疎）です（例：SNSのフォロー関係）。</li>
+<li>GNNは<strong>近傍だけにメッセージを送る</strong>ため、スパースな関係を効率的に扱えます。</li>
+<li>Transformerは、系列長に対して<strong>計算量がO(N²)</strong> になるため、大規模でスパースなグラフをそのまま扱うと非効率です。</li>
+</ul>
+<p><strong>(3) 位置不変性・構造不変性が自然に保たれる</strong></p>
+<ul>
+<li>グラフには「1番目、2番目」という順序がありません。</li>
+<li>GNNは<strong>ノードの順序に依存せず</strong>、接続関係だけで表現を学習します。</li>
+<li>Transformerは位置エンコーディングで順序を入れますが、<strong>順序が本質でないデータ</strong>では不自然なバイアスになり得ます。</li>
+</ul>
+<p><strong>(4) 大規模グラフへのスケーリング手法が豊富</strong></p>
+<ul>
+<li>GraphSAGEのような<strong>近傍サンプリング</strong>やサブグラフ抽出により、巨大なグラフでも学習可能です。</li>
+<li>Transformerは系列長が長くなると計算コストが急増し、工夫（ローカルアテンション、Linformerなど）が必要です。</li>
+</ul>
+<h3 id="3-gnnのデメリットtransformerと比較して">3. GNNのデメリット（Transformerと比較して）</h3>
+<p><strong>(1) 表現力の限界（グラフ同型性など）</strong></p>
+<ul>
+<li>GNNは<strong>Weisfeiler–Lehmanテスト</strong>と同等の表現力を持つとされ、それ以上の表現力は基本的にありません。</li>
+<li>つまり、<strong>同型なグラフを区別できない</strong>場合があります（理論的な限界）。</li>
+<li>Transformerは系列全体の関係を潜在的に学習するため、より複雑なパターンを捉えられる可能性があります。</li>
+</ul>
+<p><strong>(2) 深い層での「過平滑化（over-smoothing）」</strong></p>
+<ul>
+<li>層を深くすると、遠くのノードからも情報が集まりすぎて、<strong>ノード表現が似通ってしまう</strong>問題があります。</li>
+<li>Transformerも深くなると勾配消失などの問題はありますが、GNN特有の「過平滑化」は構造的な制約として強く現れます。</li>
+</ul>
+<p><strong>(3) 系列・グリッド構造への適用が不自然</strong></p>
+<ul>
+<li>テキストや画像のような<strong>規則的な系列・グリッド</strong>を無理やりグラフとして扱うと、GNNは冗長で非効率になります。</li>
+<li>Transformerは系列をそのまま扱えるため、NLPや画像パッチ列などに非常に適しています。</li>
+</ul>
+<p><strong>(4) 汎用性・転移性の低さ</strong></p>
+<ul>
+<li>GNNは<strong>グラフ構造に強く依存</strong>するため、異なるグラフ間での転移が難しい場合があります。</li>
+<li>Transformerは「系列→系列」の汎用フレームワークとして、言語・画像・音声などに広く適用できます。</li>
+</ul>
+<h3 id="4-transformerのメリットgnnと比較して">4. Transformerのメリット（GNNと比較して）</h3>
+<p><strong>(1) 系列・グリッドに最適</strong></p>
+<ul>
+<li>テキスト、時系列、画像パッチ列など、<strong>順序を持つデータ</strong>に非常に強いです。</li>
+<li>自己回帰生成や翻訳など、系列間の変換タスクで圧倒的な性能を発揮します。</li>
+</ul>
+<p><strong>(2) 長距離依存を直接捉えられる</strong></p>
+<ul>
+<li>アテンションにより、<strong>任意の2要素間の関係</strong>を直接モデル化できます。</li>
+<li>GNNは近傍から情報を伝播させるため、長距離依存を捉えるには層を深くする必要があります。</li>
+</ul>
+<p><strong>(3) 汎用性が高い</strong></p>
+<ul>
+<li>言語モデル、画像生成、音声認識など、<strong>多様なモダリティ</strong>に同じアーキテクチャを適用できます。</li>
+<li>GNNは基本的に「グラフ専用」の設計です。</li>
+</ul>
+<h3 id="5-transformerのデメリットgnnと比較して">5. Transformerのデメリット（GNNと比較して）</h3>
+<p><strong>(1) 計算量が系列長の2乗</strong></p>
+<ul>
+<li>系列長Nに対して<strong>O(N²)</strong> の計算量・メモリが必要です。</li>
+<li>長い系列や大規模グラフをそのまま扱うと非現実的です。</li>
+<li>GNNはスパースな接続を前提とするため、<strong>O(|E|)</strong>（エッジ数に比例）で済む場合が多いです。</li>
+</ul>
+<p><strong>(2) グラフ構造を明示的に扱うのが不自然</strong></p>
+<ul>
+<li>グラフを系列にフラット化してTransformerに入れると、<strong>接続関係の情報が失われる</strong>か、位置エンコーディングで無理やり表現する必要があります。</li>
+<li>GNNのように「近傍だけから情報を集める」という構造的帰納バイアスがありません。</li>
+</ul>
+<h2 id="gnnの応用例">GNNの応用例</h2>
+<p>GNNは「関係性が重要なデータ」を自然に扱えるため、<strong>金融、医療、EC、交通、ソフトウェア解析</strong>など、さまざまな分野で実際に使われています。以下に代表的な応用事例を分野別に紹介します。</p>
+<h3 id="1-金融不正検知">1. 金融・不正検知</h3>
+<p><strong>クレジットカード不正利用検知</strong></p>
+<ul>
+<li><strong>データ</strong>：ユーザー、取引、店舗、IPアドレスなどをノードとし、取引関係をエッジとしたグラフ</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>不正な取引パターン（例：短時間に複数国で高額決済）を<strong>グラフ上の異常なサブグラフ</strong>として検出</li>
+<li>1件ずつの取引を見るのではなく、「誰がどこでどのように取引しているか」という<strong>関係性のパターン</strong>を学習</li>
+</ul>
+</li>
+<li><strong>企業例</strong>：Mastercard、Visa、各種FinTech企業がGNNベースの不正検知システムを研究・導入していると報告されています<a href="https://developer.nvidia.com/gnn-frameworks">NVIDIA Developer</a>。</li>
+</ul>
+<p><strong>マネーロンダリング・AML（反マネーロンダリング）</strong></p>
+<ul>
+<li><strong>データ</strong>：口座、送金、企業、個人をノードとする送金ネットワーク</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>複数の口座を経由した複雑な資金移動を<strong>経路探索＋異常検出</strong>としてモデル化</li>
+<li>従来のルールベースでは捉えにくい<strong>新たな手口</strong>を学習的に検出</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-医療創薬">2. 医療・創薬</h3>
+<p><strong>分子・薬剤設計（Drug Discovery）</strong></p>
+<ul>
+<li><strong>データ</strong>：原子をノード、化学結合をエッジとする分子グラフ</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>分子の物性（毒性、溶解度、活性など）を<strong>グラフ回帰</strong>として予測</li>
+<li>新しい候補化合物のスクリーニングを高速化</li>
+</ul>
+</li>
+<li><strong>企業例</strong>：大手製薬企業やバイオテック企業が、GNNを組み込んだ創薬パイプラインを構築しています<a href="https://kumo.ai/research/graph-neural-networks-gnn">Kumo.ai</a>。</li>
+</ul>
+<p><strong>薬物相互作用・副作用予測</strong></p>
+<ul>
+<li><strong>データ</strong>：薬剤、タンパク質、副作用、疾患などをノードとする知識グラフ</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>複数の薬を併用したときの<strong>相互作用や副作用リスク</strong>を予測</li>
+<li>臨床試験前のリスク評価に活用</li>
+</ul>
+</li>
+</ul>
+<p><strong>疾患予測・バイオマーカー探索</strong></p>
+<ul>
+<li><strong>データ</strong>：遺伝子、タンパク質、代謝物などをノードとする生物学的ネットワーク</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>疾患に関連する<strong>サブネットワーク（パスウェイ）</strong> を特定</li>
+<li>個人の遺伝子変異と疾患リスクの関係をグラフとしてモデル化</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-推薦システムec">3. 推薦システム・EC</h3>
+<p><strong>商品推薦（Eコマース）</strong></p>
+<ul>
+<li><strong>データ</strong>：ユーザー、商品、カテゴリ、ブランドなどをノードとし、購入・閲覧・類似関係をエッジとするグラフ</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>ユーザーと商品の<strong>潜在的な関係</strong>を学習し、より精度の高い推薦を実現</li>
+<li>「この商品を買った人はこれも買っている」といった<strong>高次元の関係パターン</strong>を捉える</li>
+</ul>
+</li>
+<li><strong>企業例</strong>：Alibaba、Amazon、PinterestなどがGNNベースの推薦システムを導入していると報告されています<a href="https://www.assemblyai.com/blog/ai-trends-graph-neural-networks">AssemblyAI Blog</a>。</li>
+</ul>
+<p><strong>コンテンツ推薦（SNS・動画）</strong></p>
+<ul>
+<li><strong>データ</strong>：ユーザー、投稿、ハッシュタグ、コメントなどをノードとするソーシャルグラフ</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>ユーザーの興味・関係性をグラフとして捉え、<strong>タイムライン推薦</strong>や<strong>関連コンテンツ推薦</strong>に活用</li>
+<li>Pinterestの「関連ピン」推薦などが有名な例です<a href="https://www.assemblyai.com/blog/ai-trends-graph-neural-networks">AssemblyAI Blog</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-交通物流">4. 交通・物流</h3>
+<p><strong>交通流予測</strong></p>
+<ul>
+<li><strong>データ</strong>：道路セグメントや交差点をノード、道路接続をエッジとする道路ネットワーク</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>過去の交通量データから、<strong>将来の渋滞や交通流</strong>を予測</li>
+<li>都市全体の交通最適化（信号制御、経路推薦）に活用</li>
+</ul>
+</li>
+</ul>
+<p><strong>配送ルート最適化</strong></p>
+<ul>
+<li><strong>データ</strong>：配送拠点、顧客、道路をノードとする物流ネットワーク</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>需要予測とネットワーク構造を組み合わせ、<strong>効率的な配送ルート</strong>を提案</li>
+<li>リアルタイムの交通状況を反映した動的ルーティング</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-ソフトウェア解析セキュリティ">5. ソフトウェア解析・セキュリティ</h3>
+<p><strong>コード解析・バグ検出</strong></p>
+<ul>
+<li><strong>データ</strong>：プログラムの抽象構文木（AST）や制御フローグラフをグラフとして表現</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>コードの<strong>構造的なパターン</strong>からバグや脆弱性を検出</li>
+<li>コードの自動要約や類似コード検索にも応用</li>
+</ul>
+</li>
+<li><strong>企業例</strong>：AWS などが、ソフトウェア解析タスクにGNNを活用していると報告されています<a href="https://www.amazon.science/blog/how-aws-uses-graph-neural-networks-to-meet-customer-needs">Amazon Science</a>。</li>
+</ul>
+<p><strong>マルウェア検知</strong></p>
+<ul>
+<li><strong>データ</strong>：実行ファイルのAPI呼び出しグラフや制御フローグラフ</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>マルウェア特有の<strong>実行パターン</strong>をグラフとして学習し、検知精度を向上</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-知識グラフ検索">6. 知識グラフ・検索</h3>
+<p><strong>検索ランキング・質問応答</strong></p>
+<ul>
+<li><strong>データ</strong>：Wikipediaや企業内の知識グラフ（エンティティと関係）</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>クエリとエンティティの関係をグラフ上で推論し、<strong>関連度の高いエンティティ</strong>をランキング</li>
+<li>質問応答システムで、複数の事実を組み合わせた推論を行う</li>
+</ul>
+</li>
+</ul>
+<p><strong>レコメンデーション＋知識グラフ</strong></p>
+<ul>
+<li><strong>データ</strong>：ユーザー、商品、カテゴリ、ブランドに加え、知識グラフ（例：ブランドの親会社、製品ライン）を統合</li>
+<li><strong>GNNの役割</strong>：
+<ul>
+<li>「このブランドの親会社の別ブランド商品もおすすめ」といった<strong>高次の関係</strong>を考慮した推薦</li>
+</ul>
+</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>グラフニューラルネットワーク（GNN）は、<strong>「ノード（頂点）とエッジ（辺）で表されるグラフ構造」を直接入力として扱うニューラルネットワーク</strong>です。</p>
+<h3 id="1-gnnの本質メッセージパッシング">1. GNNの本質：メッセージパッシング</h3>
+<ul>
+<li>各ノードは初期特徴（例：ユーザー属性、原子の種類）を持ちます。</li>
+<li>各層で、<strong>隣接ノードから情報を集めて自分を更新</strong>します（メッセージパッシング）。</li>
+<li>これを繰り返すことで、<strong>周囲の構造を反映したノード表現</strong>を獲得します。</li>
+</ul>
+<h3 id="2-代表的なモデルと特徴">2. 代表的なモデルと特徴</h3>
+<ul>
+<li><strong>GCN</strong>：近傍の特徴を平均的に集約するシンプルなモデル。</li>
+<li><strong>GAT</strong>：近傍に「重要度（アテンション）」を付けて集約する、より柔軟なモデル。</li>
+<li><strong>GraphSAGE</strong>：近傍をサンプリングして集約し、大規模グラフにスケールしやすいモデル。</li>
+</ul>
+<p><strong>構造的特徴</strong>：</p>
+<ul>
+<li>入力が不規則なグラフ（ノード＋エッジ）</li>
+<li>パラメータ共有により、ノード数が変わっても同じモデルが使える</li>
+<li>深い層では「過平滑化」に注意が必要</li>
+</ul>
+<h3 id="3-gnnでできることタスク">3. GNNでできること（タスク）</h3>
+<ul>
+<li><strong>ノードレベル</strong>：ユーザーの興味分類、不正アカウント検出など</li>
+<li><strong>エッジレベル</strong>：推薦（ユーザー–商品）、リンク予測など</li>
+<li><strong>グラフレベル</strong>：分子の性質予測、プログラムのバグ検出など</li>
+</ul>
+<h3 id="4-transformerとの比較ざっくり">4. Transformerとの比較（ざっくり）</h3>
+<ul>
+<li><strong>GNN</strong>：グラフ（接続関係が明示）に強い。スパースな関係を効率的に扱える。</li>
+<li><strong>Transformer</strong>：系列（順序があるデータ）に強い。長距離依存を直接捉えられる。</li>
+<li>どちらが優れているかは<strong>データの本質的な構造</strong>に依存します。</li>
+</ul>
+<h3 id="5-実際の応用分野例">5. 実際の応用分野（例）</h3>
+<ul>
+<li><strong>金融</strong>：不正取引検知、マネーロンダリング検出</li>
+<li><strong>医療・創薬</strong>：分子の物性予測、薬物相互作用・副作用予測</li>
+<li><strong>EC・SNS</strong>：商品推薦、コンテンツ推薦（Pinterestなど）</li>
+<li><strong>交通・物流</strong>：交通流予測、配送ルート最適化</li>
+<li><strong>ソフトウェア解析</strong>：コードのバグ・脆弱性検出、マルウェア検知</li>
+<li><strong>知識グラフ</strong>：検索ランキング、質問応答</li>
+</ul>
+
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/tVyxRx70C4E?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+ 
+            
+        </body>
+        </html>
