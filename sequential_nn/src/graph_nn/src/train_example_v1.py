@@ -118,3 +118,127 @@ accuracy = correct / test_mask.sum().item()
 print(f"【実験結果】")
 print(f"正解を知らされていなかった32人に対する予測正解率: {accuracy * 100:.1f}%")
 
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from sklearn.datasets import load_digits
+from sklearn.metrics import pairwise_distances
+import matplotlib.pyplot as plt
+import networkx as nx
+
+# =====================================================================
+# 1. データの読み込みと「ε-近傍グラフ」の構築
+# =====================================================================
+digits = load_digits()
+features = torch.tensor(digits.data, dtype=torch.float32)
+labels = torch.tensor(digits.target, dtype=torch.long)
+
+num_nodes = features.shape[0]
+input_dim = features.shape[1]
+num_classes = 10
+
+# 全画像間の距離を計算
+dist_matrix = pairwise_distances(digits.data, metric='euclidean')
+
+# ★ここが新しいバリエーションの核★
+# 距離の閾値（epsilon）を設定。これより「近い（似ている）」画像同士だけを結ぶ
+# 距離の最大値と最小値のバランスを見て、程よい繋がりになる閾値を設定します
+epsilon = 18.5  
+adj_matrix = torch.zeros((num_nodes, num_nodes), dtype=torch.float32)
+
+for i in range(num_nodes):
+    for j in range(i + 1, num_nodes):
+        if dist_matrix[i, j] < epsilon:
+            adj_matrix[i, j] = 1.0
+            adj_matrix[j, i] = 1.0
+
+# 訓練マスク・テストマスク（前回と同条件）
+train_mask = torch.zeros(num_nodes, dtype=torch.bool)
+train_mask[:100] = True
+test_mask = torch.zeros(num_nodes, dtype=torch.bool)
+test_mask[100:1100] = True
+
+# =====================================================================
+# 2. GCNモデルの定義
+# =====================================================================
+class GCNLayer(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        self.weight = nn.Parameter(torch.FloatTensor(in_features, out_features))
+        nn.init.xavier_uniform_(self.weight)
+
+    def forward(self, x, adj):
+        adj_tilde = adj + torch.eye(adj.size(0))
+        degree = torch.sum(adj_tilde, dim=1)
+        D_inv_sqrt = torch.diag(torch.pow(degree, -0.5))
+        D_inv_sqrt[torch.isinf(D_inv_sqrt)] = 0.0
+        adj_norm = torch.mm(torch.mm(D_inv_sqrt, adj_tilde), D_inv_sqrt)
+        return torch.mm(adj_norm, torch.mm(x, self.weight))
+
+class DigitsGNN(nn.Module):
+    def __init__(self, input_dim, hidden_dim, num_classes):
+        super().__init__()
+        self.gcn1 = GCNLayer(input_dim, hidden_dim)
+        self.gcn2 = GCNLayer(hidden_dim, num_classes)
+
+    def forward(self, x, adj):
+        x = F.relu(self.gcn1(x, adj))
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = self.gcn2(x, adj)
+        return F.log_softmax(x, dim=1)
+
+# =====================================================================
+# 3. 訓練
+# =====================================================================
+model = DigitsGNN(input_dim=input_dim, hidden_dim=32, num_classes=num_classes)
+optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+criterion = nn.NLLLoss()
+
+print("新しいグラフ構造（ε-近傍）でのGNN学習開始...")
+for epoch in range(1, 101):
+    model.train()
+    optimizer.zero_grad()
+    output = model(features, adj_matrix)
+    loss = criterion(output[train_mask], labels[train_mask])
+    loss.backward()
+    optimizer.step()
+
+model.eval()
+with torch.no_grad():
+    final_output = model(features, adj_matrix)
+    all_preds = final_output.max(1)[1].numpy()
+
+# =====================================================================
+# 4. 新しいグラフ構造の可視化（最初の100ノード）
+# =====================================================================
+num_viz_nodes = 100
+sub_adj = adj_matrix[:num_viz_nodes, :num_viz_nodes].numpy()
+sub_preds = all_preds[:num_viz_nodes]
+sub_labels = labels[:num_viz_nodes].numpy()
+
+G_viz = nx.from_numpy_array(sub_adj)
+
+plt.figure(figsize=(12, 10))
+pos_viz = nx.spring_layout(G_viz, k=0.3, seed=42)
+
+# ノード描画（AIの予測で色分け）
+scatter = nx.draw_networkx_nodes(
+    G_viz, pos_viz, node_color=sub_preds, cmap=plt.cm.tab10, 
+    node_size=350, edgecolors="black", linewidths=0.8
+)
+
+# 正解の数字を描画
+labels_dict = {i: str(sub_labels[i]) for i in range(num_viz_nodes)}
+nx.draw_networkx_labels(G_viz, pos_viz, labels=labels_dict, font_size=8, font_color="black", font_weight="bold")
+
+# エッジを描画
+nx.draw_networkx_edges(G_viz, pos_viz, alpha=0.2, edge_color="gray")
+
+cbar = plt.colorbar(scatter, ticks=range(10), label="AI Predicted Digits (0-9)")
+cbar.set_ticklabels([str(i) for i in range(10)])
+
+plt.title("Epsilon-Neighborhood Graph Variety Visualization", fontsize=14, fontweight="bold")
+plt.axis("off")
+plt.show()
