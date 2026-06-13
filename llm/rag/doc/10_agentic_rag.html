@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30a8;&#x30fc;&#x30b8;&#x30a7;&#x30f3;&#x30c6;&#x30a3;&#x30c3;&#x30af;RAG&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>Google AIをお使いの方は2年前の検索エンジンに比べて検索で得られる情報量が豊富になったことを実感されていることだろうと思います。
+実は検索エンジンの内部にはLLMが組み込まれていて、検索の計画から再建策までを制御しています。
+この検索にLLMを組み込むフレームワークにはAgentic RAG（エージェンティックRAG）と呼ばれています。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>AIエージェントを検索に組み込んだAgentic RAGについて原理を説明していきます。</p>
+</blockquote>
+<h2 id="エージェンティックragとは">エージェンティックRAGとは</h2>
+<p><strong>Agentic RAG</strong> は、<strong>AIエージェントの考え方をRAG（Retrieval-Augmented Generation）に組み込んだ、自律的で動的な検索・生成パイプライン</strong>です。</p>
+<h3 id="1-agentic-ragとは何か">1. Agentic RAGとは何か</h3>
+<ul>
+<li><strong>定義</strong><br>
+Agentic RAGは、LLMが<strong>自律的に次のステップを計画しながら外部ソースから情報を取得する</strong>AIパラダイムです<a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md">Microsoft AI Agents for Beginners</a>。</li>
+<li><strong>特徴</strong>
+<ul>
+<li><strong>自律的な計画・推論</strong>：LLM自身が「何を検索すべきか」「どのツールを使うか」を判断する。</li>
+<li><strong>反復的な検索・生成ループ</strong>：1回の検索で終わらず、結果を評価し、クエリを修正し、必要に応じて再検索する。</li>
+<li><strong>メモリと状態管理</strong>：過去の行動や検索結果を保持し、次のステップに活かす。</li>
+<li><strong>自己修正（Self-Correction）</strong>：不適切なクエリや無関係な結果を検出し、再クエリや別ツールの利用で修正する<a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md">Microsoft AI Agents for Beginners</a>。</li>
+</ul>
+</li>
+</ul>
+<p>IBMはこれを「<strong>AIエージェントを使ってRAGを促進する</strong>」アプローチと説明し、従来のRAGよりも<strong>柔軟性・適応性・精度・スケーラビリティ</strong>が高いとしています<a href="https://www.ibm.com/think/topics/agentic-rag">IBM Think</a>。</p>
+<h3 id="2-従来のragtraditional-ragとの違い">2. 従来のRAG（Traditional RAG）との違い</h3>
+<p>NVIDIAのブログでは、従来RAGとAgentic RAGを以下のように対比しています<a href="https://developer.nvidia.com/blog/traditional-rag-vs-agentic-rag-why-ai-agents-need-dynamic-knowledge-to-get-smarter">NVIDIA Developer Blog</a>。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>従来のRAG（Traditional RAG）</th>
+<th>Agentic RAG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>動作の性質</strong></td>
+<td>静的な「ルックアップ」</td>
+<td>動的な「推論プロセス」</td>
+</tr>
+<tr>
+<td><strong>ワークフロー</strong></td>
+<td>単純な「クエリ → 検索 → 生成」の直線パス</td>
+<td>エージェントが自律的に計画・反復・修正するループ</td>
+</tr>
+<tr>
+<td><strong>データソース</strong></td>
+<td>単一のベクトルDBや知識ベースに接続することが多い</td>
+<td>複数の外部知識ベースやツールを動的に使い分ける<a href="https://www.ibm.com/think/topics/agentic-rag">IBM Think</a></td>
+</tr>
+<tr>
+<td><strong>適したタスク</strong></td>
+<td>コスト重視・高速な単純問い合わせ</td>
+<td>複雑な調査・要約・コード修正など、非同期で複雑なタスク<a href="https://developer.nvidia.com/blog/traditional-rag-vs-agentic-rag-why-ai-agents-need-dynamic-knowledge-to-get-smarter">NVIDIA Developer Blog</a></td>
+</tr>
+<tr>
+<td><strong>精度・信頼性</strong></td>
+<td>プロンプト設計と検索結果に依存（人間が品質を判断）</td>
+<td>エージェントが結果を検証し、必要に応じて再検索・修正する</td>
+</tr>
+</tbody>
+</table>
+<p>IBMも、従来RAGが「<strong>反応的でルールベース</strong>」なのに対し、Agentic RAGは「<strong>能動的で知的な問題解決</strong>」を行うと説明しています<a href="https://www.ibm.com/think/topics/agentic-rag">IBM Think</a>。</p>
+<h3 id="3-agentic-ragの典型的なワークフローnvidiaの整理">3. Agentic RAGの典型的なワークフロー（NVIDIAの整理）</h3>
+<p>NVIDIAはAgentic RAGのワークフローを以下のようにまとめています<a href="https://developer.nvidia.com/blog/traditional-rag-vs-agentic-rag-why-ai-agents-need-dynamic-knowledge-to-get-smarter">NVIDIA Developer Blog</a>。</p>
+<ol>
+<li><strong>データの必要性を特定</strong>（エージェントが「何が足りないか」を判断）</li>
+<li><strong>クエリ生成</strong>（エージェントが適切な検索クエリを自ら作成）</li>
+<li><strong>動的な知識取得</strong>（クエリエンジンや複数ソースから情報を取得）</li>
+<li><strong>プロンプトへのコンテキスト追加</strong>（取得した情報をLLMに渡す）</li>
+<li><strong>LLMによる意思決定・生成</strong>（必要なら再検索・修正を繰り返す）</li>
+</ol>
+<p>この「<strong>エージェントが能動的に検索戦略を変えながら繰り返す</strong>」点が、従来RAGとの大きな違いです。</p>
+<h3 id="4-agentic-ragのメリットとトレードオフ">4. Agentic RAGのメリットとトレードオフ</h3>
+<p><strong>メリット</strong></p>
+<ul>
+<li><strong>精度向上</strong>：反復的な検索・検証により、ハルシネーションを減らし、より正確な回答が可能<a href="https://developer.nvidia.com/blog/traditional-rag-vs-agentic-rag-why-ai-agents-need-dynamic-knowledge-to-get-smarter">NVIDIA Developer Blog</a>。</li>
+<li><strong>複雑な問い合わせへの対応</strong>：複数の知識ベースやツールを跨いだ調査ができる<a href="https://www.ibm.com/think/topics/agentic-rag">IBM Think</a>。</li>
+<li><strong>動的な知識への対応</strong>：リアルタイムで変化するデータソースにも適応可能。</li>
+</ul>
+<p>Agentic RAGは、 事実性データセット（factuality datasets）において、標準RAGに対して<a href="https://www.marktechpost.com/2026/06/08/google-research-adds-agentic-rag-to-gemini-enterprise-agent-platform-with-a-sufficient-context-agent-for-multi-hop-queries">最大34%の精度向上を達成</a>。
+と評価されています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\10_agentic_rag\1781125100256.png" alt="1781125100256"></p>
+<p><strong>精度向上の理由</strong></p>
+<p>Google Researchのブログでは、Agentic RAGが精度を向上させる理由として、以下の点を挙げています<a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a>。</p>
+<ol>
+<li>
+<p><strong>マルチエージェントによる計画・再検索</strong></p>
+<ul>
+<li>クエリを分解し、複数のエージェントが協調して検索・再検索を行う。</li>
+<li>情報が複数の「データの島」に分散している場合でも、<strong>十分なコンテキストが見つかるまで検索を続ける</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>Sufficient Context Agent（十分性エージェント）</strong></p>
+<ul>
+<li>取得した情報が「質問に答えるのに十分か」を評価する専用エージェントを導入。</li>
+<li>不足があれば、<strong>追加の検索クエリを生成して再検索</strong>する。</li>
+</ul>
+</li>
+<li>
+<p><strong>「推測」や「情報不足」を減らす</strong></p>
+<ul>
+<li>従来RAGでは「最初の検索で情報が見つからない → 推測 or 『情報不足』と回答」になりがち。</li>
+<li>Agentic RAGでは、<strong>情報があるのに見つけられていないケースを掘り下げる</strong>ことで、事実に基づいた回答率を高める。</li>
+</ul>
+</li>
+</ol>
+<p>このような設計により、<strong>複雑なエンタープライズ問い合わせにおいて、事実性の高い回答を生成できる確率が大幅に向上した</strong>と報告されています<a href="https://www.marktechpost.com/2026/06/08/google-research-adds-agentic-rag-to-gemini-enterprise-agent-platform-with-a-sufficient-context-agent-for-multi-hop-queries">MarkTechPost</a>。</p>
+<p><strong>トレードオフ</strong></p>
+<ul>
+<li><strong>コスト・レイテンシ</strong>：反復的なLLM呼び出しとツール利用により、トークンコストと時間が増加<a href="https://www.ibm.com/think/topics/agentic-rag">IBM Think</a>。</li>
+<li><strong>設計の複雑さ</strong>：エージェントの状態管理・エラー処理・マルチエージェント協調など、設計・実装がより高度になる。</li>
+</ul>
+<h2 id="どんなところに使われている">どんなところに使われている？</h2>
+<p>Google AI（特にGemini Enterprise Agent Platform）では、Agentic RAGの考え方を取り入れたフレームワークが実際に使われています。</p>
+<h3 id="1-google-researchによるagentic-ragフレームワークの紹介">1. Google ResearchによるAgentic RAGフレームワークの紹介</h3>
+<p>Google Researchの公式ブログでは、<strong>Gemini Enterprise Agent Platform向けの「Agentic RAGフレームワーク」</strong> を導入したと明記されています<a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a>。</p>
+<ul>
+<li>このフレームワークは、<strong>マルチエージェントのワークフロー</strong>で構成され、</li>
+<li>複雑なエンタープライズ問い合わせを<strong>分解し、反復的に検索して十分なコンテキストを集めてから回答を生成</strong>する仕組みです。</li>
+<li>従来のRAGでは「情報が足りない」とすぐに諦めてしまうようなケースでも、<strong>エージェントが再検索・再計画を行うことで、より信頼性の高い回答を目指す</strong>設計になっています。</li>
+</ul>
+<p>このブログでは、Agentic RAGを「<strong>単一の検索エンジンではなく、組織化された研究部門のようなマルチエージェントRAG</strong>」と表現しています<a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a>。</p>
+<h3 id="2-gemini-enterprise-agent-platformのrag-engineとの関係">2. Gemini Enterprise Agent PlatformのRAG Engineとの関係</h3>
+<p>Google Cloudの公式ドキュメントでは、<strong>Gemini Enterprise Agent Platformに「RAG Engine」というコンポーネント</strong>が用意されており、LLMのコンテキストをプライベートデータで拡張するためのフレームワークとして位置づけられています<a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/rag-overview">Google Cloud Docs</a>。</p>
+<ul>
+<li>RAG Engineは、<strong>ベクトルDBや外部データソースから情報を取得し、LLMのプロンプトにコンテキストを追加する</strong>役割を持ちます。</li>
+<li>Google ResearchのAgentic RAGフレームワークは、このRAG Engineを<strong>エージェント的に制御するレイヤー</strong>として機能し、
+<ul>
+<li>クエリの分解</li>
+<li>複数ソースへのルーティング</li>
+<li>検索結果の評価と再検索
+といった「Agenticな挙動」を実現しています。</li>
+</ul>
+</li>
+</ul>
+<p>つまり、<strong>Gemini Enterprise Agent Platform上で構築されるエージェントは、RAG EngineをAgentic RAG的に利用できる</strong>ようになっている、と言えます。</p>
+<h3 id="3-具体的に何がagenticなのか">3. 具体的に何が「Agentic」なのか</h3>
+<p>Googleの説明によると、Agentic RAGフレームワークでは以下のような挙動が特徴的です<a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a>。</p>
+<ol>
+<li><strong>クエリの分解と計画</strong><br>
+複雑な問い合わせを、複数のサブクエリに分解し、どのデータソースをどの順番で検索するかを計画する。</li>
+<li><strong>反復的な検索</strong><br>
+一度の検索で十分な情報が得られない場合、<strong>エージェントが自らクエリを修正し、再検索</strong>する。</li>
+<li><strong>十分性のチェック</strong><br>
+取得した情報が「質問に答えるのに十分か」を評価し、不足があれば追加検索を行う。</li>
+<li><strong>マルチエージェント協調</strong><br>
+クエリ分解エージェント、検索エージェント、評価エージェントなどが連携し、<strong>組織的な研究チームのように動く</strong>。</li>
+</ol>
+<p>これらは、前回説明した「Agentic RAG」の定義（自律的な計画・反復・自己修正）と完全に一致しています。</p>
+<blockquote>
+<p><strong>サブクエリ</strong><br>
+<strong>サブクエリ（subquery）<strong>は、</strong>「大きな問い合わせを分解した、より小さな問い合わせ」</strong> のことです。
+文脈によって少し意味が変わりますが、ここでは特に<strong>Agentic RAGやRAG全般で使われる「サブクエリ」</strong> に絞って説明します。
+<strong>1. Agentic RAGにおけるサブクエリのイメージ</strong>
+Agentic RAGでは、ユーザーからの<strong>複雑な質問を、LLM（エージェント）が複数の小さな問い合わせに分解</strong>します。この<strong>小さな問い合わせ一つひとつ</strong>が「サブクエリ」です。
+例：<br>
+ユーザーの質問：「Project Xで使われたサーバーのスペックは？」
+これをAgentic RAGが分解すると：</p>
+<ul>
+<li><strong>サブクエリ1</strong>：Project Xの文書から「サーバーID」を探す<br>
+（例：<code>「Project X サーバー ID」</code> のような検索クエリ）</li>
+<li><strong>サブクエリ2</strong>：そのサーバーIDを使って、別のDBから「スペック情報」を検索<br>
+（例：<code>「サーバーID: SVR-123 スペック」</code>）
+このように、<strong>一つの大きな質問を、複数のサブクエリに分割して順番に実行する</strong>のが、Agentic RAGの特徴です。
+<strong>2. なぜサブクエリが必要なのか</strong></li>
+<li><strong>情報が分散している場合</strong><br>
+1つの検索クエリでは、必要な情報を一度に取り出せないことが多いです。</li>
+<li><strong>マルチホップ推論が必要な場合</strong><br>
+「AからBを見つけ、そのBからCを見つける」という<strong>2段階以上の検索</strong>が必要なケース。</li>
+<li><strong>Agentic RAGの強み</strong><br>
+LLMが自律的に「どのサブクエリをどの順番で実行するか」を決め、<strong>必要に応じてサブクエリを追加・修正しながら検索を繰り返す</strong>ことで、従来RAGでは取りこぼしていた情報も拾えるようになります。</li>
+</ul>
+</blockquote>
+<h2 id="agentic-ragの動作原理">Agentic RAGの動作原理</h2>
+<p>Agentic RAGの動作原理は、<strong>「LLMが自律的に計画しながら、必要に応じて検索を繰り返し、結果を評価・修正する」</strong> というエージェント的なループ構造にあります。</p>
+<p>以下、ステップごとに説明します。</p>
+<h3 id="1-従来ragとの比較から見る何が変わったか">1. 従来RAGとの比較から見る「何が変わったか」</h3>
+<p><strong>従来RAG（Traditional RAG）</strong></p>
+<ul>
+<li><strong>クエリ → 検索（Retrieval） → 生成（Generation）</strong> の<strong>単発・直線パス</strong>。</li>
+<li>一度の検索で得たコンテキストをLLMに渡し、そのまま回答を生成。</li>
+<li>検索戦略は固定（例：ベクトル類似度上位K件）。</li>
+</ul>
+<p><strong>Agentic RAG</strong></p>
+<ul>
+<li><strong>エージェント（LLM）が「何を・どの順番で・何回検索するか」を自律的に決める</strong>。</li>
+<li>検索結果を評価し、<strong>不足があれば再検索・クエリ修正</strong>を行う。</li>
+<li>必要に応じて<strong>複数のツールやデータソースを跨いで検索</strong>する。</li>
+</ul>
+<p>MicrosoftのAIエージェント入門では、これを「<strong>LLMが自身の推論プロセスを所有し、ステップの順序を自律的に決定する</strong>」パラダイムと説明しています<a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md">Microsoft AI Agents for Beginners</a>。</p>
+<h3 id="2-agentic-ragの基本動作ステップ">2. Agentic RAGの基本動作ステップ</h3>
+<p>NVIDIAやIBM、Google Researchの説明を統合すると、典型的なAgentic RAGの動作は以下のようなループになります<a href="https://developer.nvidia.com/blog/traditional-rag-vs-agentic-rag-why-ai-agents-need-dynamic-knowledge-to-get-smarter">NVIDIA Developer Blog</a><a href="https://www.ibm.com/think/topics/agentic-rag">IBM Think</a><a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a>。</p>
+<p><strong>ステップ1：問題の理解と計画（Planning）</strong></p>
+<ul>
+<li>ユーザーのクエリを受け取り、LLMが <strong>「何を知る必要があるか」を分解</strong>します。</li>
+<li>例：「Project Xで使われたサーバーのスペックは？」<br>
+→ 「Project Xの文書からサーバーIDを探す」「そのIDで別のDBからスペックを検索する」など、<strong>複数のサブタスクに分割</strong>。</li>
+</ul>
+<p><strong>ステップ2：ツール選択とクエリ生成（Tool Selection &amp; Query Generation）</strong></p>
+<ul>
+<li>利用可能なツール（ベクトルDB、SQL DB、API、検索エンジンなど）の中から、<strong>どのツールをどの順番で使うかを決定</strong>。</li>
+<li>各ツールに対して、<strong>具体的な検索クエリを生成</strong>します。</li>
+<li>IBMはこれを「Routing agents」「Query planning agents」などの役割分担で実現すると説明しています<a href="https://www.ibm.com/think/topics/agentic-rag">IBM Think</a>。</li>
+</ul>
+<p><strong>ステップ3：検索の実行（Retrieval）</strong></p>
+<ul>
+<li>生成したクエリに基づき、実際に外部ソースから情報を取得。</li>
+<li>1回で終わらず、<strong>必要に応じて複数ソース・複数回の検索</strong>を行う。</li>
+</ul>
+<p><strong>ステップ4：結果の評価（Evaluation / Sufficient Context Check）</strong></p>
+<ul>
+<li>取得した情報が**「質問に答えるのに十分か」をLLMが評価**します。</li>
+<li>Google Researchは、これを「Sufficient Context Agent」という専用エージェントで行うと説明しています<a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a>。</li>
+<li>不足があれば、<strong>どの情報が足りないかを特定し、ステップ2に戻る</strong>。</li>
+</ul>
+<p><strong>ステップ5：再計画・再検索（Re-planning &amp; Re-retrieval）</strong></p>
+<ul>
+<li>評価結果に基づき、<strong>クエリの修正や別ツールの利用を決定</strong>。</li>
+<li>例：
+<ul>
+<li>「サーバーIDは見つかったが、スペックが見つからない」<br>
+→ 「サーバーIDを使って別のDBを検索する」という新たなサブタスクを追加。</li>
+</ul>
+</li>
+</ul>
+<p><strong>ステップ6：十分なコンテキストが揃ったら生成（Generation）</strong></p>
+<ul>
+<li>十分な情報が揃ったと判断された時点で、<strong>LLMが最終回答を生成</strong>。</li>
+<li>必要に応じて、<strong>回答の根拠（どの情報から導かれたか）も一緒に提示</strong>。</li>
+</ul>
+<h3 id="3-エージェント的であることの本質">3. 「エージェント的」であることの本質</h3>
+<p>Microsoftの説明では、Agentic RAGを「エージェント的」たらしめる要素として以下を挙げています<a href="https://github.com/microsoft/ai-agents-for-beginners/blob/main/05-agentic-rag/README.md">Microsoft AI Agents for Beginners</a>。</p>
+<ol>
+<li>
+<p><strong>自律的な計画（Autonomous Planning）</strong></p>
+<ul>
+<li>外部から「この順番で検索しろ」と指示されるのではなく、<strong>LLM自身がステップの順序を決める</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>反復的なメイカー・チェッカー・ループ（Iterative Maker-Checker Loops）</strong></p>
+<ul>
+<li>「検索 → 評価 → 修正」を<strong>ループとして繰り返す</strong>。</li>
+<li>一度の失敗で終わらず、<strong>自己修正しながら目標に近づく</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>メモリと状態管理（Memory &amp; State）</strong></p>
+<ul>
+<li>過去の検索結果や行動を保持し、<strong>次のステップの判断材料にする</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>自己修正（Self-Correction）</strong></p>
+<ul>
+<li>不適切なクエリや無関係な結果を検出し、<strong>再クエリや別ツールの利用で修正</strong>する。</li>
+</ul>
+</li>
+</ol>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\doc\image\10_agentic_rag\1781211379141.png" alt="1781211379141"></p>
+<h3 id="4-具体例googleのagentic-ragフレームワーク">4. 具体例：GoogleのAgentic RAGフレームワーク</h3>
+<p>Google ResearchのAgentic RAGフレームワーク（Gemini Enterprise Agent Platform向け）は、この原理を<strong>マルチエージェント・ワークフロー</strong>として実装しています<a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a>。</p>
+<ul>
+<li><strong>クエリ分解エージェント</strong>：複雑な問い合わせをサブクエリに分解。</li>
+<li><strong>検索エージェント</strong>：各サブクエリに対応する検索を実行。</li>
+<li><strong>Sufficient Context Agent</strong>：取得した情報が十分かどうかを評価。</li>
+<li><strong>再検索エージェント</strong>：不足があれば、クエリを修正して再検索。</li>
+</ul>
+<p>これにより、<strong>「情報があるのに見つけられない」という従来RAGの失敗モードを減らし、事実性の高い回答を生成できる</strong>と報告されています<a href="https://www.marktechpost.com/2026/06/08/google-research-adds-agentic-rag-to-gemini-enterprise-agent-platform-with-a-sufficient-context-agent-for-multi-hop-queries">MarkTechPost</a>。</p>
+<h2 id="サブクエリ設計">サブクエリ設計</h2>
+<p>以下では、</p>
+<ol>
+<li><strong>サブクエリの設計方針（Agentic RAGでの考え方）</strong></li>
+<li><strong>Graph RAGと組み合わせた場合のサブクエリ具体例</strong></li>
+</ol>
+<p>の順に説明します。</p>
+<h3 id="1-サブクエリの設計方針agentic-ragでの考え方">1. サブクエリの設計方針（Agentic RAGでの考え方）</h3>
+<p>Agentic RAGにおけるサブクエリ設計は、<strong>「LLMに質問を分解させ、小さな検索タスクに落とし込む」</strong> ことが基本です。</p>
+<p><strong>1-1. サブクエリ設計の基本ステップ</strong></p>
+<ol>
+<li>
+<p><strong>質問の理解と分解（Planning）</strong></p>
+<ul>
+<li>LLMに「この質問を答えるには、どんな情報が必要か？」を考えさせる。</li>
+<li>例：
+<ul>
+<li>質問：「Project Xで使われたサーバーのスペックは？」</li>
+<li>必要な情報：
+<ul>
+<li>Project Xの文書から「サーバーID」を特定</li>
+<li>そのサーバーIDを使って「スペック情報」を検索</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>サブクエリの生成（Subquery Generation）</strong></p>
+<ul>
+<li>必要な情報ごとに、**具体的な検索クエリ（自然言語 or 構造化クエリ）**を生成。</li>
+<li>例：
+<ul>
+<li>サブクエリ1：<code>「Project X サーバー ID」</code></li>
+<li>サブクエリ2：<code>「サーバーID: SVR-123 スペック」</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>ツールへのマッピング（Tool Mapping）</strong></p>
+<ul>
+<li>各サブクエリを、どのツール（ベクトルDB、Graph DB、APIなど）に投げるかを決める。</li>
+<li>例：
+<ul>
+<li>サブクエリ1 → 社内文書のベクトルDB</li>
+<li>サブクエリ2 → サーバー管理DB（SQL or API）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>実行順序の決定（Execution Order）</strong></p>
+<ul>
+<li>依存関係に基づき、<strong>どのサブクエリを先に実行するか</strong>を決める。</li>
+<li>上記例では、「サーバーID」が先に必要なので、サブクエリ1 → サブクエリ2の順。</li>
+</ul>
+</li>
+<li>
+<p><strong>評価と再計画（Evaluation &amp; Re-planning）</strong></p>
+<ul>
+<li>各サブクエリの結果を評価し、不足があれば<strong>新しいサブクエリを追加</strong>する。</li>
+<li>例：サーバーIDが見つからなかった → 「Project X ハードウェア構成」で再検索、など。</li>
+</ul>
+</li>
+</ol>
+<p><strong>1-2. サブクエリ設計のコツ</strong></p>
+<ul>
+<li><strong>粒度を小さく保つ</strong><br>
+1つのサブクエリで「複数のことを同時にやろうとしない」。</li>
+<li><strong>依存関係を明確にする</strong><br>
+「Aの結果を使ってBを検索する」といった依存関係をLLMに意識させる。</li>
+<li><strong>ツールごとのクエリ形式を意識する</strong>
+<ul>
+<li>ベクトルDB：自然言語クエリ（例：<code>「GraphRAGとPythonの関係」</code>）</li>
+<li>Graph DB：ノード名や関係性を意識したクエリ（例：<code>「GraphRAG」ノードから「utilizes」関係を辿る</code>）</li>
+<li>SQL DB：構造化クエリ（例：<code>SELECT spec FROM servers WHERE id = 'SVR-123'</code>）</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-graph-ragと組み合わせた場合のサブクエリ例">2. Graph RAGと組み合わせた場合のサブクエリ例</h3>
+<p>Graph RAGでは、**「ノード検索 → グラフ探索（エッジを辿る）」**が基本フローです。<br>
+Agentic RAGと組み合わせる場合、<strong>サブクエリは「どのノードを起点に、どの方向にグラフを探索するか」を指示するもの</strong>になります。</p>
+<p><strong>2-1. Graph RAG向けサブクエリの設計パターン</strong></p>
+<p><strong>パターンA：中心ノードを特定するサブクエリ</strong></p>
+<p><strong>目的</strong>：質問に関連する「中心ノード（ハブ）」を見つける。</p>
+<ul>
+<li>質問：「GraphRAGとPythonの関係は？」</li>
+<li>サブクエリ例：
+<ul>
+<li><code>「GraphRAG」ノードを検索</code></li>
+<li><code>「Python」ノードを検索</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>実装イメージ（LLMへの指示プロンプト）</strong></p>
+<pre><code class="language-text">ユーザーの質問: 「GraphRAGとPythonの関係は？」
+
+この質問に答えるために、GraphRAGのナレッジグラフから関連する中心ノードを特定したい。
+以下の形式で、検索すべきノード名を列挙せよ。
+
+[出力形式]
+- ノード名1
+- ノード名2
+...
+</code></pre>
+<p>LLMの出力例：</p>
+<pre><code class="language-text">- GraphRAG
+- Python
+</code></pre>
+<p>これをGraph RAGの <code>search_graph_nodes</code> 関数に渡して、ベクトル類似度でノードを検索します。</p>
+<p><strong>パターンB：グラフ探索の方向を決めるサブクエリ</strong></p>
+<p><strong>目的</strong>：中心ノードから「どの関係（エッジ）を辿るか」を決める。</p>
+<ul>
+<li>質問：「GraphRAGとPythonの関係は？」</li>
+<li>すでに「GraphRAG」「Python」ノードが見つかっている前提。</li>
+</ul>
+<p><strong>サブクエリ例（LLMへの指示）</strong></p>
+<pre><code class="language-text">現在、ナレッジグラフ上で以下のノードがヒットしています。
+- GraphRAG
+- Python
+
+ユーザーの質問「GraphRAGとPythonの関係は？」に答えるために、
+GraphRAGノードからどのような関係（エッジ）を辿るべきか、関係の種類を列挙せよ。
+
+[出力形式]
+- 関係名1
+- 関係名2
+...
+</code></pre>
+<p>LLMの出力例：</p>
+<pre><code class="language-text">- utilizes
+- is a library of
+</code></pre>
+<p>これをGraph RAGの探索関数に渡し、<br>
+<code>graph_db.successors(&quot;GraphRAG&quot;)</code> や <code>graph_db.predecessors(&quot;Python&quot;)</code> から、<br>
+関係名が <code>&quot;utilizes&quot;</code> や <code>&quot;is a library of&quot;</code> のエッジだけを抽出します。</p>
+<p><strong>パターンC：マルチホップ探索のためのサブクエリ</strong></p>
+<p><strong>目的</strong>：2ホップ以上離れたノード間の関係を明らかにする。</p>
+<ul>
+<li>質問：「GraphRAGとPythonの関係は？」</li>
+<li>グラフ構造：<br>
+<code>GraphRAG -&gt; utilizes -&gt; NetworkX -&gt; is a library of -&gt; Python</code></li>
+</ul>
+<p><strong>サブクエリ例（LLMへの指示）</strong></p>
+<pre><code class="language-text">ユーザーの質問「GraphRAGとPythonの関係は？」に答えるために、
+ナレッジグラフ上で「GraphRAG」ノードから「Python」ノードに到達する経路を探索したい。
+
+以下の形式で、探索すべき関係のシーケンスを提案せよ。
+
+[出力形式]
+- 開始ノード: GraphRAG
+  - 辿る関係1: [関係名]
+  - 辿る関係2: [関係名]
+  ...
+- 開始ノード: Python
+  - 辿る関係1: [関係名]
+  ...
+</code></pre>
+<p>LLMの出力例：</p>
+<pre><code class="language-text">- 開始ノード: GraphRAG
+  - 辿る関係1: utilizes
+- 開始ノード: NetworkX
+  - 辿る関係1: is a library of
+</code></pre>
+<p>これを元に、Graph RAGの探索関数で</p>
+<ol>
+<li><code>GraphRAG</code> → <code>utilizes</code> → <code>NetworkX</code></li>
+<li><code>NetworkX</code> → <code>is a library of</code> → <code>Python</code><br>
+という<strong>マルチホップ経路</strong>を自動的に探索します。</li>
+</ol>
+<p><strong>2-2. 実装イメージ（コードスニペット）</strong></p>
+<p>Graph RAG + Agentic RAG のサブクエリ設計を、簡易コードで示すと以下のようになります。</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">plan_subqueries_for_graphrag</span>(<span class="hljs-params">question, llm</span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    LLMを使って、GraphRAG向けのサブクエリ（ノード検索・関係探索）を計画する
+    &quot;&quot;&quot;</span>
+    prompt = <span class="hljs-string">f&quot;&quot;&quot;
+ユーザーの質問: <span class="hljs-subst">{question}</span>
+
+この質問に答えるために、GraphRAGのナレッジグラフから情報を取得したい。
+以下の2種類のサブクエリを計画せよ。
+
+1. 検索すべき中心ノード名（例: GraphRAG, Python）
+2. 探索すべき関係の種類（例: utilizes, is a library of）
+
+[出力形式]
+中心ノード:
+- ノード名1
+- ノード名2
+...
+
+探索関係:
+- 関係名1
+- 関係名2
+...
+&quot;&quot;&quot;</span>
+    outputs = llm(prompt, max_new_tokens=<span class="hljs-number">200</span>, temperature=<span class="hljs-number">0.0</span>)
+    text = outputs[<span class="hljs-number">0</span>][<span class="hljs-string">&quot;generated_text&quot;</span>]
+    
+    <span class="hljs-comment"># 簡易パース（実際は正規表現やJSON出力推奨）</span>
+    lines = text.strip().split(<span class="hljs-string">&quot;\n&quot;</span>)
+    nodes = []
+    relations = []
+    section = <span class="hljs-literal">None</span>
+    
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> lines:
+        line = line.strip()
+        <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;中心ノード:&quot;</span> <span class="hljs-keyword">in</span> line:
+            section = <span class="hljs-string">&quot;nodes&quot;</span>
+        <span class="hljs-keyword">elif</span> <span class="hljs-string">&quot;探索関係:&quot;</span> <span class="hljs-keyword">in</span> line:
+            section = <span class="hljs-string">&quot;relations&quot;</span>
+        <span class="hljs-keyword">elif</span> line.startswith(<span class="hljs-string">&quot;- &quot;</span>):
+            item = line[<span class="hljs-number">2</span>:].strip()
+            <span class="hljs-keyword">if</span> section == <span class="hljs-string">&quot;nodes&quot;</span>:
+                nodes.append(item)
+            <span class="hljs-keyword">elif</span> section == <span class="hljs-string">&quot;relations&quot;</span>:
+                relations.append(item)
+    
+    <span class="hljs-keyword">return</span> nodes, relations
+
+<span class="hljs-comment"># 使用例</span>
+question = <span class="hljs-string">&quot;GraphRAGとPythonの関係は？&quot;</span>
+nodes_to_search, relations_to_follow = plan_subqueries_for_graphrag(question, llm)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;検索すべきノード:&quot;</span>, nodes_to_search)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;辿るべき関係:&quot;</span>, relations_to_follow)
+
+<span class="hljs-comment"># これをGraphRAGの検索・探索関数に渡す</span>
+<span class="hljs-comment"># search_graph_nodes(nodes_to_search, ...)</span>
+<span class="hljs-comment"># retrieve_subgraph_from_nodes(nodes_to_search, relations=relations_to_follow, ...)</span>
+</code></pre>
+<h2 id="実際の実装法">実際の実装法</h2>
+<p>エージェンティックAIがサブクエリを生成するコードは、<strong>「LLMに計画を立てさせ、その計画に基づいてツールを呼び出す」</strong> というループ構造になります。</p>
+<p>ここでは、<strong>ReAct（Reasoning + Acting）スタイル</strong>をベースにした、実装しやすいPythonコード例を示します。</p>
+<h3 id="1-全体の設計イメージ">1. 全体の設計イメージ</h3>
+<p>エージェンティックAI（Agentic RAG）の典型的な流れは次の通りです。</p>
+<ol>
+<li><strong>LLMに「思考（Reasoning）」を書かせる</strong>
+<ul>
+<li>「ユーザーの質問を分解すると、どんなサブクエリが必要か？」を考えさせる。</li>
+</ul>
+</li>
+<li><strong>LLMに「行動（Acting）」を書かせる</strong>
+<ul>
+<li>「次にどのツールを、どんな引数で呼び出すか？」を決めさせる。</li>
+</ul>
+</li>
+<li><strong>ツールを実行する</strong>
+<ul>
+<li>ベクトルDB検索、Graph RAG検索、API呼び出しなど。</li>
+</ul>
+</li>
+<li><strong>結果をLLMに渡し、次のステップを決めさせる</strong>
+<ul>
+<li>必要ならサブクエリを追加・修正してループ。</li>
+</ul>
+</li>
+</ol>
+<p>これを<strong>ReAct形式</strong>でLLMに書かせると、実装がシンプルになります。</p>
+<h3 id="2-react形式のプロンプト設計">2. ReAct形式のプロンプト設計</h3>
+<p>LLMに「思考」と「行動」を交互に書かせるためのテンプレートです。</p>
+<pre><code class="language-text">あなたはエージェンティックRAGエージェントです。
+ユーザーの質問に答えるために、以下の形式で「思考」と「行動」を交互に書いてください。
+
+## 思考
+まず、ユーザーの質問を理解し、答えるために必要な情報を分解します。
+- 質問の意味は？
+- どのようなサブクエリが必要か？
+- どの順番で実行すべきか？
+
+## 行動
+次に、以下の形式で実行する行動を記述します。
+
+Action: &lt;ツール名&gt;
+Action Input: &lt;ツールへの入力（JSON形式）&gt;
+
+利用可能なツール:
+- search_knowledge_graph: ナレッジグラフからノードを検索する
+  - 入力: {&quot;query&quot;: &quot;検索クエリ（自然言語）&quot;, &quot;top_k&quot;: 5}
+- explore_graph: 指定したノードから関係を辿ってサブグラフを取得する
+  - 入力: {&quot;node_ids&quot;: [&quot;ノード1&quot;, &quot;ノード2&quot;], &quot;relations&quot;: [&quot;関係1&quot;, &quot;関係2&quot;], &quot;max_hops&quot;: 2}
+- final_answer: 最終回答を生成する
+  - 入力: {&quot;answer&quot;: &quot;回答本文&quot;}
+
+## 制約
+- 一度に1つのActionのみを書くこと。
+- Action Inputは必ずJSON形式で書くこと。
+- 必要な情報が揃ったら、final_answerを実行すること。
+
+## 現在の状況
+ユーザーの質問: {question}
+これまでの観測結果: {observations}
+
+## 次に、あなたの「思考」と「行動」を書いてください。
+</code></pre>
+<h3 id="3-pythonでの実装例">3. Pythonでの実装例</h3>
+<p>上記のReActプロンプトを使い、<strong>LLMがサブクエリを生成し、ツールを呼び出すループ</strong>を実装します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> json
+<span class="hljs-keyword">import</span> re
+
+<span class="hljs-comment"># 簡易的なLLM呼び出し関数（実際はAPIやローカルモデルに置き換え）</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">call_llm</span>(<span class="hljs-params">prompt, max_tokens=<span class="hljs-number">500</span></span>):
+    <span class="hljs-comment"># ここではダミー実装（実際はOpenAI API, Llama.cpp, vLLMなど）</span>
+    <span class="hljs-comment"># 実際には、`llm.generate(prompt, max_new_tokens=max_tokens)` のような形</span>
+    <span class="hljs-keyword">pass</span>
+
+<span class="hljs-comment"># ツールの実装（ダミー）</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">search_knowledge_graph</span>(<span class="hljs-params">query, top_k=<span class="hljs-number">5</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    ナレッジグラフからノードを検索する（Graph RAGのノード検索）
+    &quot;&quot;&quot;</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[search_knowledge_graph] query=<span class="hljs-subst">{query}</span>, top_k=<span class="hljs-subst">{top_k}</span>&quot;</span>)
+    <span class="hljs-comment"># 実際にはベクトル類似度検索など</span>
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">&quot;nodes&quot;</span>: [
+            {<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;GraphRAG&quot;</span>, <span class="hljs-string">&quot;score&quot;</span>: <span class="hljs-number">0.95</span>},
+            {<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;Python&quot;</span>, <span class="hljs-string">&quot;score&quot;</span>: <span class="hljs-number">0.88</span>},
+        ]
+    }
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">explore_graph</span>(<span class="hljs-params">node_ids, relations=<span class="hljs-literal">None</span>, max_hops=<span class="hljs-number">2</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    指定したノードから関係を辿ってサブグラフを取得する（Graph RAGの探索）
+    &quot;&quot;&quot;</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[explore_graph] node_ids=<span class="hljs-subst">{node_ids}</span>, relations=<span class="hljs-subst">{relations}</span>, max_hops=<span class="hljs-subst">{max_hops}</span>&quot;</span>)
+    <span class="hljs-comment"># 実際にはnetworkxやneo4jなどでグラフ探索</span>
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">&quot;subgraph&quot;</span>: [
+            {<span class="hljs-string">&quot;from&quot;</span>: <span class="hljs-string">&quot;GraphRAG&quot;</span>, <span class="hljs-string">&quot;relation&quot;</span>: <span class="hljs-string">&quot;utilizes&quot;</span>, <span class="hljs-string">&quot;to&quot;</span>: <span class="hljs-string">&quot;NetworkX&quot;</span>},
+            {<span class="hljs-string">&quot;from&quot;</span>: <span class="hljs-string">&quot;NetworkX&quot;</span>, <span class="hljs-string">&quot;relation&quot;</span>: <span class="hljs-string">&quot;is a library of&quot;</span>, <span class="hljs-string">&quot;to&quot;</span>: <span class="hljs-string">&quot;Python&quot;</span>},
+        ]
+    }
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">final_answer</span>(<span class="hljs-params">answer</span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    最終回答を出力する
+    &quot;&quot;&quot;</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[final_answer] <span class="hljs-subst">{answer}</span>&quot;</span>)
+    <span class="hljs-keyword">return</span> {<span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;completed&quot;</span>, <span class="hljs-string">&quot;answer&quot;</span>: answer}
+
+<span class="hljs-comment"># ReActエージェントのメインループ</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">run_agentic_rag</span>(<span class="hljs-params">question, max_steps=<span class="hljs-number">10</span></span>):
+    <span class="hljs-comment"># 観測結果の蓄積</span>
+    observations = []
+    
+    <span class="hljs-comment"># ReActプロンプトテンプレート</span>
+    react_prompt_template = <span class="hljs-string">&quot;&quot;&quot;
+あなたはエージェンティックRAGエージェントです。
+ユーザーの質問に答えるために、以下の形式で「思考」と「行動」を交互に書いてください。
+
+## 思考
+まず、ユーザーの質問を理解し、答えるために必要な情報を分解します。
+- 質問の意味は？
+- どのようなサブクエリが必要か？
+- どの順番で実行すべきか？
+
+## 行動
+次に、以下の形式で実行する行動を記述します。
+
+Action: &lt;ツール名&gt;
+Action Input: &lt;ツールへの入力（JSON形式）&gt;
+
+利用可能なツール:
+- search_knowledge_graph: ナレッジグラフからノードを検索する
+  - 入力: {{&quot;query&quot;: &quot;検索クエリ（自然言語）&quot;, &quot;top_k&quot;: 5}}
+- explore_graph: 指定したノードから関係を辿ってサブグラフを取得する
+  - 入力: {{&quot;node_ids&quot;: [&quot;ノード1&quot;, &quot;ノード2&quot;], &quot;relations&quot;: [&quot;関係1&quot;, &quot;関係2&quot;], &quot;max_hops&quot;: 2}}
+- final_answer: 最終回答を生成する
+  - 入力: {{&quot;answer&quot;: &quot;回答本文&quot;}}
+
+## 制約
+- 一度に1つのActionのみを書くこと。
+- Action Inputは必ずJSON形式で書くこと。
+- 必要な情報が揃ったら、final_answerを実行すること。
+
+## 現在の状況
+ユーザーの質問: {question}
+これまでの観測結果: {observations_str}
+
+## 次に、あなたの「思考」と「行動」を書いてください。
+&quot;&quot;&quot;</span>
+    
+    <span class="hljs-keyword">for</span> step <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(max_steps):
+        <span class="hljs-comment"># 観測結果を文字列化</span>
+        observations_str = <span class="hljs-string">&quot;\n&quot;</span>.join([
+            <span class="hljs-string">f&quot;- <span class="hljs-subst">{obs[<span class="hljs-string">&#x27;tool&#x27;</span>]}</span>: <span class="hljs-subst">{obs[<span class="hljs-string">&#x27;result&#x27;</span>]}</span>&quot;</span> <span class="hljs-keyword">for</span> obs <span class="hljs-keyword">in</span> observations
+        ])
+        
+        <span class="hljs-comment"># ReActプロンプトを生成</span>
+        prompt = react_prompt_template.<span class="hljs-built_in">format</span>(
+            question=question,
+            observations_str=observations_str
+        )
+        
+        <span class="hljs-comment"># LLM呼び出し</span>
+        response = call_llm(prompt, max_tokens=<span class="hljs-number">500</span>)
+        <span class="hljs-comment"># ここではダミーで固定のテキストを返す</span>
+        response_text = <span class="hljs-string">&quot;&quot;&quot;
+## 思考
+ユーザーの質問「GraphRAGとPythonの関係は？」に答えるためには、
+まずGraphRAGとPythonに関連するノードをナレッジグラフから検索する必要がある。
+その後、それらのノード間の関係をグラフ探索で辿る。
+
+## 行動
+Action: search_knowledge_graph
+Action Input: {&quot;query&quot;: &quot;GraphRAGとPythonの関係&quot;, &quot;top_k&quot;: 5}
+&quot;&quot;&quot;</span>
+        
+        <span class="hljs-comment"># Action部分を抽出（簡易パース）</span>
+        action_match = re.search(<span class="hljs-string">r&quot;Action: (\w+)\s*\nAction Input: (\{.*?\})&quot;</span>, response_text, re.DOTALL)
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> action_match:
+            <span class="hljs-comment"># Actionが見つからない場合はエラー or 再試行</span>
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Actionが見つかりませんでした。&quot;</span>)
+            <span class="hljs-keyword">break</span>
+        
+        tool_name = action_match.group(<span class="hljs-number">1</span>)
+        action_input_str = action_match.group(<span class="hljs-number">2</span>)
+        
+        <span class="hljs-keyword">try</span>:
+            action_input = json.loads(action_input_str)
+        <span class="hljs-keyword">except</span> json.JSONDecodeError:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Action InputのJSON解析に失敗しました。&quot;</span>)
+            <span class="hljs-keyword">break</span>
+        
+        <span class="hljs-comment"># ツール実行</span>
+        <span class="hljs-keyword">if</span> tool_name == <span class="hljs-string">&quot;search_knowledge_graph&quot;</span>:
+            query = action_input.get(<span class="hljs-string">&quot;query&quot;</span>)
+            top_k = action_input.get(<span class="hljs-string">&quot;top_k&quot;</span>, <span class="hljs-number">5</span>)
+            result = search_knowledge_graph(query, top_k=top_k)
+            observations.append({<span class="hljs-string">&quot;tool&quot;</span>: tool_name, <span class="hljs-string">&quot;result&quot;</span>: result})
+        
+        <span class="hljs-keyword">elif</span> tool_name == <span class="hljs-string">&quot;explore_graph&quot;</span>:
+            node_ids = action_input.get(<span class="hljs-string">&quot;node_ids&quot;</span>, [])
+            relations = action_input.get(<span class="hljs-string">&quot;relations&quot;</span>)
+            max_hops = action_input.get(<span class="hljs-string">&quot;max_hops&quot;</span>, <span class="hljs-number">2</span>)
+            result = explore_graph(node_ids, relations=relations, max_hops=max_hops)
+            observations.append({<span class="hljs-string">&quot;tool&quot;</span>: tool_name, <span class="hljs-string">&quot;result&quot;</span>: result})
+        
+        <span class="hljs-keyword">elif</span> tool_name == <span class="hljs-string">&quot;final_answer&quot;</span>:
+            answer = action_input.get(<span class="hljs-string">&quot;answer&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
+            result = final_answer(answer)
+            observations.append({<span class="hljs-string">&quot;tool&quot;</span>: tool_name, <span class="hljs-string">&quot;result&quot;</span>: result})
+            <span class="hljs-keyword">break</span>  <span class="hljs-comment"># 終了</span>
+        
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;未知のツール: <span class="hljs-subst">{tool_name}</span>&quot;</span>)
+            <span class="hljs-keyword">break</span>
+    
+    <span class="hljs-keyword">return</span> observations
+
+<span class="hljs-comment"># 実行例</span>
+question = <span class="hljs-string">&quot;GraphRAGとPythonの関係は？&quot;</span>
+observations = run_agentic_rag(question)
+</code></pre>
+<h3 id="4-実際のサブクエリ生成の流れ例">4. 実際のサブクエリ生成の流れ（例）</h3>
+<p>上記コードを動かすと、LLMは以下のように<strong>サブクエリを生成してツールを呼び出します</strong>。</p>
+<p><strong>ステップ1：中心ノードの検索サブクエリ</strong></p>
+<ul>
+<li><strong>LLMの思考</strong><br>
+「まずGraphRAGとPythonに関連するノードを検索する必要がある」</li>
+<li><strong>LLMの行動</strong><pre><code class="language-text">Action: search_knowledge_graph
+Action Input: {&quot;query&quot;: &quot;GraphRAGとPythonの関係&quot;, &quot;top_k&quot;: 5}
+</code></pre>
+</li>
+<li><strong>ツール実行</strong><br>
+<code>search_knowledge_graph(&quot;GraphRAGとPythonの関係&quot;, top_k=5)</code><br>
+→ <code>GraphRAG</code> と <code>Python</code> ノードがヒット</li>
+</ul>
+<p><strong>ステップ2：グラフ探索サブクエリ</strong></p>
+<ul>
+<li><strong>LLMの思考</strong><br>
+「GraphRAGとPythonのノードが見つかったので、それらの間の関係をグラフ探索で辿る」</li>
+<li><strong>LLMの行動</strong><pre><code class="language-text">Action: explore_graph
+Action Input: {&quot;node_ids&quot;: [&quot;GraphRAG&quot;, &quot;Python&quot;], &quot;relations&quot;: [&quot;utilizes&quot;, &quot;is a library of&quot;], &quot;max_hops&quot;: 2}
+</code></pre>
+</li>
+<li><strong>ツール実行</strong><br>
+<code>explore_graph([&quot;GraphRAG&quot;, &quot;Python&quot;], relations=[&quot;utilizes&quot;, &quot;is a library of&quot;], max_hops=2)</code><br>
+→ <code>GraphRAG -&gt; utilizes -&gt; NetworkX -&gt; is a library of -&gt; Python</code> という経路が取得</li>
+</ul>
+<p><strong>ステップ3：最終回答サブクエリ</strong></p>
+<ul>
+<li><strong>LLMの思考</strong><br>
+「必要な情報が揃ったので、最終回答を生成する」</li>
+<li><strong>LLMの行動</strong><pre><code class="language-text">Action: final_answer
+Action Input: {&quot;answer&quot;: &quot;GraphRAGはNetworkXを利用しており、NetworkXはPythonのライブラリです。したがって、GraphRAGはPythonのライブラリを介してPythonと関係しています。&quot;}
+</code></pre>
+</li>
+<li><strong>ツール実行</strong><br>
+<code>final_answer(...)</code> → ユーザーに回答を返す</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p><strong>エージェンティックRAG</strong>は、<strong>LLMが自律的に「何を・どの順番で・何回検索するか」を決めながら、外部知識を動的に取得して回答を生成する仕組み</strong>です。</p>
+<h3 id="1-従来ragとの違い">1. 従来RAGとの違い</h3>
+<ul>
+<li><strong>従来RAG</strong>：<br>
+「クエリ → 検索 → 生成」の<strong>単発・直線パス</strong>。検索戦略は固定。</li>
+<li><strong>エージェンティックRAG</strong>：<br>
+LLMが<strong>計画・検索・評価・再検索</strong>を<strong>ループで繰り返す</strong>。必要に応じて<strong>複数のサブクエリを生成し、複数ソースを跨いで検索</strong>する。</li>
+</ul>
+<h3 id="2-本質的な特徴">2. 本質的な特徴</h3>
+<ul>
+<li><strong>自律的な計画</strong>：LLM自身が「どんな情報が必要か」「どのツールをどう使うか」を決める。</li>
+<li><strong>反復的な検索・修正</strong>：1回で終わらず、結果を評価し、クエリを修正・再検索する。</li>
+<li><strong>自己修正</strong>：不適切なクエリや無関係な結果を検出し、再クエリや別ツールで修正する。</li>
+</ul>
+<p>GoogleのAgentic RAGフレームワークでは、<strong>マルチエージェント（クエリ分解・検索・十分性評価・再検索）</strong> で協調し、<strong>従来RAGより最大34%の事実性向上</strong>を達成したと報告されています<a href="https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag">Google Research Blog</a><a href="https://www.marktechpost.com/2026/06/08/google-research-adds-agentic-rag-to-gemini-enterprise-agent-platform-with-a-sufficient-context-agent-for-multi-hop-queries">MarkTechPost</a>。</p>
+<h3 id="3-サブクエリとは">3. サブクエリとは</h3>
+<ul>
+<li><strong>サブクエリ</strong>：<strong>大きな質問を分解した「小さな問い合わせ」</strong>。</li>
+<li>Agentic RAGでは、LLMが
+<ul>
+<li>「どんな情報が必要か？」を分解し、</li>
+<li>各情報に対応する**具体的な検索クエリ（サブクエリ）**を生成し、</li>
+<li>それを<strong>順番に実行・評価・修正</strong>します。</li>
+</ul>
+</li>
+</ul>
+<p>例：<br>
+質問「Project Xで使われたサーバーのスペックは？」<br>
+→ サブクエリ1：<code>「Project X サーバー ID」</code><br>
+→ サブクエリ2：<code>「サーバーID: SVR-123 スペック」</code></p>
+<h3 id="4-graph-ragとの組み合わせ">4. Graph RAGとの組み合わせ</h3>
+<p>Graph RAGは <strong>「ノード検索 → グラフ探索（エッジを辿る）」</strong> が基本です。<br>
+Agentic RAGと組み合わせると、サブクエリは以下のような形になります。</p>
+<ul>
+<li><strong>中心ノードを特定するサブクエリ</strong>
+<ul>
+<li>例：<code>「GraphRAG」ノードを検索</code>、<code>「Python」ノードを検索</code></li>
+</ul>
+</li>
+<li><strong>グラフ探索の方向を決めるサブクエリ</strong>
+<ul>
+<li>例：<code>GraphRAG</code> から <code>utilizes</code> 関係を辿る、<code>NetworkX</code> から <code>is a library of</code> 関係を辿る</li>
+</ul>
+</li>
+<li><strong>マルチホップ探索のためのサブクエリ</strong>
+<ul>
+<li>例：<code>GraphRAG → utilizes → NetworkX → is a library of → Python</code> という経路を計画</li>
+</ul>
+</li>
+</ul>
+<p>これにより、<strong>分散した知識をグラフ構造で統合しつつ、エージェントが自律的に探索経路を決める</strong>ことができます。</p>
+<h3 id="5-一言でまとめると">5. 一言でまとめると</h3>
+<ul>
+<li><strong>エージェンティックRAG</strong>は、<strong>LLMが自律的に計画・検索・修正するRAG</strong>。</li>
+<li><strong>サブクエリ</strong>は、その計画に基づく<strong>小さな検索タスク</strong>。</li>
+<li><strong>Graph RAG</strong>と組み合わせると、<strong>中心ノードの特定 → 関係の探索 → マルチホップ経路の計画</strong>という形で、構造化された知識を動的に活用できます。</li>
+<li>実装は<strong>ReAct形式のループ</strong>で、LLMに「思考＋行動」を書かせ、その行動をツール呼び出しに変換する形が一般的です。</li>
+</ul>
+<p>これにより、<strong>複雑で分散した知識に対しても、事実性の高い回答を生成できるRAG</strong>を構築できます。</p>
+
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/-c1q0iJJMcw?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+
+            
+        </body>
+        </html>

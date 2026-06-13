@@ -1,8 +1,14 @@
 
+Google AIをお使いの方は2年前の検索エンジンに比べて検索で得られる情報量が豊富になったことを実感されていることだろうと思います。
+実は検索エンジンの内部にはLLMが組み込まれていて、検索の計画から再建策までを制御しています。
+この検索にLLMを組み込むフレームワークにはAgentic RAG（エージェンティックRAG）と呼ばれています。
+
+本日テーマ：
+>AIエージェントを検索に組み込んだAgentic RAGについて原理を説明していきます。
 
 ## エージェンティックRAGとは
 
-**Agentic RAG（エージェンティックRAG）** は、**AIエージェントの考え方をRAG（Retrieval-Augmented Generation）に組み込んだ、自律的で動的な検索・生成パイプライン**です。
+**Agentic RAG** は、**AIエージェントの考え方をRAG（Retrieval-Augmented Generation）に組み込んだ、自律的で動的な検索・生成パイプライン**です。
 
 ### 1. Agentic RAGとは何か
 
@@ -450,5 +456,323 @@ print("辿るべき関係:", relations_to_follow)
 # retrieve_subgraph_from_nodes(nodes_to_search, relations=relations_to_follow, ...)
 ```
 
+## 実際の実装法
 
+エージェンティックAIがサブクエリを生成するコードは、**「LLMに計画を立てさせ、その計画に基づいてツールを呼び出す」** というループ構造になります。
 
+ここでは、**ReAct（Reasoning + Acting）スタイル**をベースにした、実装しやすいPythonコード例を示します。
+
+### 1. 全体の設計イメージ
+
+エージェンティックAI（Agentic RAG）の典型的な流れは次の通りです。
+
+1. **LLMに「思考（Reasoning）」を書かせる**
+   - 「ユーザーの質問を分解すると、どんなサブクエリが必要か？」を考えさせる。
+2. **LLMに「行動（Acting）」を書かせる**
+   - 「次にどのツールを、どんな引数で呼び出すか？」を決めさせる。
+3. **ツールを実行する**
+   - ベクトルDB検索、Graph RAG検索、API呼び出しなど。
+4. **結果をLLMに渡し、次のステップを決めさせる**
+   - 必要ならサブクエリを追加・修正してループ。
+
+これを**ReAct形式**でLLMに書かせると、実装がシンプルになります。
+
+### 2. ReAct形式のプロンプト設計
+
+LLMに「思考」と「行動」を交互に書かせるためのテンプレートです。
+
+```text
+あなたはエージェンティックRAGエージェントです。
+ユーザーの質問に答えるために、以下の形式で「思考」と「行動」を交互に書いてください。
+
+## 思考
+まず、ユーザーの質問を理解し、答えるために必要な情報を分解します。
+- 質問の意味は？
+- どのようなサブクエリが必要か？
+- どの順番で実行すべきか？
+
+## 行動
+次に、以下の形式で実行する行動を記述します。
+
+Action: <ツール名>
+Action Input: <ツールへの入力（JSON形式）>
+
+利用可能なツール:
+- search_knowledge_graph: ナレッジグラフからノードを検索する
+  - 入力: {"query": "検索クエリ（自然言語）", "top_k": 5}
+- explore_graph: 指定したノードから関係を辿ってサブグラフを取得する
+  - 入力: {"node_ids": ["ノード1", "ノード2"], "relations": ["関係1", "関係2"], "max_hops": 2}
+- final_answer: 最終回答を生成する
+  - 入力: {"answer": "回答本文"}
+
+## 制約
+- 一度に1つのActionのみを書くこと。
+- Action Inputは必ずJSON形式で書くこと。
+- 必要な情報が揃ったら、final_answerを実行すること。
+
+## 現在の状況
+ユーザーの質問: {question}
+これまでの観測結果: {observations}
+
+## 次に、あなたの「思考」と「行動」を書いてください。
+```
+
+### 3. Pythonでの実装例
+
+上記のReActプロンプトを使い、**LLMがサブクエリを生成し、ツールを呼び出すループ**を実装します。
+
+```python
+import json
+import re
+
+# 簡易的なLLM呼び出し関数（実際はAPIやローカルモデルに置き換え）
+def call_llm(prompt, max_tokens=500):
+    # ここではダミー実装（実際はOpenAI API, Llama.cpp, vLLMなど）
+    # 実際には、`llm.generate(prompt, max_new_tokens=max_tokens)` のような形
+    pass
+
+# ツールの実装（ダミー）
+def search_knowledge_graph(query, top_k=5):
+    """
+    ナレッジグラフからノードを検索する（Graph RAGのノード検索）
+    """
+    print(f"[search_knowledge_graph] query={query}, top_k={top_k}")
+    # 実際にはベクトル類似度検索など
+    return {
+        "nodes": [
+            {"id": "GraphRAG", "score": 0.95},
+            {"id": "Python", "score": 0.88},
+        ]
+    }
+
+def explore_graph(node_ids, relations=None, max_hops=2):
+    """
+    指定したノードから関係を辿ってサブグラフを取得する（Graph RAGの探索）
+    """
+    print(f"[explore_graph] node_ids={node_ids}, relations={relations}, max_hops={max_hops}")
+    # 実際にはnetworkxやneo4jなどでグラフ探索
+    return {
+        "subgraph": [
+            {"from": "GraphRAG", "relation": "utilizes", "to": "NetworkX"},
+            {"from": "NetworkX", "relation": "is a library of", "to": "Python"},
+        ]
+    }
+
+def final_answer(answer):
+    """
+    最終回答を出力する
+    """
+    print(f"[final_answer] {answer}")
+    return {"status": "completed", "answer": answer}
+
+# ReActエージェントのメインループ
+def run_agentic_rag(question, max_steps=10):
+    # 観測結果の蓄積
+    observations = []
+    
+    # ReActプロンプトテンプレート
+    react_prompt_template = """
+あなたはエージェンティックRAGエージェントです。
+ユーザーの質問に答えるために、以下の形式で「思考」と「行動」を交互に書いてください。
+
+## 思考
+まず、ユーザーの質問を理解し、答えるために必要な情報を分解します。
+- 質問の意味は？
+- どのようなサブクエリが必要か？
+- どの順番で実行すべきか？
+
+## 行動
+次に、以下の形式で実行する行動を記述します。
+
+Action: <ツール名>
+Action Input: <ツールへの入力（JSON形式）>
+
+利用可能なツール:
+- search_knowledge_graph: ナレッジグラフからノードを検索する
+  - 入力: {{"query": "検索クエリ（自然言語）", "top_k": 5}}
+- explore_graph: 指定したノードから関係を辿ってサブグラフを取得する
+  - 入力: {{"node_ids": ["ノード1", "ノード2"], "relations": ["関係1", "関係2"], "max_hops": 2}}
+- final_answer: 最終回答を生成する
+  - 入力: {{"answer": "回答本文"}}
+
+## 制約
+- 一度に1つのActionのみを書くこと。
+- Action Inputは必ずJSON形式で書くこと。
+- 必要な情報が揃ったら、final_answerを実行すること。
+
+## 現在の状況
+ユーザーの質問: {question}
+これまでの観測結果: {observations_str}
+
+## 次に、あなたの「思考」と「行動」を書いてください。
+"""
+    
+    for step in range(max_steps):
+        # 観測結果を文字列化
+        observations_str = "\n".join([
+            f"- {obs['tool']}: {obs['result']}" for obs in observations
+        ])
+        
+        # ReActプロンプトを生成
+        prompt = react_prompt_template.format(
+            question=question,
+            observations_str=observations_str
+        )
+        
+        # LLM呼び出し
+        response = call_llm(prompt, max_tokens=500)
+        # ここではダミーで固定のテキストを返す
+        response_text = """
+## 思考
+ユーザーの質問「GraphRAGとPythonの関係は？」に答えるためには、
+まずGraphRAGとPythonに関連するノードをナレッジグラフから検索する必要がある。
+その後、それらのノード間の関係をグラフ探索で辿る。
+
+## 行動
+Action: search_knowledge_graph
+Action Input: {"query": "GraphRAGとPythonの関係", "top_k": 5}
+"""
+        
+        # Action部分を抽出（簡易パース）
+        action_match = re.search(r"Action: (\w+)\s*\nAction Input: (\{.*?\})", response_text, re.DOTALL)
+        if not action_match:
+            # Actionが見つからない場合はエラー or 再試行
+            print("Actionが見つかりませんでした。")
+            break
+        
+        tool_name = action_match.group(1)
+        action_input_str = action_match.group(2)
+        
+        try:
+            action_input = json.loads(action_input_str)
+        except json.JSONDecodeError:
+            print("Action InputのJSON解析に失敗しました。")
+            break
+        
+        # ツール実行
+        if tool_name == "search_knowledge_graph":
+            query = action_input.get("query")
+            top_k = action_input.get("top_k", 5)
+            result = search_knowledge_graph(query, top_k=top_k)
+            observations.append({"tool": tool_name, "result": result})
+        
+        elif tool_name == "explore_graph":
+            node_ids = action_input.get("node_ids", [])
+            relations = action_input.get("relations")
+            max_hops = action_input.get("max_hops", 2)
+            result = explore_graph(node_ids, relations=relations, max_hops=max_hops)
+            observations.append({"tool": tool_name, "result": result})
+        
+        elif tool_name == "final_answer":
+            answer = action_input.get("answer", "")
+            result = final_answer(answer)
+            observations.append({"tool": tool_name, "result": result})
+            break  # 終了
+        
+        else:
+            print(f"未知のツール: {tool_name}")
+            break
+    
+    return observations
+
+# 実行例
+question = "GraphRAGとPythonの関係は？"
+observations = run_agentic_rag(question)
+```
+
+### 4. 実際のサブクエリ生成の流れ（例）
+
+上記コードを動かすと、LLMは以下のように**サブクエリを生成してツールを呼び出します**。
+
+__ステップ1：中心ノードの検索サブクエリ__
+
+- **LLMの思考**  
+  「まずGraphRAGとPythonに関連するノードを検索する必要がある」
+- **LLMの行動**  
+  ```text
+  Action: search_knowledge_graph
+  Action Input: {"query": "GraphRAGとPythonの関係", "top_k": 5}
+  ```
+- **ツール実行**  
+  `search_knowledge_graph("GraphRAGとPythonの関係", top_k=5)`  
+  → `GraphRAG` と `Python` ノードがヒット
+
+__ステップ2：グラフ探索サブクエリ__
+
+- **LLMの思考**  
+  「GraphRAGとPythonのノードが見つかったので、それらの間の関係をグラフ探索で辿る」
+- **LLMの行動**  
+  ```text
+  Action: explore_graph
+  Action Input: {"node_ids": ["GraphRAG", "Python"], "relations": ["utilizes", "is a library of"], "max_hops": 2}
+  ```
+- **ツール実行**  
+  `explore_graph(["GraphRAG", "Python"], relations=["utilizes", "is a library of"], max_hops=2)`  
+  → `GraphRAG -> utilizes -> NetworkX -> is a library of -> Python` という経路が取得
+
+__ステップ3：最終回答サブクエリ__
+
+- **LLMの思考**  
+  「必要な情報が揃ったので、最終回答を生成する」
+- **LLMの行動**  
+  ```text
+  Action: final_answer
+  Action Input: {"answer": "GraphRAGはNetworkXを利用しており、NetworkXはPythonのライブラリです。したがって、GraphRAGはPythonのライブラリを介してPythonと関係しています。"}
+  ```
+- **ツール実行**  
+  `final_answer(...)` → ユーザーに回答を返す
+
+## 総括
+
+**エージェンティックRAG**は、**LLMが自律的に「何を・どの順番で・何回検索するか」を決めながら、外部知識を動的に取得して回答を生成する仕組み**です。
+
+### 1. 従来RAGとの違い
+
+- **従来RAG**：  
+  「クエリ → 検索 → 生成」の**単発・直線パス**。検索戦略は固定。
+- **エージェンティックRAG**：  
+  LLMが**計画・検索・評価・再検索**を**ループで繰り返す**。必要に応じて**複数のサブクエリを生成し、複数ソースを跨いで検索**する。
+
+### 2. 本質的な特徴
+
+- **自律的な計画**：LLM自身が「どんな情報が必要か」「どのツールをどう使うか」を決める。
+- **反復的な検索・修正**：1回で終わらず、結果を評価し、クエリを修正・再検索する。
+- **自己修正**：不適切なクエリや無関係な結果を検出し、再クエリや別ツールで修正する。
+
+GoogleのAgentic RAGフレームワークでは、**マルチエージェント（クエリ分解・検索・十分性評価・再検索）** で協調し、**従来RAGより最大34%の事実性向上**を達成したと報告されています[Google Research Blog](https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag)[MarkTechPost](https://www.marktechpost.com/2026/06/08/google-research-adds-agentic-rag-to-gemini-enterprise-agent-platform-with-a-sufficient-context-agent-for-multi-hop-queries)。
+
+### 3. サブクエリとは
+
+- **サブクエリ**：**大きな質問を分解した「小さな問い合わせ」**。
+- Agentic RAGでは、LLMが
+  - 「どんな情報が必要か？」を分解し、
+  - 各情報に対応する**具体的な検索クエリ（サブクエリ）**を生成し、
+  - それを**順番に実行・評価・修正**します。
+
+例：  
+質問「Project Xで使われたサーバーのスペックは？」  
+→ サブクエリ1：`「Project X サーバー ID」`  
+→ サブクエリ2：`「サーバーID: SVR-123 スペック」`
+
+### 4. Graph RAGとの組み合わせ
+
+Graph RAGは **「ノード検索 → グラフ探索（エッジを辿る）」** が基本です。  
+Agentic RAGと組み合わせると、サブクエリは以下のような形になります。
+
+- **中心ノードを特定するサブクエリ**  
+  - 例：`「GraphRAG」ノードを検索`、`「Python」ノードを検索`
+- **グラフ探索の方向を決めるサブクエリ**  
+  - 例：`GraphRAG` から `utilizes` 関係を辿る、`NetworkX` から `is a library of` 関係を辿る
+- **マルチホップ探索のためのサブクエリ**  
+  - 例：`GraphRAG → utilizes → NetworkX → is a library of → Python` という経路を計画
+
+これにより、**分散した知識をグラフ構造で統合しつつ、エージェントが自律的に探索経路を決める**ことができます。
+
+### 5. 一言でまとめると
+
+- **エージェンティックRAG**は、**LLMが自律的に計画・検索・修正するRAG**。
+- **サブクエリ**は、その計画に基づく**小さな検索タスク**。
+- **Graph RAG**と組み合わせると、**中心ノードの特定 → 関係の探索 → マルチホップ経路の計画**という形で、構造化された知識を動的に活用できます。
+- 実装は**ReAct形式のループ**で、LLMに「思考＋行動」を書かせ、その行動をツール呼び出しに変換する形が一般的です。
+
+これにより、**複雑で分散した知識に対しても、事実性の高い回答を生成できるRAG**を構築できます。
