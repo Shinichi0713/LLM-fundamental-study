@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>前回触れたGNNについて、実際にどんなことが出来るかということを実験を通じて確認してみようと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>実験的にGNNの学習をさせてみて、出来ることを確認してみる</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="実験">実験</h2>
+<p>本日テーマは、&quot;手書き数字画像（Digits）をグラフとして扱い、GNN（GCN）でノード分類を行う&quot;とします。</p>
+<h3 id="詳細">詳細</h3>
+<p><strong>使うデータ</strong></p>
+<p>機械学習ではおなじみの手書き文字を使います。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\2_example\1781386930117.png" alt="1781386930117"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\2_example\1781386966359.png" alt="1781386966359"></p>
+<p>「手書き数字画像（Digits）をグラフとして扱い、GNN（GCN）でノード分類を行う」 実験です。</p>
+<p><strong>実験の内容</strong></p>
+<p>各画像（ノード）間のユークリッド距離を計算し、「似ている画像トップ5」同士をエッジで結ぶことでグラフを作ります。
+これにより、</p>
+<ul>
+<li>ノード：各画像（1797枚）</li>
+<li>エッジ：似ている画像同士の接続という類似度グラフができます。</li>
+</ul>
+<h3 id="実験内容">実験内容</h3>
+<p>ノードのうち</p>
+<ul>
+<li>訓練用（train_mask）：100ノード → ラベルが分かっている（教師あり）</li>
+<li>テスト用（test_mask）：1000ノード → ラベルは分かっていないが、グラフ構造は見える（教師なし）</li>
+<li>残りのノード：この実験では使っていません（無視）</li>
+</ul>
+<p>つまり、100ノードだけが「正解ラベル付き」だが、それ以外のノードは「ラベルなしだが、グラフ構造（誰と誰が似ているか）は見える」という半教師あり学習（semi-supervised learning） の設定を行い、テスト用ノードを近傍の関係性から正解ラベルを当てるという問題です。</p>
+<h2 id="なんでこんなことができる">なんでこんなことができる？</h2>
+<p>「似ている画像同士をエッジで結んだグラフ」上で、GNNが分類を実現できる理由は、<strong>GNNが「近傍からの情報を集約してノードを更新する」という構造を持っているから</strong>です。</p>
+<h3 id="1-gnnの基本メッセージパッシング">1. GNNの基本：メッセージパッシング</h3>
+<p>GNNのコアは、各ノードが</p>
+<ol>
+<li><strong>自分の近傍（隣接ノード）から情報を集める</strong></li>
+<li><strong>その情報と自分の特徴を組み合わせて新しい特徴に更新する</strong></li>
+</ol>
+<p>という操作（メッセージパッシング）を繰り返すことです。</p>
+<p>この実験では：</p>
+<ul>
+<li>ノード：各手書き数字画像</li>
+<li>エッジ：<strong>似ている画像同士</strong>（距離が近いトップ5）</li>
+</ul>
+<p>というグラフを作っています。<br>
+つまり、<strong>「似ている画像同士がつながっている」</strong> 状態です。</p>
+<h3 id="2-似ている画像から情報を集める効果">2. 「似ている画像」から情報を集める効果</h3>
+<p><strong>(1) ラベルが近いノードは、特徴も近いことが多い</strong></p>
+<ul>
+<li>同じ数字（例：すべて「3」）の画像は、画素パターンが似ているため、<strong>距離が近くなりやすい</strong>です。</li>
+<li>その結果、<strong>同じクラスの画像同士がエッジで結ばれやすく</strong>なります。</li>
+</ul>
+<p><strong>(2) GNNは「近傍のラベル情報」を間接的に伝播させる</strong></p>
+<ul>
+<li>GNNの1層目：**直接の近傍（1-hop）**から情報を集めます。
+<ul>
+<li>例：ある「3」の画像は、他の「3」の画像から情報を受け取る。</li>
+</ul>
+</li>
+<li>GNNの2層目：<strong>2-hop先</strong>（近傍の近傍）からも情報が伝わります。
+<ul>
+<li>例：ある「3」の画像は、「3」の近傍を通じて、さらに別の「3」の情報も間接的に受け取る。</li>
+</ul>
+</li>
+</ul>
+<p>このように、<strong>「似ている画像（＝同じクラスになりやすい画像）」から情報が集まる</strong>ため、各ノードの表現は「周囲のラベル分布」を反映したものになります。</p>
+<h3 id="3-半教師あり学習の効果">3. 半教師あり学習の効果</h3>
+<p>この実験では、</p>
+<ul>
+<li>訓練用：100ノードだけラベルあり</li>
+<li>テスト用：1000ノードはラベルなし（評価時のみ使う）</li>
+</ul>
+<p>という<strong>半教師あり学習</strong>の設定です。</p>
+<p>GNNは、</p>
+<ol>
+<li>ラベルありノードから学習した情報を、<strong>エッジを通じてラベルなしノードに伝播</strong>させます。</li>
+<li>ラベルなしノードも、近傍のラベルありノードから情報を受け取ることで、<strong>自分のラベルを推定しやすく</strong>なります。</li>
+</ol>
+<p>つまり、<strong>「少数のラベルから、グラフ全体にラベル情報を広げる」</strong> ことができます。</p>
+<h3 id="4-なぜ画像同士の距離でグラフを作るのか">4. なぜ「画像同士の距離」でグラフを作るのか</h3>
+<ul>
+<li>通常のCNNは「画素の空間配置（グリッド構造）」を前提にします。</li>
+<li>この実験では、<strong>「画像同士の類似度（距離）」をグラフ構造として扱い</strong>、GNNでその関係性を利用しています。</li>
+</ul>
+<p>これにより、</p>
+<ul>
+<li><strong>「似ている画像は同じクラスである可能性が高い」</strong> という仮定を、</li>
+<li>GNNのメッセージパッシングで<strong>自動的に活用</strong>できます。</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>実際の実装コードは以下レポジトリの&quot;train_example_v2.py&quot;をご参考下さい。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/sequential_nn/src/graph_nn/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/sequential_nn/src/graph_nn/src</a></p>
+<h3 id="1-データ設計data-design">1. データ設計（Data Design）</h3>
+<p><strong>(1) データソース</strong></p>
+<ul>
+<li><code>sklearn.datasets.load_digits()</code>：8×8ピクセルの手書き数字画像（0〜9）。</li>
+<li>1797枚の画像、各画像は64次元ベクトル（8×8をフラット化）。</li>
+</ul>
+<p><strong>(2) ノード特徴（Node Features）</strong></p>
+<ul>
+<li><code>features = torch.tensor(digits.data, dtype=torch.float32)</code></li>
+<li>各ノード（画像）は64次元の画素値ベクトルを持つ。</li>
+</ul>
+<p><strong>(3) グラフ構造（エッジ）の設計</strong></p>
+<ul>
+<li><strong>類似度ベースのk近傍グラフ</strong>：
+<ul>
+<li>各画像間のユークリッド距離を計算。</li>
+<li>各ノードについて、<strong>最も近い（似ている）5枚の画像</strong>とエッジを張る。</li>
+<li>無向グラフとして扱う（<code>adj_matrix[i, n] = 1.0; adj_matrix[n, i] = 1.0</code>）。</li>
+</ul>
+</li>
+<li>これにより、「似ている画像同士がつながったグラフ」が構築される。</li>
+</ul>
+<p><strong>(4) ラベルとマスク設計（半教師あり）</strong></p>
+<ul>
+<li><code>labels</code>：各ノードの真の数字クラス（0〜9）。</li>
+<li><code>train_mask</code>：先頭100ノードを訓練用（ラベルあり）。</li>
+<li><code>test_mask</code>：続く1000ノードをテスト用（ラベルなしで学習、評価時のみ使用）。</li>
+<li>残りのノードはこの実験では使わない（無視）。</li>
+</ul>
+<p><strong>設計意図</strong>：</p>
+<ul>
+<li>少数のラベル（100ノード）から、グラフ構造を利用して多くのノードを分類できるかを見る。</li>
+<li>テスト用ノードは学習時にはラベルを使わず、<strong>グラフ構造だけを利用</strong>する。</li>
+</ul>
+<h3 id="2-モデル設計model-design">2. モデル設計（Model Design）</h3>
+<p><strong>(1) GCNLayer（1層）</strong></p>
+<ul>
+<li>入力：<code>x</code>（ノード特徴）、<code>adj</code>（隣接行列）</li>
+<li>処理：
+<ol>
+<li>自己ループ付き隣接行列 <code>adj_tilde = adj + I</code></li>
+<li>次数行列 <code>D</code> を計算し、<strong>対称正規化</strong> <code>D^{-1/2} A~ D^{-1/2}</code> を計算</li>
+<li><code>A_norm @ (x @ W)</code> でメッセージパッシング（近傍集約）</li>
+</ol>
+</li>
+<li>これは<strong>標準的なGCNの1層</strong>の実装です。</li>
+</ul>
+<p><strong>(2) DigitsGNN（2層GCN）</strong></p>
+<ul>
+<li>構造：
+<ul>
+<li><code>GCNLayer(64, 32)</code> → ReLU → Dropout(0.5)</li>
+<li><code>GCNLayer(32, 10)</code> → <code>log_softmax</code></li>
+</ul>
+</li>
+<li>出力：各ノードの10クラスに対する対数確率。</li>
+</ul>
+<p><strong>設計意図</strong>：
+この構造は、<strong>「2層GCNによる半教師ありノード分類モデル」</strong> です。</p>
+<p><strong>1. 構造の要点</strong></p>
+<ul>
+<li><strong>入力</strong>：各ノード（画像）の64次元ベクトル（画素値）</li>
+<li><strong>第1層（GCN1）</strong>：
+<ul>
+<li>近傍（自分＋隣接ノード）の情報を集約して、64次元→32次元に変換</li>
+<li>ReLUで非線形化</li>
+<li>Dropout(0.5)で過学習防止</li>
+</ul>
+</li>
+<li><strong>第2層（GCN2）</strong>：
+<ul>
+<li>さらに近傍情報を集約して、32次元→10次元（0〜9の各クラススコア）に変換</li>
+<li>log_softmaxで10クラスの対数確率を出力</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 設計のポイント</strong></p>
+<ul>
+<li><strong>2層GCN</strong>：
+<ul>
+<li>1層目で「1-hop（自分＋直接の近傍）」、2層目で「2-hop（近傍の近傍）」まで見る。</li>
+</ul>
+</li>
+<li><strong>正規化隣接行列</strong>：
+<ul>
+<li>自己ループ付き＋次数正規化で、次数の大きいノードの影響を抑え、安定した情報伝播を実現。</li>
+</ul>
+</li>
+<li><strong>Dropout</strong>：
+<ul>
+<li>訓練時にランダムにニューロンを無効化し、過学習を抑制。</li>
+</ul>
+</li>
+<li><strong>log_softmax + NLLLoss</strong>：
+<ul>
+<li>多クラス分類の標準的な損失設計。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3. 直感的な意味</strong></p>
+<ul>
+<li>各ノードは「似ている画像同士がつながったグラフ」上で、<br>
+<strong>「自分＋近傍＋近傍の近傍」の情報を集約して数字を予測</strong>する構造です。</li>
+<li>これにより、<strong>少数のラベル（100ノード）から、グラフ構造を利用して多くのノードを分類</strong>できるようになっています。</li>
+</ul>
+<h3 id="3-学習設計training-design">3. 学習設計（Training Design）</h3>
+<p><strong>(1) 損失関数と最適化</strong></p>
+<ul>
+<li>損失：<code>NLLLoss</code>（負の対数尤度）<br>
+→ <code>log_softmax</code> 出力と組み合わせてクロスエントロピー損失として機能。</li>
+<li>最適化：<code>Adam(lr=0.01, weight_decay=5e-4)</code><br>
+→ 学習率とL2正則化（weight decay）を設定。</li>
+</ul>
+<p><strong>(2) 学習ループ</strong></p>
+<ul>
+<li>エポック数：100</li>
+<li>各エポックで：
+<ul>
+<li><code>model.train()</code> で訓練モードに</li>
+<li><code>optimizer.zero_grad()</code> で勾配リセット</li>
+<li>全ノードに対して <code>model(features, adj_matrix)</code> を計算</li>
+<li><strong>訓練マスク上のノードだけ</strong>で損失を計算（<code>output[train_mask]</code>）</li>
+<li><code>loss.backward()</code> → <code>optimizer.step()</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>設計意図</strong>：</p>
+<ul>
+<li>グラフ全体に対してメッセージパッシングを行うが、<strong>損失計算はラベルありノードのみ</strong>。</li>
+<li>これにより、ラベルなしノードもグラフ構造を通じて間接的に学習される。</li>
+</ul>
+<h3 id="4-評価設計evaluation-design">4. 評価設計（Evaluation Design）</h3>
+<p><strong>(1) 評価タイミング</strong></p>
+<ul>
+<li>エポック1, 20, 40, 60, 80, 100で評価ログを出力。</li>
+</ul>
+<p><strong>(2) 評価方法</strong></p>
+<ul>
+<li><code>model.eval()</code> で評価モードに切り替え。</li>
+<li><code>with torch.no_grad():</code> で勾配計算をオフ。</li>
+<li><code>output.max(1)[1]</code> で各ノードの予測クラスを取得。</li>
+<li><strong>テストマスク上のノード</strong>について、正解ラベルと比較して正解率を計算。</li>
+</ul>
+<p><strong>設計意図</strong>：</p>
+<ul>
+<li>学習時には使っていないテスト用ノードのラベルを使って、<strong>未知データに対する汎化性能</strong>を評価。</li>
+<li>半教師あり学習の効果（少数のラベルから多くのノードを分類できるか）を確認。</li>
+</ul>
+<pre><code class="language-python">
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># データの「中身の形状（次元）」もテキストで確認</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n=== データ構造の詳細 ===&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;1枚目の画像（行列）の形状: <span class="hljs-subst">{digits.images[<span class="hljs-number">0</span>].shape}</span> (縦8ピクセル × 横8ピクセル)&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;GNNに入力した説明変数（1次元化）の形状: <span class="hljs-subst">{digits.data[<span class="hljs-number">0</span>].shape}</span> (64次元のベクトル)&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;1枚目の画像の実データ（ピクセル値の一例）:\n<span class="hljs-subst">{digits.data[<span class="hljs-number">0</span>].<span class="hljs-built_in">round</span>().astype(<span class="hljs-built_in">int</span>).reshape(<span class="hljs-number">8</span>,<span class="hljs-number">8</span>)}</span>&quot;</span>)
+
+<span class="hljs-comment"># 説明変数 X: 各ノード（画像）のプロフィール（8x8マスのピクセル値 = 64次元）</span>
+features = torch.tensor(digits.data, dtype=torch.float32)
+
+<span class="hljs-comment"># 目的変数 Y: 各ノードの正解ラベル（0 〜 9 の数字クラス）</span>
+labels = torch.tensor(digits.target, dtype=torch.long)
+
+num_nodes = features.shape[<span class="hljs-number">0</span>]   <span class="hljs-comment"># 1797枚の画像ノード</span>
+input_dim = features.shape[<span class="hljs-number">1</span>]   <span class="hljs-comment"># 64次元の説明変数</span>
+num_classes = <span class="hljs-number">10</span>                <span class="hljs-comment"># 10クラス分類</span>
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;データ読み込み完了! 画像数(ノード): <span class="hljs-subst">{num_nodes}</span>, 説明変数の次元: <span class="hljs-subst">{input_dim}</span>, クラス数: <span class="hljs-subst">{num_classes}</span>&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;画像同士の類似度からネットワーク（エッジ）を構築中...&quot;</span>)
+<span class="hljs-comment"># 各画像間の距離を計算し、「特に見た目が似ている画像トップ5」同士を線（エッジ）で結ぶ</span>
+dist_matrix = pairwise_distances(digits.data, metric=<span class="hljs-string">&#x27;euclidean&#x27;</span>)
+adj_matrix = torch.zeros((num_nodes, num_nodes), dtype=torch.float32)
+
+top_k = <span class="hljs-number">5</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_nodes):
+    <span class="hljs-comment"># 自分自身を除外して、最も近い（似ている）インデックスを取得</span>
+    nearest_neighbors = np.argsort(dist_matrix[i])[<span class="hljs-number">1</span>:top_k+<span class="hljs-number">1</span>]
+    <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> nearest_neighbors:
+        adj_matrix[i, n] = <span class="hljs-number">1.0</span>
+        adj_matrix[n, i] = <span class="hljs-number">1.0</span> <span class="hljs-comment"># 無向グラフ</span>
+
+<span class="hljs-comment"># 訓練用（100個）とテスト用（残りの1000個）のマスクを作成</span>
+train_mask = torch.zeros(num_nodes, dtype=torch.<span class="hljs-built_in">bool</span>)
+train_mask[:<span class="hljs-number">100</span>] = <span class="hljs-literal">True</span>
+test_mask = torch.zeros(num_nodes, dtype=torch.<span class="hljs-built_in">bool</span>)
+test_mask[<span class="hljs-number">100</span>:<span class="hljs-number">1100</span>] = <span class="hljs-literal">True</span>
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 2. GCNモデルの定義</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GCNLayer</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, in_features, out_features</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.weight = nn.Parameter(torch.FloatTensor(in_features, out_features))
+        nn.init.xavier_uniform_(self.weight)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, adj</span>):
+        <span class="hljs-comment"># 対称正規化隣接行列の計算</span>
+        adj_tilde = adj + torch.eye(adj.size(<span class="hljs-number">0</span>))
+        degree = torch.<span class="hljs-built_in">sum</span>(adj_tilde, dim=<span class="hljs-number">1</span>)
+        D_inv_sqrt = torch.diag(torch.<span class="hljs-built_in">pow</span>(degree, -<span class="hljs-number">0.5</span>))
+        D_inv_sqrt[torch.isinf(D_inv_sqrt)] = <span class="hljs-number">0.0</span>
+        adj_norm = torch.mm(torch.mm(D_inv_sqrt, adj_tilde), D_inv_sqrt)
+
+        <span class="hljs-comment"># メッセージパッシング</span>
+        <span class="hljs-keyword">return</span> torch.mm(adj_norm, torch.mm(x, self.weight))
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">DigitsGNN</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, input_dim, hidden_dim, num_classes</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.gcn1 = GCNLayer(input_dim, hidden_dim)
+        self.gcn2 = GCNLayer(hidden_dim, num_classes)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, adj</span>):
+        x = F.relu(self.gcn1(x, adj))
+        x = F.dropout(x, p=<span class="hljs-number">0.5</span>, training=self.training)
+        x = self.gcn2(x, adj)
+        <span class="hljs-keyword">return</span> F.log_softmax(x, dim=<span class="hljs-number">1</span>)
+
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 3. 訓練と評価の実行</span>
+<span class="hljs-comment"># =====================================================================</span>
+<span class="hljs-comment"># 64次元(画素値) -&gt; 32次元(隠れ層) -&gt; 10次元(予測数字)</span>
+model = DigitsGNN(input_dim=input_dim, hidden_dim=<span class="hljs-number">32</span>, num_classes=num_classes)
+optimizer = optim.Adam(model.parameters(), lr=<span class="hljs-number">0.01</span>, weight_decay=<span class="hljs-number">5e-4</span>)
+criterion = nn.NLLLoss()
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\nGNNの学習を開始します...&quot;</span>)
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">101</span>):
+    model.train()
+    optimizer.zero_grad()
+
+    output = model(features, adj_matrix)
+    loss = criterion(output[train_mask], labels[train_mask])
+
+    loss.backward()
+    optimizer.step()
+
+    <span class="hljs-keyword">if</span> epoch % <span class="hljs-number">20</span> == <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> epoch == <span class="hljs-number">1</span>:
+        model.<span class="hljs-built_in">eval</span>()
+        <span class="hljs-keyword">with</span> torch.no_grad():
+            preds = output.<span class="hljs-built_in">max</span>(<span class="hljs-number">1</span>)[<span class="hljs-number">1</span>]
+            correct = preds[test_mask].eq(labels[test_mask]).<span class="hljs-built_in">sum</span>().item()
+            acc = correct / test_mask.<span class="hljs-built_in">sum</span>().item()
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch: <span class="hljs-subst">{epoch:03d}</span> | 訓練データの損失: <span class="hljs-subst">{loss.item():<span class="hljs-number">.4</span>f}</span> | 未知のデータに対する予測精度: <span class="hljs-subst">{acc*<span class="hljs-number">100</span>:<span class="hljs-number">.1</span>f}</span>%&quot;</span>)
+</code></pre>
+<h3 id="5-学習と実験結果">5. 学習と実験結果</h3>
+<p>ロスの推移は以下のようになりました。
+まあ、収束してるように思います。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\2_example\image.png" alt="alt text"></p>
+<p>そして実際に出来たグラフを表示するとこんな感じです。
+7のクラスタが分かれていたり集まりきってないノードが存在していますが、関係性の強さからクラスタが自動でできたことが確認出来ます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\2_example\1781390369537.png" alt="1781390369537"></p>
+<h2 id="総括">総括</h2>
+<p>今回の実験を踏まえると、GNNについてはまずはこの辺りです。</p>
+<ol>
+<li>良いと感じた点</li>
+</ol>
+<ul>
+<li>互いの関係性でラベリングが出来るという点は面白いと感じました。</li>
+<li>ノードの関係性が自由であり、密集するノードもあれば、疎になるノードも存在できるという点は、TransformerやRNNとは異なります。</li>
+<li>今回教師としたのは、全データの10%程度で、それ以外の関係性は近いか、そうでないかという情報のみで構築できた。→学習用のデータの負担は小さい</li>
+</ul>
+<ol start="2">
+<li>デメリットと感じた点</li>
+</ol>
+<ul>
+<li>今回のグラフはあくまで手書き文字のみで成り立つもの</li>
+<li>LLMのような汎用性は持たない</li>
+<li>精度が高いとは思えない。精度が80%程度だったが、同じデータを画像認識でやると90%オーバーになる</li>
+</ul>
+<p>とは言え、GNNのネットワークも簡素なものだったので、より精度を向上させる手法はあるはずです。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/TACRmufLfko?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+            
+        </body>
+        </html>
