@@ -242,3 +242,149 @@ cbar.set_ticklabels([str(i) for i in range(10)])
 plt.title("Epsilon-Neighborhood Graph Variety Visualization", fontsize=14, fontweight="bold")
 plt.axis("off")
 plt.show()
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+import numpy as np
+import matplotlib.pyplot as plt
+import networkx as nx
+from sklearn.metrics import roc_auc_score
+
+# =====================================================================
+# 1. 疑似データの構築と「未来のリンク（検証用）」の隠蔽
+# =====================================================================
+np.random.seed(42)
+torch.manual_seed(42)
+
+num_products = 60  # 分かりやすさのためノード数を60に調整
+labels_np = np.array([0]*20 + [1]*20 + [2]*20) # 3カテゴリ
+
+# 説明変数 X: 2次元のダミープロフィール
+features = torch.tensor(np.random.randn(num_products, 2) * 2 + 3, dtype=torch.float32)
+
+# 本来のすべてのリンク（グラウンドトゥルース）を定義
+edges = []
+for i in range(num_products):
+    for j in range(i + 1, num_products):
+        if labels_np[i] == labels_np[j] and np.random.rand() < 0.3:
+            edges.append((i, j))
+        elif labels_np[i] != labels_np[j] and np.random.rand() < 0.01:
+            edges.append((i, j))
+
+all_edges = np.array(edges)
+num_edges = len(all_edges)
+
+# 20%のリンクを「未来（テスト用）」として隠し、80%を「現在（学習用）」とする
+shuffled_indices = np.random.permutation(num_edges)
+train_edge_idx = shuffled_indices[:int(num_edges * 0.8)]
+test_edge_idx = shuffled_indices[int(num_edges * 0.8):]
+
+train_edges = all_edges[train_edge_idx]
+test_edges = all_edges[test_edge_idx]
+
+# 学習用の隣接行列 A を構築（隠されたリンクは0になっている）
+adj_train = torch.zeros((num_products, num_products), dtype=torch.float32)
+for u, v in train_edges:
+    adj_train[u, v] = 1.0
+    adj_train[v, u] = 1.0
+
+# 同数の「絶対に繋がらないペア（負例）」をテスト用にサンプリング
+negative_edges = []
+while len(negative_edges) < len(test_edges):
+    u, v = np.random.randint(0, num_products, size=2)
+    if u != v and (u, v) not in edges and (v, u) not in edges and (u, v) not in negative_edges:
+        negative_edges.append((u, v))
+negative_edges = np.array(negative_edges)
+
+# =====================================================================
+# 2. リンク予測用 GNN（GCN）モデルの定義
+# =====================================================================
+class GCNLayer(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        self.weight = nn.Parameter(torch.FloatTensor(in_features, out_features))
+        nn.init.xavier_uniform_(self.weight)
+
+    def forward(self, x, adj):
+        adj_tilde = adj + torch.eye(adj.size(0))
+        degree = torch.sum(adj_tilde, dim=1)
+        D_inv_sqrt = torch.diag(torch.pow(degree, -0.5))
+        D_inv_sqrt[torch.isinf(D_inv_sqrt)] = 0.0
+        adj_norm = torch.mm(torch.mm(D_inv_sqrt, adj_tilde), D_inv_sqrt)
+        return torch.mm(adj_norm, torch.mm(x, self.weight))
+
+class LinkPredictionGNN(nn.Module):
+    def __init__(self, input_dim, hidden_dim):
+        super().__init__()
+        self.gcn1 = GCNLayer(input_dim, hidden_dim)
+        self.gcn2 = GCNLayer(hidden_dim, hidden_dim) # 最終ノードベクトルを出力
+
+    def forward(self, x, adj):
+        x = F.relu(self.gcn1(x, adj))
+        return self.gcn2(x, adj)
+
+    def compute_link_score(self, z, edge_list):
+        # 2つのノードベクトルの内積（類似度）を計算し、リンクの存在確率（0〜1）にする
+        u_embed = z[edge_list[:, 0]]
+        v_embed = z[edge_list[:, 1]]
+        scores = torch.sum(u_embed * v_embed, dim=1)
+        return torch.sigmoid(scores)
+
+# =====================================================================
+# 3. 訓練ループ（リンクの有無を当てるバイナリ分類として学習）
+# =====================================================================
+model = LinkPredictionGNN(input_dim=2, hidden_dim=16)
+optimizer = optim.Adam(model.parameters(), lr=0.02, weight_decay=5e-4)
+
+print("隠された未来の購入リンクを予測する学習を開始...")
+for epoch in range(1, 151):
+    model.train()
+    optimizer.zero_grad()
+    
+    # 1. GNNで全ノードの構造ベクトル（z）を生成
+    z = model(features, adj_train)
+    
+    # 2. 存在するリンク（正例）と存在しないリンク（負例）のスコアを計算
+    pos_scores = model.compute_link_score(z, train_edges)
+    
+    # 訓練用の負例をランダムサンプリング
+    train_neg_edges = np.array([np.random.randint(0, num_products, size=2) for _ in range(len(train_edges))])
+    neg_scores = model.compute_link_score(z, train_neg_edges)
+    
+    # 損失関数（存在するものは1に、存在しないものは0に近づける）
+    loss = -torch.mean(torch.log(pos_scores + 1e-15) + torch.log(1.0 - neg_scores + 1e-15))
+    
+    loss.backward()
+    optimizer.step()
+    
+    if epoch % 30 == 0:
+        # 検証：隠されていたテスト用リンクの予測精度（AUCスコア）を測定
+        model.eval()
+        with torch.no_grad():
+            z_eval = model(features, adj_train)
+            test_pos_preds = model.compute_link_score(z_eval, test_edges).numpy()
+            test_neg_preds = model.compute_link_score(z_eval, negative_edges).numpy()
+            
+            y_true = np.ones(len(test_pos_preds))
+            y_true = np.concatenate([y_true, np.zeros(len(test_neg_preds))])
+            y_pred = np.concatenate([test_pos_preds, test_neg_preds])
+            
+            auc = roc_auc_score(y_true, y_pred)
+            print(f"Epoch: {epoch:03d} | Train Loss: {loss.item():.4f} | 未来のリンク予測精度 (AUC): {auc*100:.1f}%")
+
+# =====================================================================
+# 4. 「未来のリンク」の予測結果をビジュアル確認
+# =====================================================================
+model.eval()
+with torch.no_grad():
+    z_final = model(features, adj_train)
+    # 隠されていた未来のリンクの予測確率をトップ5だけ表示してみる
+    test_scores = model.compute_link_score(z_final, test_edges).numpy()
+
+print("\n=== AIが見つけた【未来のあわせて買いたいペア】TOP 5 ===")
+top_5_idx = np.argsort(test_scores)[::-1][:5]
+for idx in top_5_idx:
+    u, v = test_edges[idx]
+    print(f"商品 {u:02d} と 商品 {v:02d} -> AIの予測共同購入確率: {test_scores[idx]*100:.1f}%  (正解: 実際に未来で購入された)")
