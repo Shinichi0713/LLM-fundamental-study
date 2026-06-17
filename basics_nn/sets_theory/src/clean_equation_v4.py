@@ -67,7 +67,7 @@ def process_markdown_file(input_path: str, output_path: str) -> None:
 
 if __name__ == "__main__":
     # ここで入力ファイル名と出力ファイル名を直接指定
-    input_md = "input.md"
-    output_md = "output.md"
+    input_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\basics_nn\sets_theory\doc\6_order_set_out.md"
+    output_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\basics_nn\sets_theory\doc\6_order_set_out.md"
 
     process_markdown_file(input_md, output_md)
