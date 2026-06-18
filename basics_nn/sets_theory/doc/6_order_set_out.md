@@ -12,7 +12,7 @@ __基本設定__
 
 __定義__
 
-2つの元 $x, y \in X$ が**比較可能（comparable）**であるとは、
+2つの元 $x, y \in X$ が**比較可能（comparable）** であるとは、
 $$
 x \leq y \quad \text{または} \quad y \leq x
 $$
@@ -31,29 +31,7 @@ __補足__
   のとき、$x$ と $y$ は**比較不能（incomparable）** であるという。
 - 全順序集合（totally ordered set）では、**任意の2元が比較可能**である。
 
-### 2. 順序の種類との関係
-
-__前順序（preorder）__
-- 反射律：$\forall x,\ x \leq x$
-- 推移律：$x \leq y \land y \leq z \Rightarrow x \leq z$
-- 反対称律は要求しない。
-- この場合も「比較可能」の定義は同じ：
-  $$
-  x \text{ と } y \text{ は比較可能} \iff x \leq y \lor y \leq x
-  $$
-
-__部分順序（partial order）__
-- 前順序＋反対称律：$x \leq y \land y \leq x \Rightarrow x = y$
-- 比較不能な元が存在しうる（例：べき集合の包含順序）。
-
-__全順序（total order / linear order）__
-- 部分順序＋全順序性：
-  $$
-  \forall x,y \in X,\ x \leq y \lor y \leq x
-  $$
-- したがって、**任意の2元が比較可能**。
-
-### 3. 具体例
+### 2. 具体例
 
 __例1：実数の通常の順序 $(\mathbb{R},\leq)$__
 - 任意の実数 $a,b$ について $a \leq b$ または $b \leq a$ が成り立つ。
@@ -69,7 +47,7 @@ __例3：整除関係（自然数）__
 - 例：2 と 3 は互いに割り切れないので、比較不能。
 - 例：2 と 4 は $2 \mid 4$ なので比較可能。
 
-### 4. 関連概念
+### 3. 関連概念
 
 __鎖（chain）__
 - 部分集合 $C \subset X$ が**鎖**であるとは、$C$ の任意の2元が比較可能であること。
