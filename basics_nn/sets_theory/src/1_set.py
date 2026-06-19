@@ -36,3 +36,33 @@ C = {4, 5, 7, 8}
 
 venn3([A, B, C], set_labels=('A', 'B', 'C'))
 plt.show()
+
+
+def powerset(s):
+    """
+    集合 s のべき集合（すべての部分集合の集合）を返す。
+    """
+    from itertools import chain, combinations
+    # 0要素からlen(s)要素までのすべての組み合わせを生成
+    return list(chain.from_iterable(
+        combinations(s, r) for r in range(len(s) + 1)
+    ))
+
+def visualize_powerset(s):
+    """
+    集合 s のべき集合を整形して表示する。
+    """
+    ps = powerset(s)
+    print(f"元の集合: {set(s)}")
+    print(f"べき集合（要素数 {len(ps)}）:")
+    for i, subset in enumerate(ps):
+        # 空集合は ∅ で表示
+        if not subset:
+            print(f"  {i+1:2d}. ∅")
+        else:
+            print(f"  {i+1:2d}. {{{', '.join(map(str, subset))}}}")
+
+# 例: {1, 2, 3} のべき集合を可視化
+if __name__ == "__main__":
+    S = [1, 2, 3]
+    visualize_powerset(S)
