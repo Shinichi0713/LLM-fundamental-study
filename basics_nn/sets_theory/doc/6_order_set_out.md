@@ -1,3 +1,9 @@
+---
+title: "わかりやすい集合論"
+author: "3 sons lover"
+language: "ja"
+---
+
 # 順序集合
 
 ## 比較可能
