@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30cd;&#x30c3;&#x30c8;&#x30ef;&#x30fc;&#x30af;&#x30a2;&#x30fc;&#x30ad;&#x30c6;&#x30af;&#x30c1;&#x30e3;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>ここ2回グラフニューラルネットワーク(以下GNNと略します)のtestを行ってきました。
+GNNの特徴は直接的に関係性を理解することが出来ること。
+ですが、ネットワークアーキテクチャの特徴について説明してきませんでした。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>GNNのネットワークアーキテクチャについて理解する</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="ネットワークアーキテクチャ">ネットワークアーキテクチャ</h2>
+<p>GNNの「ネットワークアーキテクチャ」は、グラフ構造（ノードとエッジ）を入力として、その構造を活かしながら特徴量を更新していく一連の層の組み合わせとして設計されます。典型的な構成は次のようになります。</p>
+<h3 id="1-入力表現グラフのエンコーディング">1. 入力表現（グラフのエンコーディング）</h3>
+<p>まず、グラフをニューラルネットワークが扱える形に変換します。</p>
+<ul>
+<li>
+<p><strong>ノード特徴量</strong><br>
+各ノード <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> に対し、初期の特徴ベクトル <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\mathbf{h}_v^{(0)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1614em;vertical-align:-0.1166em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.5834em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">0</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1166em;"><span></span></span></span></span></span></span></span></span></span> を用意します。<br>
+例：ユーザー属性、分子の原子種、文書の単語埋め込みなど。</p>
+</li>
+<li>
+<p><strong>エッジ特徴量（必要に応じて）</strong><br>
+エッジの種類や重みをベクトル <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">e</mi><mrow><mi>u</mi><mi>v</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mathbf{e}_{uv}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">uv</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> として表現します。</p>
+</li>
+<li>
+<p><strong>グラフ全体の特徴量（グローバル特徴）</strong><br>
+グラフ全体の属性（例：分子のラベル）を <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">u</mi></mrow><annotation encoding="application/x-tex">\mathbf{u}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">u</span></span></span></span> として扱うこともあります。</p>
+</li>
+</ul>
+<h3 id="2-メッセージパッシング層グラフ畳み込み層">2. メッセージパッシング層（グラフ畳み込み層）</h3>
+<p>GNNの中核は「メッセージパッシング」または「グラフ畳み込み」層です。<br>
+1層ごとに、各ノードは「隣接ノードからの情報」を集約し、自身の表現を更新します。</p>
+<p><strong>典型的な1層の処理</strong></p>
+<ol>
+<li>
+<p><strong>メッセージ計算</strong><br>
+各エッジ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(u, v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> について、送信元ノード <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> の特徴とエッジの特徴から「メッセージ」を計算します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">m</mi><mrow><mi>u</mi><mo>→</mo><mi>v</mi></mrow></msub><mo>=</mo><mi>ϕ</mi><mrow><mo fence="true">(</mo><msub><mi mathvariant="bold">h</mi><mi>u</mi></msub><mo separator="true">,</mo><msub><mi mathvariant="bold">h</mi><mi>v</mi></msub><mo separator="true">,</mo><msub><mi mathvariant="bold">e</mi><mrow><mi>u</mi><mi>v</mi></mrow></msub><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{m}_{u \to v} = \phi\left(\mathbf{h}_u, \mathbf{h}_v, \mathbf{e}_{uv}\right)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">u</span><span class="mrel mtight">→</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">ϕ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">uv</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">)</span></span></span></span></span></span></p>
+<p>ここで <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">ϕ</span></span></span></span> は小さなニューラルネット（MLP）や線形変換などです。</p>
+</li>
+<li>
+<p><strong>集約（Aggregation）</strong><br>
+ノード <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> は、近傍ノードからのメッセージを集約します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">a</mi><mi>v</mi></msub><mo>=</mo><munder><mo>⨁</mo><mrow><mi>u</mi><mo>∈</mo><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo></mrow></munder><msub><mi mathvariant="bold">m</mi><mrow><mi>u</mi><mo>→</mo><mi>v</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mathbf{a}_v = \bigoplus_{u \in \mathcal{N}(v)} \mathbf{m}_{u \to v}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.566em;vertical-align:-1.516em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.809em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">u</span><span class="mrel mtight">∈</span><span class="mord mathcal mtight" style="margin-right:0.14736em;">N</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">⨁</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.516em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">u</span><span class="mrel mtight">→</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⨁</mo></mrow><annotation encoding="application/x-tex">\bigoplus</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⨁</span></span></span></span> は和・平均・最大値など、順序不変な演算です。</p>
+</li>
+<li>
+<p><strong>更新（Update）</strong><br>
+集約した情報と自身の特徴を組み合わせて、新しいノード表現を計算します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msubsup><mo>=</mo><msub><mi>f</mi><mi>θ</mi></msub><mrow><mo fence="true">(</mo><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup><mo separator="true">,</mo><msub><mi mathvariant="bold">a</mi><mi>v</mi></msub><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{h}_v^{(l+1)} = f_\theta\left(\mathbf{h}_v^{(l)}, \mathbf{a}_v\right)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.185em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.8em;vertical-align:-0.65em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size2">(</span></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size2">)</span></span></span></span></span></span></span></p>
+<p>ここで <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">f_\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> もMLPやGRUなどが使われます。</p>
+</li>
+</ol>
+<p>このような層を <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 回繰り返すことで、各ノードは「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span>-hop先までの情報」を含んだ表現を持つようになります。</p>
+<h3 id="3-代表的なアーキテクチャのバリエーション">3. 代表的なアーキテクチャのバリエーション</h3>
+<p>「グラフ畳み込み」の具体的な実装にはいくつかの代表的な方式があります。</p>
+<ul>
+<li>
+<p><strong>GCN（Graph Convolutional Network）</strong><br>
+近傍の特徴を正規化した和で集約し、線形変換＋非線形活性化を行うシンプルな形式です。</p>
+</li>
+<li>
+<p><strong>GraphSAGE</strong><br>
+サンプリングした近傍から集約し、連結後にMLPで更新します。大規模グラフに適します。</p>
+</li>
+<li>
+<p><strong>GAT（Graph Attention Network）</strong><br>
+隣接ノードにアテンション重みを付けて集約します。重要度の高い近傍を強調できます。</p>
+</li>
+<li>
+<p><strong>GIN（Graph Isomorphism Network）</strong><br>
+グラフ同型性を理論的に強く保証できる集約方法で、表現力の高いモデルです。</p>
+</li>
+</ul>
+<p>これらはいずれも「メッセージパッシング＋集約＋更新」という枠組みのバリエーションです。</p>
+<h3 id="4-出力層タスクに応じたヘッド">4. 出力層（タスクに応じたヘッド）</h3>
+<p>メッセージパッシングを何層か重ねた後、タスクに応じて出力を設計します。</p>
+<p><strong>ノードレベルタスク（例：ノード分類）</strong></p>
+<ul>
+<li>各ノードの最終表現 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>L</mi><mo stretchy="false">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\mathbf{h}_v^{(L)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1614em;vertical-align:-0.1166em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.5834em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">L</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1166em;"><span></span></span></span></span></span></span></span></span></span> をそのまま分類器（MLP＋Softmaxなど）に入力します。</li>
+</ul>
+<p><strong>エッジレベルタスク（例：リンク予測）</strong></p>
+<ul>
+<li>2つのノード表現 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="bold">h</mi><mi>u</mi><mrow><mo stretchy="false">(</mo><mi>L</mi><mo stretchy="false">)</mo></mrow></msubsup><mo separator="true">,</mo><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>L</mi><mo stretchy="false">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\mathbf{h}_u^{(L)}, \mathbf{h}_v^{(L)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2392em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.5834em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">L</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1166em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.5834em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">L</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1166em;"><span></span></span></span></span></span></span></span></span></span> から、内積やMLPでエッジの存在確率を計算します。</li>
+</ul>
+<p><strong>グラフレベルタスク（例：グラフ分類）</strong></p>
+<ul>
+<li><strong>読み出し（Readout）層</strong>で、全ノードの表現を集約してグラフ全体の表現を作ります。<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">h</mi><mi>G</mi></msub><mo>=</mo><mi>R</mi><mrow><mo fence="true">(</mo><mo stretchy="false">{</mo><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>L</mi><mo stretchy="false">)</mo></mrow></msubsup><mo>∣</mo><mi>v</mi><mo>∈</mo><mi>V</mi><mo stretchy="false">}</mo><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{h}_G = R\left(\{\mathbf{h}_v^{(L)} \mid v \in V\}\right)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.8em;vertical-align:-0.65em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size2">(</span></span><span class="mopen">{</span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">L</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mclose">}</span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size2">)</span></span></span></span></span></span></span></p>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> は平均・和・最大値など、順序不変な関数です。</li>
+<li>その後、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">h</mi><mi>G</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{h}_G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> をMLPなどに入れてグラフラベルを予測します。</li>
+</ul>
+<h3 id="5-アーキテクチャ全体のまとめ">5. アーキテクチャ全体のまとめ</h3>
+<p>典型的なGNNアーキテクチャは、以下のような「レイヤー構成」になります。</p>
+<ol>
+<li><strong>入力層</strong>：ノード・エッジ・グローバル特徴のエンコーディング</li>
+<li><strong>グラフ畳み込み層（メッセージパッシング層） × L</strong>
+<ul>
+<li>メッセージ計算 → 集約 → 更新</li>
+<li>必要に応じて残差接続や層正規化を追加</li>
+</ul>
+</li>
+<li><strong>読み出し層（グラフレベルタスクの場合）</strong>
+<ul>
+<li>全ノード表現を集約してグラフ表現を作成</li>
+</ul>
+</li>
+<li><strong>出力層（タスク別ヘッド）</strong>
+<ul>
+<li>ノード分類／リンク予測／グラフ分類などに対応するMLPや線形層</li>
+</ul>
+</li>
+</ol>
+<p>このように、GNNのネットワークアーキテクチャは「グラフ構造を活かしたメッセージパッシング」を何層も重ね、最後にタスクに応じたヘッドで出力する、という形で設計されるのが一般的です。</p>
+<h2 id="実装法">実装法</h2>
+<p>以下では、PyTorchを使って「GCN風のグラフニューラルネットワーク」をステップバイステップで実装します。<br>
+（実際のGCN論文の正規化まで含めた完全な再現ではなく、「メッセージパッシング＋集約＋更新」の構造を理解するための最小構成です。）</p>
+<h3 id="1-前提必要なライブラリとデータ形式">1. 前提：必要なライブラリとデータ形式</h3>
+<p>まず、PyTorchと簡単なグラフデータを用意します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
+
+<span class="hljs-comment"># 簡単なグラフ例：4ノード、エッジは 0-1, 1-2, 2-3, 3-0</span>
+edge_index = torch.tensor([[<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>],
+                           [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>]], dtype=torch.long)  <span class="hljs-comment"># shape: (2, num_edges)</span>
+
+<span class="hljs-comment"># 各ノードの特徴量（例：2次元）</span>
+x = torch.tensor([[<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>],
+                  [<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>],
+                  [<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>],
+                  [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>]], dtype=torch.<span class="hljs-built_in">float</span>)
+
+num_nodes = x.size(<span class="hljs-number">0</span>)
+</code></pre>
+<p>ここでは、<code>edge_index</code> は <code>[source, target]</code> の形でエッジを表し、<code>x</code> は各ノードの特徴ベクトルです。</p>
+<h3 id="2-ステップ1メッセージパッシング層の実装">2. ステップ1：メッセージパッシング層の実装</h3>
+<p>GNNの中核である「メッセージパッシング層」を1つ実装します。<br>
+ここでは、以下の処理を行います。</p>
+<ol>
+<li>各エッジについてメッセージを計算（ここでは単純に送信元ノードの特徴を線形変換）</li>
+<li>各ノードについて、隣接ノードからのメッセージを集約（ここでは単純な和）</li>
+<li>集約結果を線形変換して新しいノード表現に更新</li>
+</ol>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleMessagePassingLayer</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, in_dim, out_dim</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        <span class="hljs-comment"># メッセージ計算用の線形層（送信元ノード特徴を変換）</span>
+        self.msg_lin = nn.Linear(in_dim, out_dim)
+        <span class="hljs-comment"># 更新用の線形層（集約メッセージ＋自己ループを変換）</span>
+        self.update_lin = nn.Linear(in_dim + out_dim, out_dim)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, edge_index</span>):
+        <span class="hljs-string">&quot;&quot;&quot;
+        x: (num_nodes, in_dim)
+        edge_index: (2, num_edges)
+        &quot;&quot;&quot;</span>
+        src, dst = edge_index  <span class="hljs-comment"># src -&gt; dst のエッジ</span>
+
+        <span class="hljs-comment"># 1. メッセージ計算：各エッジについて送信元ノードの特徴を変換</span>
+        msg = self.msg_lin(x[src])  <span class="hljs-comment"># (num_edges, out_dim)</span>
+
+        <span class="hljs-comment"># 2. 集約：各ノードが受け取るメッセージを合計</span>
+        agg = torch.zeros(x.size(<span class="hljs-number">0</span>), msg.size(<span class="hljs-number">1</span>), device=x.device)
+        agg = agg.index_add_(<span class="hljs-number">0</span>, dst, msg)  <span class="hljs-comment"># dstノードごとにmsgを加算</span>
+
+        <span class="hljs-comment"># 3. 更新：自身の特徴と集約メッセージを結合して変換</span>
+        <span class="hljs-comment">#    ここでは自己ループとして元の特徴 x も使う</span>
+        combined = torch.cat([x, agg], dim=-<span class="hljs-number">1</span>)  <span class="hljs-comment"># (num_nodes, in_dim + out_dim)</span>
+        new_x = self.update_lin(combined)
+
+        <span class="hljs-keyword">return</span> new_x
+</code></pre>
+<p>この層は、1-hop分の情報を集約してノード表現を更新する、ごく単純なGNN層です。</p>
+<h3 id="3-ステップ2多層gnnのアーキテクチャ">3. ステップ2：多層GNNのアーキテクチャ</h3>
+<p>次に、上記のメッセージパッシング層を複数重ねた「グラフネットワーク」を定義します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleGNN</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, input_dim, hidden_dim, output_dim, num_layers=<span class="hljs-number">2</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.num_layers = num_layers
+
+        <span class="hljs-comment"># 入力層（最初のメッセージパッシング層）</span>
+        self.layers = nn.ModuleList()
+        self.layers.append(SimpleMessagePassingLayer(input_dim, hidden_dim))
+
+        <span class="hljs-comment"># 中間層</span>
+        <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_layers - <span class="hljs-number">2</span>):
+            self.layers.append(SimpleMessagePassingLayer(hidden_dim, hidden_dim))
+
+        <span class="hljs-comment"># 出力層（最後のメッセージパッシング層）</span>
+        <span class="hljs-keyword">if</span> num_layers &gt; <span class="hljs-number">1</span>:
+            self.layers.append(SimpleMessagePassingLayer(hidden_dim, output_dim))
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-comment"># num_layers == 1 の場合は input_dim -&gt; output_dim</span>
+            self.layers.append(SimpleMessagePassingLayer(input_dim, output_dim))
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, edge_index</span>):
+        h = x
+        <span class="hljs-keyword">for</span> layer <span class="hljs-keyword">in</span> self.layers:
+            h = layer(h, edge_index)
+            <span class="hljs-comment"># 非線形活性化（ReLUなど）を挟む</span>
+            h = F.relu(h)
+        <span class="hljs-keyword">return</span> h
+</code></pre>
+<p>このモデルは、<code>num_layers</code> 個のメッセージパッシング層を積み重ね、各層の後にReLUを適用するシンプルなGNNです。</p>
+<h3 id="4-ステップ3モデルのインスタンス化とフォワード計算">4. ステップ3：モデルのインスタンス化とフォワード計算</h3>
+<p>実際にモデルを作成し、先ほどのグラフデータでフォワード計算を行います。</p>
+<pre><code class="language-python"><span class="hljs-comment"># モデル定義</span>
+model = SimpleGNN(
+    input_dim=<span class="hljs-number">2</span>,   <span class="hljs-comment"># xの特徴次元</span>
+    hidden_dim=<span class="hljs-number">16</span>,
+    output_dim=<span class="hljs-number">8</span>, <span class="hljs-comment"># 最終的なノード表現の次元</span>
+    num_layers=<span class="hljs-number">2</span>
+)
+
+<span class="hljs-comment"># フォワード計算</span>
+node_embeddings = model(x, edge_index)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;入力特徴量 shape:&quot;</span>, x.shape)           <span class="hljs-comment"># (4, 2)</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;出力ノード埋め込み shape:&quot;</span>, node_embeddings.shape)  <span class="hljs-comment"># (4, 8)</span>
+</code></pre>
+<p>これで、各ノードの特徴量が「グラフ構造を考慮して変換された」埋め込みベクトルになります。</p>
+<h3 id="5-ステップ4グラフレベルタスク用の読み出し層readout">5. ステップ4：グラフレベルタスク用の読み出し層（Readout）</h3>
+<p>グラフ分類など「グラフ全体」を1つのベクトルにまとめたい場合は、<strong>読み出し層（Readout）</strong> を追加します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleGNNWithReadout</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, input_dim, hidden_dim, node_out_dim, graph_out_dim</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        <span class="hljs-comment"># ノード表現を学習するGNN</span>
+        self.gnn = SimpleGNN(input_dim, hidden_dim, node_out_dim, num_layers=<span class="hljs-number">2</span>)
+        <span class="hljs-comment"># グラフ読み出し用MLP（全ノードを集約してグラフ表現に変換）</span>
+        self.readout_mlp = nn.Sequential(
+            nn.Linear(node_out_dim, graph_out_dim),
+            nn.ReLU()
+        )
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, edge_index, batch=<span class="hljs-literal">None</span></span>):
+        <span class="hljs-string">&quot;&quot;&quot;
+        x: (num_nodes, input_dim)
+        edge_index: (2, num_edges)
+        batch: 各ノードが属するグラフID（単一グラフの場合はNoneでOK）
+        &quot;&quot;&quot;</span>
+        <span class="hljs-comment"># 1. ノード表現をGNNで更新</span>
+        node_emb = self.gnn(x, edge_index)  <span class="hljs-comment"># (num_nodes, node_out_dim)</span>
+
+        <span class="hljs-comment"># 2. グラフ読み出し（ここでは全ノードの平均を取る）</span>
+        <span class="hljs-keyword">if</span> batch <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+            <span class="hljs-comment"># 単一グラフの場合：全ノード平均</span>
+            graph_emb = node_emb.mean(dim=<span class="hljs-number">0</span>, keepdim=<span class="hljs-literal">True</span>)  <span class="hljs-comment"># (1, node_out_dim)</span>
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-comment"># 複数グラフが1つのバッチにまとまっている場合：グラフごとに平均</span>
+            <span class="hljs-comment"># ここでは簡略化のため省略（実際は scatter_mean などを使う）</span>
+            <span class="hljs-keyword">raise</span> NotImplementedError(<span class="hljs-string">&quot;batch処理は省略しています&quot;</span>)
+
+        <span class="hljs-comment"># 3. グラフ表現をMLPで変換</span>
+        graph_out = self.readout_mlp(graph_emb)  <span class="hljs-comment"># (1, graph_out_dim)</span>
+
+        <span class="hljs-keyword">return</span> graph_out
+</code></pre>
+<p>このように、<code>SimpleGNN</code> でノード表現を学習し、その後に <code>mean</code> などの順序不変な集約関数でグラフ表現を作るのが一般的です。</p>
+<h3 id="6-まとめこのアーキテクチャの構成">6. まとめ：このアーキテクチャの構成</h3>
+<p>今回実装したGNNアーキテクチャは、以下のステップで構成されています。</p>
+<ol>
+<li><strong>入力表現</strong>
+<ul>
+<li>ノード特徴量 <code>x</code> とエッジリスト <code>edge_index</code> を用意</li>
+</ul>
+</li>
+<li><strong>メッセージパッシング層（SimpleMessagePassingLayer）</strong>
+<ul>
+<li>メッセージ計算 → 集約（<code>index_add_</code>） → 更新（線形層）</li>
+<li>各層の後にReLUを適用</li>
+</ul>
+</li>
+<li><strong>多層GNN（SimpleGNN）</strong>
+<ul>
+<li>上記の層を <code>num_layers</code> 個重ねる</li>
+</ul>
+</li>
+<li><strong>読み出し層（Readout）</strong>
+<ul>
+<li>全ノード表現を平均などで集約し、MLPでグラフ表現に変換</li>
+</ul>
+</li>
+</ol>
+<p>このコードは「GNNの基本構造」を理解するための最小構成です。<br>
+実際の研究・実務では、以下のような拡張がよく行われます。</p>
+<ul>
+<li>正規化（LayerNorm, BatchNorm）や残差接続の追加</li>
+<li>GCN, GAT, GraphSAGE など論文に基づいた正確な集約式の実装</li>
+<li>ミニバッチ処理（複数グラフを1バッチにまとめる）</li>
+<li>Dropoutや重み初期化の調整</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\4_graph_nn_architecture\1781942334566.png" alt="1781942334566"></p>
+<h2 id="総括">総括</h2>
+<p>以下では、GNNの<strong>アーキテクチャの構成要素</strong>と<strong>実装のキーポイント</strong>をコンパクトにまとめます。</p>
+<h3 id="1-gnnアーキテクチャの構成要素設計の基本">1. GNNアーキテクチャの構成要素（設計の基本）</h3>
+<p>GNNのネットワークアーキテクチャは、以下の要素の組み合わせとして設計されます。</p>
+<p><strong>(1) 入力表現（グラフのエンコーディング）</strong></p>
+<ul>
+<li><strong>ノード特徴量</strong><br>
+各ノード <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> に初期特徴ベクトル <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\mathbf{h}_v^{(0)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1614em;vertical-align:-0.1166em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.5834em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">0</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1166em;"><span></span></span></span></span></span></span></span></span></span> を割り当てる（ユーザ属性、原子種、単語埋め込みなど）。</li>
+<li><strong>エッジ特徴量（任意）</strong><br>
+エッジの種類・重みをベクトル <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">e</mi><mrow><mi>u</mi><mi>v</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mathbf{e}_{uv}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">uv</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> で表現。</li>
+<li><strong>グローバル特徴（任意）</strong><br>
+グラフ全体の属性（例：分子ラベル）を <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">u</mi></mrow><annotation encoding="application/x-tex">\mathbf{u}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">u</span></span></span></span> として扱う。</li>
+</ul>
+<p><strong>(2) メッセージパッシング層（グラフ畳み込み層）</strong></p>
+<p>1層ごとに、各ノードは「隣接ノードからの情報」を集約し、自身の表現を更新します。</p>
+<ul>
+<li><strong>メッセージ計算</strong><p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">m</mi><mrow><mi>u</mi><mo>→</mo><mi>v</mi></mrow></msub><mo>=</mo><mi>ϕ</mi><mo stretchy="false">(</mo><msub><mi mathvariant="bold">h</mi><mi>u</mi></msub><mo separator="true">,</mo><msub><mi mathvariant="bold">h</mi><mi>v</mi></msub><mo separator="true">,</mo><msub><mi mathvariant="bold">e</mi><mrow><mi>u</mi><mi>v</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{m}_{u \to v} = \phi(\mathbf{h}_u, \mathbf{h}_v, \mathbf{e}_{uv})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">u</span><span class="mrel mtight">→</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">uv</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">ϕ</span></span></span></span>：小さなMLPや線形変換など。</li>
+<li><strong>集約（Aggregation）</strong><p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">a</mi><mi>v</mi></msub><mo>=</mo><munder><mo>⨁</mo><mrow><mi>u</mi><mo>∈</mo><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo></mrow></munder><msub><mi mathvariant="bold">m</mi><mrow><mi>u</mi><mo>→</mo><mi>v</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mathbf{a}_v = \bigoplus_{u \in \mathcal{N}(v)} \mathbf{m}_{u \to v}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.566em;vertical-align:-1.516em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.809em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">u</span><span class="mrel mtight">∈</span><span class="mord mathcal mtight" style="margin-right:0.14736em;">N</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">⨁</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.516em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">u</span><span class="mrel mtight">→</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⨁</mo></mrow><annotation encoding="application/x-tex">\bigoplus</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⨁</span></span></span></span>：和・平均・最大値など、順序不変な演算。</li>
+<li><strong>更新（Update）</strong><p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msubsup><mo>=</mo><msub><mi>f</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup><mo separator="true">,</mo><msub><mi mathvariant="bold">a</mi><mi>v</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{h}_v^{(l+1)} = f_\theta(\mathbf{h}_v^{(l)}, \mathbf{a}_v)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.185em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.188em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>θ</mi></msub></mrow><annotation encoding="application/x-tex">f_\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>：MLPやGRUなど。</li>
+</ul>
+<p>この層を <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 回繰り返すことで、各ノードは「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span>-hop先までの情報」を含んだ表現を持ちます。</p>
+<p><strong>(3) 代表的なバリエーション</strong></p>
+<ul>
+<li><strong>GCN</strong>：正規化した近傍和＋線形変換＋活性化。</li>
+<li><strong>GraphSAGE</strong>：サンプリング近傍から集約し、連結後にMLPで更新。</li>
+<li><strong>GAT</strong>：アテンション重み付き集約で重要近傍を強調。</li>
+<li><strong>GIN</strong>：グラフ同型性を理論的に保証できる強い表現力を持つ集約。</li>
+</ul>
+<p>いずれも「メッセージパッシング＋集約＋更新」の枠組みのバリエーションです。</p>
+<p><strong>(4) 出力層（タスク別ヘッド）</strong></p>
+<ul>
+<li><strong>ノードレベル</strong>：各ノードの最終表現 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="bold">h</mi><mi>v</mi><mrow><mo stretchy="false">(</mo><mi>L</mi><mo stretchy="false">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\mathbf{h}_v^{(L)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1614em;vertical-align:-0.1166em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.5834em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">L</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1166em;"><span></span></span></span></span></span></span></span></span></span> を分類器に入力。</li>
+<li><strong>エッジレベル</strong>：2ノード表現から内積やMLPでエッジ存在確率を計算。</li>
+<li><strong>グラフレベル</strong>：全ノード表現を読み出し関数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>（平均・和・最大など）で集約し、MLPでグラフラベルを予測。</li>
+</ul>
+<h3 id="2-実装のキーポイントpytorchでの最小構成">2. 実装のキーポイント（PyTorchでの最小構成）</h3>
+<p><strong>(1) データ形式</strong></p>
+<ul>
+<li><code>x</code>：ノード特徴量テンソル <code>(num_nodes, input_dim)</code></li>
+<li><code>edge_index</code>：エッジリスト <code>(2, num_edges)</code>（<code>[source, target]</code>）</li>
+</ul>
+<p><strong>(2) メッセージパッシング層の実装ポイント</strong></p>
+<ul>
+<li><strong>メッセージ計算</strong>：<code>x[src]</code> を線形変換して各エッジのメッセージを作る。</li>
+<li><strong>集約</strong>：<code>torch.zeros(...).index_add_(0, dst, msg)</code> で、各ノードが受け取るメッセージを合計。</li>
+<li><strong>更新</strong>：元の特徴 <code>x</code> と集約結果 <code>agg</code> を結合し、線形層で新しいノード表現を計算。</li>
+<li>各層の後にReLUなどの非線形活性化を挟む。</li>
+</ul>
+<p><strong>(3) 多層GNNの構成</strong></p>
+<ul>
+<li><code>nn.ModuleList</code> で複数のメッセージパッシング層を積み重ねる。</li>
+<li>入力次元 → 隠れ次元 → … → 出力次元と段階的に変換。</li>
+<li>必要に応じて残差接続や正規化（LayerNormなど）を追加。</li>
+</ul>
+<p><strong>(4) グラフレベルタスク用の読み出し（Readout）</strong></p>
+<ul>
+<li>全ノード表現を <code>mean</code> などで集約し、グラフ全体のベクトルを作成。</li>
+<li>そのベクトルをMLPで変換してグラフラベルを予測。</li>
+<li>複数グラフをバッチ処理する場合は、<code>batch</code> 引数と <code>scatter_mean</code> などでグラフごとに集約。</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
