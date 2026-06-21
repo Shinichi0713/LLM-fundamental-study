@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;&#x5185;&#x5bb9;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>前回商品のダミーデータを用いてGNNにより予測を行いました。
+ですが、ダミーデータは少し味気ありません。</p>
+<p>GNNの学習用の公開データセットが存在するので、実際のデータを用いて実験してみようと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>実際に公開データを用いてGNNを学習・推論させてみる</p>
+</blockquote>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+
+<h2 id="実験内容">実験内容</h2>
+<p>今回実験に使うデータセットは、<strong>MovieLens 1M データセット</strong>です。
+本データセットは次のリファレンスに記載されているものです。<a href="https://pytorch-geometric.readthedocs.io/en/2.5.3/generated/torch_geometric.datasets.MovieLens1M.html">PyTorch Geometric Docs</a>。</p>
+<p>以下、その詳細を整理します。</p>
+<h3 id="1-データセットの基本情報">1. データセットの基本情報</h3>
+<ul>
+<li><strong>提供元</strong>: GroupLens Research（MovieLens サイトの評価データ）<a href="https://grouplens.org/datasets/movielens/1m">GroupLens</a></li>
+<li><strong>PyTorch Geometric でのクラス</strong>: <code>torch_geometric.datasets.MovieLens1M</code></li>
+<li><strong>データ規模</strong>:
+<ul>
+<li>ユーザー数: 6,040</li>
+<li>映画数: 3,883</li>
+<li>評価エッジ数: 約 1,000,209（1〜5段階の評価）<a href="https://kumo.ai/pyg/datasets/movielens-1m">Kumo.ai PyG Guide</a></li>
+</ul>
+</li>
+<li><strong>評価の範囲</strong>: 1〜5 の整数スター評価</li>
+</ul>
+<h3 id="2-pytorch-geometric-でのグラフ構造">2. PyTorch Geometric でのグラフ構造</h3>
+<p>PyTorch Geometric では、MovieLens 1M を**異種グラフ（heterogeneous graph）**として扱います<a href="https://pytorch-geometric.readthedocs.io/en/2.5.3/generated/torch_geometric.datasets.MovieLens1M.html">PyTorch Geometric Docs</a>。</p>
+<p><strong>ノードタイプ（2種類）</strong></p>
+<ol>
+<li><strong>ユーザーノード</strong>（<code>'user'</code>）
+<ul>
+<li>ノード数: 6,040</li>
+<li>特徴量: <code>data['user'].x</code>（形状: <code>[6040, 30]</code>）</li>
+</ul>
+</li>
+<li><strong>映画ノード</strong>（<code>'movie'</code>）
+<ul>
+<li>ノード数: 3,883</li>
+<li>特徴量: <code>data['movie'].x</code>（形状: <code>[3883, 18]</code>）</li>
+</ul>
+</li>
+</ol>
+<p><strong>エッジタイプ（1種類）</strong></p>
+<ul>
+<li><strong>評価エッジ</strong>（<code>'user', 'rates', 'movie'</code>）
+<ul>
+<li>エッジ数: 約 1,000,209</li>
+<li>エッジ属性:
+<ul>
+<li><code>edge_index</code>: 接続情報（どのユーザーがどの映画を評価したか）</li>
+<li><code>rating</code>: 1〜5 の評価値（ラベル）</li>
+<li><code>time</code>: 評価時刻（タイムスタンプ）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-python">edge_index = data[<span class="hljs-string">&#x27;user&#x27;</span>, <span class="hljs-string">&#x27;rates&#x27;</span>, <span class="hljs-string">&#x27;movie&#x27;</span>].edge_index  <span class="hljs-comment"># (2, num_edges)</span>
+ratings    = data[<span class="hljs-string">&#x27;user&#x27;</span>, <span class="hljs-string">&#x27;rates&#x27;</span>, <span class="hljs-string">&#x27;movie&#x27;</span>].rating      <span class="hljs-comment"># (num_edges,)</span>
+times      = data[<span class="hljs-string">&#x27;user&#x27;</span>, <span class="hljs-string">&#x27;rates&#x27;</span>, <span class="hljs-string">&#x27;movie&#x27;</span>].time        <span class="hljs-comment"># (num_edges,)</span>
+</code></pre>
+<h3 id="3-特徴量の内容ユーザー映画のベクトル">3. 特徴量の内容（ユーザー・映画のベクトル）</h3>
+<p>MovieLens 1M の元データは、以下の3つのテーブルで構成されています<a href="https://grouplens.org/datasets/movielens/1m">GroupLens</a>。</p>
+<ul>
+<li><code>users.dat</code>: ユーザーID, 性別, 年齢, 職業, 郵便番号</li>
+<li><code>movies.dat</code>: 映画ID, タイトル, ジャンル（複数）</li>
+<li><code>ratings.dat</code>: ユーザーID, 映画ID, 評価値, タイムスタンプ</li>
+</ul>
+<p>PyTorch Geometric 版では、これらを <strong>「Inductive Matrix Completion Based on Graph Neural Networks」</strong> という論文の手法に基づいて特徴量にエンコードしています<a href="https://pytorch-geometric.readthedocs.io/en/2.5.3/generated/torch_geometric.datasets.MovieLens1M.html">PyTorch Geometric Docs</a>。</p>
+<p><strong>ユーザー特徴量（<code>data['user'].x</code>）</strong></p>
+<ul>
+<li>次元: 30</li>
+<li>内容（例）:
+<ul>
+<li>性別（one-hot）</li>
+<li>年齢カテゴリ（one-hot）</li>
+<li>職業カテゴリ（one-hot）</li>
+<li>その他、ユーザーの属性を低次元ベクトルに圧縮した表現</li>
+</ul>
+</li>
+</ul>
+<p><strong>映画特徴量（<code>data['movie'].x</code>）</strong></p>
+<ul>
+<li>次元: 18</li>
+<li>内容（例）:
+<ul>
+<li>ジャンル（アクション, コメディ, ドラマ, SF, …）の one-hot または埋め込み</li>
+<li>タイトルや公開年などの情報を低次元ベクトルに圧縮した表現</li>
+</ul>
+</li>
+</ul>
+<p>これにより、**「IDだけの協調フィルタリング」<strong>だけでなく、</strong>「ユーザー属性・映画属性も考慮したGNN」**を構築できます。</p>
+<h3 id="4-タスク設定">4. タスク設定</h3>
+<p>今回の実験では、このデータセットを以下のように使っていきます。</p>
+<ul>
+<li><strong>グラフタスク</strong>: リンク予測（ユーザー–映画の「高評価リンク」を予測）</li>
+<li><strong>入力</strong>: ユーザーと映画の接続（<code>edge_index</code>）＋評価値（<code>rating</code>）</li>
+<li><strong>ラベル</strong>:
+<ul>
+<li>評価 4〜5 → 「高評価（リンクあり）」＝1</li>
+<li>評価 1〜3 → 「低評価（リンクなし）」＝0</li>
+</ul>
+</li>
+<li><strong>モデル</strong>: LightGCN 風のシンプルな GNN（ユーザー・映画埋め込みの内積）</li>
+<li><strong>評価指標</strong>: AUC（2値分類）＋ RMSE（確率の誤差）</li>
+</ul>
+<h3 id="5-このデータセットの特徴注意点">5. このデータセットの特徴・注意点</h3>
+<ul>
+<li><strong>二部グラフ構造</strong>: ユーザー–映画の二部グラフであり、推薦システムの標準的なベンチマークです。</li>
+<li><strong>評価の偏り</strong>: 一部の映画やユーザーに評価が集中するため、データ分割や評価指標の設計に注意が必要です。</li>
+<li><strong>時間情報</strong>: <code>time</code> 属性があるため、時系列でのリンク予測（未来の評価を予測）も可能です。</li>
+<li><strong>特徴量の質</strong>: ユーザー・映画の特徴量は自動エンコードされたもので、元の生データ（年齢・職業・ジャンルなど）の情報を保持していますが、解釈性は限定的です。</li>
+</ul>
+<h2 id="gnnアーキテクチャ">GNNアーキテクチャ</h2>
+<p>今回実験で使うGNNは、<strong>LightGCN風のシンプルな埋め込みモデル</strong>です。<br>
+以下、構造と「なぜその構成が良いか」を順に説明します。</p>
+<h3 id="1-gnnの構造simplelightgcnクラス">1. GNNの構造（SimpleLightGCNクラス）</h3>
+<p><strong>1.1 全体像</strong></p>
+<ul>
+<li><strong>入力</strong>: ユーザーIDと映画IDのペア（<code>edge_index</code>）</li>
+<li><strong>出力</strong>: 各ユーザー–映画ペアの「高評価確率」（0〜1）</li>
+<li><strong>モデルの中身</strong>:
+<ul>
+<li>ユーザー埋め込み（<code>nn.Embedding</code>）</li>
+<li>映画埋め込み（<code>nn.Embedding</code>）</li>
+<li>内積（ユーザー×映画） → シグモイドで確率化</li>
+</ul>
+</li>
+</ul>
+<p><strong>1.2 コード構造</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleLightGCN</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, user_dim, movie_dim, hidden_dim, num_layers=<span class="hljs-number">3</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.num_layers = num_layers
+        
+        <span class="hljs-comment"># ユーザーと映画の埋め込み（IDベースの協調フィルタリング）</span>
+        self.user_embed = nn.Embedding(user_dim, hidden_dim)
+        self.movie_embed = nn.Embedding(movie_dim, hidden_dim)
+        
+        <span class="hljs-comment"># 重み初期化</span>
+        nn.init.xavier_uniform_(self.user_embed.weight)
+        nn.init.xavier_uniform_(self.movie_embed.weight)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, edge_index</span>):
+        user_idx, movie_idx = edge_index
+        
+        <span class="hljs-comment"># 埋め込み取得</span>
+        user_emb = self.user_embed(user_idx)      <span class="hljs-comment"># (num_edges, hidden_dim)</span>
+        movie_emb = self.movie_embed(movie_idx)  <span class="hljs-comment"># (num_edges, hidden_dim)</span>
+        
+        <span class="hljs-comment"># 内積でスコア計算（協調フィルタリング）</span>
+        scores = torch.<span class="hljs-built_in">sum</span>(user_emb * movie_emb, dim=<span class="hljs-number">1</span>)  <span class="hljs-comment"># (num_edges,)</span>
+        
+        <span class="hljs-comment"># シグモイドで確率に変換（0〜1）</span>
+        <span class="hljs-keyword">return</span> torch.sigmoid(scores)
+</code></pre>
+<p><strong>1.3 各コンポーネントの役割</strong></p>
+<ol>
+<li>
+<p><strong>ユーザー埋め込み（<code>user_embed</code>）</strong></p>
+<ul>
+<li>入力: ユーザーID（0〜6039）</li>
+<li>出力: 64次元のベクトル（<code>hidden_dim=64</code>）</li>
+<li>意味: 「このユーザーの好みを表す潜在ベクトル」</li>
+</ul>
+</li>
+<li>
+<p><strong>映画埋め込み（<code>movie_embed</code>）</strong></p>
+<ul>
+<li>入力: 映画ID（0〜3882）</li>
+<li>出力: 64次元のベクトル</li>
+<li>意味: 「この映画の特徴（ジャンル・人気度など）を表す潜在ベクトル」</li>
+</ul>
+</li>
+<li>
+<p><strong>内積（<code>user_emb * movie_emb</code>）</strong></p>
+<ul>
+<li>ユーザーと映画のベクトルの類似度を計算</li>
+<li>類似度が高いほど「このユーザーはこの映画を好きそう」と解釈</li>
+</ul>
+</li>
+<li>
+<p><strong>シグモイド（<code>torch.sigmoid</code>）</strong></p>
+<ul>
+<li>内積スコアを 0〜1 の確率に変換</li>
+<li>「このユーザーがこの映画に高評価（4〜5）をつける確率」を出力</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-なぜこの構成が良いのか">2. なぜこの構成が「良い」のか</h3>
+<p><strong>2.1 推薦タスクに最適化されたシンプルな設計</strong></p>
+<ul>
+<li><strong>タスク</strong>: 「ユーザー–映画」のリンク予測（高評価かどうか）</li>
+<li><strong>必要な情報</strong>: 「どのユーザーがどの映画を評価したか」＋「その評価値」</li>
+<li><strong>このモデルがやっていること</strong>:
+<ul>
+<li>ユーザーIDと映画IDだけから、<strong>協調フィルタリング</strong>を行う</li>
+<li>「似たユーザーが高評価した映画」を推薦する</li>
+</ul>
+</li>
+</ul>
+<p>この設計は、<strong>Matrix Factorization（MF）</strong> や<strong>LightGCN</strong>の基本アイデアと同じです。<br>
+GNNの「メッセージパッシング」を<strong>埋め込みの内積＋シグモイド</strong>という形で実装しているため、計算が軽く、解釈もシンプルです。</p>
+<p><strong>2.2 計算効率とスケーラビリティ</strong></p>
+<ul>
+<li><strong>パラメータ数</strong>:
+<ul>
+<li>ユーザー埋め込み: 6040 × 64 ≈ 386,560</li>
+<li>映画埋め込み: 3883 × 64 ≈ 248,512</li>
+<li>合計: 約 63万パラメータ（非常に軽量）</li>
+</ul>
+</li>
+<li><strong>推論コスト</strong>:
+<ul>
+<li>1回の <code>forward</code> で、与えられたエッジ数分だけ内積を計算するだけ</li>
+<li>大規模データ（100万エッジ）でもColab上で十分高速</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.3 解釈性の高さ</strong></p>
+<ul>
+<li><strong>内積スコア</strong>:
+<ul>
+<li>ユーザーと映画の「方向の近さ」を表す</li>
+<li>スコアが高い = ユーザーの好みと映画の特徴がマッチしている</li>
+</ul>
+</li>
+<li><strong>確率出力</strong>:
+<ul>
+<li>「高評価確率 80%」など、直感的に理解しやすい</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.4 GNNとしての利点（構造情報の活用）</strong></p>
+<p>このモデルは一見「ただの埋め込み＋内積」に見えますが、<strong>学習過程でグラフ構造を暗黙に活用</strong>しています。</p>
+<ul>
+<li><strong>学習データ</strong>: ユーザー–映画の評価エッジ（<code>edge_index</code>）</li>
+<li><strong>損失関数</strong>: バイナリ交差エントロピー（BCE）</li>
+<li><strong>学習の結果</strong>:
+<ul>
+<li>高評価エッジ（4〜5）では内積が大きくなるように</li>
+<li>低評価エッジ（1〜3）では内積が小さくなるように</li>
+<li>埋め込みが調整される</li>
+</ul>
+</li>
+</ul>
+<p>つまり、<strong>「繋がっているユーザーと映画の埋め込みを近づける／遠ざける」</strong> というGNN的な学習が、内積を通じて行われています。</p>
+<p><strong>2.5 拡張性（将来的な発展）</strong></p>
+<p>このシンプルなモデルをベースに、以下のような拡張が容易です。</p>
+<ul>
+<li><strong>特徴量の活用</strong>:
+<ul>
+<li><code>user_emb = user_embed(user_idx) + user_feature_proj(data['user'].x[user_idx])</code></li>
+<li>ユーザー属性（年齢・性別・職業）や映画ジャンルを組み込める</li>
+</ul>
+</li>
+<li><strong>GNN層の追加</strong>:
+<ul>
+<li><code>HeteroConv</code> や <code>GCNConv</code> を使って、ユーザー–映画グラフ上でメッセージパッシングを行う</li>
+</ul>
+</li>
+<li><strong>時系列情報の活用</strong>:
+<ul>
+<li><code>time</code> 属性を使って「最近の評価」を重視する重み付けを行う</li>
+</ul>
+</li>
+</ul>
+<h2 id="学習の結果">学習の結果</h2>
+<p>学習した結果についてまとめます。</p>
+<p>まずは学習ロスとテストの正解率の推移です。
+正直、あまりよくはありません。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\5_example_v3\1782002396277.png" alt="1782002396277"></p>
+<p>推論をしてみました。
+「ユーザー0が実際に高評価した映画」と「モデルが推薦した映画」を比較しています。</p>
+<pre><code>ユーザー 0 へのおすすめ映画 TOP5:
+1. 映画ID 257 -&gt; 高評価確率: 54.2% ✓
+2. 映画ID 2789 -&gt; 高評価確率: 54.1% ✗
+3. 映画ID 1178 -&gt; 高評価確率: 54.1% ✗
+4. 映画ID 1180 -&gt; 高評価確率: 54.1% ✗
+5. 映画ID 589 -&gt; 高評価確率: 53.8% ✗
+</code></pre>
+<p>一番上位のものだけ順位が正解しています。
+正直、少し精度には難があるという結果となりました。
+データの質にも課題があった可能性があります。</p>
+<h2 id="総括">総括</h2>
+<p>MovieLens 1M データセットを使い、<strong>実際の公開データで GNN を学習・推論させる</strong>実験を行いました。</p>
+<h3 id="1-データセットの要点">1. データセットの要点</h3>
+<ul>
+<li><strong>MovieLens 1M</strong>（GroupLens 提供）を PyTorch Geometric の <code>MovieLens1M</code> クラスで読み込み。</li>
+<li><strong>異種グラフ</strong>として扱い、ノードは「ユーザー」「映画」の2種類、エッジは「評価（rates）」。</li>
+<li>ユーザー特徴量 30 次元、映画特徴量 18 次元（属性・ジャンル等をエンコード済み）。</li>
+<li>タスクは<strong>リンク予測</strong>：評価 4〜5 を「高評価リンクあり（=1）」、1〜3 を「なし（=0）」とし、ユーザー–映画ペアの高評価確率を予測。</li>
+</ul>
+<h3 id="2-モデルsimplelightgcnの要点">2. モデル（SimpleLightGCN）の要点</h3>
+<ul>
+<li><strong>LightGCN 風のシンプルな埋め込みモデル</strong>：
+<ul>
+<li>ユーザーID・映画IDから埋め込みベクトルを取得。</li>
+<li>内積で類似度を計算し、シグモイドで確率化。</li>
+</ul>
+</li>
+<li>実質的には<strong>Matrix Factorization / 協調フィルタリング</strong>を GNN 風に実装した形。</li>
+<li>計算が軽く、解釈しやすい一方、グラフ構造の情報は「暗黙的に」しか使っていない。</li>
+</ul>
+<h3 id="3-結果の総括">3. 結果の総括</h3>
+<ul>
+<li>学習ロス・テスト精度の推移を見ると、<strong>精度はあまり高くない</strong>。</li>
+<li>ユーザー 0 への推薦例では、TOP5 のうち 1 つだけが実際の高評価映画と一致。</li>
+<li>全体として、<strong>「それなりに動くが、精度には課題が残る」</strong> という結果。</li>
+</ul>
+<h3 id="4-実験の意義と今後の方向性">4. 実験の意義と今後の方向性</h3>
+<ul>
+<li>ダミーデータではなく、<strong>実際の公開データセットで GNN を動かす</strong>経験が得られた。</li>
+<li>推薦タスク（ユーザー–アイテム二部グラフ）を GNN で扱う典型的な例として、実装・評価の流れを確認できた。</li>
+<li>精度を上げるには、
+<ul>
+<li>ユーザー・映画の<strong>属性特徴量を明示的に組み込む</strong>、</li>
+<li>より本格的な GNN 層（HeteroConv 等）を導入する、</li>
+<li>評価の偏りを考慮したデータ分割・評価指標を設計する、
+といった改善が考えられます。</li>
+</ul>
+</li>
+</ul>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+
+            
+        </body>
+        </html>
