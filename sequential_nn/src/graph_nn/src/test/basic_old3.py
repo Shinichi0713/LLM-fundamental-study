@@ -20,7 +20,7 @@ torch.manual_seed(42)
 np.random.seed(42)
 
 # =============================================================================
-# 1. データセットのロードと前処理
+# 1. データセットのロードと属性名の確認
 # =============================================================================
 dataset = MovieLens1M(root="./data/MovieLens")
 data = dataset[0]  # HeteroDataオブジェクト
@@ -32,10 +32,21 @@ print(f"評価エッジ数: {data['user', 'rates', 'movie'].num_edges}")
 print(f"ユーザー特徴次元: {data['user'].x.shape if data['user'].x is not None else 'なし'}")
 print(f"映画特徴次元: {data['movie'].x.shape if data['movie'].x is not None else 'なし'}")
 
-# 評価エッジを正例（リンクあり）とみなし、評価値を取得
-edge_index = data['user', 'rates', 'movie'].edge_index  # (2, num_edges)
-ratings = data['user', 'rates', 'movie'].edge_attr      # 1〜5の評価（edge_labelではなくedge_attr）
+# エッジストレージの属性名を確認
+edge_storage = data['user', 'rates', 'movie']
+print("\nエッジストレージの属性名:")
+print(edge_storage.keys())
 
+# 評価ラベルは 'rating' 属性に格納されている
+edge_index = edge_storage.edge_index  # (2, num_edges)
+ratings = edge_storage.rating         # 1〜5の評価値
+
+print(f"評価ラベルの形状: {ratings.shape}")
+print(f"評価ラベルの例: {ratings[:5]}")
+
+# =============================================================================
+# 2. 前処理：2値化とデータ分割
+# =============================================================================
 # 評価が4以上を「高評価（リンク強い）」、3以下を「低評価（リンク弱い）」として2値化
 y_binary = (ratings >= 4).float()
 
@@ -54,7 +65,7 @@ print(f"学習用エッジ数: {train_edge_index.size(1)}")
 print(f"テスト用エッジ数: {test_edge_index.size(1)}")
 
 # =============================================================================
-# 2. シンプルなGNNモデル（LightGCN風）の定義
+# 3. シンプルなGNNモデル（LightGCN風）の定義
 # =============================================================================
 class SimpleLightGCN(nn.Module):
     def __init__(self, user_dim, movie_dim, hidden_dim, num_layers=3):
@@ -86,7 +97,7 @@ class SimpleLightGCN(nn.Module):
         return torch.sigmoid(scores)
 
 # =============================================================================
-# 3. モデル・オプティマイザの準備
+# 4. モデル・オプティマイザの準備
 # =============================================================================
 model = SimpleLightGCN(
     user_dim=data['user'].num_nodes,
@@ -97,7 +108,7 @@ model = SimpleLightGCN(
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=1e-4)
 
 # =============================================================================
-# 4. 学習ループ（リンク予測＝2値分類）
+# 5. 学習ループ（リンク予測＝2値分類）
 # =============================================================================
 def train():
     model.train()
@@ -139,7 +150,7 @@ for epoch in range(1, 101):
         print(f"Epoch {epoch:03d} | Train Loss: {loss:.4f} | Test AUC: {auc:.4f} | Test RMSE: {rmse:.4f}")
 
 # =============================================================================
-# 5. 学習曲線の可視化
+# 6. 学習曲線の可視化
 # =============================================================================
 plt.figure(figsize=(12, 4))
 
@@ -160,55 +171,10 @@ plt.tight_layout()
 plt.show()
 
 # =============================================================================
-# 6. 推論例：特定ユーザーに対する映画推薦ランキング
+# 7. 推論例：特定ユーザーに対する映画推薦ランキング（エラー修正版）
 # =============================================================================
 @torch.no_grad()
 def recommend_for_user(user_id, top_k=10):
-    model.eval()
-    
-    # 全映画ID
-    movie_ids = torch.arange(data['movie'].num_nodes)
-    
-    # ユーザーIDを全映画数分複製
-    user_ids = torch.full((movie_ids.size(0),), user_id)
-    
-    # エッジとして組み立て
-    edge_index = torch.stack([user_ids, movie_ids], dim=0)
-    
-    # 各映画の「高評価確率」を予測
-    scores = model(edge_index).cpu().numpy()
-    
-    # スコア上位の映画IDを取得
-    top_indices = np.argsort(scores)[::-1][:top_k]
-    top_movies = movie_ids[top_indices].numpy()
-    top_scores = scores[top_indices]
-    
-    return top_movies, top_scores
-
-# 例：ユーザーID=0 に対する推薦TOP5
-user_id = 0
-top_movies, top_scores = recommend_for_user(user_id, top_k=5)
-
-print(f"\nユーザー {user_id} へのおすすめ映画 TOP5:")
-for i, (mid, score) in enumerate(zip(top_movies, top_scores)):
-    print(f"{i+1}. 映画ID {mid} -> 高評価確率: {score*100:.1f}%")
-
-# =============================================================================
-# 7. まとめ
-# =============================================================================
-print("\n=== 実験のポイント ===")
-print("・MovieLens 1Mを二部グラフ（ユーザー–映画）として扱い、")
-print("  評価4以上を「リンクあり」、3以下を「リンクなし」として2値分類。")
-print("・シンプルなLightGCN風モデルで、ユーザーと映画の埋め込みの内積から")
-print("  「高評価をつける確率」を予測。")
-print("・テストセットでAUCとRMSEを評価し、特定ユーザーへの推薦ランキングを出力。")
-
-
-# =============================================================================
-# 9. 正解との答え合わせ：順位を問わない上位5位の一致で評価
-# =============================================================================
-@torch.no_grad()
-def evaluate_top5_match(user_id, k=5):
     model.eval()
     
     # 全映画ID（CPU上で処理）
@@ -223,55 +189,27 @@ def evaluate_top5_match(user_id, k=5):
     # 各映画の「高評価確率」を予測
     scores = model(edge_index).cpu().numpy()
     
-    # スコア上位kの映画IDを取得（予測の上位k位）
-    top_indices = np.argsort(scores)[::-1][:k].copy()
-    predicted_top_k = movie_ids[top_indices].numpy()
+    # スコア上位の映画IDを取得（torchのまま処理）
+    top_indices = torch.from_numpy(np.argsort(scores)[::-1][:top_k])
+    top_movies = movie_ids[top_indices].numpy()
+    top_scores = scores[top_indices]
     
-    # このユーザーが実際に高評価（4〜5）した映画を取得
-    user_edges_mask = (edge_storage.edge_index[0] == user_id)
-    user_ratings = edge_storage.rating[user_edges_mask]
-    user_movies = edge_storage.edge_index[1][user_edges_mask]
-    
-    high_rated_mask = (user_ratings >= 4)
-    high_rated_movies = user_movies[high_rated_mask].cpu().numpy()
-    
-    # 実際の高評価映画のうち、スコア上位kを「実際の上位k位」とする
-    # ここでは単純に「高評価した映画のうち、モデルのスコアが高い順にk個」を採用
-    high_rated_scores = scores[high_rated_movies]
-    actual_top_k_indices = np.argsort(high_rated_scores)[::-1][:k]
-    actual_top_k = high_rated_movies[actual_top_k_indices]
-    
-    # 予測の上位k位と実際の上位k位を比較
-    predicted_set = set(predicted_top_k)
-    actual_set = set(actual_top_k)
-    
-    # 順位を問わない一致度を計算
-    intersection = predicted_set & actual_set
-    is_perfect_match = (len(intersection) == k)  # すべて一致していればTrue
-    
-    return predicted_top_k, actual_top_k, is_perfect_match
+    return top_movies, top_scores
 
-# 例：ユーザーID=0 に対する上位5位の一致評価
+# 例：ユーザーID=0 に対する推薦TOP5
 user_id = 0
-predicted_top5, actual_top5, is_perfect_match = evaluate_top5_match(user_id, k=5)
+top_movies, top_scores = recommend_for_user(user_id, top_k=5)
 
-print(f"\nユーザー {user_id} の評価結果（順位を問わない上位5位の一致）:")
-print(f"予測の上位5位: {predicted_top5}")
-print(f"実際の上位5位: {actual_top5}")
-print(f"一致映画: {set(predicted_top5) & set(actual_top5)}")
-print(f"完全一致（順位を問わず5つすべて含まれているか）: {'Yes' if is_perfect_match else 'No'}")
+print(f"\nユーザー {user_id} へのおすすめ映画 TOP5:")
+for i, (mid, score) in enumerate(zip(top_movies, top_scores)):
+    print(f"{i+1}. 映画ID {mid} -> 高評価確率: {score*100:.1f}%")
 
-# 複数ユーザーで平均を取る場合の例
-def evaluate_top5_match_batch(user_ids, k=5):
-    perfect_matches = 0
-    for uid in user_ids:
-        _, _, is_match = evaluate_top5_match(uid, k=k)
-        if is_match:
-            perfect_matches += 1
-    return perfect_matches / len(user_ids)
-
-# 例：ユーザー0〜9の平均
-sample_users = list(range(10))
-avg_perfect_match_rate = evaluate_top5_match_batch(sample_users, k=5)
-
-print(f"\nユーザー {sample_users} の平均完全一致率（Top-5）: {avg_perfect_match_rate*100:.1f}%")
+# =============================================================================
+# 8. まとめ
+# =============================================================================
+print("\n=== 実験のポイント ===")
+print("・MovieLens 1Mを二部グラフ（ユーザー–映画）として扱い、")
+print("  評価4以上を「リンクあり」、3以下を「リンクなし」として2値分類。")
+print("・シンプルなLightGCN風モデルで、ユーザーと映画の埋め込みの内積から")
+print("  「高評価をつける確率」を予測。")
+print("・テストセットでAUCとRMSEを評価し、特定ユーザーへの推薦ランキングを出力。")
