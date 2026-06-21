@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>GNN&#x306e;&#x5f97;&#x610f;&#x5206;&#x91ce;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/06/21/043000">先日扱ったGNN</a>ですが、手書き文字を関係性から推論できたこと自体は面白いのですが、精度であればCNNのネットワークの方がよかったです。
+そこで先日扱ったGNNの実験に対して、もう少しGNNの特徴を活かした実験にしようと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>GNNの特徴を活かした実験を行う</p>
+</blockquote>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="gnnの得意分野">GNNの得意分野</h2>
+<p>先日は手書き文字を、文字の特徴の関係性からラベルを当てに行くという予測を行いました。
+ですが、文字の特徴であれば画像関係の処理の方が高精度です。</p>
+<p>そもそも、LLMや画像関係のニューラルネットワークではできないことで、GNNだからできることは何でしょう？</p>
+<p>ずばり「繋がり（構造）そのものを学習し、未来のリンクや未知の隠れた関係性をあぶり出す」という強みです。
+この強味を極限まで活かすなら、さらに適した推論タスクが3つあります。</p>
+<p>GNNの特性に最もマッチした、実社会で大活躍している応用例は以下のようなものではないでしょうか。</p>
+<h3 id="1-リンク予測link-prediction次にあわせて買いたいと思われる商品の予測">1. リンク予測（Link Prediction）：次に「あわせて買いたい」と思われる商品の予測</h3>
+<p>商品のカテゴリ（ジャンル）を当てるのではなく、「まだ繋がっていないノード同士の間に、新しく線（エッジ）が生まれる確率」を予測するタスクです。</p>
+<ul>
+<li><strong>GNNが最強である理由</strong>：
+GNNはノード周辺の「ネットワークの形状（三角形の閉じ方やハブの存在など）」をベクトル化するのが得意です。
+「商品AとBを一緒に買った人は、Cも買っている」「商品DとBを買った人も、Cを買っている」という構造から、「じゃあ、まだ誰も試していないけれど、商品AとDも一緒に買われる潜在的ニーズ（隠れたリンク）があるはずだ」という高精度なレコメンデーション（次に売れる組み合わせ）を直接予測できます。Amazonなどのレコメンドエンジンの裏側はまさにこれです。</li>
+</ul>
+<h3 id="2-影響度波及予測ある商品がヒットした際次にドミノ倒しで売れる商品の予測">2. 影響度・波及予測：ある商品がヒットした際、次にドミノ倒しで売れる商品の予測</h3>
+<p>1つのノードに起きた変化（購入された、炎上した、ウイルスに感染したなど）が、<strong>ネットワークを伝ってどのように他のノードへ伝播・波及するか</strong>を推論するタスクです。</p>
+<ul>
+<li><strong>GNNが最強である理由</strong>：
+GNNの基本原理は「メッセージパッシング（情報の口コミ効果）」そのものです。
+例えば、「スマホ（ノードA）」が爆発的に売れたとき、その1歩隣にある「スマホケース（ノードB）」、さらにその隣にある「スマホ用スタンド（ノードC）」へと、購買意欲のエネルギーがネットワークの線をどう伝わっていくか（トレンドの拡散経路）をシミュレーション・推論することができます。サプライチェーンの需要予測や、SNSのインフルエンサーマーケティングの波及効果予測に最適です。</li>
+</ul>
+<h3 id="3-異常検知fraud-detectionサクラレビューや不正転売ネットワークのあぶり出し">3. 異常検知（Fraud Detection）：サクラレビューや不正転売ネットワークのあぶり出し</h3>
+<p>商品そのものではなく、「不正な取引や、不自然な繋がり方をしているノード」を見つけ出すタスクです。</p>
+<ul>
+<li><strong>GNNが最強である理由</strong>：
+「価格が1,000円、評価4.5」というプロフィール（説明変数）単体で見たら、普通の商品に見えます。しかしグラフ構造で見ると、<strong>「特定の怪しいグループ（アカウント）の間だけで、不自然に超高速に共同購入（エッジ）が繰り返されている」</strong> という、構造の歪みが一発で分かります。
+GNNは、ノード単体の見た目に騙されず、<strong>「周囲との付き合い方の怪しさ（リンクの異常性）」</strong> を学習できるため、クレカの不正利用、サクラ業者の摘発、チケットの不正転売botの検知において、従来のAIを圧倒する成果を上げています。</li>
+</ul>
+<h2 id="実験">実験</h2>
+<h3 id="実験内容">実験内容</h3>
+<p>商品の既知の購入関係から、未来に一緒に購入されると思われる商品のペアを見つけるGNNを構築してみます。
+用いる商品の購入関係は人工的につくる擬似データです。
+あくまで、テーマに則ったデータセットを模したものとしてみてください。</p>
+<h3 id="学習テストデータ作成">学習＋テストデータ作成</h3>
+<p>今回使うデータは、実在のECサイトの購買履歴などではなく、プログラム上でランダムに生成したダミーデータです。</p>
+<p><strong>1. どんなデータか</strong></p>
+<ul>
+<li><strong>ノード（商品）</strong>：60個の商品</li>
+<li><strong>ノード特徴量</strong>：各商品につき2次元のダミープロフィール（数値ベクトル）</li>
+<li><strong>ノードラベル</strong>：3つのカテゴリ（0, 1, 2）に分かれている</li>
+<li><strong>エッジ（リンク）</strong>：商品同士の「一緒に買われた」関係</li>
+<li><strong>データ分割</strong>：
+<ul>
+<li>学習用：全リンクの80%（現在観測されているリンク）</li>
+<li>テスト用：全リンクの20%（未来に現れるリンクとして隠す）</li>
+</ul>
+</li>
+<li><strong>負例</strong>：本来リンクが存在しない商品ペア（絶対に一緒に買われないペア）</li>
+</ul>
+<p>つまり、**「商品カテゴリと特徴量に基づいて、一緒に買われやすい／買われにくい関係を人工的に作り、その一部を未来のリンクとして隠して予測する」**という設定です。</p>
+<p><strong>2. ノードデータ（商品）の作り方</strong></p>
+<p><strong>2-1. 商品数とカテゴリ</strong></p>
+<pre><code class="language-python">num_products = <span class="hljs-number">60</span>
+labels_np = np.array([<span class="hljs-number">0</span>]*<span class="hljs-number">20</span> + [<span class="hljs-number">1</span>]*<span class="hljs-number">20</span> + [<span class="hljs-number">2</span>]*<span class="hljs-number">20</span>)  <span class="hljs-comment"># 3カテゴリ、各20個</span>
+</code></pre>
+<ul>
+<li>商品は60個。</li>
+<li>カテゴリは 0, 1, 2 の3種類で、それぞれ20個ずつ。</li>
+</ul>
+<p><strong>2-2. 特徴量（ダミープロフィール）</strong></p>
+<pre><code class="language-python">features = torch.tensor(np.random.randn(num_products, <span class="hljs-number">2</span>) * <span class="hljs-number">2</span> + <span class="hljs-number">3</span>, dtype=torch.float32)
+</code></pre>
+<ul>
+<li>各商品に2次元の特徴ベクトルを付与。</li>
+<li>正規分布 <code>N(3, 2^2)</code> からランダムにサンプリングした数値です。</li>
+<li>実務では「価格帯」「人気度」「カテゴリ別スコア」などに相当する情報ですが、ここでは単なるダミー数値です。</li>
+</ul>
+<p><strong>3. エッジデータ（一緒に買われた関係）の作り方</strong></p>
+<p><strong>3-1. すべてのリンク（グラウンドトゥルース）の生成</strong></p>
+<pre><code class="language-python">edges = []
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_products):
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(i + <span class="hljs-number">1</span>, num_products):
+        <span class="hljs-keyword">if</span> labels_np[i] == labels_np[j] <span class="hljs-keyword">and</span> np.random.rand() &lt; <span class="hljs-number">0.3</span>:
+            edges.append((i, j))
+        <span class="hljs-keyword">elif</span> labels_np[i] != labels_np[j] <span class="hljs-keyword">and</span> np.random.rand() &lt; <span class="hljs-number">0.01</span>:
+            edges.append((i, j))
+</code></pre>
+<ul>
+<li>すべての商品ペア <code>(i, j)</code> について、以下のルールでリンクを生成：
+<ul>
+<li><strong>同じカテゴリ</strong>の場合：確率 0.3 でリンクを作る（一緒に買われやすい）。</li>
+<li><strong>異なるカテゴリ</strong>の場合：確率 0.01 でリンクを作る（一緒に買われにくい）。</li>
+</ul>
+</li>
+<li>これにより、「同じカテゴリ内ではリンクが密、異なるカテゴリ間ではリンクが疎」という現実的なネットワーク構造を模倣しています。</li>
+</ul>
+<p><strong>3-2. 「現在（学習用）」と「未来（テスト用）」の分割</strong></p>
+<pre><code class="language-python">shuffled_indices = np.random.permutation(num_edges)
+train_edge_idx = shuffled_indices[:<span class="hljs-built_in">int</span>(num_edges * <span class="hljs-number">0.8</span>)]
+test_edge_idx = shuffled_indices[<span class="hljs-built_in">int</span>(num_edges * <span class="hljs-number">0.8</span>):]
+
+train_edges = all_edges[train_edge_idx]
+test_edges = all_edges[test_edge_idx]
+</code></pre>
+<ul>
+<li>全リンクをランダムにシャッフルし、
+<ul>
+<li>80% を <code>train_edges</code>（現在観測されているリンク）</li>
+<li>20% を <code>test_edges</code>（未来に現れるリンクとして隠す）</li>
+</ul>
+</li>
+<li>学習時には <code>test_edges</code> は使わず、評価時にのみ使用します。</li>
+</ul>
+<p><strong>3-3. 学習用の隣接行列（現在のネットワーク）</strong></p>
+<pre><code class="language-python">adj_train = torch.zeros((num_products, num_products), dtype=torch.float32)
+<span class="hljs-keyword">for</span> u, v <span class="hljs-keyword">in</span> train_edges:
+    adj_train[u, v] = <span class="hljs-number">1.0</span>
+    adj_train[v, u] = <span class="hljs-number">1.0</span>
+</code></pre>
+<ul>
+<li><code>adj_train</code> は、<strong>現在観測されているリンクのみを含む隣接行列</strong>です。</li>
+<li>隠された未来のリンク（<code>test_edges</code>）は含まれていません。</li>
+<li>GNNはこの <code>adj_train</code> と <code>features</code> だけを見て、未来のリンクを予測します。</li>
+</ul>
+<h3 id="ネットワークの構築">ネットワークの構築</h3>
+<p>前回のコードでは、<strong>「商品同士の共同購入関係」を模したネットワーク（グラフ）</strong> を、以下の手順で構築しています。</p>
+<p><strong>1. ノード（商品）の定義</strong></p>
+<ul>
+<li><strong>ノード数</strong>：<code>num_products = 60</code> 個の商品。</li>
+<li><strong>ノードラベル</strong>：3カテゴリ（0, 1, 2）に分かれています。<pre><code class="language-python">labels_np = np.array([<span class="hljs-number">0</span>]*<span class="hljs-number">20</span> + [<span class="hljs-number">1</span>]*<span class="hljs-number">20</span> + [<span class="hljs-number">2</span>]*<span class="hljs-number">20</span>)
+</code></pre>
+</li>
+<li><strong>ノード特徴量</strong>：各商品に2次元のダミープロフィール（数値ベクトル）を付与。<pre><code class="language-python">features = torch.tensor(np.random.randn(num_products, <span class="hljs-number">2</span>) * <span class="hljs-number">2</span> + <span class="hljs-number">3</span>, dtype=torch.float32)
+</code></pre>
+</li>
+</ul>
+<p>これにより、<strong>60個のノード（商品）</strong> が定義されます。</p>
+<p><strong>2. エッジ（リンク）の生成ルール</strong></p>
+<p>「一緒に買われた」関係を表すエッジは、以下のルールで生成されています。</p>
+<pre><code class="language-python">edges = []
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_products):
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(i + <span class="hljs-number">1</span>, num_products):
+        <span class="hljs-keyword">if</span> labels_np[i] == labels_np[j] <span class="hljs-keyword">and</span> np.random.rand() &lt; <span class="hljs-number">0.3</span>:
+            edges.append((i, j))
+        <span class="hljs-keyword">elif</span> labels_np[i] != labels_np[j] <span class="hljs-keyword">and</span> np.random.rand() &lt; <span class="hljs-number">0.01</span>:
+            edges.append((i, j))
+</code></pre>
+<ul>
+<li><strong>同じカテゴリの商品ペア</strong>：
+<ul>
+<li>確率 0.3 でリンクを作成（一緒に買われやすい）。</li>
+</ul>
+</li>
+<li><strong>異なるカテゴリの商品ペア</strong>：
+<ul>
+<li>確率 0.01 でリンクを作成（一緒に買われにくい）。</li>
+</ul>
+</li>
+</ul>
+<p>これにより、<strong>「同じカテゴリ内はリンクが密、異なるカテゴリ間はリンクが疎」という現実的なネットワーク構造</strong>が作られます。</p>
+<p><strong>3. 「現在のネットワーク」と「未来のリンク」の分割</strong></p>
+<p>生成した全リンクを、<strong>「現在観測されているネットワーク」</strong> と <strong>「未来に現れるリンク（隠す）」</strong> に分割します。</p>
+<pre><code class="language-python">all_edges = np.array(edges)
+num_edges = <span class="hljs-built_in">len</span>(all_edges)
+
+shuffled_indices = np.random.permutation(num_edges)
+train_edge_idx = shuffled_indices[:<span class="hljs-built_in">int</span>(num_edges * <span class="hljs-number">0.8</span>)]
+test_edge_idx = shuffled_indices[<span class="hljs-built_in">int</span>(num_edges * <span class="hljs-number">0.8</span>):]
+
+train_edges = all_edges[train_edge_idx]
+test_edges = all_edges[test_edge_idx]
+</code></pre>
+<ul>
+<li><strong>train_edges</strong>：全リンクの80%（現在観測されているリンク）</li>
+<li><strong>test_edges</strong>：全リンクの20%（未来に現れるリンクとして隠す）</li>
+</ul>
+<p><strong>4. 学習用の隣接行列（現在のネットワーク）の構築</strong></p>
+<p>GNNに入力する「現在のネットワーク構造」は、<strong>隣接行列 <code>adj_train</code></strong> として構築されます。</p>
+<pre><code class="language-python">adj_train = torch.zeros((num_products, num_products), dtype=torch.float32)
+<span class="hljs-keyword">for</span> u, v <span class="hljs-keyword">in</span> train_edges:
+    adj_train[u, v] = <span class="hljs-number">1.0</span>
+    adj_train[v, u] = <span class="hljs-number">1.0</span>
+</code></pre>
+<ul>
+<li>サイズ：<code>(60, 60)</code> の正方行列。</li>
+<li><code>(u, v)</code> が <code>train_edges</code> に含まれる場合のみ <code>1</code> を設定（無向グラフなので <code>(v, u)</code> も1）。</li>
+<li><code>test_edges</code> に含まれるリンクは、この <code>adj_train</code> には含まれません（未来のリンクとして隠されている）。</li>
+</ul>
+<p>これが、GNNが実際に見る「現在のネットワーク構造」です。</p>
+<h3 id="学習">学習</h3>
+<p>作成したダミーデータの20%を学習用データとして、残り80%を予測していきます。</p>
+<p>学習コードは以下レポジトリを参考下さい。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/sequential_nn/src/graph_nn/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/sequential_nn/src/graph_nn/src</a></p>
+<p>学習と検証の結果は以下の通りとなりました。</p>
+<pre><code>隠された未来の購入リンクを予測する学習を開始...
+Epoch: 030 | Train Loss: 1.3681 | 未来のリンク予測精度 (AUC): 57.5%
+Epoch: 060 | Train Loss: 1.2285 | 未来のリンク予測精度 (AUC): 61.3%
+Epoch: 090 | Train Loss: 1.3069 | 未来のリンク予測精度 (AUC): 58.3%
+Epoch: 120 | Train Loss: 1.2551 | 未来のリンク予測精度 (AUC): 59.5%
+Epoch: 150 | Train Loss: 1.2773 | 未来のリンク予測精度 (AUC): 61.8%
+
+=== AIが見つけた【未来のあわせて買いたいペア】TOP 5 ===
+商品 23 と 商品 35 -&gt; AIの予測共同購入確率: 87.5%  (正解: 実際に未来で購入された)
+商品 33 と 商品 37 -&gt; AIの予測共同購入確率: 84.4%  (正解: 実際に未来で購入された)
+商品 21 と 商品 25 -&gt; AIの予測共同購入確率: 78.5%  (正解: 実際に未来で購入された)
+商品 35 と 商品 36 -&gt; AIの予測共同購入確率: 78.4%  (正解: 実際に未来で購入された)
+商品 00 と 商品 10 -&gt; AIの予測共同購入確率: 71.3%  (正解: 実際に未来で購入された)
+</code></pre>
+<p>学習済みのGNNが確率80%以上であると予言した『未来の購入リンク』の数7本を可視化してみました。
+(全部実際に購入されたエッジです。)
+<img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\doc\image\3_example_v2\1781394473543.png" alt="1781394473543"></p>
+<p>予測確率が高いものはさすがに正解しているようです。(特徴から高い確率で共同購入しているとおもされるため)</p>
+<h2 id="総括">総括</h2>
+<p>今回の要点を絞ってまとめます。</p>
+<h3 id="gnnの得意技">GNNの得意技</h3>
+<p><strong>(1) リンク予測（Link Prediction）</strong></p>
+<ul>
+<li><strong>タスク</strong>：まだ繋がっていないノード同士の間に、新しくエッジが生まれる確率を予測。</li>
+<li><strong>例</strong>：Amazonの「あわせて買いたい」商品のレコメンド。</li>
+<li><strong>GNNの強み</strong>：
+<ul>
+<li>「AとBを一緒に買った人はCも買っている」といった<strong>ネットワーク形状</strong>から、潜在的なニーズ（隠れたリンク）を高精度に予測できる。</li>
+<li>ノードの属性だけでなく、<strong>周辺の構造パターン</strong>を直接学習するため、レコメンド精度が高い。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) 影響度・波及予測（Influence / Diffusion Prediction）</strong></p>
+<ul>
+<li><strong>タスク</strong>：あるノードの変化（購入、炎上、感染など）が、ネットワークを伝って他ノードにどう波及するかを推論。</li>
+<li><strong>例</strong>：スマホがヒットしたとき、次に売れるスマホケースやスタンドの予測。</li>
+<li><strong>GNNの強み</strong>：
+<ul>
+<li>GNNの基本原理は「メッセージパッシング（情報の口コミ効果）」そのもの。</li>
+<li>トレンドの拡散経路やサプライチェーンの需要連鎖を、<strong>グラフ構造に沿ってシミュレーション</strong>できる。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) 異常検知（Fraud Detection）</strong></p>
+<ul>
+<li><strong>タスク</strong>：不正な取引や不自然な繋がり方（サクラレビュー、不正転売ネットワークなど）を検知。</li>
+<li><strong>GNNの強み</strong>：
+<ul>
+<li>単体のプロフィール（価格・評価など）では普通に見えるが、**周囲との付き合い方の怪しさ（リンクの異常性）**を検出できる。</li>
+<li>クレカ不正利用、サクラ業者、ボットネットワークの摘発で高い成果。</li>
+</ul>
+</li>
+</ul>
+<h3 id="gnnの本質的な価値">GNNの本質的な価値</h3>
+<ul>
+<li><strong>構造学習</strong>：ノード単体ではなく、「誰とどう繋がっているか」を直接学習できる。</li>
+<li><strong>未来の関係予測</strong>：まだ観測されていないリンクや、潜在的なニーズを高精度に予測。</li>
+<li><strong>波及・異常の検出</strong>：情報の伝播経路や不自然な繋がり方を、グラフ構造からあぶり出す。</li>
+</ul>
+<p>このように、GNNは <strong>「関係性そのもの」を扱うタスク</strong> において、LLMや画像モデルでは代替できない強力なツールと言えると思います。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+
+            
+        </body>
+        </html>
