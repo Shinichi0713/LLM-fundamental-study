@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Cora&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>本日扱うのはGNNの練習問題シリーズの第４弾です。
+今回扱うデータセットはCoraです。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>coraデータセットを用いた学習と推論を行ってみます。</p>
+</blockquote>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="coraとは">Coraとは</h2>
+<p>Cora は、<strong>GNN（Graph Neural Network）の練習・評価で最もよく使われる代表的な引用ネットワークデータセット</strong>です。</p>
+<h3 id="1-データの概要">1. データの概要</h3>
+<ul>
+<li><strong>ノード</strong>: 科学論文（約 2,708 本）</li>
+<li><strong>エッジ</strong>: 論文間の「引用関係」
+<ul>
+<li>論文 A が論文 B を引用している → エッジ（A → B）</li>
+</ul>
+</li>
+<li><strong>ノード特徴量（<code>x</code>）</strong>:
+<ul>
+<li>各論文の<strong>タイトル・アブストラクト中の単語</strong>をベースにした Bag-of-Words ベクトル</li>
+<li>次元数は約 1,433（出現した単語の有無を 0/1 で表現）</li>
+</ul>
+</li>
+<li><strong>ノードラベル（<code>y</code>）</strong>:
+<ul>
+<li>論文の<strong>研究分野（カテゴリ）</strong></li>
+<li>例: Case-Based, Genetic Algorithms, Neural Networks, Probabilistic Methods, Reinforcement Learning, Rule Learning, Theory</li>
+<li>合計 7 クラス</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-タスク設定典型的な使い方">2. タスク設定（典型的な使い方）</h3>
+<ul>
+<li><strong>タスク</strong>: ノード分類（semi-supervised node classification）</li>
+<li><strong>入力</strong>:
+<ul>
+<li>グラフ構造（どの論文がどの論文を引用しているか）</li>
+<li>ノード特徴（単語ベクトル）</li>
+</ul>
+</li>
+<li><strong>目的</strong>:
+<ul>
+<li>一部の論文にだけラベル（研究分野）が与えられており、</li>
+<li>残りの論文の研究分野を予測する</li>
+</ul>
+</li>
+<li><strong>評価指標</strong>: テストノードの分類精度（Accuracy）</li>
+</ul>
+<h3 id="3-gnn-練習における特徴">3. GNN 練習における特徴</h3>
+<ul>
+<li><strong>サイズが扱いやすい</strong>:
+<ul>
+<li>ノード数 2,708、エッジ数 5,429 程度で、Colab やローカル PC でも十分動く。</li>
+</ul>
+</li>
+<li><strong>構造がシンプル</strong>:
+<ul>
+<li>無向グラフとして扱うことが多く、GCN・GAT などの基本モデルの動作確認に最適。</li>
+</ul>
+</li>
+<li><strong>特徴量がわかりやすい</strong>:
+<ul>
+<li>Bag-of-Words ベクトルなので、「どの単語が効いているか」をある程度解釈できる。</li>
+</ul>
+</li>
+<li><strong>ベンチマークとして確立</strong>:
+<ul>
+<li>多くの論文で性能比較に使われており、<strong>自分の実装が標準的な性能に達しているか</strong>を確認しやすい。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-pytorch-geometric-での読み込み例参考">4. PyTorch Geometric での読み込み例（参考）</h3>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> torch_geometric.datasets <span class="hljs-keyword">import</span> Planetoid
+
+dataset = Planetoid(root=<span class="hljs-string">&#x27;./data&#x27;</span>, name=<span class="hljs-string">&#x27;Cora&#x27;</span>)
+data = dataset[<span class="hljs-number">0</span>]
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;ノード数: <span class="hljs-subst">{data.num_nodes}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;エッジ数: <span class="hljs-subst">{data.num_edges}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;特徴量次元: <span class="hljs-subst">{data.num_features}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;クラス数: <span class="hljs-subst">{dataset.num_classes}</span>&quot;</span>)
+</code></pre>
+<h2 id="データをdlサンプル抽出">データをDL→サンプル抽出</h2>
+<h3 id="1-パッケージインストール">1. パッケージインストール</h3>
+<pre><code># PyTorch Geometric のインストール（Colab の場合）
+!pip install torch torchvision torchaudio
+!pip install torch_geometric
+!pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cu121.html
+</code></pre>
+<h3 id="2-データロード">2. データロード</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> torch_geometric.datasets <span class="hljs-keyword">import</span> Planetoid
+
+<span class="hljs-comment"># Cora データセットのダウンロード</span>
+dataset = Planetoid(root=<span class="hljs-string">&#x27;./data&#x27;</span>, name=<span class="hljs-string">&#x27;Cora&#x27;</span>)
+data = dataset[<span class="hljs-number">0</span>]
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;データセット名: <span class="hljs-subst">{dataset}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;グラフ数: <span class="hljs-subst">{<span class="hljs-built_in">len</span>(dataset)}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;ノード数: <span class="hljs-subst">{data.num_nodes}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;エッジ数: <span class="hljs-subst">{data.num_edges}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;特徴量次元: <span class="hljs-subst">{data.num_features}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;クラス数: <span class="hljs-subst">{dataset.num_classes}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;学習用マスク数: <span class="hljs-subst">{data.train_mask.<span class="hljs-built_in">sum</span>().item()}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;検証用マスク数: <span class="hljs-subst">{data.val_mask.<span class="hljs-built_in">sum</span>().item()}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;テスト用マスク数: <span class="hljs-subst">{data.test_mask.<span class="hljs-built_in">sum</span>().item()}</span>&quot;</span>)
+</code></pre>
+<p>サンプル的にロードしたデータからノード0の3ホップ(3つ先)の論文までをグラフ構造で可視化してみました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\src\cora\image\readme\1782129369806.png" alt="1782129369806"></p>
+<p>3つ先の論文の一つはかなり参照しまくったという感じのようです。</p>
+<h2 id="テーマの選定">テーマの選定</h2>
+<p>Cora データセットを使った GNN の学習・予測テーマは、主に以下の 3 つに大別できます。</p>
+<h3 id="1-ノード分類node-classification">1. ノード分類（Node Classification）</h3>
+<ul>
+<li><strong>何を予測するか</strong>:
+<ul>
+<li>各論文ノードの<strong>研究分野（カテゴリ）</strong> を予測します。</li>
+</ul>
+</li>
+<li><strong>入力</strong>:
+<ul>
+<li>ノード特徴量（単語ベクトル）</li>
+<li>引用ネットワーク（エッジ）</li>
+</ul>
+</li>
+<li><strong>タスクの意味</strong>:
+<ul>
+<li>「引用関係と単語情報から、この論文がどの分野に属するかを自動分類する」</li>
+</ul>
+</li>
+<li><strong>典型的なモデル</strong>:
+<ul>
+<li>GCN, GAT, GraphSAGE など</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-リンク予測link-prediction">2. リンク予測（Link Prediction）</h3>
+<ul>
+<li><strong>何を予測するか</strong>:
+<ul>
+<li>「まだ引用されていない論文ペアのうち、<strong>将来引用される可能性が高いペア</strong>」を予測します。</li>
+</ul>
+</li>
+<li><strong>入力</strong>:
+<ul>
+<li>既存の引用エッジ</li>
+<li>ノード特徴量</li>
+</ul>
+</li>
+<li><strong>タスクの意味</strong>:
+<ul>
+<li>「この論文は、将来的にどの論文を引用しそうか？」を予測する</li>
+</ul>
+</li>
+<li><strong>典型的なモデル</strong>:
+<ul>
+<li>ノード埋め込みの内積や、GNN ベースのリンク予測モデル</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-グラフ分類graph-classification少し応用">3. グラフ分類（Graph Classification）※少し応用</h3>
+<ul>
+<li><strong>何を予測するか</strong>:
+<ul>
+<li>Cora 全体を 1 つのグラフと見なし、「この引用ネットワーク全体がどのような性質を持つか」を分類する（例：分野の偏りなど）。</li>
+</ul>
+</li>
+<li><strong>入力</strong>:
+<ul>
+<li>Cora 全体のグラフ構造＋ノード特徴</li>
+</ul>
+</li>
+<li><strong>タスクの意味</strong>:
+<ul>
+<li>「この引用ネットワーク全体が、どの研究分野に偏っているか」などを判定する</li>
+</ul>
+</li>
+<li><strong>典型的なモデル</strong>:
+<ul>
+<li>グラフプーリング＋全結合層など</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-今回のテーマに合うのは">4. 今回のテーマに合うのは？</h3>
+<p><strong>ノード分類</strong>が最も直感的で、「引用関係と単語情報から論文の分野を予測する」というタスクが、可視化したグラフ構造と自然に結びつきます。</p>
+<h2 id="モデル構築">モデル構築</h2>
+<p>今回実験で構築する GCN ノード分類モデル構築の<strong>キーポイント</strong>を、設計意図ごとに整理します。</p>
+<h3 id="1-モデル設計のキーポイント">1. モデル設計のキーポイント</h3>
+<p><strong>1.1 2層 GCN の採用理由</strong></p>
+<ul>
+<li><strong>1層目</strong>: <code>GCNConv(in → hidden)</code> + ReLU + Dropout
+<ul>
+<li>入力特徴（単語ベクトル）を、グラフ構造（引用関係）を考慮しながら<strong>低次元の隠れ表現</strong>に変換。</li>
+<li>ReLU で非線形性を入れ、Dropout で過学習を抑制。</li>
+</ul>
+</li>
+<li><strong>2層目</strong>: <code>GCNConv(hidden → out)</code>
+<ul>
+<li>隠れ表現を<strong>クラス数分のスコア</strong>に変換。</li>
+</ul>
+</li>
+<li><strong>なぜ 2 層か</strong>:
+<ul>
+<li>Cora は比較的小規模で、2 層程度で十分な表現力が得られることが多い。</li>
+<li>層を増やしすぎると過学習や勾配消失のリスクが増えるため、<strong>シンプルさと性能のバランス</strong>を取っています。</li>
+</ul>
+</li>
+</ul>
+<p><strong>1.2 <code>log_softmax</code> 出力の理由</strong></p>
+<ul>
+<li>最終出力に <code>F.log_softmax</code> を使い、<strong>対数確率</strong>を出力。</li>
+<li>損失関数に <code>NLLLoss</code>（負の対数尤度）を使うため、<strong>確率分布として扱いやすく、数値的にも安定</strong>します。</li>
+</ul>
+<h3 id="2-学習ループのキーポイント">2. 学習ループのキーポイント</h3>
+<p><strong>2.1 <code>train_mask</code> のみで損失計算</strong></p>
+<ul>
+<li><code>loss = criterion(out[data.train_mask], data.y[data.train_mask])</code></li>
+<li>Cora は**半教師あり学習（semi-supervised）**の設定で、
+<ul>
+<li>一部のノード（<code>train_mask=True</code>）だけラベルが与えられ、</li>
+<li>残りのノードはラベルなしでグラフ構造を通じて情報を伝播させる。</li>
+</ul>
+</li>
+<li>学習時は<strong>ラベル付きノードだけ</strong>で損失を計算し、GNN がグラフ全体に情報を広げるように学習させます。</li>
+</ul>
+<p><strong>2.2 Adam + Weight Decay</strong></p>
+<ul>
+<li><code>torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)</code></li>
+<li>Adam は学習率調整が自動で行われるため、<strong>安定した学習</strong>が期待できます。</li>
+<li><code>weight_decay=5e-4</code> で L2 正則化を入れ、<strong>過学習を抑制</strong>します。</li>
+</ul>
+<h3 id="3-評価早期終了のキーポイント">3. 評価・早期終了のキーポイント</h3>
+<p><strong>3.1 マスクごとの精度計算</strong></p>
+<ul>
+<li><code>train_mask</code>, <code>val_mask</code>, <code>test_mask</code> それぞれで精度を計算。</li>
+<li><strong>学習用・検証用・テスト用</strong>の精度を分けて確認することで、
+<ul>
+<li>過学習（train は高いが val/test が低い）</li>
+<li>学習不足（すべて低い）
+を判別しやすくなります。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.2 早期終了（Early Stopping）</strong></p>
+<ul>
+<li><code>patience=20</code> で、「検証精度が 20 エポック連続で改善しなければ打ち切り」。</li>
+<li><strong>過学習を防ぎつつ、十分な学習回数</strong>を確保するための一般的な手法です。</li>
+<li>検証精度が最も良かった時点のモデルを採用する（必要なら保存）ことで、<strong>テスト精度の安定性</strong>を高めます。</li>
+</ul>
+<p>モデル単体はこういう感じになります。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
+<span class="hljs-keyword">from</span> torch_geometric.nn <span class="hljs-keyword">import</span> GCNConv
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GCN</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, in_channels, hidden_channels, out_channels</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.conv1 = GCNConv(in_channels, hidden_channels)
+        self.conv2 = GCNConv(hidden_channels, out_channels)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, edge_index</span>):
+        <span class="hljs-comment"># 1層目: 入力特徴 → 隠れ表現</span>
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = F.dropout(x, training=self.training)
+
+        <span class="hljs-comment"># 2層目: 隠れ表現 → クラススコア</span>
+        x = self.conv2(x, edge_index)
+        <span class="hljs-keyword">return</span> F.log_softmax(x, dim=<span class="hljs-number">1</span>)
+</code></pre>
+<p>モデルを図示すると以下になります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\src\cora\image\readme\1782130220657.png" alt="1782130220657"></p>
+<h2 id="結果">結果</h2>
+<h3 id="学習">学習</h3>
+<p>ではいざ学習です。</p>
+<p>モデルの埋め込み表現を次元圧縮して可視化した結果です。</p>
+<p>こちらは学習前</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\src\cora\image\readme\1782130682792.png" alt="1782130682792"></p>
+<p>こちらは学習後です。
+学習したことで特徴の傾向を理解した形状となったと思います。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\src\cora\image\readme\1782130699504.png" alt="1782130699504"></p>
+<h3 id="学習済みモデルで予測">学習済みモデルで予測</h3>
+<p>学習したモデルで、テスト用のノードを推論してみます。</p>
+<pre><code># モデルを評価モードに
+model.eval()
+
+# 全ノードの出力を取得（log_softmax 済み）
+with torch.no_grad():
+    out = model(data.x, data.edge_index)  # shape: [num_nodes, num_classes]
+
+# ノード 0 の予測結果を確認
+node_id = 0
+
+# 各クラスの対数確率 → 確率に変換
+log_probs = out[node_id]
+probs = torch.exp(log_probs)  # log_softmax の逆変換
+
+# 予測ラベル（最大確率のクラス）
+pred_label = out[node_id].argmax().item()
+true_label = data.y[node_id].item()
+
+# クラス名の対応（Cora の 7 クラス）
+class_names = [
+    &quot;Case-Based&quot;,
+    &quot;Genetic Algorithms&quot;,
+    &quot;Neural Networks&quot;,
+    &quot;Probabilistic Methods&quot;,
+    &quot;Reinforcement Learning&quot;,
+    &quot;Rule Learning&quot;,
+    &quot;Theory&quot;
+]
+
+# いくつかのノードについて一覧表示
+node_ids = [0, 10, 100, 500, 1000]
+
+print(&quot;=== 複数ノードの予測結果一覧 ===&quot;)
+for node_id in node_ids:
+    pred_label = out[node_id].argmax().item()
+    true_label = data.y[node_id].item()
+    match = &quot;✓&quot; if pred_label == true_label else &quot;✗&quot;
+    print(f&quot;ノード {node_id:4d}: 予測 {pred_label} ({class_names[pred_label]:20s}) | &quot;
+          f&quot;正解 {true_label} ({class_names[true_label]:20s}) | {match}&quot;)
+</code></pre>
+<p>上記により予測した結果は以下通りです。
+今回は全問正解です。
+出木スギですね。</p>
+<pre><code>=== 複数ノードの予測結果一覧 ===
+ノード    0: 予測 3 (Probabilistic Methods) | 正解 3 (Probabilistic Methods) | ✓
+ノード   10: 予測 0 (Case-Based          ) | 正解 0 (Case-Based          ) | ✓
+ノード  100: 予測 0 (Case-Based          ) | 正解 0 (Case-Based          ) | ✓
+ノード  500: 予測 3 (Probabilistic Methods) | 正解 3 (Probabilistic Methods) | ✓
+ノード 1000: 予測 3 (Probabilistic Methods) | 正解 3 (Probabilistic Methods) | ✓
+</code></pre>
+<p>本コードは以下レポジトリに保管しています。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/sequential_nn/src/graph_nn/src/cora">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/sequential_nn/src/graph_nn/src/cora</a></p>
+<h2 id="総括">総括</h2>
+<p>Cora での GCN ノード分類が<strong>良い結果（全問正解に近い精度）</strong> になった理由は、主に以下の 4 点が考えられます。</p>
+<h3 id="1-cora-データセットがgnn-向きである">1. Cora データセットが「GNN 向き」である</h3>
+<ul>
+<li><strong>引用ネットワーク＋単語特徴</strong>という構造が、GNN の強み（近傍ノードの情報を集約する）と非常に相性が良い。</li>
+<li>同じ分野の論文は、
+<ul>
+<li>似た単語（アブストラクト）を使い、</li>
+<li>互いに引用し合う傾向があるため、</li>
+<li>GCN が「引用関係＋単語情報」を組み合わせることで、<strong>分野のクラスタをうまく捉えられる</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-gcn-の設計がタスクに最適だった">2. GCN の設計がタスクに最適だった</h3>
+<ul>
+<li><strong>2層 GCN</strong> は、Cora のような中規模グラフに対して、
+<ul>
+<li>1-hop 近傍（直接引用）と 2-hop 近傍（間接引用）の情報をバランスよく集約できる。</li>
+</ul>
+</li>
+<li><code>ReLU</code> + <code>Dropout</code> により、
+<ul>
+<li>非線形性を入れつつ、</li>
+<li>過学習を適度に抑制。</li>
+</ul>
+</li>
+<li><code>log_softmax</code> + <code>NLLLoss</code> の組み合わせが、<strong>多クラス分類タスクに適した安定した学習</strong>を実現。</li>
+</ul>
+<h3 id="3-学習設定adam--weight-decay--early-stoppingが適切だった">3. 学習設定（Adam + Weight Decay + Early Stopping）が適切だった</h3>
+<ul>
+<li><strong>Adam オプティマイザ</strong>:
+<ul>
+<li>学習率調整が自動で行われるため、安定した収束。</li>
+</ul>
+</li>
+<li><strong>Weight Decay (L2 正則化)</strong>:
+<ul>
+<li>過学習を抑え、汎化性能を高める。</li>
+</ul>
+</li>
+<li><strong>Early Stopping</strong>:
+<ul>
+<li>検証精度が改善しなくなった時点で打ち切ることで、<strong>過学習前に最良モデルを採用</strong>。</li>
+</ul>
+</li>
+</ul>
+<p>これらにより、<strong>「学習不足でもなく、過学習でもない」ちょうど良い状態</strong>で学習が止まり、高いテスト精度が得られました。</p>
+<h3 id="4-cora-はよく研究されたベンチマークである">4. Cora は「よく研究されたベンチマーク」である</h3>
+<ul>
+<li>Cora は長年 GNN のベンチマークとして使われており、
+<ul>
+<li>データのクオリティが高く、</li>
+<li>ラベル付けも比較的信頼できる。</li>
+</ul>
+</li>
+<li>そのため、<strong>標準的な GCN モデルでも、文献通りの高い精度が出やすい</strong>傾向があります。</li>
+</ul>
+<p>ということで少し手ごたえを感じたGNNの実験でした。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+            
+        </body>
+        </html>
