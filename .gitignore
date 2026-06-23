@@ -162,3 +162,6 @@ cython_debug/
 *.pth
 *.bin
 *.gz
+
+*.epub
+/basics_nn/sets_theory/doc/tmp
