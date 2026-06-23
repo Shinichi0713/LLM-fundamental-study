@@ -166,3 +166,4 @@ cython_debug/
 *.epub
 /basics_nn/sets_theory/doc/tmp
 !/llm/rag/datas/omni_diff.zip
+!/llm/rag/datas/pair_something.zip
