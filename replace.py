@@ -64,8 +64,8 @@ def format_to_note_style(content, output_file):
     print(f"変換が完了しました！\n出力先: {output_file}")
 
 # 実行設定
-input_md = r"D:\PycharmProjects\LLM-research\other\set_theory\example_transfinite_induction_v2.md"   # 変換元のファイル名
-output_md = r"D:\PycharmProjects\LLM-research\other\set_theory\example_transfinite_induction_v2.md" # 変換後のファイル名
+input_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\17_Reasoning-in-a-Haystack_Tasks.md"   # 変換元のファイル名
+output_md = r"D:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\17_Reasoning-in-a-Haystack_Tasks.md" # 変換後のファイル名
 is_note = False
 
 
