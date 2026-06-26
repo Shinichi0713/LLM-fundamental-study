@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>自然言語を扱う最大学会であるACL 2026に採択された論文を追っていました。
+テーマはエージェント、クラウド利用の安全性などが多く、トレンディなテーマ多いなーと感じてました。</p>
+<p>そんな中、LLMの原理に関する論文もありました。
+パッと見てみた論文は<a href="https://aclanthology.org/2026.acl-long.26.pdf">ImReasoner: Improving Memory-based Language Models for Reasoning-in-a-Haystack Tasks</a>というものです。</p>
+<p>本日はこの論文について読んでみました、というものです。</p>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="概要">概要</h2>
+<p><strong>ImReasoner: Improving Memory-based Language Models for Reasoning-in-a-Haystack Tasks</strong> は、<strong>「干し草の中の針」型の推論タスク（reasoning-in-a-haystack）</strong> における、<strong>メモリ拡張型言語モデル（memory-based LLM）の推論性能を改善するためのフレームワーク</strong> に関する論文です。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<h3 id="問題設定なぜreasoning-in-a-haystackが難しいか">問題設定：なぜ「reasoning-in-a-haystack」が難しいか</h3>
+<ul>
+<li>長い文脈（例：数万トークン）の中に、<strong>ごく少数の関連事実が散在</strong>し、残りは無関係な「干し草」のようなノイズであるようなタスク「reasoning-in-a-haystack」と呼びます。</li>
+<li>既存のLLMやメモリ拡張モデルは、
+<ul>
+<li>構造的な帰納バイアスが弱い</li>
+<li>大量のノイズ（distractors）があると、メモリ読み出しが不安定になる</li>
+<li>中間ステップの教師信号（どの事実が使われたか）が乏しい
+といった理由で、この種のタスクに苦戦します。</li>
+</ul>
+</li>
+</ul>
+<p>multi-step reasoning＝根拠をつなげていって解答が必要なタスクでは、沢山の文章の中から根拠を見つけ出して、つなげていく必要があります。
+この手のタスク例として以下が挙げられています。
+<code>apple</code>を探そうと思うと、持ち主である<code>Sandra</code>がどこに行ったかを見つけないといけないわけですが、この手の根拠と根拠をつなげようと思うと、広い文章から小さなきっかけを探す不毛な作業になっていきます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\17_Reasoning-in-a-Haystack_Tasks\1782510686053.png" alt="1782510686053"></p>
+<h3 id="目的">目的</h3>
+<ul>
+<li><strong>長い・ノイズの多い文脈での多段階推論</strong>を安定化させること。</li>
+<li><strong>細かい中間ステップの教師信号（どの事実が使われたか）に依存せず</strong>に、推論の汎化性能を高めること。</li>
+<li>特に「弱い教師信号（答えだけ）」の設定でも、推論性能を大きく改善すること。</li>
+</ul>
+<h3 id="主な手法">主な手法</h3>
+<p><strong>1. 時間順序を考慮したメモリ（Memory with Temporal Order）</strong></p>
+<ul>
+<li>事実の潜在表現（latents）を <strong>GRU</strong> で通し、<strong>事実の時間的な順序</strong>をエンコードします。</li>
+<li>これにより、単なる「集合」ではなく「時系列としてのエピソード」としてメモリを扱えるようにします。</li>
+</ul>
+<p><strong>2. 段階的学習（Staged Training）</strong></p>
+<ul>
+<li><strong>表現学習と推論学習を分離</strong>して行うことで、潜在空間の崩壊（collapse）を防ぎます。
+<ol>
+<li><strong>再構成損失（autoencoding）</strong> でまず表現を学習</li>
+<li>その後、<strong>答えの再構成（answer reconstruction）</strong> で推論を学習</li>
+</ol>
+</li>
+<li>これにより、中間ステップの明示的な教師信号なしでも、安定した推論表現が得られます。</li>
+</ul>
+<p><strong>3. 推論時のメモリ更新（Inference-time Memory Update）</strong></p>
+<ul>
+<li>推論時に、まず<strong>テキストを「スキミング」して関連性の高い証拠だけを抽出</strong>します。</li>
+<li>具体的には：
+<ul>
+<li><strong>関連度推定（relevance estimation）</strong> でノイズをフィルタリング</li>
+<li>その後、残った証拠に対して<strong>深い分析・推論</strong>を行う</li>
+</ul>
+</li>
+<li>これにより、<strong>ノイズの多い長文脈でも、推論に必要な部分だけを効率的に扱う</strong>ことができます。</li>
+</ul>
+<h2 id="背景課題">背景・課題</h2>
+<p><strong>ImReasoner</strong> の研究背景は、<strong>「長い文脈での多段階推論（multi-step reasoning）」をLLMがうまく扱えない</strong>という問題にあります。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<h3 id="研究背景llmと長文推論の課題">研究背景：LLMと長文推論の課題</h3>
+<p><strong>1. LLMは長い文脈での多段階推論が苦手</strong></p>
+<ul>
+<li>LLMは、<strong>依存関係の長いチェーン（dependency chains）</strong> を追うのが難しく、長い文脈の中で「どの事実がどの推論ステップに必要か」を正しく追跡できないことが多いです。</li>
+<li>その結果、<strong>幻覚（hallucination）</strong> や誤った推論が生じやすくなります。</li>
+</ul>
+<p><strong>2. 「reasoning-in-a-haystack」タスクの登場</strong></p>
+<ul>
+<li>近年、<strong>BABILong</strong> などのベンチマークで、<strong>「干し草の中の針」型の推論タスク（reasoning-in-a-haystack）</strong> が注目されています。</li>
+<li>ここでは、
+<ul>
+<li>文脈が非常に長い（数万トークン）</li>
+<li>関連する事実はごく少数</li>
+<li>残りは無関係な「干し草」（distractors）
+という設定で、<strong>少数の関連事実だけを使って多段階推論</strong>を行う必要があります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="既存手法の限界何が問題か">既存手法の限界（何が問題か）</h3>
+<p>論文では、既存のメモリ拡張型LLM（memory-augmented LLM）や長文推論手法に、主に以下の限界があると指摘しています。<a href="https://aclanthology.org/26.pdf">ACL Anthology</a></p>
+<p><strong>1. RMT・Mamba系：テスト分布への依存が強い</strong></p>
+<ul>
+<li>RMTやMambaなどのモデルは、<strong>テスト分布に近いデータにさらされることに依存</strong>しており、<br>
+根本的な「汎化」というよりは、<strong>分布の露出に頼った性能</strong>になっていると批判されています。</li>
+</ul>
+<p><strong>2. MemReasonerなど：細かい中間教師信号が必要</strong></p>
+<ul>
+<li>MemReasonerのようなメモリ拡張LLMは、<strong>「どの事実がどの推論ステップで使われたか」という中間のサポート事実インデックス</strong>を教師信号として必要とします。</li>
+<li>現実の多くの応用では、<strong>そのような細かい中間ラベルは得られない</strong>ため、実用上の制約が大きいです。</li>
+</ul>
+<p><strong>3. 技術的な2つの大きな問題点</strong>
+論文が特に強調しているのは、以下の2点です。</p>
+<p><strong>(a) 大量のノイズ下でのメモリ読み出しの「悪条件化（ill-conditioning）」</strong></p>
+<ul>
+<li>長い文脈に大量の無関係なテキスト（distractors）が混ざると、<br>
+<strong>メモリ読み出し操作が不安定</strong>になり、<br>
+本当に必要な事実をうまく取り出せない（retrievalが不正確になる）という問題が生じます。</li>
+</ul>
+<p><strong>(b) 弱い教師信号下での「表現の崩壊（representation collapse）」</strong></p>
+<ul>
+<li>中間のサポート事実ラベルがない（答えだけの弱い教師信号）状況で学習すると、モデルは<strong>潜在表現が崩壊（collapse）</strong> し、事実の区別がつかなくなる問題が起きます。</li>
+</ul>
+<blockquote>
+<p>潜在表現（latent representation） は、「モデルが内部で保持している、入力テキストを意味的に要約したベクトル表現」 のことです。
+言い方様々ですが、言葉の内部表現のことと思ってみてもらえればと思います。</p>
+</blockquote>
+<h3 id="imreasonerが解決すべきとしたこと">ImReasonerが「解決すべきとした」こと</h3>
+<p>以上を踏まえ、ImReasonerは以下の問題を解決することを目的としています。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<ol>
+<li>
+<p><strong>長い・ノイズの多い文脈での多段階推論の性能低下と不安定性</strong></p>
+<ul>
+<li>特に「reasoning-in-a-haystack」タスクで、大量のdistractorsがあるとメモリ読み出しがうまくいかない問題。</li>
+</ul>
+</li>
+<li>
+<p><strong>弱い教師信号（答えだけ）の設定でも、推論の汎化性能を高めること</strong></p>
+<ul>
+<li>中間のサポート事実ラベルなしで、モデルが「どの事実が重要か」を自分で見つけられるようにすること。</li>
+</ul>
+</li>
+<li>
+<p><strong>メモリ拡張LLMにおける「表現崩壊」と「悪条件化」の回避</strong></p>
+<ul>
+<li>学習時に潜在表現が崩壊しないようにし、</li>
+<li>推論時にノイズをうまくフィルタして、必要な事実だけを安定して取り出せるようにすること。</li>
+</ul>
+</li>
+</ol>
+<h2 id="方法論">方法論</h2>
+<p><strong>ImReasoner</strong> が行った主な工夫は、大きく以下の2つです。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<ol>
+<li><strong>推論時のメモリ更新（inference-time memory update）</strong></li>
+<li><strong>段階的学習（staged training）</strong></li>
+</ol>
+<p>そして、これらの工夫は<strong>人間の読解・学習戦略</strong>に着想を得ています。</p>
+<h3 id="工夫推論時のメモリ更新二段階推論">工夫①：推論時のメモリ更新（二段階推論）</h3>
+<p><strong>何をしているか</strong></p>
+<ul>
+<li>推論時に、まず<strong>文脈全体を「スキミング」して関連度の高い部分だけを抽出</strong>し、その後、<strong>その部分だけに対して深い推論</strong>を行います。</li>
+<li>具体的には：
+<ul>
+<li>クエリ（質問）と各事実の潜在表現の<strong>近さ（latent proximity）</strong> を計算</li>
+<li>分位関数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">Q_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> を使って、<strong>上位の関連度を持つ部分だけを残し、残りは捨てる</strong></li>
+<li>2回目のパスでは、<strong>フィルタリングされた部分集合だけ</strong>に対して推論を行う</li>
+</ul>
+</li>
+</ul>
+<p><strong>着想の根拠：人間の「建設的に応答する読解」</strong></p>
+<ul>
+<li>この二段階戦略は、<strong>Pressley &amp; Afflerbach (1995)</strong> が提唱した<br>
+<strong>“constructively responsive reading”</strong>（建設的に応答する読解）に着想を得ています。</li>
+<li>人間は長い文章を読むとき、
+<ul>
+<li>まず<strong>ざっと読み（skimming）</strong> して全体像と関連箇所を把握し、</li>
+<li>その後、<strong>必要な部分だけを深く読む</strong>
+という戦略をとります。</li>
+</ul>
+</li>
+<li>ImReasonerは、この <strong>「まずスキミングしてノイズを捨て、その後深く読む」</strong> という人間の読解戦略を、メモリ拡張LLMの推論プロセスに組み込んでいます。</li>
+</ul>
+<h3 id="工夫段階的学習表現学習と推論学習の分離">工夫②：段階的学習（表現学習と推論学習の分離）</h3>
+<p><strong>何をしているか</strong></p>
+<p>現論文だとここが結構難しかったです。学習を2stepに分けます。それぞれについては以下のことのようです。</p>
+<ol>
+<li>第1段階（約50エポック）で具体的に何をしているか</li>
+</ol>
+<p>ImReasonerの第1段階では、<strong>「入力テキストを潜在表現にうまくマッピングする」</strong> ことを目的に、<br>
+<strong>自己符号化（autoencoding）</strong> に近い形で学習を行います。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<p><strong>具体的な処理イメージ</strong></p>
+<ol>
+<li>
+<p><strong>入力</strong></p>
+<ul>
+<li>長い文脈（例：BABILongの長い文章）の中の<strong>各事実（fact）</strong> を、エンコーダで潜在表現（ベクトル）に変換します。</li>
+</ul>
+</li>
+<li>
+<p><strong>再構成（reconstruction）</strong></p>
+<ul>
+<li>その潜在表現から、<strong>元のテキスト（あるいはその要約）を再生成</strong>します。</li>
+<li>損失は「再構成損失（reconstruction loss）」と呼ばれ、<br>
+<strong>元のテキストと生成されたテキストの差分</strong>を最小化するように学習します。</li>
+</ul>
+</li>
+<li>
+<p><strong>目的</strong></p>
+<ul>
+<li>この段階では、まだ「答えを当てる」タスクは導入しません。</li>
+<li>代わりに、**潜在表現が「元のテキストの意味をきちんと保持しているか」**を重視します。</li>
+<li>これにより、
+<ul>
+<li>異なる事実が**同じ潜在表現に潰れてしまう（representation collapse）**のを防ぎ、</li>
+<li>メモリに書き込まれる潜在表現が<strong>意味的に区別可能</strong>な状態になります。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>要するに、第1段階は<br>
+<strong>「テキスト → 潜在表現 → テキスト」というループを回して、潜在表現の質を高める事前学習</strong><br>
+に相当します。</p>
+<p><strong>第2段階の「推論タスクに特化した学習」はLLMの文章生成か？</strong></p>
+<p>はい、<strong>LLMの文章生成の一種</strong>と捉えて差し支えありませんが、<br>
+より正確には「<strong>答えの再構成（answer reconstruction）</strong> 」という形で実装されています。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<p><strong>具体的な処理イメージ</strong></p>
+<ol>
+<li>
+<p><strong>入力</strong></p>
+<ul>
+<li>長い文脈（事実の集合）と、クエリ（質問）が与えられます。</li>
+</ul>
+</li>
+<li>
+<p><strong>メモリ読み出し＋推論</strong></p>
+<ul>
+<li>メモリから関連事実を読み出し、それらを統合して<strong>推論を行います</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>出力（answer reconstruction）</strong></p>
+<ul>
+<li>モデルは、<strong>正解の答えテキストを生成</strong>します。</li>
+<li>損失は「答えの再構成損失」であり、<strong>生成された答えと正解の答えの差分</strong>を最小化します。</li>
+</ul>
+</li>
+</ol>
+<p><strong>LLMの文章生成との関係</strong></p>
+<ul>
+<li>技術的には、<strong>デコーダ型LLMの「次トークン予測」</strong> と同じ枠組みです。</li>
+<li>ただし、ImReasonerでは
+<ul>
+<li>入力が<strong>長い文脈＋メモリ</strong>、</li>
+<li>出力が<strong>推論の結果としての答えテキスト</strong>
+という形で、<strong>「推論タスクに特化した生成」</strong> を行っています。</li>
+</ul>
+</li>
+</ul>
+<p>したがって、</p>
+<ul>
+<li><strong>「推論タスクに特化した学習」＝「推論の結果としての答えテキストを生成するLLMの学習」</strong></li>
+<li>これは、一般的なLLMの文章生成と同様の仕組みですが、<br>
+<strong>目的が「推論の正しさ」にフォーカスされている</strong>点が特徴です。</li>
+</ul>
+<p>これにより、<strong>まず表現を安定させ、その後で推論タスクに特化した生成能力を学ぶ</strong>という段階的な設計になっています。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<p><strong>着想の根拠：人間の「概念的理解」</strong></p>
+<ul>
+<li>この「まず表現を学び、その後タスクに特化する」という考え方は、<br>
+<strong>Byrnes (1992)</strong> が議論した <strong>“conceptual understanding”</strong>（概念的理解）に基づいています。</li>
+<li>人間は、
+<ul>
+<li>まず<strong>基礎的な概念や表現を身につけ</strong>、</li>
+<li>その後、それを使って<strong>特定の問題を解く</strong>
+というプロセスをたどります。</li>
+</ul>
+</li>
+<li>ImReasonerは、この <strong>「概念（表現）を先にしっかり学び、その後推論を学ぶ」</strong> という人間の学習戦略を、<br>
+モデルの学習プロセスに取り入れています。</li>
+</ul>
+<h3 id="なぜこの工夫が必要だったか根拠">なぜこの工夫が必要だったか（根拠）</h3>
+<p>論文では、既存のメモリ拡張LLMやTransformerに以下の問題があると指摘しています。<a href="https://aclanthology.org/26.pdf">ACL Anthology</a></p>
+<ol>
+<li>
+<p><strong>メモリ操作の「悪条件化（ill-conditioning）」</strong></p>
+<ul>
+<li>大量のノイズ（distractors）があると、メモリ読み出しが不安定になり、必要な事実を取り出せない。</li>
+<li>→ <strong>推論時のフィルタリング</strong>で、まずノイズを捨てることで解決。</li>
+</ul>
+</li>
+<li>
+<p><strong>弱い教師信号下での「ショートカット行動」と「表現崩壊」</strong></p>
+<ul>
+<li>答えだけの弱い教師信号で学習すると、モデルは<strong>簡単なパターン（ショートカット）</strong> に頼り、潜在表現が崩壊してしまう。</li>
+<li>→ <strong>段階的学習</strong>で、まず表現を安定させてから推論を学ぶことで解決。</li>
+</ul>
+</li>
+<li>
+<p><strong>順序付きメモリ（ordered memory）の導入</strong></p>
+<ul>
+<li>潜在表現を<strong>GRUで時間順序に沿ってエンコード</strong>し、<br>
+事実の「時系列としてのエピソード」をメモリに保持します。</li>
+<li>これにより、<strong>推論チェーンの組み合わせ仮説空間を減らす</strong>（帰納バイアスを与える）効果があります。</li>
+</ul>
+</li>
+</ol>
+<p>そして上記の2段階推論を行うとしているアルゴリズムが以下です。
+このアルゴリズムは一つのLLM内部で実施されていることで、この動作を行う上で自然な流れとなるように学習が進められているものとされています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\17_Reasoning-in-a-Haystack_Tasks\1782511100097.png" alt="1782511100097"></p>
+<h2 id="実験">実験</h2>
+<p>ImReasonerの実験では、<strong>「長い文脈での多段階推論」</strong> と <strong>「弱い教師信号（答えだけ）」</strong> の設定で、<br>
+既存手法を大きく上回る性能を示すことが確認されています。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></p>
+<h3 id="実験で使われたデータセット">実験で使われたデータセット</h3>
+<p><strong>1. bAbI ベンチマーク</strong></p>
+<ul>
+<li><strong>bAbI Task 1</strong>：単一ホップ推論（1-step reasoning）</li>
+<li><strong>bAbI Task 2</strong>：二段階推論（2-hop reasoning）</li>
+<li>比較的短い文脈での推論能力を評価するために使用。</li>
+</ul>
+<p><strong>2. BABILong</strong></p>
+<ul>
+<li>bAbIを拡張し、<strong>PG-19</strong>の長い背景テキストを追加したデータセット。</li>
+<li>文脈長は <strong>0k〜128kトークン</strong>までスケール。</li>
+<li>「干し草の中の針」型の推論タスク（reasoning-in-a-haystack）を評価。</li>
+</ul>
+<p><strong>3. BABILong-soft（新バリアント）</strong></p>
+<ul>
+<li><strong>in-distribution distractors</strong>（真の事実と似たテンプレートのノイズ）を含むバージョン。</li>
+<li>文脈長は最大 <strong>4kトークン</strong>。</li>
+<li>より「紛らわしい」ノイズ下での推論能力を評価。</li>
+</ul>
+<h3 id="比較対象ベースライン">比較対象（ベースライン）</h3>
+<ul>
+<li><strong>RMT（Recurrent Memory Transformer）</strong></li>
+<li><strong>Mamba</strong></li>
+<li><strong>MemReasoner</strong>（ImReasonerの前身となるメモリ拡張LLM）</li>
+</ul>
+<p>これらとImReasonerを、<strong>弱い教師信号（answer-only）</strong> と<strong>強い教師信号（supporting-facts）</strong> の両方で比較しています。</p>
+<h3 id="評価指標">評価指標</h3>
+<ul>
+<li><strong>Accuracy（%）</strong>：<br>
+推論タスクの正解率を評価指標として使用。</li>
+</ul>
+<h3 id="主な実験結果">主な実験結果</h3>
+<p><strong>1. bAbI Task 2（2-hop推論、弱い教師信号）</strong></p>
+<ul>
+<li><strong>MemReasoner</strong>：39.5%</li>
+<li><strong>ImReasoner</strong>：<strong>90%</strong></li>
+<li>→ 弱い教師信号（答えだけ）の設定でも、<strong>2段階推論の精度が大幅に向上</strong>。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></li>
+</ul>
+<p><strong>2. BABILong（16kトークン）</strong></p>
+<ul>
+<li>ベースライン（単純なメモリ読み出し）：<strong>約14%</strong></li>
+<li><strong>推論時のフィルタリングだけ</strong>を導入：<strong>82%</strong></li>
+<li><strong>段階的学習も組み合わせた ImReasoner</strong>：<strong>94%</strong></li>
+<li>→ 長い文脈（16kトークン）でも、<strong>ノイズをフィルタして推論する効果が非常に大きい</strong>ことが確認されました。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></li>
+</ul>
+<p><strong>3. BABILong-soft Task 1（in-distribution distractors）</strong></p>
+<ul>
+<li><strong>RMT</strong>：
+<ul>
+<li>1kトークン：<strong>59%</strong></li>
+<li>4kトークン：<strong>21%</strong>（大幅に性能低下）</li>
+</ul>
+</li>
+<li><strong>ImReasoner</strong>：
+<ul>
+<li>1k〜4kトークンまで**ほぼ完璧な精度（near-perfect accuracy）**を維持</li>
+</ul>
+</li>
+<li>→ 真の事実と似たノイズがある場合でも、ImReasonerは<strong>安定して関連事実を選び出せる</strong>ことが示されました。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></li>
+</ul>
+<p><strong>4. BABILong-soft Task 2（2-hop推論、in-distribution distractors）</strong></p>
+<ul>
+<li>1kトークンを超えると精度は低下するものの、<br>
+<strong>RMTやMambaなどのベースラインよりは一貫して優れた性能</strong>を示しました。</li>
+<li>→ 多段階推論＋紛らわしいノイズは依然として難しい課題ですが、<br>
+ImReasonerは既存手法より<strong>頑健な推論能力</strong>を持つことが確認されています。</li>
+</ul>
+<p>という結果を示すのは以下の図です。
+縦軸はトークン数で、Oursにあたる一番右側の手法はトークンが増加しても精度を維持していることが確認されました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\17_Reasoning-in-a-Haystack_Tasks\1782512965203.png" alt="1782512965203"></p>
+<h3 id="実験からわかったことまとめ">実験からわかったこと（まとめ）</h3>
+<ol>
+<li>
+<p><strong>弱い教師信号（答えだけ）でも、多段階推論が可能</strong></p>
+<ul>
+<li>bAbI Task 2で90%の精度を達成し、MemReasoner（39.5%）を大きく上回りました。</li>
+</ul>
+</li>
+<li>
+<p><strong>長い文脈での「干し草の中の針」推論が大幅に改善</strong></p>
+<ul>
+<li>BABILong 16kトークンで、14% → 94% と劇的な改善が見られました。</li>
+</ul>
+</li>
+<li>
+<p><strong>in-distribution distractors（紛らわしいノイズ）にも強い</strong></p>
+<ul>
+<li>BABILong-softで、RMTが大きく性能を落とす中、ImReasonerはほぼ完璧な精度を維持しました。</li>
+</ul>
+</li>
+<li>
+<p><strong>128kトークンまでスケール可能だが、多段階推論＋紛らわしいノイズは依然として難題</strong></p>
+<ul>
+<li>128kトークンまでスケールしても性能を維持できる一方、<br>
+BABILong-softの2-hopタスクでは精度低下が見られ、<br>
+これが現在のフレームワークの限界として示されています。<a href="https://aclanthology.org/2026.acl-long.26.pdf">ACL Anthology</a></li>
+</ul>
+</li>
+</ol>
+<p>これらにより、ImReasonerは<strong>長い・ノイズの多い文脈での多段階推論を、弱い教師信号の設定で大幅に改善する</strong>ことを実証しているようです。</p>
+<h2 id="総括">総括</h2>
+<p>LLMがmulti-step reasoningを行う場合の精度低下を、
+以下の2step推論を行うことで</p>
+<ol>
+<li>推論時の二段階処理（人間の読解戦略の模倣）</li>
+</ol>
+<p>まずスキミングしてノイズを捨て、その後深く読むというconstructively responsive reading に着想を得た二段階推論を導入。
+潜在表現の近さに基づく関連度推定＋フィルタリングで、必要な事実だけを残してから推論を行う。</p>
+<ol start="2">
+<li>段階的学習（人間の概念的理解の模倣）</li>
+</ol>
+<p>まず表現を学び、その後推論を学ぶというconceptual understanding に基づく段階的学習を採用。
+第1段階：自己符号化（再構成損失）で潜在表現を安定化<br>
+第2段階：答えの再構成（answer reconstruction）で推論タスクに特化</p>
+<p>長い・ノイズの多い文脈での多段階推論を、弱い教師信号（答えだけ）の設定で安定かつ高精度に実現した。</p>
+<p>という論文でした。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+        </body>
+        </html>
