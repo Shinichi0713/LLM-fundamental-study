@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>昨日に引き続きACL2026採択論文を読み進めています。
+同じく仕組み・原理に関する論文で読んでみたものは<a href="https://arxiv.org/pdf/2510.19496">CARES</a>です。</p>
+<p>ACL2026で採択された <strong>CARES: Context-Aware Resolution Selector for VLMs</strong> は、<strong>「画像と言語の両方を扱う大規模モデル（Vision-Language Models, VLMs）の計算コストとレイテンシを大幅に削減するための軽量な前処理モジュール」</strong> を提案した論文です。</p>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="概要">概要</h2>
+<p>ざっとまとめていくとこんな感じでしょうか。Vision-Language Models(以下VLMとします)に関する課題を解決したというものです。</p>
+<h3 id="問題設定何を解決したいか">問題設定（何を解決したいか）</h3>
+<p>現在のVLMs（例：CLIP系、LLaVA系など）は、入力画像を<strong>常に高解像度で処理</strong>する傾向があります。<br>
+その結果、</p>
+<ul>
+<li>入力トークンのうち <strong>97〜99% が視覚トークン</strong> になる</li>
+<li>計算量とメモリ使用量が非常に大きい</li>
+<li>推論が遅く、実運用コストが高い</li>
+</ul>
+<p>といった問題が生じています。<br>
+多くのタスクでは、画像全体を高解像度で見る必要はなく、<strong>「どの解像度で見れば十分か」は画像と質問の内容に依存する</strong> はず、という観点から、この無駄を減らすことを目指しています。</p>
+<h3 id="提案手法cares-の仕組み">提案手法：CARES の仕組み</h3>
+<p>CARES は、<strong>「この画像＋この質問に対して、ターゲットVLMがピーク性能に達するのに必要な最小限の解像度はどれか」</strong> を予測する <strong>軽量な前処理VLM</strong> です。</p>
+<ul>
+<li><strong>モデル規模</strong>: 約 <strong>350Mパラメータ</strong> の比較的小さなモデル</li>
+<li><strong>役割</strong>: メインの大規模VLMの前に挿入し、<br>
+「どの解像度で画像を入力すれば十分か」を<strong>画像とテキストの両方を見て</strong>判断する</li>
+<li><strong>学習</strong>: 離散的な解像度クラスとして学習されるが、推論時には<strong>連続的な解像度を内挿</strong>できる</li>
+<li><strong>出力</strong>: 「この解像度で十分」と判断した解像度で画像をリサイズし、その画像をメインVLMに渡す</li>
+</ul>
+<p>これにより、<strong>メインVLMが処理する視覚トークン数を大幅に削減</strong>しつつ、タスク性能をほぼ維持することを狙っています。</p>
+<h3 id="主な成果">主な成果</h3>
+<ol>
+<li>
+<p><strong>コンテキストに応じた解像度選択</strong><br>
+単純なヒューリスティックではなく、<strong>画像と質問の内容に応じて</strong>必要な解像度を動的に決める点が新しい。</p>
+</li>
+<li>
+<p><strong>軽量な前処理モジュールとしての設計</strong><br>
+350Mパラメータという比較的小さなモデルで、さまざまなターゲットVLMの前に挿入可能な汎用的なモジュールとして設計されている。</p>
+</li>
+<li>
+<p><strong>計算効率の大幅改善</strong><br>
+実験では、<strong>計算量を最大80%削減</strong>しながら、タスク性能をほぼ維持できることを示している。</p>
+</li>
+<li>
+<p><strong>連続的な解像度内挿</strong><br>
+学習は離散クラスで行うが、推論時に連続的な解像度を扱えるため、柔軟な解像度選択が可能。</p>
+</li>
+</ol>
+<h3 id="実験結果の概要">実験結果の概要</h3>
+<ul>
+<li><strong>対象ベンチマーク</strong>: 文書画像と自然画像を含む <strong>5つのマルチモーダルベンチマーク</strong></li>
+<li><strong>対象VLM</strong>: 複数のターゲットVLMに対して適用</li>
+<li><strong>結果</strong>:
+<ul>
+<li><strong>計算コストを最大80%削減</strong></li>
+<li>タスク性能（精度など）は<strong>ほぼ維持</strong>（多くの設定で性能低下はごくわずか）</li>
+<li>異なるVLMに対しても<strong>汎用的に有効</strong>であることを確認</li>
+</ul>
+</li>
+</ul>
+<h3 id="まとめ">まとめ</h3>
+<p>CARES は、<strong>「画像と言語の両方を見て、このタスクにはどの解像度で十分かを軽量なモデルが事前に判断する」</strong> という発想で、<br>
+VLMsの<strong>計算効率とレイテンシを大幅に改善</strong>することを目指した研究です。<br>
+ACL2026でのオーラル採択論文であり、コードも公開されています<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</p>
+<h2 id="背景課題">背景・課題</h2>
+<p>この論文が<strong>解決すべきとした課題・事実</strong>は、主に次の2点です<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</p>
+<h3 id="1-課題vlmsの常に高解像度で処理することによる計算レイテンシの非効率性">1. 課題：VLMsの「常に高解像度で処理する」ことによる計算・レイテンシの非効率性</h3>
+<p>現在の大規模VLMsは、入力画像を<strong>常に高解像度で処理</strong>する傾向があります。<br>
+その結果、</p>
+<ul>
+<li><strong>計算量が非常に大きい</strong></li>
+<li><strong>推論が遅い（レイテンシが高い）</strong></li>
+<li><strong>実運用コスト（クラウド料金など）が高い</strong></li>
+</ul>
+<p>といった問題が生じています。</p>
+<p>論文は、<strong>「多くのタスクでは、画像全体を高解像度で見る必要はない」</strong> という前提に立ち、<br>
+<strong>「この画像＋この質問に対して、どの解像度で見れば十分か」を動的に決める仕組みがない</strong>ことを課題として挙げています。</p>
+<h3 id="2-事実視覚トークンが入力の大部分を占めること">2. 事実：視覚トークンが入力の大部分を占めること</h3>
+<p>論文が根拠として示している<strong>定量的な事実</strong>は、次の通りです<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</p>
+<ul>
+<li>VLMの入力トークンのうち、<strong>視覚トークンが 97〜99% を占める</strong></li>
+<li>つまり、<strong>ほぼすべての計算コストは画像側に集中している</strong></li>
+</ul>
+<p>この事実から、</p>
+<ul>
+<li><strong>画像解像度を少し下げるだけで、視覚トークン数が大きく減る</strong></li>
+<li>したがって、<strong>「必要な最小限の解像度」を選べば、計算コストを大幅に削減できる</strong></li>
+</ul>
+<p>という発想が導かれます。</p>
+<h3 id="3-論文が解決すべきとした課題事実">3. 論文が解決すべきとした課題・事実</h3>
+<ol>
+<li>
+<p><strong>課題</strong></p>
+<ul>
+<li>VLMsが<strong>常に高解像度で画像を処理</strong>するため、計算・レイテンシ・コストが過大になっている。</li>
+<li><strong>画像と質問の内容に応じて、必要な解像度を動的に選ぶ仕組みがない</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>事実</strong></p>
+<ul>
+<li>VLMの入力トークンのうち、<strong>視覚トークンが97〜99%を占める</strong>。</li>
+<li>したがって、<strong>解像度選択が計算効率を支配する</strong>。</li>
+</ul>
+</li>
+</ol>
+<p>CARES は、この課題と事実を踏まえ、<br>
+<strong>「軽量な前処理VLMで、画像＋質問を見て最小限の解像度を予測する」</strong> ことで、<br>
+<strong>計算コストを最大80%削減しつつ、タスク性能をほぼ維持する</strong>ことを目指しています<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</p>
+<p>論文で出されている画像の解像度に応じた視覚トークンの割合は以下のようなもので、まじか！？とびっくりした次第です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\18_CARES_acl\1782516087460.png" alt="1782516087460"></p>
+<h2 id="論文が取り組んだ工夫点">論文が取り組んだ工夫点</h2>
+<p>CARES の問題設定と、それに対応する<strong>具体的な工夫点</strong>を対応付けて整理します。</p>
+<h3 id="1-問題設定何を解決したいか">1. 問題設定（何を解決したいか）</h3>
+<p><strong>(A) 計算・レイテンシの非効率性</strong></p>
+<ul>
+<li><strong>事実</strong>: 現在のVLMsは、入力画像を<strong>常に高解像度で処理</strong>する。</li>
+<li><strong>結果</strong>:
+<ul>
+<li>視覚トークンが入力トークンの <strong>97〜99%</strong> を占める<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</li>
+<li>計算量・メモリ使用量・レイテンシが非常に大きい。</li>
+</ul>
+</li>
+<li><strong>課題</strong>:
+<ul>
+<li>「この画像＋この質問に対して、<strong>どの解像度で見れば十分か</strong>」を動的に決める仕組みがない。</li>
+<li>多くのタスクでは高解像度は不要なのに、常に高解像度で処理している。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(B) コンテキスト依存性の無視</strong></p>
+<ul>
+<li><strong>課題</strong>:
+<ul>
+<li>必要な解像度は<strong>画像の内容</strong>と<strong>質問の内容</strong>の両方に依存するはずだが、既存手法は単純なヒューリスティック（例：常に低解像度）か、固定解像度に依存している。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-具体的な工夫点問題設定への対応">2. 具体的な工夫点（問題設定への対応）</h3>
+<p><strong>工夫①：軽量な「前処理VLM」としての設計</strong></p>
+<ul>
+<li><strong>問題設定への対応</strong>:<br>
+「どの解像度で十分か」を<strong>画像とテキストの両方を見て</strong>判断する必要がある。</li>
+<li><strong>工夫内容</strong>:
+<ul>
+<li>CARES を <strong>約350Mパラメータの軽量VLM</strong> として設計し、<br>
+メインVLMの<strong>前段に挿入</strong>する<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</li>
+<li>入力: <strong>画像＋質問テキスト</strong></li>
+<li>出力: 「このタスクに必要な最小限の解像度」の予測</li>
+</ul>
+</li>
+<li><strong>効果</strong>:
+<ul>
+<li>メインVLMが処理する視覚トークン数を大幅に削減できる。</li>
+<li>計算コストを最大80%削減しつつ、タスク性能をほぼ維持<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\18_CARES_acl\1782516577113.png" alt="1782516577113"></p>
+<p><strong>工夫②：コンテキストに応じた解像度選択</strong></p>
+<ul>
+<li><strong>問題設定への対応</strong>:<br>
+必要な解像度は<strong>画像と質問の内容に依存</strong>する。</li>
+<li><strong>工夫内容</strong>:
+<ul>
+<li>CARES は、単純なルールではなく、<strong>画像とテキストの両方を入力として受け取り</strong>、「この組み合わせに対して、ターゲットVLMがピーク性能に達するのに十分な解像度」を予測する。</li>
+</ul>
+</li>
+<li><strong>効果</strong>:
+<ul>
+<li>文書画像のように細かい文字が必要な場合と、自然画像の大まかなシーン理解では、<strong>異なる解像度が選ばれる</strong>。</li>
+<li>これにより、<strong>無駄な高解像度処理を避けつつ、必要な情報は落とさない</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>工夫③：離散クラス学習＋連続解像度の内挿</strong></p>
+<ul>
+<li><strong>問題設定への対応</strong>:<br>
+実世界では「この解像度でちょうどよい」という値が連続的に変化するが、<br>
+学習時には離散的な解像度しかサンプルできない。</li>
+<li><strong>工夫内容</strong>:
+<ul>
+<li>CARES は<strong>離散的な解像度クラス</strong>として学習されるが、<br>
+推論時には<strong>連続的な解像度を内挿</strong>できるように設計されている<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</li>
+</ul>
+</li>
+<li><strong>効果</strong>:
+<ul>
+<li>固定の解像度セットに縛られず、<strong>柔軟に解像度を選べる</strong>。</li>
+<li>実運用で「ちょうどよい解像度」を細かく調整できる。</li>
+</ul>
+</li>
+</ul>
+<p><strong>工夫④：ターゲットVLMへの汎用的な適用</strong></p>
+<ul>
+<li><strong>問題設定への対応</strong>:<br>
+特定のVLMに依存せず、<strong>さまざまなVLMの前処理として使える</strong>ことが望ましい。</li>
+<li><strong>工夫内容</strong>:
+<ul>
+<li>CARES は<strong>独立した前処理モジュール</strong>として設計され、<br>
+複数のターゲットVLMに対して適用可能な形で評価されている<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</li>
+</ul>
+</li>
+<li><strong>効果</strong>:
+<ul>
+<li>特定のVLMに依存せず、<strong>一般的なVLMの効率化手法</strong>として提案できる。</li>
+</ul>
+</li>
+</ul>
+<p><strong>工夫⑤：複数ベンチマークでの検証</strong></p>
+<ul>
+<li><strong>問題設定への対応</strong>:<br>
+「どのタスクでもうまく機能するか」を検証する必要がある。</li>
+<li><strong>工夫内容</strong>:
+<ul>
+<li><strong>文書画像</strong>と<strong>自然画像</strong>を含む <strong>5つのマルチモーダルベンチマーク</strong>で評価<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</li>
+</ul>
+</li>
+<li><strong>効果</strong>:
+<ul>
+<li>ドメインの異なるタスクでも、<strong>計算削減と性能維持の両立</strong>が示された。</li>
+</ul>
+</li>
+</ul>
+<h2 id="実験">実験</h2>
+<p>CARES の<strong>行った実験</strong>と<strong>実験結果</strong>を、設定と結果に分けてまとめます。</p>
+<h3 id="1-実験設定何をどう評価したか">1. 実験設定（何をどう評価したか）</h3>
+<p><strong>(1) 使用ベンチマーク</strong>
+CARES は、<strong>文書画像</strong>と<strong>自然画像</strong>を含む <strong>5つのマルチモーダルベンチマーク</strong>で評価されています<a href="https://arxiv.org/abs/2510.19496">arXiv</a>。</p>
+<p>GitHubリポジトリによると、具体的には以下のベンチマークが使用されています<a href="https://github.com/mkimhi/CARES">GitHub</a>。</p>
+<ul>
+<li><strong>TextVQA</strong>（自然画像＋テキストを含む画像に対するQA）</li>
+<li><strong>DocVQA</strong>（文書画像に対するQA）</li>
+<li><strong>ChartQA</strong>（チャート・グラフ画像に対するQA）</li>
+<li><strong>InfographicVQA</strong>（インフォグラフィック画像に対するQA）</li>
+<li><strong>HME100K</strong>（マルチモーダルQAベンチマーク）</li>
+</ul>
+<p>これらは、<strong>細かい文字認識が必要な文書系</strong>と、<strong>自然画像のシーン理解</strong>の両方を含むため、<br>
+解像度選択の影響を多面的に評価できる設計になっています。</p>
+<p><strong>(2) ターゲットVLM（メインのVLM）</strong>
+CARES は<strong>前処理モジュール</strong>として設計されているため、<br>
+複数のターゲットVLMに対して適用して評価されています<a href="https://github.com/mkimhi/CARES">GitHub</a>。</p>
+<ul>
+<li><strong>HuggingFaceTB/SmolVLM-256M-Instruct</strong></li>
+<li><strong>HuggingFaceTB/SmolVLM-500M-Instruct</strong></li>
+<li><strong>IBM Granite-Docling</strong></li>
+</ul>
+<p>これらは、<strong>比較的軽量なVLM</strong>から<strong>文書特化型VLM</strong>までを含み、<br>
+CARES の汎用性（さまざまなVLMの前段に使えるか）を検証する意図があります。</p>
+<p><strong>(3) 評価指標</strong>
+主な評価指標は次の2つです<a href="https://github.com/mkimhi/CARES">GitHub</a>。</p>
+<ol>
+<li>
+<p><strong>質問回答精度（Question answering accuracy）</strong></p>
+<ul>
+<li>各ベンチマークの標準的なQA精度指標（例：TextVQAのAccなど）</li>
+<li>CARES を挟んだ場合に、<strong>フル解像度ベースラインと比べて精度がどの程度維持されるか</strong>を評価。</li>
+</ul>
+</li>
+<li>
+<p><strong>平均解像度処理量（Average resolution processing）</strong></p>
+<ul>
+<li>CARES が選択した解像度に基づき、<br>
+実際にターゲットVLMが処理した<strong>画像解像度の平均値</strong>や、<br>
+それに対応する<strong>計算量（FLOPsやトークン数）</strong> を評価。</li>
+<li>これにより、<strong>どれだけ計算を削減できたか</strong>を定量化。</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-実験結果何が示されたか">2. 実験結果（何が示されたか）</h3>
+<p><strong>(1) 計算効率の大幅な改善</strong></p>
+<ul>
+<li>
+<p><strong>平均解像度処理量を最大80%削減</strong><br>
+CARES を挟むことで、ターゲットVLMが処理する画像解像度（および対応する計算量）を<br>
+<strong>最大80%削減</strong>できたことが報告されています<a href="https://arxiv.org/abs/2510.19496">arXiv</a><a href="https://github.com/mkimhi/CARES">GitHub</a>。</p>
+</li>
+<li>
+<p>これは、<strong>視覚トークン数が入力の97〜99%を占める</strong>という事実を踏まえると、<br>
+非常に大きな改善です。</p>
+</li>
+</ul>
+<p><strong>(2) タスク性能のほぼ維持</strong></p>
+<ul>
+<li>
+<p><strong>質問回答精度をフル解像度ベースラインの1%以内に維持</strong><br>
+CARES を挟んだ場合でも、<br>
+<strong>QA精度がフル解像度で処理した場合と比べて1%以内の誤差に収まる</strong>ことが示されています<a href="https://github.com/mkimhi/CARES">GitHub</a>。</p>
+</li>
+<li>
+<p>つまり、<strong>計算コストを大幅に削減しつつ、タスク性能はほぼ変わらない</strong>という結果です。</p>
+</li>
+</ul>
+<p><strong>(3) ベンチマーク・ターゲットVLMにわたる一貫性</strong></p>
+<ul>
+<li>
+<p>上記の傾向は、</p>
+<ul>
+<li><strong>文書系（DocVQA, ChartQA, InfographicVQA）</strong></li>
+<li><strong>自然画像系（TextVQA, HME100K）</strong><br>
+の両方で確認されています<a href="https://github.com/mkimhi/CARES">GitHub</a>。</li>
+</ul>
+</li>
+<li>
+<p>また、<strong>SmolVLM系</strong>と<strong>IBM Granite-Docling</strong>といった異なるターゲットVLMに対しても、<br>
+同様に<strong>計算削減と性能維持</strong>が確認されており、<br>
+CARES が<strong>汎用的な前処理モジュール</strong>として機能することが示されています。</p>
+</li>
+</ul>
+<h3 id="3-まとめ実験と結果の要点">3. まとめ：実験と結果の要点</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ベンチマーク</strong></td>
+<td>TextVQA, DocVQA, ChartQA, InfographicVQA, HME100K（文書＋自然画像）</td>
+</tr>
+<tr>
+<td><strong>ターゲットVLM</strong></td>
+<td>SmolVLM-256M-Instruct, SmolVLM-500M-Instruct, IBM Granite-Docling</td>
+</tr>
+<tr>
+<td><strong>評価指標</strong></td>
+<td>QA精度、平均解像度処理量（≒計算量）</td>
+</tr>
+<tr>
+<td><strong>主な結果</strong></td>
+<td>平均解像度処理量を最大80%削減しつつ、QA精度をフル解像度ベースラインの1%以内に維持</td>
+</tr>
+<tr>
+<td><strong>結論</strong></td>
+<td>CARES は、多様なVLMとベンチマークにおいて、<strong>計算効率を大幅に改善しつつタスク性能をほぼ維持できる</strong></td>
+</tr>
+</tbody>
+</table>
+<p>このように、CARES は <strong>「常に高解像度で処理する」という非効率な現状</strong> に対し、<br>
+<strong>コンテキスト依存の解像度選択</strong>によって、<br>
+<strong>計算量を最大80%削減しつつ、QA精度をほぼ維持する</strong>ことを実験的に示しています<a href="https://arxiv.org/abs/2510.19496">arXiv</a><a href="https://github.com/mkimhi/CARES">GitHub</a>。</p>
+<p>これも実験の結果と言えるでしょうか。
+サイズや質問に対する解像度が異なる画像を入力して、うまく解答できるようになったというものです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\18_CARES_acl\1782516819283.png" alt="1782516819283"></p>
+<p>ちょっと面白かったのは、実験結果ですが、ほとんどすべて&quot;Ours&quot;が上回るというような結果ではないということです。
+精度は維持程度だが、計算コスト低減という、嬉しいは嬉しいけど、精度だともっと嬉しいのにという結果を載せていることです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\18_CARES_acl\1782517201338.png" alt="1782517201338"></p>
+<h2 id="総括">総括</h2>
+<h3 id="結果要旨">結果要旨</h3>
+<p><strong>1. 計算効率の大幅改善</strong></p>
+<ul>
+<li><strong>平均解像度処理量（≒計算量）を最大80%削減</strong><br>
+CARES を挟むことで、ターゲットVLMが処理する画像解像度（および対応する計算量）を大幅に削減できた<a href="https://arxiv.org/abs/2510.19496">arXiv</a><a href="https://github.com/mkimhi/CARES">GitHub</a>。</li>
+<li>これは、<strong>視覚トークンが入力の97〜99%を占める</strong>という事実を踏まえると、非常に大きな改善です。</li>
+</ul>
+<p><strong>2. タスク性能のほぼ維持</strong></p>
+<ul>
+<li><strong>質問回答精度をフル解像度ベースラインの1%以内に維持</strong><br>
+CARES を挟んだ場合でも、QA精度がフル解像度で処理した場合と比べて<strong>1%以内の誤差に収まる</strong>ことが示されている<a href="https://github.com/mkimhi/CARES">GitHub</a>。</li>
+<li>つまり、<strong>計算コストを大幅に削減しつつ、タスク性能はほぼ変わらない</strong>という結果です。</li>
+</ul>
+<p><strong>3. ベンチマーク・ターゲットVLMにわたる一貫性</strong></p>
+<ul>
+<li><strong>文書系（DocVQA, ChartQA, InfographicVQA）</strong> と<strong>自然画像系（TextVQA, HME100K）</strong> の両方で、同様の傾向が確認されている<a href="https://github.com/mkimhi/CARES">GitHub</a>。</li>
+<li><strong>SmolVLM系</strong>と<strong>IBM Granite-Docling</strong>といった異なるターゲットVLMに対しても、<br>
+<strong>計算削減と性能維持</strong>が一貫して確認されており、<br>
+CARES が<strong>汎用的な前処理モジュール</strong>として機能することが示されています。</li>
+</ul>
+<p><strong>4. 実験結果の位置づけ</strong></p>
+<ul>
+<li>論文の結果は、「<strong>精度で他手法を大きく上回る</strong>」というより、<br>
+<strong>「精度をほぼ維持したまま、計算コストを大幅に削減できる」</strong> という<strong>効率改善型</strong>の成果です。</li>
+<li>そのため、図表では「Oursがすべての指標で圧倒」というより、<br>
+<strong>計算量削減と精度維持のトレードオフ</strong>が強調されています。</li>
+</ul>
+<h3 id="一言でまとめると">一言でまとめると</h3>
+<p>CARES は、<strong>「画像＋質問に応じて必要な解像度を選ぶ」</strong> ことで、<strong>計算量を最大80%削減しつつ、QA精度をほぼ維持できる</strong>ことを、複数のベンチマークとターゲットVLMで示した研究でした<a href="https://arxiv.org/abs/2510.19496">arXiv</a><a href="https://github.com/mkimhi/CARES">GitHub</a>。</p>
+<p>途中までは精度上がるんじゃないかと思っていたら、計算コストを抑えるという結論だったという。。。
+そう簡単にうまくはいかないか・・・。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
