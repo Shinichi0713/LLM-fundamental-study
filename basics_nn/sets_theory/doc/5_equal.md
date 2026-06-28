@@ -896,4 +896,4 @@ __問題10（総合）__
    - 一方、包含写像 $x \mapsto \{x\}$ は単射 $X \to \mathcal{P}(X)$ を与えるので $|X| \leq |\mathcal{P}(X)|$。  
    - 全射がないため $|X| \neq |\mathcal{P}(X)|$、したがって $|X| < |\mathcal{P}(X)|$。
   
-
+<div style="page-break-before:always"></div>

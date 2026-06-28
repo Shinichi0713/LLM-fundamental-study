@@ -1093,4 +1093,4 @@ __(4) 巨大基数公理と CH の関係__
 - CH の真偽は、巨大基数公理とは独立に選択できる追加公理として扱われる。
 
 
-
+<div style="page-break-before:always"></div>

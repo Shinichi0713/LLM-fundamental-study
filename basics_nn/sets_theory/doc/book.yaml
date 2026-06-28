@@ -1,0 +1,16 @@
+# 結合結果となるMarkdownファイル名（拡張子含む）
+merged-file-name: "merged_output.md"
+
+# 結合するMarkdownのリスト。margeMD.pyスクリプトから相対パスで記述（拡張子含む）
+md-files:
+  - 0_prewritten.md
+  - 1_set.md
+  - 2_power_sets.md
+  - 3_indexed_set.md
+  - 4_quivalent.md
+  - 5_equal.md
+  - 6_order_set.md
+  - 7_arranged_set.md
+  - 8_lemma_well_ordered.md
+  - 9_ordered_number.md
+  - 10_base_density.md
