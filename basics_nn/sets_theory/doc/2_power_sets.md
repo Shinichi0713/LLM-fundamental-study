@@ -1057,3 +1057,4 @@ R は一般に反射律・対称律・推移律のいずれも満たさない。
 
 
 
+<div style="page-break-before:always"></div>

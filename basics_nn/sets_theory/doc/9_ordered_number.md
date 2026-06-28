@@ -1495,3 +1495,5 @@ __問10（整列集合の比較定理）__
 - よって3つの場合のいずれかが成り立つ。
 
 
+
+<div style="page-break-before:always"></div>
