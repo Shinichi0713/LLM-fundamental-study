@@ -95,7 +95,8 @@ def latex_to_png(latex_code, dpi=120, img_dir="math_images", display_mode=True):
         with open(magick_log_path, "w") as magick_log_file:
             # 修正後：-trim と +repage を追加して余白を完全に削ぎ落とす
             result_magick = subprocess.run(
-                ["magick", "-density", str(dpi), pdf_path, "-trim", "+repage", png_path],
+                # ["magick", "-density", str(dpi), pdf_path, "-trim", "+repage", png_path],
+                ["magick", "-density", str(dpi), pdf_path, png_path],
                 stdout=magick_log_file,
                 stderr=magick_log_file
             )

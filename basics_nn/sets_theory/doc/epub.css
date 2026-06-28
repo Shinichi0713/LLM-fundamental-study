@@ -70,20 +70,29 @@ img.math-inline {
 /* 3. 一行独立（ディスプレイ）数式の配置・サイズ設定 */
 div.math-display-container {
     text-align: center !important;
-    margin: 1.5em 0 !important;
+    margin: 1.0em 0 !important;        /* 上下の余白を少しスマートに */
     padding: 0 !important;
     width: 100% !important;
     page-break-inside: avoid !important;
 }
 
-img.math-display {
+img.math-display, .math-display {
     display: inline-block !important;
-    width: auto !important;             /* 数式本来の横幅を維持 */
-    max-width: 90% !important;          /* 画面からはみ出る場合のみ自動縮小 */
+    
+    /* 1. まずは画像本来のサイズ（解像度通り）で一度引き出す */
+    width: auto !important;
     height: auto !important;
+    max-width: 90% !important;          /* 画面はみ出し防止 */
+    
+    /* 2. 【最重要】ここでお好みの比率に一律縮小する（例: 元の大きさの 75% に縮小） */
+    transform: scale(0.6) !important;
+    
+    /* 3. 縮小によって生じる周囲の余計な空白を詰める（必要に応じて） */
+    transform-origin: center center;
+    
     margin: 0 auto !important;
+    padding: 0 !important;
 }
-
 /* ==========================================
    その他装飾設定
 ========================================== */
