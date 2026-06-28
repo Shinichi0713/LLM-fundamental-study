@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x56de;&#x5e30;&#x554f;&#x984c;&#x306b;&#x5909;&#x66f4;&#x3059;&#x308b;&#x30ad;&#x30fc;&#x30dd;&#x30a4;&#x30f3;&#x30c8;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/10/02/000000">Gridの座標予測問題</a>を続けています。
+Gridの座標予測モデルについて、<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/04/000000">前回まで分類問題</a>として解こうとしていたものを、今度は回帰問題として解いていこうと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>座標予測を回帰予測の問題として改めて解きなおす+データ生成のコード実装</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="回帰問題に変更するキーポイント">回帰問題に変更するキーポイント</h2>
+<p>以下に、今回の「5×5グリッドから黒マスの位置を予測する」タスクを<strong>回帰予測（座標回帰）</strong> に変更する際に必要な修正点を、コードの各パートごとに整理して説明します。</p>
+<h3 id="1-モデル定義の変更">1. モデル定義の変更</h3>
+<p><strong>1.1 出力次元の変更</strong></p>
+<ul>
+<li><strong>現状（分類）</strong>：
+<ul>
+<li>出力は25クラス（0〜24）のロジット。</li>
+<li><code>num_classes = GRID_SIZE * GRID_SIZE = 25</code></li>
+</ul>
+</li>
+<li><strong>回帰に変更</strong>：
+<ul>
+<li>出力は <code>(row, col)</code> の2次元ベクトル。</li>
+<li>最終層の出力ユニット数を2に変更します。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># 変更前（分類）</span>
+self.fc2 = nn.Linear(<span class="hljs-number">128</span>, num_classes)  <span class="hljs-comment"># 25クラス</span>
+
+<span class="hljs-comment"># 変更後（回帰）</span>
+self.fc2 = nn.Linear(<span class="hljs-number">128</span>, <span class="hljs-number">2</span>)  <span class="hljs-comment"># (row, col) の2次元</span>
+</code></pre>
+<p><strong>1.2 出力のスケーリング</strong></p>
+<ul>
+<li>モデル出力を <code>[0, GRID_SIZE-1]</code> の範囲に収めるため、<br>
+<code>sigmoid</code> や <code>tanh</code> でスケーリングするのが一般的です。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+    x = self.conv_layers(x)
+    x = x.view(x.size(<span class="hljs-number">0</span>), -<span class="hljs-number">1</span>)
+    x = F.relu(self.fc1(x))
+    coords = torch.sigmoid(self.fc2(x)) * (GRID_SIZE - <span class="hljs-number">1</span>)  <span class="hljs-comment"># [0,1] → [0,4]</span>
+    <span class="hljs-keyword">return</span> coords
+</code></pre>
+<p><strong>キーポイント</strong>：</p>
+<ul>
+<li><code>sigmoid</code> で [0,1] に収め、<code>(GRID_SIZE-1)</code> を掛けることで [0,4] に変換。</li>
+<li>あるいは <code>tanh</code> で [-1,1] → [0,4] に変換する方法もあります。</li>
+</ul>
+<h3 id="2-損失関数の変更">2. 損失関数の変更</h3>
+<p><strong>2.1 CrossEntropyLoss → 回帰用Loss</strong></p>
+<ul>
+<li><strong>現状（分類）</strong>：
+<ul>
+<li><code>criterion = nn.CrossEntropyLoss()</code></li>
+</ul>
+</li>
+<li><strong>回帰に変更</strong>：
+<ul>
+<li><code>MSE Loss</code> や <code>SmoothL1Loss</code> など、連続値の誤差を測る損失関数を使用します。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># 変更前</span>
+criterion = nn.CrossEntropyLoss()
+
+<span class="hljs-comment"># 変更後（例）</span>
+criterion = nn.MSELoss()  <span class="hljs-comment"># または nn.SmoothL1Loss()</span>
+</code></pre>
+<p><strong>キーポイント</strong>：</p>
+<ul>
+<li><code>MSE Loss</code> は外れ値に敏感ですが、学習が速い場合があります。</li>
+<li><code>SmoothL1Loss</code> は外れ値に頑健で、勾配爆発を抑制しやすいです。</li>
+</ul>
+<h3 id="3-データローダーラベル形式の変更">3. データローダー（ラベル形式）の変更</h3>
+<p><strong>3.1 ラベルの形式変更</strong></p>
+<ul>
+<li><strong>現状（分類）</strong>：
+<ul>
+<li>ラベルはクラスID（0〜24）の整数。</li>
+<li><code>class_id = row * 5 + col</code></li>
+</ul>
+</li>
+<li><strong>回帰に変更</strong>：
+<ul>
+<li>ラベルは <code>(row, col)</code> の浮動小数点数テンソル。</li>
+<li>例：<code>torch.tensor([row, col], dtype=torch.float32)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Datasetクラスの修正例</strong>：</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, idx</span>):
+    <span class="hljs-comment"># 画像読み込み（既存と同じ）</span>
+    img_path = os.path.join(self.img_dir, self.annotations[idx][<span class="hljs-string">&quot;file_name&quot;</span>])
+    image = Image.<span class="hljs-built_in">open</span>(img_path).convert(<span class="hljs-string">&quot;L&quot;</span>)
+
+    <span class="hljs-comment"># ラベル取得（回帰用に変更）</span>
+    row = self.annotations[idx][<span class="hljs-string">&quot;black_cell_row&quot;</span>]
+    col = self.annotations[idx][<span class="hljs-string">&quot;black_cell_col&quot;</span>]
+    label = torch.tensor([row, col], dtype=torch.float32)  <span class="hljs-comment"># 2次元ベクトル</span>
+
+    <span class="hljs-keyword">if</span> self.transform:
+        image = self.transform(image)
+
+    <span class="hljs-keyword">return</span> image, label
+</code></pre>
+<p><strong>キーポイント</strong>：</p>
+<ul>
+<li>ラベルを <code>float32</code> にすることで、回帰損失（MSEなど）と互換性を持たせます。</li>
+</ul>
+<h3 id="4-学習ループの変更">4. 学習ループの変更</h3>
+<p><strong>4.1 損失計算部分の変更</strong></p>
+<ul>
+<li><strong>現状（分類）</strong>：
+<ul>
+<li><code>loss = criterion(outputs, labels)</code>（labelsは整数）</li>
+</ul>
+</li>
+<li><strong>回帰に変更</strong>：
+<ul>
+<li><code>loss = criterion(outputs, labels)</code>（labelsは2次元ベクトル）</li>
+</ul>
+</li>
+</ul>
+<p><strong>変更はほぼ不要</strong>ですが、<code>outputs</code> と <code>labels</code> の形状が一致していることを確認します。</p>
+<pre><code class="language-python">outputs = model(images)        <span class="hljs-comment"># shape: (batch_size, 2)</span>
+labels = labels.to(device)     <span class="hljs-comment"># shape: (batch_size, 2)</span>
+loss = criterion(outputs, labels)
+</code></pre>
+<p><strong>4.2 精度計算の変更（任意）</strong></p>
+<ul>
+<li>回帰タスクでは「正解/不正解」よりも「距離」が重要です。</li>
+<li>例：L1距離やL2距離を計算し、平均誤差を表示します。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># 例：L1距離（マンハッタン距離）の計算</span>
+diff = torch.<span class="hljs-built_in">abs</span>(outputs - labels)  <span class="hljs-comment"># shape: (batch_size, 2)</span>
+l1_dist = diff.<span class="hljs-built_in">sum</span>(dim=<span class="hljs-number">1</span>).mean().item()  <span class="hljs-comment"># バッチ平均のL1距離</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch [<span class="hljs-subst">{epoch+<span class="hljs-number">1</span>}</span>/<span class="hljs-subst">{num_epochs}</span>], Loss: <span class="hljs-subst">{epoch_loss:<span class="hljs-number">.4</span>f}</span>, L1 Dist: <span class="hljs-subst">{l1_dist:<span class="hljs-number">.4</span>f}</span>&quot;</span>)
+</code></pre>
+<h3 id="5-推論コードの変更">5. 推論コードの変更</h3>
+<p><strong>5.1 予測値の取得方法の変更</strong></p>
+<ul>
+<li><strong>現状（分類）</strong>：
+<ul>
+<li><code>_, predicted = torch.max(outputs, 1)</code> でクラスIDを取得し、<br>
+<code>row = class_id // 5</code>, <code>col = class_id % 5</code> で座標に変換。</li>
+</ul>
+</li>
+<li><strong>回帰に変更</strong>：
+<ul>
+<li>モデル出力そのものが <code>(row, col)</code> の近似値です。</li>
+<li>必要に応じて四捨五入やクリップを行います。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict_black_cell_regression</span>(<span class="hljs-params">model, image, transform, device</span>):
+    model.<span class="hljs-built_in">eval</span>()
+    image_tensor = transform(image).unsqueeze(<span class="hljs-number">0</span>).to(device)
+
+    <span class="hljs-keyword">with</span> torch.no_grad():
+        outputs = model(image_tensor)  <span class="hljs-comment"># shape: (1, 2)</span>
+        coords = outputs.squeeze().cpu().numpy()  <span class="hljs-comment"># [row_pred, col_pred]</span>
+
+    <span class="hljs-comment"># 四捨五入して整数座標に変換（0〜4の範囲にクリップ）</span>
+    row_pred = <span class="hljs-built_in">int</span>(np.clip(<span class="hljs-built_in">round</span>(coords[<span class="hljs-number">0</span>]), <span class="hljs-number">0</span>, GRID_SIZE - <span class="hljs-number">1</span>))
+    col_pred = <span class="hljs-built_in">int</span>(np.clip(<span class="hljs-built_in">round</span>(coords[<span class="hljs-number">1</span>]), <span class="hljs-number">0</span>, GRID_SIZE - <span class="hljs-number">1</span>))
+
+    <span class="hljs-keyword">return</span> row_pred, col_pred
+</code></pre>
+<p><strong>キーポイント</strong>：</p>
+<ul>
+<li><code>round</code> で最も近い整数に丸め、<code>np.clip</code> で [0,4] の範囲に収めます。</li>
+<li>これにより、分類タスクと同様に「整数座標」として評価できます。</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>今回は回帰用の学習データセットを生成するコードを実装していきます。
+既存の「分類用データ生成コード」をベースに、<strong>ラベルを (row, col) の2次元ベクトル形式</strong>で保存するように実装しています。</p>
+<h3 id="1-必要なライブラリのインポート">1. 必要なライブラリのインポート</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image, ImageDraw
+</code></pre>
+<h3 id="2-グリッド設定とグリッド線描画関数">2. グリッド設定とグリッド線描画関数</h3>
+<pre><code class="language-python"><span class="hljs-comment"># 画像サイズとグリッド設定</span>
+GRID_SIZE = <span class="hljs-number">5</span>
+CELL_SIZE = <span class="hljs-number">64</span>
+IMG_SIZE = GRID_SIZE * CELL_SIZE
+LINE_WIDTH = <span class="hljs-number">2</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">draw_grid_lines</span>(<span class="hljs-params">img, grid_size=GRID_SIZE, cell_size=CELL_SIZE, line_width=LINE_WIDTH</span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    画像にグリッド線（黒枠）を描画する
+    &quot;&quot;&quot;</span>
+    draw = ImageDraw.Draw(img)
+    img_width, img_height = img.size
+
+    <span class="hljs-comment"># 縦線（列の境界）</span>
+    <span class="hljs-keyword">for</span> col <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, grid_size):
+        x = col * cell_size
+        draw.line([(x, <span class="hljs-number">0</span>), (x, img_height)], fill=<span class="hljs-number">0</span>, width=line_width)
+
+    <span class="hljs-comment"># 横線（行の境界）</span>
+    <span class="hljs-keyword">for</span> row <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, grid_size):
+        y = row * cell_size
+        draw.line([(<span class="hljs-number">0</span>, y), (img_width, y)], fill=<span class="hljs-number">0</span>, width=line_width)
+
+    <span class="hljs-comment"># 外枠</span>
+    draw.rectangle([<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, img_width - <span class="hljs-number">1</span>, img_height - <span class="hljs-number">1</span>], outline=<span class="hljs-number">0</span>, width=line_width)
+    <span class="hljs-keyword">return</span> img
+</code></pre>
+<h3 id="3-1枚の画像とラベルを生成する関数回帰用">3. 1枚の画像とラベルを生成する関数（回帰用）</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_single_black_cell_image_and_label</span>():
+    <span class="hljs-string">&quot;&quot;&quot;
+    5x5グリッドからランダムに1マスだけ黒く塗った画像を生成し、
+    そのマスの座標（行, 列）を返す（回帰用：ラベルは (row, col) の浮動小数点数）
+    &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># 白いキャンバス（グレースケール画像）</span>
+    img_array = np.full((IMG_SIZE, IMG_SIZE), <span class="hljs-number">255</span>, dtype=np.uint8)
+
+    <span class="hljs-comment"># ランダムに1マスを選ぶ（0〜4の範囲）</span>
+    row = random.randint(<span class="hljs-number">0</span>, GRID_SIZE - <span class="hljs-number">1</span>)
+    col = random.randint(<span class="hljs-number">0</span>, GRID_SIZE - <span class="hljs-number">1</span>)
+
+    <span class="hljs-comment"># 選んだマスを黒く塗る</span>
+    y_start = row * CELL_SIZE
+    y_end = (row + <span class="hljs-number">1</span>) * CELL_SIZE
+    x_start = col * CELL_SIZE
+    x_end = (col + <span class="hljs-number">1</span>) * CELL_SIZE
+
+    img_array[y_start:y_end, x_start:x_end] = <span class="hljs-number">0</span>  <span class="hljs-comment"># 黒=0</span>
+
+    <span class="hljs-comment"># PIL Imageに変換</span>
+    img = Image.fromarray(img_array, mode=<span class="hljs-string">&#x27;L&#x27;</span>)  <span class="hljs-comment"># &#x27;L&#x27; = 8bitグレースケール</span>
+
+    <span class="hljs-comment"># グリッド線を描画（任意：必要に応じてコメントアウト）</span>
+    img = draw_grid_lines(img)
+
+    <span class="hljs-comment"># ラベルは (row, col) の浮動小数点数（回帰用）</span>
+    label = (<span class="hljs-built_in">float</span>(row), <span class="hljs-built_in">float</span>(col))
+
+    <span class="hljs-keyword">return</span> img, label
+</code></pre>
+<p><strong>ポイント</strong>：</p>
+<ul>
+<li>ラベルを <code>(float(row), float(col))</code> とすることで、回帰損失（MSEなど）と互換性を持たせています。</li>
+<li>グリッド線の描画は任意です（学習データと推論データで一貫させてください）。</li>
+</ul>
+<h3 id="4-データセット全体を生成する関数回帰用">4. データセット全体を生成する関数（回帰用）</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_regression_dataset</span>(<span class="hljs-params">num_images=<span class="hljs-number">100</span>, output_dir=<span class="hljs-string">&quot;regression_dataset&quot;</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    指定枚数分の画像とannotationファイルを生成する（回帰用）
+    - 画像：5x5グリッドに1マスだけ黒く塗った画像
+    - ラベル：黒マスの座標 (row, col) を浮動小数点数で保存
+    &quot;&quot;&quot;</span>
+    os.makedirs(output_dir, exist_ok=<span class="hljs-literal">True</span>)
+
+    annotations = []
+
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_images):
+        <span class="hljs-comment"># 1枚の画像とラベルを生成</span>
+        img, (row, col) = generate_single_black_cell_image_and_label()
+
+        <span class="hljs-comment"># 画像保存</span>
+        img_path = os.path.join(output_dir, <span class="hljs-string">f&quot;img_<span class="hljs-subst">{i:04d}</span>.png&quot;</span>)
+        img.save(img_path)
+
+        <span class="hljs-comment"># annotation情報を記録（回帰用：row, col を浮動小数点数で保存）</span>
+        annotations.append({
+            <span class="hljs-string">&quot;image_id&quot;</span>: i,
+            <span class="hljs-string">&quot;file_name&quot;</span>: <span class="hljs-string">f&quot;img_<span class="hljs-subst">{i:04d}</span>.png&quot;</span>,
+            <span class="hljs-string">&quot;black_cell_row&quot;</span>: row,
+            <span class="hljs-string">&quot;black_cell_col&quot;</span>: col
+        })
+
+    <span class="hljs-comment"># annotationをテキストファイルに保存（CSV形式）</span>
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(os.path.join(output_dir, <span class="hljs-string">&quot;annotations.txt&quot;</span>), <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">as</span> f:
+        f.write(<span class="hljs-string">&quot;image_id,file_name,black_cell_row,black_cell_col\n&quot;</span>)
+        <span class="hljs-keyword">for</span> ann <span class="hljs-keyword">in</span> annotations:
+            f.write(<span class="hljs-string">f&quot;<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;image_id&#x27;</span>]}</span>,<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;file_name&#x27;</span>]}</span>,<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;black_cell_row&#x27;</span>]}</span>,<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;black_cell_col&#x27;</span>]}</span>\n&quot;</span>)
+
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Generated <span class="hljs-subst">{num_images}</span> regression images and annotations in &#x27;<span class="hljs-subst">{output_dir}</span>/&#x27;&quot;</span>)
+</code></pre>
+<p><strong>ポイント</strong>：</p>
+<ul>
+<li><code>annotations.txt</code> の形式は分類用とほぼ同じですが、<code>black_cell_row</code> と <code>black_cell_col</code> が<strong>浮動小数点数</strong>として保存されます。</li>
+<li>これにより、回帰モデルが <code>(row, col)</code> を直接学習できるようになります。</li>
+</ul>
+<h3 id="5-実行例">5. 実行例</h3>
+<pre><code class="language-python"><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    <span class="hljs-comment"># 例：100枚の回帰用データセットを生成</span>
+    generate_regression_dataset(num_images=<span class="hljs-number">100</span>, output_dir=<span class="hljs-string">&quot;regression_dataset&quot;</span>)
+</code></pre>
+<p><strong>出力例</strong>：</p>
+<pre><code>Generated 100 regression images and annotations in 'regression_dataset/'
+</code></pre>
+<p><code>regression_dataset/annotations.txt</code> の一部：</p>
+<pre><code class="language-text">image_id,file_name,black_cell_row,black_cell_col
+0,img_0000.png,2.0,4.0
+1,img_0001.png,0.0,1.0
+2,img_0002.png,3.0,2.0
+...
+</code></pre>
+<h3 id="6-次のステップ回帰モデル用datasetクラスの例">6. 次のステップ（回帰モデル用Datasetクラスの例）</h3>
+<p>回帰用データセットを読み込む <code>Dataset</code> クラスの例も簡単に示します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GridRegressionDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, annotations_file, img_dir, transform=<span class="hljs-literal">None</span></span>):
+        self.img_dir = img_dir
+        self.transform = transform
+        self.annotations = []
+
+        <span class="hljs-comment"># annotationファイルを読み込み</span>
+        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(annotations_file, <span class="hljs-string">&quot;r&quot;</span>) <span class="hljs-keyword">as</span> f:
+            lines = f.readlines()[<span class="hljs-number">1</span>:]  <span class="hljs-comment"># ヘッダーをスキップ</span>
+            <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> lines:
+                parts = line.strip().split(<span class="hljs-string">&quot;,&quot;</span>)
+                image_id = <span class="hljs-built_in">int</span>(parts[<span class="hljs-number">0</span>])
+                file_name = parts[<span class="hljs-number">1</span>]
+                black_cell_row = <span class="hljs-built_in">float</span>(parts[<span class="hljs-number">2</span>])
+                black_cell_col = <span class="hljs-built_in">float</span>(parts[<span class="hljs-number">3</span>])
+                self.annotations.append({
+                    <span class="hljs-string">&quot;image_id&quot;</span>: image_id,
+                    <span class="hljs-string">&quot;file_name&quot;</span>: file_name,
+                    <span class="hljs-string">&quot;black_cell_row&quot;</span>: black_cell_row,
+                    <span class="hljs-string">&quot;black_cell_col&quot;</span>: black_cell_col
+                })
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.annotations)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, idx</span>):
+        <span class="hljs-comment"># 画像読み込み</span>
+        img_path = os.path.join(self.img_dir, self.annotations[idx][<span class="hljs-string">&quot;file_name&quot;</span>])
+        image = Image.<span class="hljs-built_in">open</span>(img_path).convert(<span class="hljs-string">&quot;L&quot;</span>)
+
+        <span class="hljs-comment"># ラベル取得（回帰用：2次元ベクトル）</span>
+        row = self.annotations[idx][<span class="hljs-string">&quot;black_cell_row&quot;</span>]
+        col = self.annotations[idx][<span class="hljs-string">&quot;black_cell_col&quot;</span>]
+        label = torch.tensor([row, col], dtype=torch.float32)
+
+        <span class="hljs-keyword">if</span> self.transform:
+            image = self.transform(image)
+
+        <span class="hljs-keyword">return</span> image, label
+</code></pre>
+<p><strong>ポイント</strong>：</p>
+<ul>
+<li><code>label</code> を <code>torch.tensor([row, col], dtype=torch.float32)</code> として返すことで、<br>
+回帰モデル（MSE Lossなど）と互換性を持たせています。</li>
+</ul>
+<h3 id="7-動作チェック">7. 動作チェック</h3>
+<p>ランダムにデータ生成して、画像とペアとなる座標を出力してみました。
+思った通りの状態になっています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\cnn\grid_cnn\image\4_cnn_regressive\1782623516474.png" alt="1782623516474"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\cnn\grid_cnn\image\4_cnn_regressive\1782623529587.png" alt="1782623529587"></p>
+<h3 id="総括">総括</h3>
+<p>問題を回帰問題として設定しなおした上で、データ生成の実装を行いました。</p>
+<ul>
+<li><strong>出力次元と損失関数を回帰用に変更</strong>し、</li>
+<li><strong>ラベルを (row, col) の浮動小数点数形式に統一</strong>し、</li>
+<li><strong>学習・推論で座標ベクトルを直接扱う</strong>ことで、<br>
+分類タスクから「座標回帰タスク」へとスムーズに移行できます。</li>
+</ul>
+<p>回帰モデルでは「どのクラスか」ではなく「どの座標か」を直接学習するため、</p>
+<ul>
+<li>グリッドサイズが大きくなっても出力次元は常に2で済む</li>
+<li>連続的な位置の曖昧さ（境界付近など）も扱いやすい<br>
+といった利点があります。</li>
+</ul>
+<p>次回はモデル構築と学習コードの実装を行います。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/ETzUKUZ6l8c?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
