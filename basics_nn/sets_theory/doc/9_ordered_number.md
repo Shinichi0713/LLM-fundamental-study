@@ -915,19 +915,15 @@ __形式的な記述__
 置換公理は、次のような**公理図式（axiom schema）** として与えられます。
 
 > 任意の論理式 $\varphi(x,y)$ について、次が成り立つとする：
->
-> $$
-> \forall x \forall y \forall z\ \big(\varphi(x,y) \land \varphi(x,z) \rightarrow y=z\big)
-> $$
->
+$$
+\forall x \forall y \forall z\ \big(\varphi(x,y) \land \varphi(x,z) \rightarrow y=z\big)
+$$
 > （すなわち、$\varphi$ は「各 $x$ に対して高々1つの $y$ を定める」）
 >
 > このとき、任意の集合 $A$ に対して、
->
-> $$
-> \exists B\ \forall y\ \big(y \in B \leftrightarrow \exists x \in A\ \varphi(x,y)\big)
-> $$
->
+$$
+\exists B\ \forall y\ \big(y \in B \leftrightarrow \exists x \in A\ \varphi(x,y)\big)
+$$
 > が成り立つ。
 
 言葉で言い換えると：

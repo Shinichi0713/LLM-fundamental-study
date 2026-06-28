@@ -210,15 +210,27 @@ Colab でそのまま実行できる形でまとめます。
 必要なパッケージのインストールです。
 
 ```
-# PyTorch 本体（Colab のデフォルトでも可）
-!pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+# 1. 現在のPyTorchとCUDAのバージョンを取得して環境変数に入れる
+import torch
+import os
+torch_version = torch.__version__.split('+')[0]
 
-# PyTorch Geometric 本体と依存ライブラリ
+# CUDAが利用可能ならそのバージョン、なければcpuとする
+if torch.cuda.is_available():
+    cuda_version = "cu" + torch.version.cuda.replace('.', '')
+else:
+    cuda_version = "cpu"
+
+os.environ['TORCH'] = torch_version
+os.environ['CUDA'] = cuda_version
+
+print(f"Detected PyTorch: {torch_version}, CUDA: {cuda_version}")
+!pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 !pip install torch_geometric
-!pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
 ```
 
 データをロードしていきます。
+今回通常のニューラルネットワークとは異なり`NeighborLoader`を用いたデータローダを作成します。
 
 ```python
 import torch
@@ -239,6 +251,15 @@ print(f'エッジ数: {data.num_edges}')
 print(f'特徴量次元: {data.num_node_features}')
 print(f'クラス数: {dataset.num_classes}')
 ```
+>__NeighborLoader__  
+>NeighborLoader は、PyTorch Geometric (PyG) に用意されている、巨大なグラフデータをメモリ効率よくミニバッチ学習（あるいは推論）するための非常に強力なデータローダーです。
+>通常のディープラーニングにおける DataLoader はデータを単にシャッフルして分割しますが、グラフデータではノードどうしがエッジで繋がっているため、単純にブツ切りにすると「周りのつながり（構造情報）」が消えてしまいます。
+>これを解決するのが NeighborLoader です。
+>__どんな仕組みなのか？（ノードサンプリング）__  
+>NeighborLoader は、指定されたバッチサイズ分だけノードをランダムに選び（これをルートノードと呼びます）、そのノードからエッジを逆にたどって周辺の近傍ノード（Neighbors）を芋づる式に集めて小さなサブグラフ（ミニバッチ）を作ります。
+>このとき、周辺ノードを無限に集めると結局グラフ全体が loading されてしまうため、各ステップ（ホップ）で集める上限数を設定します。
+>外側に向かって指定した数だけ「部分的に」グラフを切り出すことで、巨大なグラフの構造を壊さずに小さなデータサイズに収めていきます。結果、グラフの構造を維持したまま、メモリをクラッシュさせるほどのメモリ占有することなく、データを取り出すことが出来るということになります。
+
 
 ### 2. ミニバッチ用サンプラの準備（NeighborLoader）
 
@@ -339,9 +360,7 @@ for epoch in range(1, 51):
         print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val Acc: {val_acc:.4f}')
 ```
 
----
-
-## 6. テストセットでの評価
+### 5. テストセットでの評価
 
 学習が終わったら、テスト用サンプラで精度を確認します。
 
@@ -353,4 +372,128 @@ print(f'Test Accuracy: {test_acc:.4f}')
 - Reddit データセットでは、GCN でおおよそ 93% 前後、GraphSAGE や ClusterGCN で 95〜97% 程度の精度が報告されています[Kumo.ai PyG Guide](https://kumo.ai/pyg/datasets/reddit)。
 
 
+## 学習の結果
+
+まずは学習させた結果ですが。
+おおよそ85～86%程度の分類性能を持っていることが確認されます。
+
+```
+Epoch: 01, Loss: 1.2822, Val Acc: 0.8602
+Epoch: 05, Loss: 1.1750, Val Acc: 0.8608
+Epoch: 10, Loss: 1.1717, Val Acc: 0.8515
+Test Accuracy: 0.8512
+```
+
+ランダムにデータを取り出して分類の採点してみました。
+
+```python
+import random
+
+def test_inference_step(num_samples=10):
+    model.eval()
+    
+    # 1. 全ノードの中からランダムに10個のインデックスを選択
+    all_indices = list(range(data.num_nodes))
+    sampled_indices = random.sample(all_indices, num_samples)
+    
+    # 2. 選択したノードを起点として、小さなサブグラフをサンプリング
+    # (NeighborLoaderを内部で1ステップだけ手動で動かすイメージです)
+    single_loader = NeighborLoader(
+        data,
+        num_neighbors=[5, 3],
+        batch_size=num_samples,
+        input_nodes=torch.tensor(sampled_indices),
+        shuffle=False
+    )
+    
+    # 1バッチ分だけ取得して推論
+    batch = next(iter(single_loader))
+    batch = batch.to(device)
+    
+    with torch.no_grad():
+        out = model(batch.x, batch.edge_index)
+        preds = out.argmax(dim=-1)
+    
+    # 3. 結果の見易い表示
+    print(f"=== お試し推論 (サンプル数: {num_samples}個) ===")
+    for i in range(num_samples):
+        node_idx = sampled_indices[i]
+        true_label = int(batch.y[i])
+        pred_label = int(preds[i])
+        
+        # 正誤判定マーク
+        status = "◯ 正解" if true_label == pred_label else "× 不正解"
+        
+        print(f"サンプル [{i+1}] 元のノードID: {node_idx:6d} | 正解クラス: {true_label:2d} -> 予測: {pred_label:2d} ({status})")
+
+# 実行
+test_inference_step(num_samples=10)
+```
+
+10問中7問正解。
+test時の正解率ほどではないにせよきちんと正解を選択しています。
+
+```
+=== お試し推論 (サンプル数: 10個) ===
+サンプル [1] 元のノードID:  32121 | 正解クラス: 34 -> 予測: 34 (◯ 正解)
+サンプル [2] 元のノードID:  59787 | 正解クラス:  8 -> 予測:  8 (◯ 正解)
+サンプル [3] 元のノードID: 228462 | 正解クラス: 30 -> 予測: 19 (× 不正解)
+サンプル [4] 元のノードID:  17002 | 正解クラス: 16 -> 予測: 16 (◯ 正解)
+サンプル [5] 元のノードID:  54946 | 正解クラス:  7 -> 予測:  7 (◯ 正解)
+サンプル [6] 元のノードID:   9865 | 正解クラス:  2 -> 予測:  4 (× 不正解)
+サンプル [7] 元のノードID: 134311 | 正解クラス:  3 -> 予測:  3 (◯ 正解)
+サンプル [8] 元のノードID: 125132 | 正解クラス:  2 -> 予測:  2 (◯ 正解)
+サンプル [9] 元のノードID:  20293 | 正解クラス:  1 -> 予測:  6 (× 不正解)
+サンプル [10] 元のノードID:  13374 | 正解クラス:  8 -> 予測:  8 (◯ 正解)
+```
+
+## 今回結果の考察
+
+今回結果はずばり、高次元空間でtmap（またはt-SNE/UMAPなど）で見るとグチャグチャに混ざり合っているのに、GCNなどのGNN（グラフニューラルネットワーク）に通すと80%もの高精度で分類できる。
+
+なぜ今回の結果につながったか考察してみました。
+
+### 1. 「特徴量（Node Features）」と「構造（Topology）」の相乗効果
+
+tmapなどの次元圧縮手法が可視化しているのは、あくまで「600次元の特徴量空間における距離」だけです。つまり、「単語の出現傾向」や「プロフィールの数値」が似ているかどうかしか見ていません。
+
+しかし、GNNは以下の**2つの異なる情報源**を掛け合わせて学習します。
+
+- 600次元の「特徴量」
+- 誰と誰が繋がっているかという「エッジ（構造情報）」
+
+例えるなら、tmapで見ているのは **「趣味や見た目がなんとなく似ている人を無理やり近くに並べた図」** です。当然、見た目が似ていても全然違うコミュニティの人（クラスタの競合）が混ざるため、可視化するとグチャグチャになります。
+一方でGNNは、 **「見た目はバラバラでも、実際に毎日会話している（エッジがある）から同じコミュニティだ」という強い繋がり（構造）** を認識できるため、特徴量が重なっている以上の情報を学習できていることになります。
+
+### 2. グラフの「同質性（Homophily）」の恩恵
+
+グラフデータ、特にRedditのようなSNSや論文リンクのデータセットには、「類は友を呼ぶ（Homophily: 同質性）」という強い統計的性質があります。
+
+> **同質性（Homophily）とは**
+> 「同じクラス（カテゴリ）に属するノード同士は、エッジで繋がりやすい」という傾向。
+
+GCNConvのメッセージパッシング（層を通過する際の処理）は、数学的には **「近傍ノードの特徴量のローカルな滑らかさ（平滑化）」** を行っています。
+1ホップ、2ホップと近傍の情報を集約するプロセスにより、競合していた600次元のノード特徴量が、**「周囲の繋がっている仲間の平均的な特徴量」** へとマイルドに書き換え（リファイン）られます。これにより、特徴量空間の境界線上にいて判別が難しいノードをつながりという特徴を使って分類することにつながります。
+
+### 3. 高次元（600次元）の壁をGNNの層が解決した
+
+600次元という空間は非常に広大で、ただの距離ベースの圧縮（tmap）では「本質的に重要な10次元」と「ノイズになっている590次元」を綺麗に区別できず、クラスタが潰れてしまいがちです。
+
+しかし、今回使用したGCNの第1層：
+
+```python
+self.conv1 = GCNConv(in_channels, hidden_channels) # hidden_channels=64
+
+```
+
+ここでは、600次元の特徴量を、グラフ構造のフィルターを通しながら「本質的な64次元」へと一気に圧縮（特徴抽出）しています。
+
+GNNの畳み込み層は、単なる次元削減ではなく「つながっている隣人たちを最も綺麗に分類できるような、新しい低次元空間へのマッピング」を逆伝播（Adamオプティマイザ）によって自動で学習します。そのため、人間の目（tmap）には混ざって見えた境界線を、AIは64次元の隠れ層の中で見事に分離することに成功したと言えます。
+
+### 結論を一言でいうと
+
+> **「特徴量だけでは敵味方の区別がつかない乱戦状態（tmapの見た目）だったが、GNNが『通信記録（エッジ）』を解析したことで、誰がどの陣営（クラスタ）かが明確に判明した」**
+
+というのが、今回の80%という高い正解率の背景にあるロジックです。
+データの「繋がり」がいかに強力な情報であるかが確認できる実験結果でした。
 

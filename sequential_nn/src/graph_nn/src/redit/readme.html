@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Reddit&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>最近続けている<a href="https://yoshishinnze.hatenablog.com/entry/2026/06/25/043000">GNNの例題シリーズ</a>について話していきます。
+今回はネットワークで比較的大きなデータセットを使ってみたいということでRedditというデータセットを使ってみます。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>Redditを使った学習について取り組んでみる</p>
+</blockquote>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="redditとは">Redditとは</h2>
+<p>Reddit データセットは、<strong>大規模グラフ上での GNN のスケーラビリティを評価するための代表的なベンチマーク</strong>です。<br>
+PyTorch Geometric では <code>torch_geometric.datasets.Reddit</code> として提供されています<a href="https://pytorch-geometric.readthedocs.io/en/2.6.0/generated/torch_geometric.datasets.Reddit.html">PyTorch Geometric Docs</a>。</p>
+<h3 id="1-データセットの由来">1. データセットの由来</h3>
+<ul>
+<li>元論文：<strong>“Inductive Representation Learning on Large Graphs”</strong>（Hamilton et al., 2017）</li>
+<li>目的：大規模グラフ上で GNN を学習するための<strong>スケーラビリティ評価用ベンチマーク</strong>として設計されました。</li>
+</ul>
+<h3 id="2-グラフの構造ノードとエッジ">2. グラフの構造（ノードとエッジ）</h3>
+<ul>
+<li><strong>ノード</strong>：Reddit の投稿（post）
+<ul>
+<li>ノード数：約 <strong>232,965</strong> ノード<a href="https://kumo.ai/pyg/datasets/reddit">Kumo.ai PyG Guide</a>。</li>
+</ul>
+</li>
+<li><strong>エッジ</strong>：投稿間の「共コメント（co-comment）」関係
+<ul>
+<li>エッジ数：約 <strong>114,615,892</strong> エッジ（約 1.14 億）<a href="https://kumo.ai/pyg/datasets/reddit">Kumo.ai PyG Guide</a>。</li>
+<li>同じスレッド内で同じユーザーがコメントした投稿同士をリンクさせたものとされています。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-ノード特徴量">3. ノード特徴量</h3>
+<ul>
+<li>特徴量次元：<strong>602 次元</strong></li>
+<li>内容：各ノード（投稿）の <strong>Bag-of-Words（BoW）表現</strong>
+<ul>
+<li>投稿テキストを単語単位でベクトル化したもの（単語の出現頻度など）です<a href="https://kumo.ai/pyg/datasets/reddit">Kumo.ai PyG Guide</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-ラベルとタスク">4. ラベルとタスク</h3>
+<ul>
+<li><strong>クラス数</strong>：<strong>41 クラス</strong></li>
+<li>ラベルの意味：投稿が属する <strong>Reddit のコミュニティ（サブレディット）</strong>
+<ul>
+<li>例：<code>r/aww</code>, <code>r/funny</code>, <code>r/AskReddit</code> など、人気の高いサブレディット群。</li>
+</ul>
+</li>
+<li><strong>タスク</strong>：ノード分類（コミュニティ分類）
+<ul>
+<li>各投稿（ノード）がどのサブレディットに属するかを予測する、<strong>マルチクラス分類問題</strong>です。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-マスク学習検証テスト分割">5. マスク（学習・検証・テスト分割）</h3>
+<ul>
+<li><code>train_mask</code> / <code>val_mask</code> / <code>test_mask</code> が付与されています。</li>
+<li>それぞれ <code>[num_nodes]</code> の <code>bool</code> テンソルで、対応するノードが学習・検証・テストに使われるかを示します。</li>
+<li>タスク設定は<strong>inductive（帰納的）</strong>：
+<ul>
+<li>学習時に見たノードと、テスト時に評価するノードが明確に分かれています。</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-データセットの特徴用途">6. データセットの特徴・用途</h3>
+<ul>
+<li><strong>大規模かつスパース</strong>：
+<ul>
+<li>ノード数 23 万、エッジ数 1.1 億と非常に大きく、<strong>フルバッチ学習では GPU メモリに載りきらない</strong>ため、<br>
+GraphSAGE や ClusterGCN、GraphSAINT などの<strong>サンプリング・ミニバッチ手法</strong>の評価に適しています<a href="https://kumo.ai/pyg/datasets/reddit">Kumo.ai PyG Guide</a>。</li>
+</ul>
+</li>
+<li><strong>コミュニティ構造がはっきりしている</strong>：
+<ul>
+<li>サブレディットごとに話題が分かれているため、GNN がうまくコミュニティを捉えられれば高い精度が出やすいです。</li>
+</ul>
+</li>
+<li><strong>GNN スケーラビリティ研究の標準ベンチマーク</strong>：
+<ul>
+<li>「Reddit でうまく動く手法は、実運用レベルの大規模グラフにも応用できる」という位置づけでよく使われます<a href="https://kumo.ai/pyg/datasets/reddit">Kumo.ai PyG Guide</a>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="データの可視化">データの可視化</h2>
+<p>このデータセットですが</p>
+<ul>
+<li>非常に特徴量が多く(602次元)</li>
+<li>ラベルが多い(Reddit のコミュニティに相当で41クラス)</li>
+</ul>
+<p>ちょっとイメージが難しい面があります。</p>
+<h3 id="グラフ全体の統計情報の確認">グラフ全体の統計情報の確認</h3>
+<p>パッとデータ全貌を確認するのであれば、以下コードを実行下さい。</p>
+<pre><code class="language-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;ノード数: <span class="hljs-subst">{data.num_nodes}</span>&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;エッジ数: <span class="hljs-subst">{data.num_edges}</span>&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;特徴量次元: <span class="hljs-subst">{data.num_node_features}</span>&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;クラス数: <span class="hljs-subst">{dataset.num_classes}</span>&#x27;</span>)
+
+<span class="hljs-keyword">if</span> <span class="hljs-built_in">hasattr</span>(data, <span class="hljs-string">&#x27;train_mask&#x27;</span>):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;train_mask shape: <span class="hljs-subst">{data.train_mask.shape}</span>&#x27;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;train ノード数: <span class="hljs-subst">{data.train_mask.<span class="hljs-built_in">sum</span>().item()}</span>&#x27;</span>)
+<span class="hljs-keyword">if</span> <span class="hljs-built_in">hasattr</span>(data, <span class="hljs-string">&#x27;val_mask&#x27;</span>):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;val_mask shape: <span class="hljs-subst">{data.val_mask.shape}</span>&#x27;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;val ノード数: <span class="hljs-subst">{data.val_mask.<span class="hljs-built_in">sum</span>().item()}</span>&#x27;</span>)
+<span class="hljs-keyword">if</span> <span class="hljs-built_in">hasattr</span>(data, <span class="hljs-string">&#x27;test_mask&#x27;</span>):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;test_mask shape: <span class="hljs-subst">{data.test_mask.shape}</span>&#x27;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;test ノード数: <span class="hljs-subst">{data.test_mask.<span class="hljs-built_in">sum</span>().item()}</span>&#x27;</span>)
+
+<span class="hljs-comment"># エッジが無向か有向か</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;エッジインデックスの形状: <span class="hljs-subst">{data.edge_index.shape}</span>&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;エッジ属性の有無: <span class="hljs-subst">{<span class="hljs-built_in">hasattr</span>(data, <span class="hljs-string">&quot;edge_attr&quot;</span>)}</span>&#x27;</span>)
+</code></pre>
+<p>これにより、Reddit データセットが</p>
+<ul>
+<li>約 23 万ノード</li>
+<li>約 1.1 億エッジ</li>
+</ul>
+<p>であることが分かります<a href="https://pytorch-geometric.readthedocs.io/en/2.6.0/generated/torch_geometric.datasets.Reddit.html">PyTorch Geometric Docs</a><a href="https://kumo.ai/pyg/datasets/reddit">Kumo.ai PyG Guide</a>。</p>
+<h3 id="サブグラフの可視化networkx-を使う例">サブグラフの可視化（NetworkX を使う例）</h3>
+<p>グラフ全体は大きすぎるので、<strong>学習用ノードの一部とその近傍だけを取り出して可視化</strong>します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> networkx <span class="hljs-keyword">as</span> nx
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+<span class="hljs-comment"># 学習ノードのうち最初の 1 つを選ぶ</span>
+train_idx = data.train_mask.nonzero(as_tuple=<span class="hljs-literal">False</span>).view(-<span class="hljs-number">1</span>)
+center_node = train_idx[<span class="hljs-number">0</span>].item()
+
+<span class="hljs-comment"># 1-hop 近傍を取得（NeighborLoader の仕組みを真似る）</span>
+edge_index = data.edge_index
+center_mask = (edge_index[<span class="hljs-number">0</span>] == center_node)
+neighbors = edge_index[<span class="hljs-number">1</span>, center_mask].unique()
+
+<span class="hljs-comment"># 中心ノードとその近傍だけを含むノード集合</span>
+sub_nodes = torch.cat([torch.tensor([center_node]), neighbors])
+
+<span class="hljs-comment"># サブグラフのエッジを抽出</span>
+sub_mask = torch.isin(edge_index[<span class="hljs-number">0</span>], sub_nodes) &amp; torch.isin(edge_index[<span class="hljs-number">1</span>], sub_nodes)
+sub_edge_index = edge_index[:, sub_mask]
+
+<span class="hljs-comment"># NetworkX のグラフに変換</span>
+G = nx.Graph()
+G.add_edges_from(sub_edge_index.t().tolist())
+
+<span class="hljs-comment"># 可視化</span>
+plt.figure(figsize=(<span class="hljs-number">8</span>, <span class="hljs-number">6</span>))
+pos = nx.spring_layout(G, seed=<span class="hljs-number">42</span>)
+nx.draw(G, pos, node_size=<span class="hljs-number">50</span>, node_color=<span class="hljs-string">&#x27;lightblue&#x27;</span>, edge_color=<span class="hljs-string">&#x27;gray&#x27;</span>, width=<span class="hljs-number">0.5</span>)
+plt.title(<span class="hljs-string">f&#x27;Subgraph around training node <span class="hljs-subst">{center_node}</span>&#x27;</span>)
+plt.show()
+</code></pre>
+<ul>
+<li>これにより、ある投稿（ノード）と、その投稿にコメントした他の投稿（近傍ノード）のつながりを可視化できます。</li>
+<li>ノード数が多すぎる場合は、<code>neighbors = neighbors[:50]</code> のように近傍数を制限してください。</li>
+</ul>
+<p>かなりエッジの多い構造であることが分かります。
+これがRedditというSNSの特性かもしれません。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\src\redit\image\readme\1782529106554.png" alt="1782529106554"></p>
+<h3 id="ラベルの例">ラベルの例</h3>
+<pre><code class="language-python"><span class="hljs-comment"># 最初の 10 ノードのラベル</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;最初の 10 ノードのラベル（クラスID）:&quot;</span>)
+<span class="hljs-built_in">print</span>(data.y[:<span class="hljs-number">10</span>])
+
+<span class="hljs-comment"># 各クラスに属するノード数の分布（おおまか）</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n各クラスのノード数（上位 10 クラス）:&quot;</span>)
+unique, counts = torch.unique(data.y, return_counts=<span class="hljs-literal">True</span>)
+<span class="hljs-keyword">for</span> cls, cnt <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(unique[:<span class="hljs-number">10</span>], counts[:<span class="hljs-number">10</span>]):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;クラス <span class="hljs-subst">{cls.item()}</span>: <span class="hljs-subst">{cnt.item()}</span> ノード&quot;</span>)
+</code></pre>
+<ul>
+<li>ラベルは 0〜40 の整数で、どのサブレディット（コミュニティ）に属するかを表します。</li>
+</ul>
+<h3 id="次元圧縮">次元圧縮</h3>
+<p>次元圧縮して少しイメージしやすくなるかと期待してumapで3D散布図にしてみました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\src\redit\image\readme\1782528892651.png" alt="1782528892651"></p>
+<p>クラス0のみがかなり孤立していますが、それ以外は分離しているとは言いづらい状態です。
+特徴量のみで分類ということが難しいということが伝わるようなデータセットです。</p>
+<h2 id="実験">実験</h2>
+<p>Reddit データセットに GNN を適用して、ラベル(クラス)の実験をしてみようと思います。</p>
+<h3 id="1-reddit-データセットでよく使われるタスク">1. Reddit データセットでよく使われるタスク</h3>
+<p>Reddit データセットでは、主に以下のようなタスクが考えられます。</p>
+<ol>
+<li>
+<p><strong>ノード分類（Node Classification）</strong></p>
+<ul>
+<li>各ノード（投稿）がどのコミュニティ（サブレディット）に属するかを予測する。</li>
+<li>例：ある投稿が <code>r/aww</code> なのか <code>r/funny</code> なのかを予測。</li>
+</ul>
+</li>
+<li>
+<p><strong>リンク予測（Link Prediction）</strong></p>
+<ul>
+<li>まだ存在しないエッジ（投稿間の共コメント関係）を予測する。</li>
+<li>例：「この 2 つの投稿は将来的に同じユーザーからコメントされるか？」を予測。</li>
+</ul>
+</li>
+<li>
+<p><strong>グラフ分類（Graph Classification）</strong></p>
+<ul>
+<li>Reddit 全体ではなく、スレッド単位の小さなグラフを作り、そのグラフがどのカテゴリか（例：政治系・娯楽系）を分類する。</li>
+</ul>
+</li>
+</ol>
+<p>この中で、<strong>ノード分類が最も直感的で、GNN の効果が分かりやすい</strong>と思いました。</p>
+<h3 id="2-手順">2. 手順</h3>
+<p>以下のフローでノード分類の学習の実験をしてみます。</p>
+<ol>
+<li>データのロードと前処理<br>
+Reddit データセットをロードし、GPU に転送。</li>
+<li>ミニバッチ用サンプラの準備<br>
+NeighborLoader で学習・検証・テスト用のミニバッチを作成。</li>
+<li>GNN モデルの定義<br>
+例：2 層 GCN。</li>
+<li>学習ループ<br>
+ミニバッチごとに順伝播・損失計算・逆伝播。</li>
+<li>テストセットでの評価<br>
+学習済みモデルでテストノードの精度を計算。</li>
+</ol>
+<h2 id="実装">実装</h2>
+<p>手順で記載した流れで学習してみます。
+Colab でそのまま実行できる形でまとめます。</p>
+<h3 id="1-データのロードと前処理">1. データのロードと前処理</h3>
+<p>必要なパッケージのインストールです。</p>
+<pre><code># 1. 現在のPyTorchとCUDAのバージョンを取得して環境変数に入れる
+import torch
+import os
+torch_version = torch.__version__.split('+')[0]
+
+# CUDAが利用可能ならそのバージョン、なければcpuとする
+if torch.cuda.is_available():
+    cuda_version = &quot;cu&quot; + torch.version.cuda.replace('.', '')
+else:
+    cuda_version = &quot;cpu&quot;
+
+os.environ['TORCH'] = torch_version
+os.environ['CUDA'] = cuda_version
+
+print(f&quot;Detected PyTorch: {torch_version}, CUDA: {cuda_version}&quot;)
+!pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+!pip install torch_geometric
+</code></pre>
+<p>データをロードしていきます。
+今回通常のニューラルネットワークとは異なり<code>NeighborLoader</code>を用いたデータローダを作成します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> torch_geometric.datasets <span class="hljs-keyword">import</span> Reddit
+<span class="hljs-keyword">from</span> torch_geometric.loader <span class="hljs-keyword">import</span> NeighborLoader
+<span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
+
+<span class="hljs-comment"># データセットのダウンロード</span>
+dataset = Reddit(root=<span class="hljs-string">&#x27;/tmp/Reddit&#x27;</span>)
+data = dataset[<span class="hljs-number">0</span>]
+
+<span class="hljs-comment"># GPU に転送</span>
+device = torch.device(<span class="hljs-string">&#x27;cuda&#x27;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&#x27;cpu&#x27;</span>)
+data = data.to(device)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;ノード数: <span class="hljs-subst">{data.num_nodes}</span>&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;エッジ数: <span class="hljs-subst">{data.num_edges}</span>&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;特徴量次元: <span class="hljs-subst">{data.num_node_features}</span>&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;クラス数: <span class="hljs-subst">{dataset.num_classes}</span>&#x27;</span>)
+</code></pre>
+<blockquote>
+<p><strong>NeighborLoader</strong><br>
+NeighborLoader は、PyTorch Geometric (PyG) に用意されている、巨大なグラフデータをメモリ効率よくミニバッチ学習（あるいは推論）するための非常に強力なデータローダーです。
+通常のディープラーニングにおける DataLoader はデータを単にシャッフルして分割しますが、グラフデータではノードどうしがエッジで繋がっているため、単純にブツ切りにすると「周りのつながり（構造情報）」が消えてしまいます。
+これを解決するのが NeighborLoader です。
+<strong>どんな仕組みなのか？（ノードサンプリング）</strong><br>
+NeighborLoader は、指定されたバッチサイズ分だけノードをランダムに選び（これをルートノードと呼びます）、そのノードからエッジを逆にたどって周辺の近傍ノード（Neighbors）を芋づる式に集めて小さなサブグラフ（ミニバッチ）を作ります。
+このとき、周辺ノードを無限に集めると結局グラフ全体が loading されてしまうため、各ステップ（ホップ）で集める上限数を設定します。
+外側に向かって指定した数だけ「部分的に」グラフを切り出すことで、巨大なグラフの構造を壊さずに小さなデータサイズに収めていきます。結果、グラフの構造を維持したまま、メモリをクラッシュさせるほどのメモリ占有することなく、データを取り出すことが出来るということになります。</p>
+</blockquote>
+<h3 id="2-ミニバッチ用サンプラの準備neighborloader">2. ミニバッチ用サンプラの準備（NeighborLoader）</h3>
+<p>Reddit は巨大なので、全グラフを一度に GPU に載せるのではなく、近傍サンプリングでミニバッチ学習します。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 学習用サンプラ</span>
+train_loader = NeighborLoader(
+    data,
+    num_neighbors=[<span class="hljs-number">10</span>, <span class="hljs-number">5</span>],  <span class="hljs-comment"># 1-hop で 10 ノード、2-hop で 5 ノードをサンプル</span>
+    batch_size=<span class="hljs-number">1024</span>,
+    input_nodes=data.train_mask,
+    shuffle=<span class="hljs-literal">True</span>
+)
+
+<span class="hljs-comment"># 検証用サンプラ</span>
+val_loader = NeighborLoader(
+    data,
+    num_neighbors=[<span class="hljs-number">10</span>, <span class="hljs-number">5</span>],
+    batch_size=<span class="hljs-number">1024</span>,
+    input_nodes=data.val_mask
+)
+
+<span class="hljs-comment"># テスト用サンプラ（後で使う）</span>
+test_loader = NeighborLoader(
+    data,
+    num_neighbors=[<span class="hljs-number">10</span>, <span class="hljs-number">5</span>],
+    batch_size=<span class="hljs-number">1024</span>,
+    input_nodes=data.test_mask
+)
+</code></pre>
+<ul>
+<li><code>num_neighbors</code> や <code>batch_size</code> は GPU メモリに応じて調整してください。</li>
+</ul>
+<h3 id="3-gnn-モデルの定義例2-層-gcn">3. GNN モデルの定義（例：2 層 GCN）</h3>
+<p>前回も使ったGCNと呼ばれるシンプルなGNNを用います。</p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> torch_geometric.nn <span class="hljs-keyword">import</span> GCNConv
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GCN</span>(torch.nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, in_channels, hidden_channels, out_channels</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.conv1 = GCNConv(in_channels, hidden_channels)
+        self.conv2 = GCNConv(hidden_channels, out_channels)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, edge_index</span>):
+        x = self.conv1(x, edge_index).relu()
+        x = F.dropout(x, p=<span class="hljs-number">0.5</span>, training=self.training)
+        x = self.conv2(x, edge_index)
+        <span class="hljs-keyword">return</span> x
+
+model = GCN(
+    in_channels=data.num_node_features,
+    hidden_channels=<span class="hljs-number">128</span>,
+    out_channels=dataset.num_classes
+).to(device)
+</code></pre>
+<h3 id="4-学習ループの実装">4. 学習ループの実装</h3>
+<pre><code class="language-python">optimizer = torch.optim.Adam(model.parameters(), lr=<span class="hljs-number">0.01</span>, weight_decay=<span class="hljs-number">5e-4</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">train</span>():
+    model.train()
+    total_loss = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> train_loader:
+        optimizer.zero_grad()
+        out = model(batch.x, batch.edge_index)
+        <span class="hljs-comment"># 学習マスク部分のみで損失を計算</span>
+        loss = F.cross_entropy(out[batch.train_mask], batch.y[batch.train_mask])
+        loss.backward()
+        optimizer.step()
+        total_loss += <span class="hljs-built_in">float</span>(loss)
+    <span class="hljs-keyword">return</span> total_loss / <span class="hljs-built_in">len</span>(train_loader)
+
+<span class="hljs-meta">@torch.no_grad()</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">eval_loader</span>(<span class="hljs-params">loader, mask_name=<span class="hljs-string">&#x27;val_mask&#x27;</span></span>):
+    model.<span class="hljs-built_in">eval</span>()
+    correct = total = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> loader:
+        out = model(batch.x, batch.edge_index)
+        pred = out.argmax(dim=-<span class="hljs-number">1</span>)
+        <span class="hljs-comment"># mask_name に応じてマスクを選択</span>
+        mask = <span class="hljs-built_in">getattr</span>(batch, mask_name)
+        correct += <span class="hljs-built_in">int</span>((pred[mask] == batch.y[mask]).<span class="hljs-built_in">sum</span>())
+        total += <span class="hljs-built_in">int</span>(mask.<span class="hljs-built_in">sum</span>())
+    <span class="hljs-keyword">return</span> correct / total
+
+<span class="hljs-comment"># 学習実行（例: 50 エポック）</span>
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">51</span>):
+    loss = train()
+    val_acc = eval_loader(val_loader, mask_name=<span class="hljs-string">&#x27;val_mask&#x27;</span>)
+    <span class="hljs-keyword">if</span> epoch % <span class="hljs-number">10</span> == <span class="hljs-number">0</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;Epoch: <span class="hljs-subst">{epoch:02d}</span>, Loss: <span class="hljs-subst">{loss:<span class="hljs-number">.4</span>f}</span>, Val Acc: <span class="hljs-subst">{val_acc:<span class="hljs-number">.4</span>f}</span>&#x27;</span>)
+</code></pre>
+<h3 id="5-テストセットでの評価">5. テストセットでの評価</h3>
+<p>学習が終わったら、テスト用サンプラで精度を確認します。</p>
+<pre><code class="language-python">test_acc = eval_loader(test_loader, mask_name=<span class="hljs-string">&#x27;test_mask&#x27;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;Test Accuracy: <span class="hljs-subst">{test_acc:<span class="hljs-number">.4</span>f}</span>&#x27;</span>)
+</code></pre>
+<ul>
+<li>Reddit データセットでは、GCN でおおよそ 93% 前後、GraphSAGE や ClusterGCN で 95〜97% 程度の精度が報告されています<a href="https://kumo.ai/pyg/datasets/reddit">Kumo.ai PyG Guide</a>。</li>
+</ul>
+<h2 id="学習の結果">学習の結果</h2>
+<p>まずは学習させた結果ですが。
+おおよそ85～86%程度の分類性能を持っていることが確認されます。</p>
+<pre><code>Epoch: 01, Loss: 1.2822, Val Acc: 0.8602
+Epoch: 05, Loss: 1.1750, Val Acc: 0.8608
+Epoch: 10, Loss: 1.1717, Val Acc: 0.8515
+Test Accuracy: 0.8512
+</code></pre>
+<p>ランダムにデータを取り出して分類の採点してみました。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> random
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">test_inference_step</span>(<span class="hljs-params">num_samples=<span class="hljs-number">10</span></span>):
+    model.<span class="hljs-built_in">eval</span>()
+    
+    <span class="hljs-comment"># 1. 全ノードの中からランダムに10個のインデックスを選択</span>
+    all_indices = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">range</span>(data.num_nodes))
+    sampled_indices = random.sample(all_indices, num_samples)
+    
+    <span class="hljs-comment"># 2. 選択したノードを起点として、小さなサブグラフをサンプリング</span>
+    <span class="hljs-comment"># (NeighborLoaderを内部で1ステップだけ手動で動かすイメージです)</span>
+    single_loader = NeighborLoader(
+        data,
+        num_neighbors=[<span class="hljs-number">5</span>, <span class="hljs-number">3</span>],
+        batch_size=num_samples,
+        input_nodes=torch.tensor(sampled_indices),
+        shuffle=<span class="hljs-literal">False</span>
+    )
+    
+    <span class="hljs-comment"># 1バッチ分だけ取得して推論</span>
+    batch = <span class="hljs-built_in">next</span>(<span class="hljs-built_in">iter</span>(single_loader))
+    batch = batch.to(device)
+    
+    <span class="hljs-keyword">with</span> torch.no_grad():
+        out = model(batch.x, batch.edge_index)
+        preds = out.argmax(dim=-<span class="hljs-number">1</span>)
+    
+    <span class="hljs-comment"># 3. 結果の見易い表示</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;=== お試し推論 (サンプル数: <span class="hljs-subst">{num_samples}</span>個) ===&quot;</span>)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_samples):
+        node_idx = sampled_indices[i]
+        true_label = <span class="hljs-built_in">int</span>(batch.y[i])
+        pred_label = <span class="hljs-built_in">int</span>(preds[i])
+        
+        <span class="hljs-comment"># 正誤判定マーク</span>
+        status = <span class="hljs-string">&quot;◯ 正解&quot;</span> <span class="hljs-keyword">if</span> true_label == pred_label <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;× 不正解&quot;</span>
+        
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;サンプル [<span class="hljs-subst">{i+<span class="hljs-number">1</span>}</span>] 元のノードID: <span class="hljs-subst">{node_idx:6d}</span> | 正解クラス: <span class="hljs-subst">{true_label:2d}</span> -&gt; 予測: <span class="hljs-subst">{pred_label:2d}</span> (<span class="hljs-subst">{status}</span>)&quot;</span>)
+
+<span class="hljs-comment"># 実行</span>
+test_inference_step(num_samples=<span class="hljs-number">10</span>)
+</code></pre>
+<p>10問中7問正解。
+test時の正解率ほどではないにせよきちんと正解を選択しています。</p>
+<pre><code>=== お試し推論 (サンプル数: 10個) ===
+サンプル [1] 元のノードID:  32121 | 正解クラス: 34 -&gt; 予測: 34 (◯ 正解)
+サンプル [2] 元のノードID:  59787 | 正解クラス:  8 -&gt; 予測:  8 (◯ 正解)
+サンプル [3] 元のノードID: 228462 | 正解クラス: 30 -&gt; 予測: 19 (× 不正解)
+サンプル [4] 元のノードID:  17002 | 正解クラス: 16 -&gt; 予測: 16 (◯ 正解)
+サンプル [5] 元のノードID:  54946 | 正解クラス:  7 -&gt; 予測:  7 (◯ 正解)
+サンプル [6] 元のノードID:   9865 | 正解クラス:  2 -&gt; 予測:  4 (× 不正解)
+サンプル [7] 元のノードID: 134311 | 正解クラス:  3 -&gt; 予測:  3 (◯ 正解)
+サンプル [8] 元のノードID: 125132 | 正解クラス:  2 -&gt; 予測:  2 (◯ 正解)
+サンプル [9] 元のノードID:  20293 | 正解クラス:  1 -&gt; 予測:  6 (× 不正解)
+サンプル [10] 元のノードID:  13374 | 正解クラス:  8 -&gt; 予測:  8 (◯ 正解)
+</code></pre>
+<h2 id="今回結果の考察">今回結果の考察</h2>
+<p>今回結果はずばり、高次元空間でtmap（またはt-SNE/UMAPなど）で見るとグチャグチャに混ざり合っているのに、GCNなどのGNN（グラフニューラルネットワーク）に通すと80%もの高精度で分類できる。</p>
+<p>なぜ今回の結果につながったか考察してみました。</p>
+<h3 id="1-特徴量node-featuresと構造topologyの相乗効果">1. 「特徴量（Node Features）」と「構造（Topology）」の相乗効果</h3>
+<p>tmapなどの次元圧縮手法が可視化しているのは、あくまで「600次元の特徴量空間における距離」だけです。つまり、「単語の出現傾向」や「プロフィールの数値」が似ているかどうかしか見ていません。</p>
+<p>しかし、GNNは以下の<strong>2つの異なる情報源</strong>を掛け合わせて学習します。</p>
+<ul>
+<li>600次元の「特徴量」</li>
+<li>誰と誰が繋がっているかという「エッジ（構造情報）」</li>
+</ul>
+<p>例えるなら、tmapで見ているのは <strong>「趣味や見た目がなんとなく似ている人を無理やり近くに並べた図」</strong> です。当然、見た目が似ていても全然違うコミュニティの人（クラスタの競合）が混ざるため、可視化するとグチャグチャになります。
+一方でGNNは、 <strong>「見た目はバラバラでも、実際に毎日会話している（エッジがある）から同じコミュニティだ」という強い繋がり（構造）</strong> を認識できるため、特徴量が重なっている以上の情報を学習できていることになります。</p>
+<h3 id="2-グラフの同質性homophilyの恩恵">2. グラフの「同質性（Homophily）」の恩恵</h3>
+<p>グラフデータ、特にRedditのようなSNSや論文リンクのデータセットには、「類は友を呼ぶ（Homophily: 同質性）」という強い統計的性質があります。</p>
+<blockquote>
+<p><strong>同質性（Homophily）とは</strong>
+「同じクラス（カテゴリ）に属するノード同士は、エッジで繋がりやすい」という傾向。</p>
+</blockquote>
+<p>GCNConvのメッセージパッシング（層を通過する際の処理）は、数学的には <strong>「近傍ノードの特徴量のローカルな滑らかさ（平滑化）」</strong> を行っています。
+1ホップ、2ホップと近傍の情報を集約するプロセスにより、競合していた600次元のノード特徴量が、<strong>「周囲の繋がっている仲間の平均的な特徴量」</strong> へとマイルドに書き換え（リファイン）られます。これにより、特徴量空間の境界線上にいて判別が難しいノードをつながりという特徴を使って分類することにつながります。</p>
+<h3 id="3-高次元600次元の壁をgnnの層が解決した">3. 高次元（600次元）の壁をGNNの層が解決した</h3>
+<p>600次元という空間は非常に広大で、ただの距離ベースの圧縮（tmap）では「本質的に重要な10次元」と「ノイズになっている590次元」を綺麗に区別できず、クラスタが潰れてしまいがちです。</p>
+<p>しかし、今回使用したGCNの第1層：</p>
+<pre><code class="language-python">self.conv1 = GCNConv(in_channels, hidden_channels) <span class="hljs-comment"># hidden_channels=64</span>
+
+</code></pre>
+<p>ここでは、600次元の特徴量を、グラフ構造のフィルターを通しながら「本質的な64次元」へと一気に圧縮（特徴抽出）しています。</p>
+<p>GNNの畳み込み層は、単なる次元削減ではなく「つながっている隣人たちを最も綺麗に分類できるような、新しい低次元空間へのマッピング」を逆伝播（Adamオプティマイザ）によって自動で学習します。そのため、人間の目（tmap）には混ざって見えた境界線を、AIは64次元の隠れ層の中で見事に分離することに成功したと言えます。</p>
+<h3 id="結論を一言でいうと">結論を一言でいうと</h3>
+<blockquote>
+<p><strong>「特徴量だけでは敵味方の区別がつかない乱戦状態（tmapの見た目）だったが、GNNが『通信記録（エッジ）』を解析したことで、誰がどの陣営（クラスタ）かが明確に判明した」</strong></p>
+</blockquote>
+<p>というのが、今回の80%という高い正解率の背景にあるロジックです。
+データの「繋がり」がいかに強力な情報であるかが確認できる実験結果でした。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/hHC-8jTWOhA?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
