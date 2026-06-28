@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>CNN&#x30a2;&#x30fc;&#x30ad;&#x30c6;&#x30af;&#x30c1;&#x30e3;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>前回より
+<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/02/000000">&quot;盤目やワールドをCNNモデルに視覚情報を入力として与えているが、果たしてどの程度の精密さで認識しているのだろうか？&quot;</a>
+という疑問を解消するべくCNNモデルで盤面の座標を正確に当てられるかを確認しています。</p>
+<p>前回は学習用のデータを作れるようにしました。
+今回は学習用データを使って学習を行うモデルを構築していきます。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>画像情報を見て座標の予測を行うモデルの構築</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="cnnアーキテクチャ">CNNアーキテクチャ</h2>
+<p>以下に、今回設計したモデルが「CNNアーキテクチャ」であることの意味と、設計上の重要なポイントを整理して説明します。</p>
+<h3 id="cnn畳み込みニューラルネットワークとは">CNN（畳み込みニューラルネットワーク）とは</h3>
+<ul>
+<li><strong>局所的な特徴抽出</strong>：<br>
+画像の一部分（局所領域）ごとにフィルタ（カーネル）を適用し、エッジやテクスチャなどの特徴を抽出します。</li>
+<li><strong>位置不変性</strong>：<br>
+同じパターンが画像内のどこにあっても、畳み込みフィルタによって検出できる性質があります。</li>
+<li><strong>パラメータ共有</strong>：<br>
+同じフィルタを画像全体に適用するため、全結合層に比べてパラメータ数が大幅に少なくて済みます。</li>
+</ul>
+<h3 id="今回のタスクにcnnが適している理由">今回のタスクにCNNが適している理由</h3>
+<ul>
+<li>5×5のグリッド画像は「マス目という局所構造」と「黒マスという局所的な変化」を持っています。</li>
+<li>CNNは、その局所構造を効率的に捉え、「どのマスが黒いか」という位置情報を学習しやすくなります。</li>
+</ul>
+<h2 id="設計上の重要なポイント">設計上の重要なポイント</h2>
+<h3 id="畳み込み層の設計">畳み込み層の設計</h3>
+<ul>
+<li>
+<p><strong>カーネルサイズとパディング</strong>：</p>
+<ul>
+<li><code>kernel_size=3, padding=1</code> とすることで、空間サイズを維持したまま畳み込みを行っています。</li>
+<li>これにより、画像の端の情報も失わずに特徴抽出ができます。</li>
+</ul>
+</li>
+<li>
+<p><strong>チャネル数の増加</strong>：</p>
+<ul>
+<li>1チャネル（グレースケール） → 32チャネル → 64チャネル と増やし、<br>
+浅い層では単純なエッジや明暗、深い層ではより複雑なパターンを捉えるように設計しています。</li>
+</ul>
+</li>
+</ul>
+<h3 id="プーリング層の役割">プーリング層の役割</h3>
+<ul>
+<li>
+<p><strong>MaxPool2d(2)</strong>：</p>
+<ul>
+<li>2×2の最大プーリングにより、空間サイズを1/2に縮小します。</li>
+<li>これにより、
+<ul>
+<li>計算量の削減</li>
+<li>位置の微小なずれに対するロバスト性の向上<br>
+が期待できます。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>プーリングの位置</strong>：</p>
+<ul>
+<li>畳み込み層の直後に配置することで、局所的な特徴を抽出した後、その情報を凝縮しています。</li>
+</ul>
+</li>
+</ul>
+<h3 id="活性化関数reluの採用">活性化関数（ReLU）の採用</h3>
+<ul>
+<li>
+<p><strong>非線形性の導入</strong>：</p>
+<ul>
+<li>各畳み込み層・全結合層の後に <code>F.relu()</code> を適用し、モデルに非線形性を持たせています。</li>
+<li>これにより、線形変換だけでは表現できない複雑な関係も学習可能になります。</li>
+</ul>
+</li>
+<li>
+<p><strong>勾配消失の緩和</strong>：</p>
+<ul>
+<li>ReLUは負の入力で0になるため、勾配が0になりにくく、学習が安定しやすいという利点があります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="全結合層の設計">全結合層の設計</h3>
+<ul>
+<li>
+<p><strong>フラット化と次元削減</strong>：</p>
+<ul>
+<li>プーリング後の特徴マップを <code>view()</code> で1次元にフラット化し、全結合層に入力しています。</li>
+<li><code>fc_input_size</code>（プーリング後の全要素数） → 128次元 → 25クラス という流れで、<br>
+高次元の特徴をクラスごとの確率に変換しています。</li>
+</ul>
+</li>
+<li>
+<p><strong>出力層の設計</strong>：</p>
+<ul>
+<li>最終層は25ユニットの線形出力（ロジット）とし、<code>CrossEntropyLoss</code> 内でソフトマックスを適用する形にしています。</li>
+<li>これにより、25クラス分類として扱いやすくなります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="出力形式の設計クラスid--座標">出力形式の設計（クラスID ↔ 座標）</h3>
+<ul>
+<li>
+<p><strong>25クラス分類として扱う</strong>：</p>
+<ul>
+<li>5×5=25マスを25クラスに対応付け、<code>class_id = row * 5 + col</code> で一意に変換しています。</li>
+<li>これにより、標準的な多クラス分類の枠組み（CrossEntropyLossなど）をそのまま利用できます。</li>
+</ul>
+</li>
+<li>
+<p><strong>推論時の座標への変換</strong>：</p>
+<ul>
+<li>モデル出力のクラスIDから <code>row = class_id // 5</code>, <code>col = class_id % 5</code> で座標に戻すことで、<br>
+人間にとって直感的な <code>(row, col)</code> 形式で結果を解釈できます。</li>
+</ul>
+</li>
+</ul>
+<h2 id="設計上の工夫意図">設計上の工夫・意図</h2>
+<h3 id="シンプルさと汎用性のバランス">シンプルさと汎用性のバランス</h3>
+<ul>
+<li>層数やチャネル数を必要最小限に抑えつつ、5×5グリッドのような比較的小さな問題に対して十分な表現力を持つように設計しています。</li>
+<li>グリッドサイズや画像サイズをパラメータ化（<code>grid_size</code>, <code>img_size</code>）することで、別のサイズにも拡張しやすい構造にしています。</li>
+</ul>
+<h3 id="画像サイズに依存しないfc_input_sizeの計算">画像サイズに依存しないfc_input_sizeの計算</h3>
+<ul>
+<li><code>_get_fc_input_size()</code> メソッドでダミー入力を通し、プーリング後の特徴マップの要素数を動的に計算しています。</li>
+<li>これにより、<code>IMG_SIZE</code> を変更しても全結合層の入力サイズを自動で調整できるようになっています。</li>
+</ul>
+<h3 id="グリッド構造を活かした入力設計">グリッド構造を活かした入力設計</h3>
+<ul>
+<li>画像生成時にグリッド線（黒枠）を描画することで、モデルがマス目の境界を明確に認識できるようにしています。</li>
+<li>これにより、CNNが「マス単位の位置」をより正確に捉えやすくなります。</li>
+</ul>
+<h2 id="実装コード">実装コード</h2>
+<p>実際に実装するとこんな感じになります。</p>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleGridCNN</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, grid_size=<span class="hljs-number">5</span>, img_size=<span class="hljs-number">320</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.grid_size = grid_size
+        self.num_classes = grid_size * grid_size
+
+        self.conv1 = nn.Conv2d(<span class="hljs-number">1</span>, <span class="hljs-number">32</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-number">1</span>)
+        self.conv2 = nn.Conv2d(<span class="hljs-number">32</span>, <span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-number">1</span>)
+        self.pool = nn.MaxPool2d(<span class="hljs-number">2</span>)
+
+        self.fc_input_size = self._get_fc_input_size(img_size)
+        self.fc1 = nn.Linear(self.fc_input_size, <span class="hljs-number">128</span>)
+        self.fc2 = nn.Linear(<span class="hljs-number">128</span>, self.num_classes)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_fc_input_size</span>(<span class="hljs-params">self, img_size</span>):
+        x = torch.zeros(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, img_size, img_size)
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        <span class="hljs-keyword">return</span> x.numel()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = x.view(x.size(<span class="hljs-number">0</span>), -<span class="hljs-number">1</span>)
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        <span class="hljs-keyword">return</span> x
+</code></pre>
+<p>以下に、上記の<code>SimpleGridCNN</code> モデルの構築上の要点をまとめます。</p>
+<h3 id="1-モデルの目的と出力設計">1. モデルの目的と出力設計</h3>
+<ul>
+<li>
+<p><strong>目的</strong>：<br>
+5×5グリッド画像から、黒く塗られた1マスの位置（行・列）を推定する。</p>
+</li>
+<li>
+<p><strong>出力形式</strong>：</p>
+<ul>
+<li>内部では「25クラス分類」として扱い、<code>num_classes = grid_size * grid_size</code> と定義。</li>
+<li>最終層 <code>self.fc2</code> は25ユニットのロジット出力。</li>
+<li>推論時には <code>torch.max()</code> でクラスIDを選び、<code>row = class_id // grid_size</code>, <code>col = class_id % grid_size</code> で座標に変換する設計。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-入力サイズへの柔軟な対応">2. 入力サイズへの柔軟な対応</h3>
+<ul>
+<li>
+<p><strong><code>_get_fc_input_size()</code> メソッド</strong>：</p>
+<ul>
+<li>ダミー入力 <code>torch.zeros(1, 1, img_size, img_size)</code> を実際にフォワードし、<br>
+プーリング後の特徴マップの要素数（<code>x.numel()</code>）を動的に計算。</li>
+<li>これにより、<code>img_size</code> が変わっても全結合層の入力サイズを自動で調整できる。</li>
+</ul>
+</li>
+<li>
+<p><strong>利点</strong>：</p>
+<ul>
+<li>画像サイズに依存しない汎用的なモデル定義が可能。</li>
+<li>5×5以外のグリッドサイズ（例：3×3, 10×10）にも拡張しやすい。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-畳み込み層の設計">3. 畳み込み層の設計</h3>
+<ul>
+<li>
+<p><strong>Conv1</strong>：<code>nn.Conv2d(1, 32, kernel_size=3, padding=1)</code></p>
+<ul>
+<li>入力チャネル数：1（グレースケール）</li>
+<li>出力チャネル数：32</li>
+<li>カーネルサイズ3、パディング1で空間サイズを維持。</li>
+</ul>
+</li>
+<li>
+<p><strong>Conv2</strong>：<code>nn.Conv2d(32, 64, kernel_size=3, padding=1)</code></p>
+<ul>
+<li>32チャネル → 64チャネルへ増加。</li>
+<li>浅い層では単純なエッジや明暗、深い層ではより複雑なパターンを捉えることを意図。</li>
+</ul>
+</li>
+<li>
+<p><strong>活性化関数</strong>：</p>
+<ul>
+<li>各畳み込み層の後に <code>F.relu()</code> を適用し、非線形性を導入。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-プーリング層の役割">4. プーリング層の役割</h3>
+<ul>
+<li>
+<p><strong>MaxPool2d(2)</strong>：</p>
+<ul>
+<li>2×2最大プーリングで空間サイズを1/2に縮小。</li>
+<li>Conv1 → Pool → Conv2 → Pool の順で適用。</li>
+</ul>
+</li>
+<li>
+<p><strong>効果</strong>：</p>
+<ul>
+<li>計算量の削減。</li>
+<li>位置の微小なずれに対するロバスト性の向上。</li>
+<li>特徴の抽象化（局所的な最大値を残す）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-全結合層の設計">5. 全結合層の設計</h3>
+<ul>
+<li>
+<p><strong>FC1</strong>：<code>nn.Linear(fc_input_size, 128)</code></p>
+<ul>
+<li>プーリング後の特徴マップをフラット化し、128次元の中間表現に変換。</li>
+</ul>
+</li>
+<li>
+<p><strong>FC2</strong>：<code>nn.Linear(128, num_classes)</code></p>
+<ul>
+<li>128次元 → 25クラスのロジット出力。</li>
+<li>ソフトマックスは損失関数（<code>CrossEntropyLoss</code>）側で適用する前提。</li>
+</ul>
+</li>
+<li>
+<p><strong>活性化関数</strong>：</p>
+<ul>
+<li>FC1の後には <code>F.relu()</code> を適用し、非線形変換を行う。</li>
+<li>FC2の後には活性化関数を適用せず、ロジットのまま出力。</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-フォワードパスの流れ">6. フォワードパスの流れ</h3>
+<ol>
+<li>入力 <code>x</code>（形状：<code>(batch, 1, H, W)</code>）</li>
+<li>Conv1 → ReLU → Pool（空間サイズ1/2）</li>
+<li>Conv2 → ReLU → Pool（空間サイズさらに1/2）</li>
+<li><code>view()</code> でフラット化</li>
+<li>FC1 → ReLU</li>
+<li>FC2（ロジット出力）</li>
+</ol>
+<p>この流れにより、</p>
+<ul>
+<li>局所特徴の抽出（Conv）</li>
+<li>特徴の凝縮（Pool）</li>
+<li>クラスへのマッピング（FC）<br>
+が段階的に行われる設計になっています。</li>
+</ul>
+<h2 id="出力確認">出力確認</h2>
+<p>出力の確認を行います。
+以下の画像を先程のモデルに入力します。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\cnn\grid_cnn\image\2_cnn_train\1782200364640.png" alt="1782200364640"></p>
+<p>すると得られた出力は以下のようなものです。
+場所を示す5×5の存在確率を示すロジットと呼ばれる数値の列が出力されました。
+学習前なので、意味を持つ出力にはなっていませんが、一旦モデルの構築が出来たことになります。</p>
+<pre><code>=== モデルの出力（ロジット）===
+形状: torch.Size([1, 25])
+ロジットの先頭5要素（例）:
+  class_0: -0.031
+  class_1: 0.017
+  class_2: 0.044
+  class_3: 0.117
+  class_4: -0.029
+...（中略）
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>ご提示のCNNモデル設計の要点を、目的・設計上のポイント・工夫の3点に絞ってまとめます。</p>
+<h3 id="1-モデルの目的と出力設計-1">1. モデルの目的と出力設計</h3>
+<ul>
+<li><strong>目的</strong><br>
+5×5グリッド画像から「黒く塗られた1マスの位置（行・列）」を推定する。</li>
+<li><strong>出力形式</strong>
+<ul>
+<li>内部では 5×5＝25クラス分類として扱い、<code>num_classes = grid_size * grid_size</code>。</li>
+<li>最終層 <code>fc2</code> は25ユニットのロジット出力。</li>
+<li>推論時はクラスIDを選び、<code>row = class_id // grid_size</code>, <code>col = class_id % grid_size</code> で座標に変換。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-cnnアーキテクチャの設計ポイント">2. CNNアーキテクチャの設計ポイント</h3>
+<p><strong>畳み込み層</strong></p>
+<ul>
+<li><code>Conv2d(1, 32, kernel_size=3, padding=1)</code> → <code>Conv2d(32, 64, kernel_size=3, padding=1)</code></li>
+<li>3×3カーネル＋パディング1で空間サイズを維持し、端の情報も保持。</li>
+<li>チャネル数を 1 → 32 → 64 と増やし、浅い層でエッジ・明暗、深い層で複雑なパターンを捉える。</li>
+</ul>
+<p><strong>プーリング層</strong></p>
+<ul>
+<li><code>MaxPool2d(2)</code> を各畳み込みの直後に適用し、空間サイズを1/2に縮小。</li>
+<li>計算量削減・位置ずれへのロバスト性向上・特徴の抽象化を狙う。</li>
+</ul>
+<p><strong>活性化関数</strong></p>
+<ul>
+<li>各畳み込み・全結合層の後に <code>F.relu()</code> を適用し、非線形性を導入。</li>
+<li>勾配消失を緩和しつつ、複雑な関係も学習可能に。</li>
+</ul>
+<p><strong>全結合層</strong></p>
+<ul>
+<li>プーリング後の特徴マップを <code>view()</code> でフラット化し、<code>fc_input_size</code> → 128 → 25クラスへ変換。</li>
+<li><code>fc_input_size</code> は <code>_get_fc_input_size()</code> でダミー入力を通して動的に計算し、画像サイズに依存しない設計。</li>
+</ul>
+<h3 id="3-設計上の工夫意図">3. 設計上の工夫・意図</h3>
+<ul>
+<li><strong>シンプルさと汎用性のバランス</strong>
+<ul>
+<li>層数・チャネル数を最小限にしつつ、5×5グリッド程度なら十分な表現力を持つ。</li>
+<li><code>grid_size</code>, <code>img_size</code> をパラメータ化し、別サイズにも拡張しやすい。</li>
+</ul>
+</li>
+<li><strong>グリッド構造の活用</strong>
+<ul>
+<li>画像生成時にグリッド線（黒枠）を描画し、マス目の境界を明確にすることで、CNNが「マス単位の位置」を捉えやすくしている。</li>
+</ul>
+</li>
+<li><strong>出力確認</strong>
+<ul>
+<li>学習前のロジット出力はまだ意味を持たないが、形状 <code>(1, 25)</code> のロジット列が得られ、モデル構築自体は完了している。</li>
+</ul>
+</li>
+</ul>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/FgrpF3MLlQM?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+
+            
+        </body>
+        </html>
