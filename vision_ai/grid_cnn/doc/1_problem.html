@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x554f;&#x984c;&#x8a2d;&#x5b9a;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>強化学習をやっていて少し疑問に感じたことがあります。
+盤目やワールドをCNNモデルに視覚情報を入力として与えているが、果たしてどの程度の精密さで認識しているのだろうか？
+正確にグリッドを当てるようなことが可能なのだろうか？
+ということで、確認していこうと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>ワールドをCNNに与えてグリッドレベルで認識することは可能なのだろうか？試していこう</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="問題設定">問題設定</h2>
+<p>以下に、ご提示の内容を「機械学習の問題設定」として整理いたします。</p>
+<h3 id="1-問題の概要">1. 問題の概要</h3>
+<ul>
+<li>
+<p><strong>タスク</strong>：<br>
+5×5のグリッド（マス目）画像から、黒く塗られた1マスの座標（行・列）を推定する。</p>
+</li>
+<li>
+<p><strong>入力</strong>：<br>
+5×5マスで構成される画像。<br>
+各マスは「白」または「黒」のいずれかであり、黒マスは必ず1マスだけ存在する。</p>
+</li>
+<li>
+<p><strong>出力</strong>：<br>
+黒マスの位置を表す座標（行番号・列番号）。<br>
+例：<code>(2, 3)</code> など。</p>
+</li>
+</ul>
+<h3 id="2-データ生成の前提">2. データ生成の前提</h3>
+<ul>
+<li>
+<p><strong>グリッド構造</strong>：</p>
+<ul>
+<li>グリッドサイズ：5×5（行数・列数ともに5）。</li>
+<li>各マスは正方形で、1マスあたりのピクセル数は一定（例：64×64ピクセル）。</li>
+</ul>
+</li>
+<li>
+<p><strong>画像生成</strong>：</p>
+<ul>
+<li>背景は白（画素値255）。</li>
+<li>ランダムに選ばれた1マスだけを黒（画素値0）で塗りつぶす。</li>
+<li>それ以外のマスは白のまま。</li>
+</ul>
+</li>
+<li>
+<p><strong>ラベル（annotation）</strong>：</p>
+<ul>
+<li>黒マスの位置を <code>(row, col)</code> 形式で記録する。</li>
+<li>行・列のインデックスは 0〜4 の整数。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-機械学習としての定式化">3. 機械学習としての定式化</h3>
+<p><strong>3.1 入力空間</strong></p>
+<ul>
+<li>入力画像は、グレースケールまたはRGBの2次元（または3次元）配列。</li>
+<li>画像サイズ：
+<ul>
+<li>1マスあたり <code>CELL_SIZE × CELL_SIZE</code> ピクセル。</li>
+<li>全体サイズ：<code>(5 * CELL_SIZE) × (5 * CELL_SIZE)</code>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.2 出力空間（予測対象）</strong></p>
+<ul>
+<li>
+<p><strong>分類問題として扱う場合</strong>：</p>
+<ul>
+<li>5×5 = 25クラスの多クラス分類問題。</li>
+<li>各クラスは「どのマスが黒か」を表す。</li>
+<li>出力層：25ユニットのソフトマックス。</li>
+</ul>
+</li>
+<li>
+<p><strong>回帰問題として扱う場合</strong>：</p>
+<ul>
+<li>連続的な座標を予測する回帰問題。</li>
+<li>出力層：2ユニット（<code>(row, col)</code>）の回帰出力。</li>
+<li>ただし、実際には離散的なマス位置なので、分類として扱う方が自然。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.3 学習用データセット</strong></p>
+<ul>
+<li>
+<p><strong>訓練データ</strong>：</p>
+<ul>
+<li>上記のルールで生成した画像と、その黒マス座標のペア。</li>
+<li>例：<code>(画像, (row, col))</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>評価指標（例）</strong>：</p>
+<ul>
+<li>分類問題の場合：
+<ul>
+<li>正解率（Accuracy）</li>
+<li>各マスごとの精度（マクロ平均F1など）</li>
+</ul>
+</li>
+<li>回帰問題の場合：
+<ul>
+<li>平均二乗誤差（MSE）</li>
+<li>マス単位での「正しいマスに予測できた割合」</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-cnnモデルに期待する役割">4. CNNモデルに期待する役割</h3>
+<ul>
+<li>
+<p><strong>特徴抽出</strong>：</p>
+<ul>
+<li>グリッド構造と黒マスの位置関係を学習し、どのマスが黒かを識別する特徴量を抽出する。</li>
+</ul>
+</li>
+<li>
+<p><strong>位置推定</strong>：</p>
+<ul>
+<li>画像全体を見て、黒マスがどの行・どの列にあるかを</li>
+</ul>
+</li>
+</ul>
+<h2 id="データ生成">データ生成</h2>
+<p>今回は上記の学習データを作成するコードを作成します。
+学習用データ生成コードの「実装のポイント」を整理します。</p>
+<h3 id="1-全体の流れ">1. 全体の流れ</h3>
+<ol>
+<li><strong>グリッド構造の定義</strong>
+<ul>
+<li>5×5マス、1マスあたりのピクセル数、画像全体のサイズを定数で定義。</li>
+</ul>
+</li>
+<li><strong>1枚の画像＋ラベル生成</strong>
+<ul>
+<li>白い画像を作成し、ランダムに選んだ1マスだけを黒く塗る。</li>
+<li>そのマスの座標 <code>(row, col)</code> をラベルとして返す。</li>
+</ul>
+</li>
+<li><strong>データセット生成</strong>
+<ul>
+<li>指定枚数分の画像とラベルを生成し、ファイルとして保存。</li>
+<li>annotationファイル（CSV形式）に画像ID・ファイル名・黒マス座標を記録。</li>
+</ul>
+</li>
+<li><strong>サンプル表示</strong>
+<ul>
+<li>生成したデータセットからランダムに画像を選び、画像とラベルを可視化。</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-実装のポイント">2. 実装のポイント</h3>
+<p><strong>2.1 グリッド構造の扱い</strong></p>
+<ul>
+<li>
+<p><strong>定数で管理</strong></p>
+<ul>
+<li><code>GRID_SIZE = 5</code>（5×5マス）</li>
+<li><code>CELL_SIZE = 64</code>（1マスあたり64×64ピクセル）</li>
+<li><code>IMG_SIZE = GRID_SIZE * CELL_SIZE</code>（画像全体のサイズ）<br>
+と定数化することで、変更が容易でバグが入りにくい設計にしています。</li>
+</ul>
+</li>
+<li>
+<p><strong>インデックスとピクセル座標の対応</strong></p>
+<ul>
+<li>マス番号 <code>(row, col)</code> から画像上のピクセル範囲への変換を、<pre><code class="language-python">y_start = row * CELL_SIZE
+y_end = (row + <span class="hljs-number">1</span>) * CELL_SIZE
+x_start = col * CELL_SIZE
+x_end = (col + <span class="hljs-number">1</span>) * CELL_SIZE
+</code></pre>
+のように計算しています。</li>
+<li>これにより、「どのマスを黒く塗るか」を <code>(row, col)</code> だけで指定でき、画像上の矩形領域に自動で対応付けられます。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 画像生成のポイント</strong></p>
+<ul>
+<li>
+<p><strong>NumPy配列による効率的な画像生成</strong></p>
+<ul>
+<li>まず <code>np.full((IMG_SIZE, IMG_SIZE), 255, dtype=np.uint8)</code> で白一色の画像配列を作成し、<br>
+該当マスだけを <code>img_array[y_start:y_end, x_start:x_end] = 0</code> で黒く塗っています。</li>
+<li>NumPyのスライス操作を使うことで、ループを使わず高速に矩形領域を塗りつぶせます。</li>
+</ul>
+</li>
+<li>
+<p><strong>PILへの変換</strong></p>
+<ul>
+<li><code>Image.fromarray(img_array, mode='L')</code> でNumPy配列をPILのグレースケール画像に変換しています。</li>
+<li><code>mode='L'</code> は8bitグレースケールを意味し、白=255、黒=0 の表現に対応します。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.3 グリッド線（黒枠）の描画</strong></p>
+<ul>
+<li>
+<p><strong>ImageDrawによる線描画</strong></p>
+<ul>
+<li><code>ImageDraw.Draw(img)</code> で描画オブジェクトを取得し、<code>draw.line()</code> や <code>draw.rectangle()</code> で線を描画しています。</li>
+<li>縦線・横線・外枠をそれぞれ別に描画することで、マス目がはっきり見えるようにしています。</li>
+</ul>
+</li>
+<li>
+<p><strong>線の太さと色</strong></p>
+<ul>
+<li><code>line_width=2</code> で線の太さを指定し、<code>fill=0</code> または <code>outline=0</code> で黒色を指定しています。</li>
+<li>必要に応じて <code>line_width</code> や色を変更することで、見た目を調整できます。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.4 ラベル（annotation）の設計</strong></p>
+<ul>
+<li>
+<p><strong>座標形式のラベル</strong></p>
+<ul>
+<li>黒マスの位置を <code>(row, col)</code> というタプルで保持しています。</li>
+<li>0〜4の整数インデックスで表現することで、後続のCNNモデルで「25クラス分類」や「2次元回帰」として扱いやすくしています。</li>
+</ul>
+</li>
+<li>
+<p><strong>annotationファイル（CSV）の構造</strong></p>
+<ul>
+<li><code>image_id, file_name, black_cell_row, black_cell_col</code> という列を持つCSV形式で保存しています。</li>
+<li>これにより、学習時に「どの画像がどのラベルに対応するか」を簡単に読み込めます。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.5 データセット生成とサンプル表示</strong></p>
+<ul>
+<li>
+<p><strong>一括生成と保存</strong></p>
+<ul>
+<li><code>generate_dataset()</code> で指定枚数分の画像とannotationを一括生成し、ディレクトリに保存しています。</li>
+<li><code>os.makedirs(output_dir, exist_ok=True)</code> で出力ディレクトリを自動生成し、既存の場合は上書きを避けています。</li>
+</ul>
+</li>
+<li>
+<p><strong>可視化による確認</strong></p>
+<ul>
+<li><code>display_samples()</code> でランダムに選んだ画像とラベルを <code>matplotlib</code> で表示し、
+<ul>
+<li>画像が正しく生成されているか</li>
+<li>ラベルが正しく付与されているか<br>
+を目視で確認できるようにしています。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-この実装の利点">3. この実装の利点</h3>
+<ul>
+<li><strong>再現性の高さ</strong>
+<ul>
+<li>乱数シードを固定すれば、同じデータセットを何度でも再現できます。</li>
+</ul>
+</li>
+<li><strong>拡張性</strong>
+<ul>
+<li><code>GRID_SIZE</code> や <code>CELL_SIZE</code> を変えるだけで、3×3や10×10など別のグリッドサイズにも対応可能です。</li>
+</ul>
+</li>
+<li><strong>学習データとしての扱いやすさ</strong>
+<ul>
+<li>画像とラベルの対応が明確で、PyTorchやTensorFlowのデータローダーに組み込みやすい形式になっています。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-実装">4. 実装</h3>
+<p>それでは実装していきます。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> os
+
+<span class="hljs-comment"># 画像サイズとグリッド設定</span>
+GRID_SIZE = <span class="hljs-number">5</span>     <span class="hljs-comment"># 5x5マス</span>
+CELL_SIZE = <span class="hljs-number">64</span>    <span class="hljs-comment"># 1マスのピクセル数</span>
+IMG_SIZE = GRID_SIZE * CELL_SIZE  <span class="hljs-comment"># 画像全体のサイズ</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_single_black_cell_image_and_label</span>():
+    <span class="hljs-string">&quot;&quot;&quot;
+    5x5グリッドからランダムに1マスだけ黒く塗った画像を生成し、
+    そのマスの座標（行, 列）を返す
+    &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># 白いキャンバス（グレースケール画像）</span>
+    img_array = np.full((IMG_SIZE, IMG_SIZE), <span class="hljs-number">255</span>, dtype=np.uint8)
+
+    <span class="hljs-comment"># ランダムに1マスを選ぶ（0〜4の範囲）</span>
+    row = random.randint(<span class="hljs-number">0</span>, GRID_SIZE - <span class="hljs-number">1</span>)
+    col = random.randint(<span class="hljs-number">0</span>, GRID_SIZE - <span class="hljs-number">1</span>)
+
+    <span class="hljs-comment"># 選んだマスを黒く塗る</span>
+    y_start = row * CELL_SIZE
+    y_end = (row + <span class="hljs-number">1</span>) * CELL_SIZE
+    x_start = col * CELL_SIZE
+    x_end = (col + <span class="hljs-number">1</span>) * CELL_SIZE
+
+    img_array[y_start:y_end, x_start:x_end] = <span class="hljs-number">0</span>  <span class="hljs-comment"># 黒=0</span>
+
+    <span class="hljs-comment"># PIL Imageに変換</span>
+    img = Image.fromarray(img_array, mode=<span class="hljs-string">&#x27;L&#x27;</span>)  <span class="hljs-comment"># &#x27;L&#x27; = 8bitグレースケール</span>
+
+    <span class="hljs-keyword">return</span> img, (row, col)
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_dataset</span>(<span class="hljs-params">num_images=<span class="hljs-number">100</span>, output_dir=<span class="hljs-string">&quot;dataset&quot;</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    指定枚数分の画像とannotationファイルを生成する
+    &quot;&quot;&quot;</span>
+    os.makedirs(output_dir, exist_ok=<span class="hljs-literal">True</span>)
+
+    annotations = []
+
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_images):
+        img, (row, col) = generate_single_black_cell_image_and_label()
+
+        <span class="hljs-comment"># 画像保存</span>
+        img_path = os.path.join(output_dir, <span class="hljs-string">f&quot;img_<span class="hljs-subst">{i:04d}</span>.png&quot;</span>)
+        img.save(img_path)
+
+        <span class="hljs-comment"># annotation情報を記録</span>
+        annotations.append({
+            <span class="hljs-string">&quot;image_id&quot;</span>: i,
+            <span class="hljs-string">&quot;file_name&quot;</span>: <span class="hljs-string">f&quot;img_<span class="hljs-subst">{i:04d}</span>.png&quot;</span>,
+            <span class="hljs-string">&quot;black_cell_row&quot;</span>: row,
+            <span class="hljs-string">&quot;black_cell_col&quot;</span>: col
+        })
+
+    <span class="hljs-comment"># annotationをテキストファイルに保存（CSV形式の例）</span>
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(os.path.join(output_dir, <span class="hljs-string">&quot;annotations.txt&quot;</span>), <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">as</span> f:
+        f.write(<span class="hljs-string">&quot;image_id,file_name,black_cell_row,black_cell_col\n&quot;</span>)
+        <span class="hljs-keyword">for</span> ann <span class="hljs-keyword">in</span> annotations:
+            f.write(<span class="hljs-string">f&quot;<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;image_id&#x27;</span>]}</span>,<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;file_name&#x27;</span>]}</span>,<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;black_cell_row&#x27;</span>]}</span>,<span class="hljs-subst">{ann[<span class="hljs-string">&#x27;black_cell_col&#x27;</span>]}</span>\n&quot;</span>)
+
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Generated <span class="hljs-subst">{num_images}</span> images and annotations in &#x27;<span class="hljs-subst">{output_dir}</span>/&#x27;&quot;</span>)
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    <span class="hljs-comment"># 100枚の画像とannotationを生成</span>
+    generate_dataset(num_images=<span class="hljs-number">100</span>)
+</code></pre>
+<p>上記コードで作成した学習データは以下のようになります。
+マス目が示された番目に、黒い塗りつぶしと塗りつぶされた座標情報が示されています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\cnn\grid_cnn\image\1_problem\1782192730332.png" alt="1782192730332"></p>
+<h2 id="総括">総括</h2>
+<p>以下に、今回のデータ作成コードにおける「キーポイント」を総括的にまとめます。</p>
+<h3 id="1-グリッド構造の明示的な定義">1. グリッド構造の明示的な定義</h3>
+<ul>
+<li>
+<p><strong>グリッドサイズとマスサイズを定数化</strong></p>
+<ul>
+<li><code>GRID_SIZE = 5</code>（5×5マス）</li>
+<li><code>CELL_SIZE = 64</code>（1マスあたり64×64ピクセル）</li>
+<li><code>IMG_SIZE = GRID_SIZE * CELL_SIZE</code>（画像全体のサイズ）<br>
+と定数で管理することで、変更が容易でバグが入りにくい設計にしています。</li>
+</ul>
+</li>
+<li>
+<p><strong>インデックスとピクセル座標の対応付け</strong></p>
+<ul>
+<li>マス番号 <code>(row, col)</code> から画像上の矩形領域への変換を、<pre><code class="language-python">y_start = row * CELL_SIZE
+y_end = (row + <span class="hljs-number">1</span>) * CELL_SIZE
+x_start = col * CELL_SIZE
+x_end = (col + <span class="hljs-number">1</span>) * CELL_SIZE
+</code></pre>
+のように計算しています。</li>
+<li>これにより、「どのマスを黒く塗るか」を <code>(row, col)</code> だけで指定でき、画像上のピクセル範囲に自動で対応付けられます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-画像生成の効率化と一貫性">2. 画像生成の効率化と一貫性</h3>
+<ul>
+<li>
+<p><strong>NumPy配列による高速な矩形塗りつぶし</strong></p>
+<ul>
+<li>まず白一色の画像配列を作成し、該当マスだけを <code>img_array[y_start:y_end, x_start:x_end] = 0</code> で黒く塗っています。</li>
+<li>NumPyのスライス操作を使うことで、ループを使わず高速かつ簡潔に矩形領域を塗りつぶせます。</li>
+</ul>
+</li>
+<li>
+<p><strong>PILによる画像形式の統一</strong></p>
+<ul>
+<li><code>Image.fromarray(img_array, mode='L')</code> でNumPy配列をPILのグレースケール画像に変換しています。</li>
+<li><code>mode='L'</code> により、白=255、黒=0 という一貫した表現で画像を扱えます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-グリッド線黒枠による可視性の確保">3. グリッド線（黒枠）による可視性の確保</h3>
+<ul>
+<li>
+<p><strong>ImageDrawによる境界線の描画</strong></p>
+<ul>
+<li><code>ImageDraw.Draw(img)</code> で描画オブジェクトを取得し、<code>draw.line()</code> と <code>draw.rectangle()</code> で縦線・横線・外枠を描画しています。</li>
+<li>これにより、マス目がはっきり見えるようになり、CNNモデルがグリッド構造を認識しやすくなります。</li>
+</ul>
+</li>
+<li>
+<p><strong>線の太さと色の調整</strong></p>
+<ul>
+<li><code>line_width=2</code> で線の太さを指定し、<code>fill=0</code> または <code>outline=0</code> で黒色を指定しています。</li>
+<li>必要に応じてパラメータを変更することで、見た目やモデルへの影響を調整できます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-ラベルannotation設計">4. ラベル（annotation）設計</h3>
+<ul>
+<li>
+<p><strong>座標形式のラベル</strong></p>
+<ul>
+<li>黒マスの位置を <code>(row, col)</code> というタプルで保持しています。</li>
+<li>0〜4の整数インデックスで表現することで、後続のCNNモデルで「25クラス分類」や「2次元回帰」として扱いやすくしています。</li>
+</ul>
+</li>
+<li>
+<p><strong>annotationファイル（CSV）の構造</strong></p>
+<ul>
+<li><code>image_id, file_name, black_cell_row, black_cell_col</code> という列を持つCSV形式で保存しています。</li>
+<li>これにより、学習時に「どの画像がどのラベルに対応するか」を簡単に読み込めます。</li>
+</ul>
+</li>
+</ul>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/FgrpF3MLlQM?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
