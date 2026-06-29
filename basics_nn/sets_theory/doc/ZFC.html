@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b58;&#x5728;&#x610f;&#x7fa9;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>数学の集合論を理解する上で、そもそもこれが成立の土台になる、という公理群があります。
+その名も<strong>ZFC公理系</strong>と呼ばれるものです。
+ZFC公理系を理解しないと、その後に続く関係や<a href="https://yoshishinnze.hatenablog.com/entry/2026/04/09/050000">濃度</a>といった考えを理解することが難しくなります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\set_theory\image\ZFC\1781429651262.png" alt="1781429651262"></p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>集合論の土台となるZFC公理系についてまとめてみます</p>
+</blockquote>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="存在意義">存在意義</h2>
+<p>ZFC公理系は、<strong>現代数学のほとんどすべてを「集合」として厳密に定式化し、その推論が矛盾なく行えることを保証するための土台</strong>として存在しています。<br>
+主な目的は次の4点にまとめられます。</p>
+<h3 id="1-数学の基礎づけfoundation-of-mathematics">1. 数学の基礎づけ（Foundation of Mathematics）</h3>
+<ul>
+<li>19世紀後半〜20世紀初頭にかけて、数学の厳密化が進み、「数とは何か」「関数とは何か」「無限とは何か」を明確に定義する必要が出てきました。</li>
+<li>ZFC公理系は、<strong>自然数・実数・関数・空間など、数学のあらゆる対象を「集合」として構成する</strong>ための共通の枠組みを提供します。
+<ul>
+<li>例：自然数は空集合から帰納的に構成（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>=</mo><mi mathvariant="normal">∅</mi><mo separator="true">,</mo><mtext> </mtext><mn>1</mn><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">∅</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mtext> </mtext><mn>2</mn><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">∅</mi><mo separator="true">,</mo><mo stretchy="false">{</mo><mi mathvariant="normal">∅</mi><mo stretchy="false">}</mo><mo stretchy="false">}</mo><mo separator="true">,</mo><mo>…</mo></mrow><annotation encoding="application/x-tex">0 = \emptyset,\ 1 = \{\emptyset\},\ 2 = \{\emptyset, \{\emptyset\}\},\dots</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9444em;vertical-align:-0.1944em;"></span><span class="mord">∅</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">∅</span><span class="mclose">}</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">∅</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">{</span><span class="mord">∅</span><span class="mclose">}}</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span></span></span></span>）</li>
+<li>実数は有理数のコーシー列の同値類やデデキント切断として構成</li>
+<li>関数は順序対の集合として定義 など</li>
+</ul>
+</li>
+</ul>
+<p>これにより、「数学の言葉」を集合論という1つの体系に翻訳できます。</p>
+<h3 id="2-矛盾の回避と推論の厳密化">2. 矛盾の回避と推論の厳密化</h3>
+<ul>
+<li>素朴な集合論（「条件を満たすもの全体」を無制限に集合とみなす）では、<strong>ラッセルのパラドックス</strong>のような矛盾が生じます。
+<ul>
+<li>例：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>=</mo><mo stretchy="false">{</mo><mi>x</mi><mo>∣</mo><mi>x</mi><mo mathvariant="normal">∉</mo><mi>x</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">R = \{x \mid x \notin x\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mord"><span class="mrel">∈</span></span><span class="mord vbox"><span class="thinbox"><span class="llap"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="inner"><span class="mord"><span class="mord">/</span><span class="mspace" style="margin-right:0.0556em;"></span></span></span><span class="fix"></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mclose">}</span></span></span></span> とすると、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>∈</mo><mi>R</mi><mtext>  </mtext><mo>⟺</mo><mtext>  </mtext><mi>R</mi><mo mathvariant="normal">∉</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">R \in R \iff R \notin R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7073em;vertical-align:-0.024em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⟺</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mord"><span class="mrel">∈</span></span><span class="mord vbox"><span class="thinbox"><span class="llap"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="inner"><span class="mord"><span class="mord">/</span><span class="mspace" style="margin-right:0.0556em;"></span></span></span><span class="fix"></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> となり矛盾。</li>
+</ul>
+</li>
+<li>ZFC公理系は、<strong>どのような操作で集合が作れるかを公理で明確に制限</strong>することで、この種の矛盾を避けます。
+<ul>
+<li>分出公理（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi>A</mi><mo>∣</mo><mi>φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{x \in A \mid \varphi(x)\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">φ</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)}</span></span></span></span> は集合）により、「すべての集合」のような大きすぎる対象は扱わない。</li>
+<li>正則性公理により、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">x \in x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> のような自己言及的な構造を禁止。</li>
+</ul>
+</li>
+</ul>
+<p>これにより、<strong>ZFCから導かれる命題は（少なくともZFCが無矛盾である限り）矛盾しない</strong>と期待されます。</p>
+<h3 id="3-無限集合の扱いと大きさの比較">3. 無限集合の扱いと「大きさ」の比較</h3>
+<ul>
+<li>無限集合（自然数全体・実数全体など）を数学的に扱うには、その存在と性質を公理で保証する必要があります。</li>
+<li><strong>無限公理</strong>は「無限集合が存在する」ことを保証し、<strong>冪集合の公理</strong>は「より大きい無限（べき集合の濃度）が存在する」ことを保証します。</li>
+<li>これにより、<strong>可算無限・連続体濃度・さらに大きい無限</strong>といった階層を厳密に議論できます。</li>
+</ul>
+<p>Cantorの定理（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>X</mi><mi mathvariant="normal">∣</mi><mo>&lt;</mo><mi mathvariant="normal">∣</mi><mi mathvariant="script">P</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|X| &lt; |\mathcal{P}(X)|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathcal" style="margin-right:0.08222em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mord">∣</span></span></span></span>）も、冪集合公理のもとで成り立つ重要な結果です。</p>
+<h3 id="4-構成可能性と選択の保証">4. 構成可能性と「選択」の保証</h3>
+<ul>
+<li>数学の多くの定理（「ベクトル空間には基底が存在する」「任意のフィルターは極大フィルターに拡大できる」など）は、<strong>無限個の集合から同時に元を選ぶ操作</strong>を必要とします。</li>
+<li><strong>選択公理（Axiom of Choice, AC）</strong> は、そのような「選択関数」の存在を保証します。
+<ul>
+<li>ZFだけでは証明できないが、数学の多くの分野で事実上必要となる命題がACに依存しています。</li>
+</ul>
+</li>
+<li>ZFCは「ZF＋AC」として、<strong>実用上必要な構成可能性を備えた標準的な枠組み</strong>となっています。</li>
+</ul>
+<h2 id="zfc公理系">ZFC公理系</h2>
+<p><strong>ZFC公理系</strong>は、現代数学の基礎として広く用いられる集合論の公理系です。<br>
+「Zermelo–Fraenkel集合論（ZF）＋選択公理（Axiom of Choice）」の略で、通常は次の9つの公理からなります。</p>
+<p>以下、各公理を簡潔に説明します（記法は教科書によって多少異なります）。</p>
+<h3 id="1-外延性の公理axiom-of-extensionality">1. 外延性の公理（Axiom of Extensionality）</h3>
+<p><strong>内容</strong>：2つの集合が同じ要素を持つなら、それらは等しい。</p>
+<p><strong>形式的に</strong>：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>x</mi><mi mathvariant="normal">∀</mi><mi>y</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi mathvariant="normal">∀</mi><mi>z</mi><mo stretchy="false">(</mo><mi>z</mi><mo>∈</mo><mi>x</mi><mo>↔</mo><mi>z</mi><mo>∈</mo><mi>y</mi><mo stretchy="false">)</mo><mo>→</mo><mi>x</mi><mo>=</mo><mi>y</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\forall x \forall y \bigl[ \forall z (z \in x \leftrightarrow z \in y) \rightarrow x = y \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∀</span><span class="mord mathnormal">x</span><span class="mord">∀</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord">∀</span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">↔</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p><strong>意味</strong>：集合はその要素によって完全に決まる。</p>
+<h3 id="2-対の公理axiom-of-pairing">2. 対の公理（Axiom of Pairing）</h3>
+<p><strong>内容</strong>：任意の2つの集合 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a, b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span></span></span></span> に対して、それらだけを要素とする集合 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a, b\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord mathnormal">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">}</span></span></span></span> が存在する。</p>
+<p><strong>形式的に</strong>：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>a</mi><mi mathvariant="normal">∀</mi><mi>b</mi><mi mathvariant="normal">∃</mi><mi>z</mi><mi mathvariant="normal">∀</mi><mi>x</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi>x</mi><mo>∈</mo><mi>z</mi><mo>↔</mo><mo stretchy="false">(</mo><mi>x</mi><mo>=</mo><mi>a</mi><mo>∨</mo><mi>x</mi><mo>=</mo><mi>b</mi><mo stretchy="false">)</mo><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\forall a \forall b \exists z \forall x \bigl[ x \in z \leftrightarrow (x = a \lor x = b) \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∀</span><span class="mord mathnormal">a</span><span class="mord">∀</span><span class="mord mathnormal">b</span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mord">∀</span><span class="mord mathnormal">x</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">↔</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.5556em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∨</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p><strong>意味</strong>：2点集合が作れる。</p>
+<h3 id="3-和集合の公理axiom-of-union">3. 和集合の公理（Axiom of Union）</h3>
+<p><strong>内容</strong>：任意の集合 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> に対して、その要素の要素全体の和集合 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⋃</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">\bigcup A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋃</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">A</span></span></span></span> が存在する。</p>
+<p><strong>形式的に</strong>：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>A</mi><mi mathvariant="normal">∃</mi><mi>U</mi><mi mathvariant="normal">∀</mi><mi>x</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi>x</mi><mo>∈</mo><mi>U</mi><mo>↔</mo><mi mathvariant="normal">∃</mi><mi>y</mi><mo stretchy="false">(</mo><mi>x</mi><mo>∈</mo><mi>y</mi><mo>∧</mo><mi>y</mi><mo>∈</mo><mi>A</mi><mo stretchy="false">)</mo><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\forall A \exists U \forall x \bigl[ x \in U \leftrightarrow \exists y (x \in y \land y \in A) \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∀</span><span class="mord mathnormal">A</span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord">∀</span><span class="mord mathnormal">x</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">↔</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.75em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∧</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal">A</span><span class="mclose">)</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p><strong>意味</strong>：集合の族の和集合が取れる。</p>
+<h3 id="4-冪集合の公理axiom-of-power-set">4. 冪集合の公理（Axiom of Power Set）</h3>
+<p><strong>内容</strong>：任意の集合 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span></span></span> に対して、その部分集合全体の集合（冪集合）<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">P</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{P}(X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.08222em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span> が存在する。</p>
+<p><strong>形式的に</strong>：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>X</mi><mi mathvariant="normal">∃</mi><mi>P</mi><mi mathvariant="normal">∀</mi><mi>Y</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi>Y</mi><mo>∈</mo><mi>P</mi><mo>↔</mo><mi>Y</mi><mo>⊂</mo><mi>X</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\forall X \exists P \forall Y \bigl[ Y \in P \leftrightarrow Y \subset X \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∀</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">∀</span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">↔</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⊂</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p><strong>意味</strong>：部分集合全体も集合である。</p>
+<h3 id="5-無限公理axiom-of-infinity">5. 無限公理（Axiom of Infinity）</h3>
+<p><strong>内容</strong>：無限集合が存在する。</p>
+<p><strong>形式的に（一例）</strong>：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∃</mi><mi>I</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi mathvariant="normal">∅</mi><mo>∈</mo><mi>I</mi><mo>∧</mo><mi mathvariant="normal">∀</mi><mi>x</mi><mo stretchy="false">(</mo><mi>x</mi><mo>∈</mo><mi>I</mi><mo>→</mo><mi>x</mi><mo>∪</mo><mo stretchy="false">{</mo><mi>x</mi><mo stretchy="false">}</mo><mo>∈</mo><mi>I</mi><mo stretchy="false">)</mo><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\exists I \bigl[ \emptyset \in I \land \forall x (x \in I \rightarrow x \cup \{x\} \in I) \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord">∅</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∧</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∀</span><span class="mord mathnormal">x</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.5556em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∪</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord mathnormal">x</span><span class="mclose">}</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mclose">)</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p><strong>意味</strong>：自然数全体のような無限集合の存在を保証する（帰納的に閉じた集合の存在）。</p>
+<h3 id="6-置換公理図式axiom-schema-of-replacement">6. 置換公理図式（Axiom Schema of Replacement）</h3>
+<p><strong>内容</strong>：関数による「像」が再び集合になる。</p>
+<p><strong>形式的に（スキーマ）</strong>：<br>
+任意の論理式 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\varphi(x,y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">φ</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span> が「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> に対して高々1つの <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> を定める」なら、</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>A</mi><mi mathvariant="normal">∃</mi><mi>B</mi><mi mathvariant="normal">∀</mi><mi>y</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi>y</mi><mo>∈</mo><mi>B</mi><mo>↔</mo><mi mathvariant="normal">∃</mi><mi>x</mi><mo>∈</mo><mi>A</mi><mtext> </mtext><mi>φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\forall A \exists B \forall y \bigl[ y \in B \leftrightarrow \exists x \in A \ \varphi(x,y) \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∀</span><span class="mord mathnormal">A</span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mord">∀</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">↔</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.0391em;"></span><span class="mord">∃</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal">A</span><span class="mspace"> </span><span class="mord mathnormal">φ</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p>が成り立つ。</p>
+<p><strong>意味</strong>：集合を関数で写した像も集合である（「大きすぎる集合」が生じないようにする）。</p>
+<h3 id="7-正則性公理axiom-of-regularity--foundation">7. 正則性公理（Axiom of Regularity / Foundation）</h3>
+<p><strong>内容</strong>：すべての非空集合は、それ自身と交わらない要素を持つ。</p>
+<p><strong>形式的に</strong>：</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>A</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi>A</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi><mo>→</mo><mi mathvariant="normal">∃</mi><mi>x</mi><mo>∈</mo><mi>A</mi><mtext> </mtext><mi mathvariant="normal">∀</mi><mi>y</mi><mo>∈</mo><mi>x</mi><mo stretchy="false">(</mo><mi>y</mi><mo mathvariant="normal">∉</mo><mi>A</mi><mo stretchy="false">)</mo><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\forall A \bigl[ A \neq \emptyset \rightarrow \exists x \in A \ \forall y \in x (y \notin A) \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∀</span><span class="mord mathnormal">A</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em;"></span><span class="mord">∅</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.0391em;"></span><span class="mord">∃</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">A</span><span class="mspace"> </span><span class="mord">∀</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">x</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mord"><span class="mrel">∈</span></span><span class="mord vbox"><span class="thinbox"><span class="llap"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="inner"><span class="mord"><span class="mord">/</span><span class="mspace" style="margin-right:0.0556em;"></span></span></span><span class="fix"></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal">A</span><span class="mclose">)</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p><strong>意味</strong>：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">x \in x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> や無限降下列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>∋</mo><msub><mi>x</mi><mn>2</mn></msub><mo>∋</mo><msub><mi>x</mi><mn>3</mn></msub><mo>∋</mo><mo>⋯</mo></mrow><annotation encoding="application/x-tex">x_1 \ni x_2 \ni x_3 \ni \cdots</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6891em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∋</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6891em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∋</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6891em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∋</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.313em;"></span><span class="minner">⋯</span></span></span></span> のような病理的な状況を排除する。</p>
+<h3 id="8-分出公理図式axiom-schema-of-separation--aussonderung">8. 分出公理図式（Axiom Schema of Separation / Aussonderung）</h3>
+<p><strong>内容</strong>：与えられた集合の部分で、ある条件を満たすもの全体は再び集合である。</p>
+<p><strong>形式的に（スキーマ）</strong>：<br>
+任意の論理式 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\varphi(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">φ</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span> に対して、</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>A</mi><mi mathvariant="normal">∃</mi><mi>B</mi><mi mathvariant="normal">∀</mi><mi>x</mi><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">[</mo><mi>x</mi><mo>∈</mo><mi>B</mi><mo>↔</mo><mo stretchy="false">(</mo><mi>x</mi><mo>∈</mo><mi>A</mi><mo>∧</mo><mi>φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo fence="true" stretchy="true" minsize="1.2em" maxsize="1.2em">]</mo></mrow><annotation encoding="application/x-tex">\forall A \exists B \forall x \bigl[ x \in B \leftrightarrow (x \in A \land \varphi(x)) \bigr]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord">∀</span><span class="mord mathnormal">A</span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mord">∀</span><span class="mord mathnormal">x</span><span class="mopen"><span class="delimsizing size1">[</span></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">↔</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∧</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord mathnormal">φ</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">))</span><span class="mclose"><span class="delimsizing size1">]</span></span></span></span></span></span></p>
+<p><strong>意味</strong>：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi>A</mi><mo>∣</mo><mi>φ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{x \in A \mid \varphi(x)\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">φ</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)}</span></span></span></span> のような「内包的な定義」で得られるものは集合である。</p>
+<h3 id="9-選択公理axiom-of-choice-ac">9. 選択公理（Axiom of Choice, AC）</h3>
+<p><strong>内容</strong>：互いに交わらない非空集合の族に対して、それぞれから1つずつ元を選ぶ「選択関数」が存在する。</p>
+<p><strong>形式的に</strong>：<br>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">A</mi></mrow><annotation encoding="application/x-tex">\mathcal{A}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal">A</span></span></span></span> が互いに素な非空集合の族なら、</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∃</mi><mi>f</mi><mo>:</mo><mi mathvariant="script">A</mi><mo>→</mo><mo>⋃</mo><mi mathvariant="script">A</mi><mspace width="1em"/><mtext>s.t.</mtext><mspace width="1em"/><mi mathvariant="normal">∀</mi><mi>A</mi><mo>∈</mo><mi mathvariant="script">A</mi><mo separator="true">,</mo><mtext> </mtext><mi>f</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mo>∈</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">\exists f: \mathcal{A} \to \bigcup \mathcal{A} \quad \text{s.t.} \quad \forall A \in \mathcal{A},\ f(A) \in A
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord">∃</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.6em;vertical-align:-0.55em;"></span><span class="mop op-symbol large-op" style="position:relative;top:0em;">⋃</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathcal">A</span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord">s.t.</span></span><span class="mspace" style="margin-right:1em;"></span><span class="mord">∀</span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal">A</span><span class="mpunct">,</span><span class="mspace"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">A</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span></span></p>
+<p><strong>意味</strong>：無限個の集合から同時に代表元を選ぶことを保証する（ZFCの「C」の部分）。</p>
+<h2 id="zfc公理系の延長線">ZFC公理系の延長線</h2>
+<p>ZFC公理系の<strong>延長線上</strong>にある概念とは、おおまかに言うと次の3種類です。</p>
+<ol>
+<li><strong>ZFCより強い公理</strong>（ZFCでは証明できないが、追加するとより多くのことが証明できる）</li>
+<li><strong>ZFCから独立な命題</strong>（ZFCでもその否定でも証明できない）</li>
+<li><strong>ZFCを土台にした高度な理論</strong>（モデル理論・強制法・巨大基数の階層など）</li>
+</ol>
+<p>以下、具体例を挙げます。</p>
+<h3 id="1-zfcより強い公理の例">1. ZFCより強い公理の例</h3>
+<p><strong>(1) 巨大基数公理（Large Cardinal Axioms）</strong></p>
+<ul>
+<li>例：<strong>到達不能基数（inaccessible cardinal）</strong>、<strong>マーロ基数（Mahlo cardinal）</strong>、<strong>可測基数（measurable cardinal）</strong> など。</li>
+<li>内容：通常の集合の世界より「はるかに大きい」無限基数の存在を主張する公理。</li>
+<li>なぜ延長線上か：ZFCだけではその存在を証明できず、追加するとZFCより強い体系になる。<br>
+巨大基数の存在を仮定すると、<strong>ZFCから独立な命題（例：射影集合の決定性）が証明できる</strong>ことが知られています。</li>
+</ul>
+<p><strong>(2) 決定性公理（Axiom of Determinacy, AD）</strong></p>
+<ul>
+<li>内容：特定の無限ゲーム（実数上のゲーム）について、どちらかのプレイヤーに必勝戦略がある、という主張。</li>
+<li>なぜ延長線上か：ADはZFCと矛盾しませんが、<strong>選択公理（AC）と両立しない</strong>ため、ZFC＋ADはZFCとは別の方向への拡張です。<br>
+実数集合の正則性（すべての実数集合が可測など）を導く強力な公理として研究されます。</li>
+</ul>
+<p><strong>(3) マーティンの公理（Martin’s Axiom, MA）</strong></p>
+<ul>
+<li>内容：特定の半順序集合に関する「反連鎖条件」を満たす強制概念について、ある種の稠密集合族の共通点が存在する、という主張。</li>
+<li>なぜ延長線上か：ZFCと矛盾せず、かつ<strong>連続体仮説（CH）とは独立</strong>。<br>
+MA＋¬CH の体系では、実数集合に関する多くの組合せ的性質がZFC＋CHとは異なる振る舞いをします。</li>
+</ul>
+<h3 id="2-zfcから独立な命題の例">2. ZFCから独立な命題の例</h3>
+<p><strong>(1) 連続体仮説（Continuum Hypothesis, CH）</strong></p>
+<ul>
+<li>内容：(2^{\aleph_0} = \aleph_1)（実数全体の濃度は、可算無限の次にくる最小の無限基数である）。</li>
+<li>なぜ延長線上か：
+<ul>
+<li>ゲーデル（1938）：ZFCが無矛盾ならZFC＋CHも無矛盾（構成可能宇宙LでCHが成り立つ）。</li>
+<li>コーエン（1963）：ZFCが無矛盾ならZFC＋¬CHも無矛盾（強制法によるモデル構成）。<br>
+→ <strong>CHはZFCから独立</strong>であり、ZFCの「外」にある問題です。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) スソリン仮説（Suslin’s Hypothesis）</strong></p>
+<ul>
+<li>内容：特定の条件を満たす順序（スソリン線）が実数直線と同型かどうか、という問題。</li>
+<li>なぜ延長線上か：ZFCから独立であることが知られており、巨大基数公理などと組み合わせてその真偽が研究されます。</li>
+</ul>
+<p><strong>(3) ホワイトヘッド問題（Whitehead problem）</strong></p>
+<ul>
+<li>内容：アーベル群に関する「すべての短完全列が分裂するか？」という問題。</li>
+<li>なぜ延長線上か：ZFCから独立であることが示されており、集合論の独立性現象が「代数」に現れる典型例です。</li>
+</ul>
+<h3 id="3-zfcを土台にした高度な理論の例">3. ZFCを土台にした高度な理論の例</h3>
+<p><strong>(1) 強制法（Forcing）</strong></p>
+<ul>
+<li>内容：既存のZFCモデルから新しいモデルを構成し、そこでは特定の命題（例：¬CH）が成り立つようにする技術。</li>
+<li>なぜ延長線上か：ZFCの「外」にある命題（CHなど）の独立性を示すために開発され、<strong>ZFCのモデル理論的な振る舞い</strong>を深く理解するための道具です。</li>
+</ul>
+<p><strong>(2) 内部モデル理論（Inner Model Theory）</strong></p>
+<ul>
+<li>内容：ZFCの「内部モデル」（例：構成可能宇宙L）を研究し、巨大基数公理の無矛盾性や独立性を調べる分野。</li>
+<li>なぜ延長線上か：ZFCの「中に」より小さい宇宙を構成することで、ZFCそのものの構造や、より強い公理との関係を探ります。</li>
+</ul>
+<p><strong>(3) 記述集合論（Descriptive Set Theory）</strong></p>
+<ul>
+<li>内容：実数集合の「複雑さ」（ボレル集合・解析集合・射影集合など）を、ZFCやその拡張のもとで分類する理論。</li>
+<li>なぜ延長線上か：CHや巨大基数公理の有無によって、実数集合の正則性（可測性など）が大きく変わるため、ZFCの延長線上にある公理との相互作用が重要です。</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>ZFC公理系についてはこんな感じのまとめになると思います。</p>
+<ul>
+<li>ZFCは「数学の言葉を集合論に翻訳するためのルールブック」</li>
+<li>無限の存在・濃度の比較・選択公理による構成可能性を保証</li>
+<li>その上に、巨大基数・CH・強制法など、より深い集合論の世界が広がっている</li>
+</ul>
+<p>これが理解できると、「数学がどのように成り立っているか」という根幹の部分が見えてきます。</p>
+<div class="shop-card">
+<div class="shop-card-image"><img src="https://m.media-amazon.com/images/I/71KdVTTStBL._SL1500_.jpg" alt="商品画像" /></div>
+<div class="shop-card-content">
+<div class="shop-card-title">集合・位相入門</div>
+<div class="shop-card-description">現代数学の中で集合は言語の性格をもっている。本書は初学者のためにほとんど予備知識を前提とせず、現代数学の基礎としての集合論と位相空間論を解説した。適切な練習問題を付して入門書としても類を見ない好書。</div>
+<div class="shop-card-link"><a href="https://www.amazon.co.jp/%E9%9B%86%E5%90%88%E3%83%BB%E4%BD%8D%E7%9B%B8%E5%85%A5%E9%96%80-%E6%9D%BE%E5%9D%82-%E5%92%8C%E5%A4%AB/dp/4000054244?adgrpid=1319416443240486&amp;dib=eyJ2IjoiMSJ9.cAHXYCovFyLhmmSBL-uaJeq9tBG7vcCi1mn9wAhf0OQsx64IGGL-kIRaTe8fNzHCbRgCO65mkR5IlzsxKtBNAXyIdMrJqDQ2O_8t8eWWHWeHuwuC6MdugQC0rtAuq9IclLoqdqKFtayfqmJQ2WW_Q2GDQ9Zt9EiRRCbn4omjn7r-5uBKOgUuL1FoTHyfjXUR.tTlV60SPcQwlz24KNaOdRb2ayPeMHqyAwdyqgN_9Lso&amp;dib_tag=se&amp;hvadid=82463778460934&amp;hvbmt=bb&amp;hvdev=c&amp;hvlocphy=243905&amp;hvnetw=o&amp;hvqmt=b&amp;hvtargid=kwd-82464775510893%3Aloc-96&amp;hydadcr=13897_13695548&amp;jp-ad-ap=0&amp;keywords=%E9%9B%86%E5%90%88+%E4%BD%8D%E7%9B%B8+%E4%BD%90%E4%B9%85%E9%96%93&amp;mcid=34c83605e713387bb25bc3c32fd1d09d&amp;msclkid=d4a8715a8bb31ac45e3218808017bbde&amp;qid=1775897511&amp;sr=8-4&amp;linkCode=ll2&amp;tag=yoshishinnze-22&amp;linkId=e4e3bd5022afaf78503b27547a4b586f&amp;ref_=as_li_ss_tl" target="_blank" rel="noopener">Amazonで詳細を見る</a></div>
+</div>
+</div>
+<p>[blog:g:11696248318754550877:banner]</p>
+<p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/TACRmufLfko?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+        </body>
+        </html>
