@@ -143,7 +143,8 @@ __例3:イデアルのイメージ1__
 
 このコードでは、数直線上に整数をプロットし、イデアル $n\mathbb{Z}$ に属する点を赤で、それ以外を青で表示します。これにより、「一定の間隔で並ぶ点の集まり」がイデアルであることが視覚的にわかります。
 
-![1782734430668](image/8_lemma_well_ordered/1782734430668.png)
+<img src="image/8_lemma_well_ordered/1782734430668.png" alt="" width="500" style="display: block; margin: 0 auto;">
+
 
 ```python
 import matplotlib.pyplot as plt
@@ -186,8 +187,7 @@ __例4:イデアルのイメージ2__
 この可視化は、イデアル $n\mathbb{Z}$ で割ることで、整数が「n で割った余り」だけに分類される→その余りを円周上の点として表す。
 というイメージを示します。
 
-![1782734543503](image/8_lemma_well_ordered/1782734543503.png)
-
+<img src="image/8_lemma_well_ordered/1782734543503.png" alt="" width="500" style="display: block; margin: 0 auto;">
 
 ```python
 def visualize_quotient_ring_mod_n(n):
@@ -292,7 +292,7 @@ __問題3__
   ことです。
 >つまり、**鎖は「全順序になっている部分集合」** です。
 >以下絵のオレンジのノードをつなげた部分集合は、半順序集合の中で「互いに比較できる元の列」として表現されてます。これが鎖のイメージです。
->![1782817871135](image/8_lemma_well_ordered/1782817871135.png)
+><img src="image/8_lemma_well_ordered/1782817871135.png" alt="" width="500" style="display: block; margin: 0 auto;">
 >例
 >- 整数の通常の順序 $\leq$ で、$\{1,2,3,4,5\}$ は鎖（1<2<3<4<5）。
 >- 自然数全体 $\mathbb{N}$ も鎖（0<1<2<...）。
