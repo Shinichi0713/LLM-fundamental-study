@@ -74,10 +74,10 @@ $$
 
 __(2) 後続順序数と極限順序数__
 
-- **後続順序数（successor ordinal）**：ある順序数 $\alpha$ が存在して $\beta = \alpha+1 = \alpha \cup \{\alpha\}$ と書けるとき、$\beta$ を後続順序数といいます。
+- **後続順序数（successor ordinal）** ：ある順序数 $\alpha$ が存在して $\beta = \alpha+1 = \alpha \cup \{\alpha\}$ と書けるとき、$\beta$ を後続順序数といいます。
 
   - 例：$1,2,3,\dots,\omega+1,\omega+2,\dots$
-- **極限順序数（limit ordinal）**：後続順序数でなく、かつ $0$ でもない順序数。
+- **極限順序数（limit ordinal）** ：後続順序数でなく、かつ $0$ でもない順序数。
 
   - 例：$\omega,\ \omega\cdot2,\ \omega^2,\ \omega^\omega,\dots$
 
@@ -153,7 +153,7 @@ __大小関係の定義__
 - $\alpha < \beta \iff \alpha \in \beta$
 - $\alpha \leq \beta \iff \alpha \in \beta$ または $\alpha = \beta$
 
-つまり、**「小さい順序数は、大きい順序数の要素として含まれる」**という関係です。
+つまり、**「小さい順序数は、大きい順序数の要素として含まれる」** という関係です。
 
 例：
 
@@ -176,7 +176,7 @@ __(1) 全順序性（任意の2つの順序数は比較可能）__
 
 証明の概略：
 
-- 順序数 $\alpha,\beta$ に対し、$\alpha \cap \beta$ はどちらかの**始片（initial segment）**になる。
+- 順序数 $\alpha,\beta$ に対し、$\alpha \cap \beta$ はどちらかの**始片（initial segment）** になる。
 - 整列集合の比較定理により、$\alpha$ と $\beta$ は順序同型か、一方が他方の真の始片になる。
 - 順序数は「自分より小さい順序数全体」として定義されているので、順序同型なら等しい。
 - したがって、$\alpha \subset \beta$（$\alpha$ が $\beta$ の始片）か、その逆か、あるいは等しいかのいずれかになる。
@@ -235,7 +235,7 @@ __(3) 順序数のべき乗 $\alpha^\beta$__
 
 __整列集合の順序型としての順序数__
 
-任意の整列集合 $(X,\leq)$ は、ある順序数 $\alpha$ と**順序同型**になります。この $\alpha$ を $(X,\leq)$ の**順序型（order type）**といいます。
+任意の整列集合 $(X,\leq)$ は、ある順序数 $\alpha$ と**順序同型**になります。この $\alpha$ を $(X,\leq)$ の**順序型（order type）** といいます。
 
 - 例：
   - $(\mathbb{N},\leq)$ の順序型は $\omega$
@@ -1497,3 +1497,5 @@ __問10（整列集合の比較定理）__
 
 
 <div style="page-break-before:always"></div>
+
+
