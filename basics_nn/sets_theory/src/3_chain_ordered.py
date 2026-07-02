@@ -135,3 +135,76 @@ def visualize_ordinal_as_order_type():
     plt.show()
 
 visualize_ordinal_as_order_type()
+
+import matplotlib.pyplot as plt
+import networkx as nx
+
+def visualize_comparable_sets():
+    """
+    集合の包含関係による半順序集合で、
+    比較可能なペアと比較不能なペアを可視化する。
+    """
+    # 集合族: ∅, {1}, {2}, {1,2}
+    sets = {
+        '∅': set(),
+        '{1}': {1},
+        '{2}': {2},
+        '{1,2}': {1,2}
+    }
+
+    # 包含関係による半順序
+    G = nx.DiGraph()
+    G.add_edges_from([
+        ('∅', '{1}'),
+        ('∅', '{2}'),
+        ('{1}', '{1,2}'),
+        ('{2}', '{1,2}')
+    ])
+
+    pos = {
+        '∅': (0, 0),
+        '{1}': (-1, 1),
+        '{2}': (1, 1),
+        '{1,2}': (0, 2)
+    }
+
+    plt.figure(figsize=(6, 6))
+    nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=800)
+    nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+    nx.draw_networkx_edges(G, pos, edge_color='gray', arrows=True, arrowsize=20)
+
+    # 比較可能なペア（包含関係がある）を強調
+    comparable_pairs = [('∅', '{1}'), ('∅', '{2}'), ('{1}', '{1,2}'), ('{2}', '{1,2}')]
+    nx.draw_networkx_edges(G, pos, edgelist=comparable_pairs,
+                           edge_color='green', arrows=True, arrowsize=20, width=2)
+
+    # 比較不能なペア（{1} と {2}）を強調
+    nx.draw_networkx_nodes(G, pos, nodelist=['{1}', '{2}'],
+                            node_color='orange', node_size=800)
+
+    plt.title("集合の包含関係による半順序\n（緑：比較可能、オレンジ：比較不能なペア）")
+    plt.axis('off')
+    plt.show()
+
+visualize_comparable_sets()
+
+def visualize_totally_ordered_sets():
+    """
+    数直線上に元を並べ、すべての元が比較可能（全順序）であることを可視化する。
+    """
+    values = [1, 3, 5, 7]
+    y = np.zeros_like(values)
+
+    plt.figure(figsize=(10, 2))
+    plt.scatter(values, y, s=100, color='red', zorder=3)
+    for x in values:
+        plt.text(x, 0.1, str(x), ha='center', va='bottom', fontsize=12)
+
+    plt.axhline(0, color='black', linewidth=0.5)
+    plt.yticks([])
+    plt.xlabel('値')
+    plt.title("全順序集合のイメージ\n（すべての元が比較可能）")
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.show()
+
+visualize_totally_ordered_sets()

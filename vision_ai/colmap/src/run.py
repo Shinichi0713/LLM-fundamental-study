@@ -1,5 +1,5 @@
 # Colab上でCOLMAPをソースからビルドする例
-
+"""
 # 依存ライブラリのインストール
 !apt-get update
 !apt-get install -y \
@@ -119,3 +119,5 @@ else:
 
 # Driveにコピー（任意）
 !cp "$ply_path" "/content/drive/MyDrive/"
+"""
+
