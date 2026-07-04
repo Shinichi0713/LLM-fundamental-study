@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>本日はNLP関係の論文を読むということで昨年のNeurIPS　2025年にて再テクされた論文より
+&quot;Knowledge Insulating Vision-Language-Action Models: Train Fast, Run Fast, Generalize Better&quot;
+について読んでいこうと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>Knowledge Insulating Vision-Language-Action Models: Train Fast, Run Fast, Generalize Betterを理解する</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="概要">概要</h2>
+<p>以下では、当該論文の概要を説明します<a href="https://neurips.cc/virtual/2025/poster/117079">NeurIPS Poster</a>。</p>
+<h3 id="1-論文の基本情報">1. 論文の基本情報</h3>
+<ul>
+<li><strong>タイトル</strong>:<br>
+<strong>Knowledge Insulating Vision-Language-Action Models: Train Fast, Run Fast, Generalize Better</strong></li>
+<li><strong>著者</strong>: Danny Driess ほか</li>
+<li><strong>会議</strong>: NeurIPS 2025 Spotlight Poster</li>
+</ul>
+<h3 id="2-問題設定アブストラクト前半">2. 問題設定（アブストラクト前半）</h3>
+<p>ポスターページのアブストラクトは、次のように始まっています。</p>
+<blockquote>
+<p><strong>Vision-language-action (VLA) models provide a powerful approach to training control policies for physical systems… by combining end-to-end learning with transfer of semantic knowledge from web-scale vision-language model (VLM) training.</strong><br>
+<strong>However, the constraints of real-time control are often at odds with the design of VLMs…</strong></p>
+</blockquote>
+<p>ここから読み取れるポイントは以下の通りです。</p>
+<ul>
+<li><strong>VLA（Vision-Language-Action）モデル</strong>は、
+<ul>
+<li>物理システム（ロボットなど）の制御ポリシーを学習するための強力な枠組みであり、</li>
+<li>エンドツーエンド学習と、Webスケールで事前学習された<strong>VLM（Vision-Language Model）の意味知識の転移</strong>を組み合わせている。</li>
+</ul>
+</li>
+<li>しかし、<strong>リアルタイム制御の制約</strong>（高速推論・連続値出力など）と、<br>
+大規模VLMの設計（巨大なパラメータ数・離散トークン出力など）は<strong>しばしば相反する</strong>。</li>
+</ul>
+<h3 id="3-具体的な問題点アブストラクト中盤">3. 具体的な問題点（アブストラクト中盤）</h3>
+<p>アブストラクトの続きは次のように述べています。</p>
+<blockquote>
+<p><strong>In this paper, we study this question in the context of VLAs that include a continuous diffusion or flow matching action expert, showing that naively including such experts significantly harms both training speed and knowledge transfer.</strong></p>
+</blockquote>
+<p>ここでは、より具体的な設定と問題点が示されています。</p>
+<ul>
+<li>本研究では、<strong>連続的な拡散モデル（diffusion）やフローマッチング（flow matching）をアクション“専門家”として組み込んだVLAモデル</strong>を対象とする。</li>
+<li>その結果、
+<ul>
+<li><strong>単純にこうしたアクション専門家をVLMに組み込むと、<br>
+学習速度と知識転移の両方が大きく損なわれる</strong>ことが示されている。</li>
+</ul>
+</li>
+</ul>
+<p>つまり、VLMの豊富な意味知識を活かしつつ、連続制御用のアクション専門家を追加しようとすると、<br>
+<strong>VLM側の知識が壊れたり、学習が遅くなったりする</strong>というトレードオフが生じる、という問題です。</p>
+<h3 id="4-提案手法knowledge-insulatingアブストラクト後半">4. 提案手法：Knowledge Insulating（アブストラクト後半）</h3>
+<p>アブストラクトの後半では、提案手法の概要が述べられています。</p>
+<blockquote>
+<p><strong>We provide an extensive analysis of various design choices, their impact on performance and knowledge transfer, and propose a technique for insulating the VLM backbone during VLA training that mitigates this issue.</strong></p>
+</blockquote>
+<p>ここから分かることは：</p>
+<ul>
+<li>著者らは、<strong>さまざまな設計選択（VLMとアクション専門家の接続方法など）を詳細に分析</strong>し、<br>
+それらが<strong>性能と知識転移に与える影響</strong>を明らかにしている。</li>
+<li>そのうえで、<strong>VLA学習中にVLMバックボーンを“絶縁（insulating）”する技術</strong>を提案し、<br>
+上記の問題を<strong>緩和</strong>している。</li>
+</ul>
+<p>この「Knowledge Insulating」のアイデアは、<br>
+<strong>VLMの事前学習済み表現を壊さないようにしつつ、連続制御用のアクション専門家をうまく統合する</strong>ための工夫と解釈できます。</p>
+<h3 id="5-貢献のまとめ">5. 貢献のまとめ</h3>
+<p>公式ページの要約では、主な貢献として次の3点が挙げられています<a href="https://neurips.cc/virtual/2025/poster/117079">NeurIPS Poster</a>。</p>
+<ol>
+<li><strong>分析</strong>:
+<ul>
+<li>連続アクション専門家（diffusion / flow matching）をVLMに組み込むと、<br>
+<strong>学習速度と知識転移の両方が悪化する</strong>ことを示す詳細な分析。</li>
+</ul>
+</li>
+<li><strong>手法</strong>:
+<ul>
+<li>VLMバックボーンを<strong>Knowledge Insulating</strong>することで、<br>
+この悪影響を<strong>軽減</strong>し、<strong>より高速な学習と良好な汎化</strong>を実現する技術を提案。</li>
+</ul>
+</li>
+<li><strong>公開</strong>:
+<ul>
+<li>モデル重みなどを含む**オープンソース実装（OpenPI）**を公開。</li>
+</ul>
+</li>
+</ol>
+<h3 id="6-解釈">6. 解釈</h3>
+<p>要約すると、この論文は：</p>
+<ul>
+<li><strong>大規模VLMの意味知識</strong>と</li>
+<li><strong>ロボットなどの連続制御タスク</strong><br>
+を両立させたいが、そのまま組み合わせると<strong>VLMの知識が壊れてしまう</strong>という問題に直面する。</li>
+</ul>
+<p>そこで、<strong>VLMバックボーンを“絶縁”する設計</strong>を採用し、</p>
+<ul>
+<li>VLMの事前学習済み表現を守りつつ、</li>
+<li>連続アクション専門家を効果的に統合することで、<br>
+<strong>「学習が速く、推論も速く、汎化も良い」VLAモデル</strong>を実現している、という内容です。</li>
+</ul>
+<h2 id="解決したい課題">解決したい課題</h2>
+<p>この論文（<strong>Knowledge Insulating Vision-Language-Action Models: Train Fast, Run Fast, Generalize Better</strong>）が解決しようとしている課題は、大きく分けて次の3つです。</p>
+<h3 id="1-大規模vlmの意味知識とリアルタイム連続制御の設計上の衝突">1. 「大規模VLMの意味知識」と「リアルタイム連続制御」の設計上の衝突</h3>
+<p>アブストラクト冒頭では、VLA（Vision-Language-Action）モデルの強みと、そこに潜む矛盾が次のように述べられています。</p>
+<blockquote>
+<p><strong>Vision-language-action (VLA) models provide a powerful approach to training control policies for physical systems… by combining end-to-end learning with transfer of semantic knowledge from web-scale vision-language model (VLM) training.</strong><br>
+<strong>However, the constraints of real-time control are often at odds with the design of VLMs…</strong><br>
+<a href="https://neurips.cc/virtual/2025/poster/117079">NeurIPS Poster</a></p>
+</blockquote>
+<p>ここから読み取れる<strong>課題</strong>は：</p>
+<ul>
+<li>VLAモデルは、<strong>Webスケールで事前学習されたVLMの意味知識</strong>を転移することで、物理システム（ロボットなど）の制御ポリシーを強力に学習できる。</li>
+<li>しかし、<strong>リアルタイム制御の制約</strong>（高速推論、連続値出力、低レイテンシなど）と、大規模VLMの設計（巨大パラメータ数、離散トークン出力、高計算コスト）は<strong>本質的に相いれない</strong>。</li>
+</ul>
+<p>つまり、<strong>「VLMの豊富な意味知識を活かしたい」</strong> という要求と、<strong>「ロボット制御として実用的な速度・連続性を確保したい」</strong> という要求が、<strong>そのままでは両立しない</strong>という設計上の衝突が、第一の課題です。</p>
+<h3 id="2-連続アクション専門家を素朴に組み込むと学習速度と知識転移が悪化する">2. 連続アクション専門家を“素朴に”組み込むと、学習速度と知識転移が悪化する</h3>
+<p>アブストラクト中盤では、より具体的な問題が示されています。</p>
+<blockquote>
+<p><strong>In this paper, we study this question in the context of VLAs that include a continuous diffusion or flow matching action expert, showing that naively including such experts significantly harms both training speed and knowledge transfer.</strong><br>
+<a href="https://neurips.cc/virtual/2025/poster/117079">NeurIPS Poster</a></p>
+</blockquote>
+<p>ここでの<strong>具体的な課題</strong>は：</p>
+<ul>
+<li>VLAモデルに、<strong>連続的なアクション出力を行う専門家（diffusion / flow matching ベースのアクションモデル）</strong> を組み込むと、
+<ul>
+<li><strong>学習速度（training speed）が遅くなる</strong></li>
+<li><strong>VLMから転移される意味知識の質が落ちる（knowledge transfer が悪化する）</strong></li>
+</ul>
+</li>
+<li>これは、<strong>単純にVLMとアクション専門家を結合するだけではうまくいかない</strong>ことを意味する。</li>
+</ul>
+<p>つまり、<strong>「連続制御に適したアクション専門家をVLMに付け足す」</strong> という自然な発想が、<strong>「VLMの事前学習済み表現を壊し、学習を遅くし、知識転移を悪化させる」</strong> という<strong>意図しない副作用</strong>を生んでしまう、というのが第二の課題です。</p>
+<h3 id="3-vlmバックボーンを壊さずに連続制御用のアクション専門家を統合する方法がない">3. VLMバックボーンを壊さずに、連続制御用のアクション専門家を統合する方法がない</h3>
+<p>アブストラクト後半と要約では、著者らが提案する解決策の方向性が示されています。</p>
+<blockquote>
+<p><strong>We provide an extensive analysis of various design choices, their impact on performance and knowledge transfer, and propose a technique for insulating the VLM backbone during VLA training that mitigates this issue.</strong><br>
+<a href="https://neurips.cc/virtual/2025/poster/117079">NeurIPS Poster</a></p>
+</blockquote>
+<p>ここから読み取れる<strong>第三の課題</strong>は：</p>
+<ul>
+<li>VLA学習において、<strong>VLMバックボーンをどのように扱うか</strong>という設計選択が、<br>
+性能と知識転移に大きく影響する。</li>
+<li>しかし、<strong>VLMの事前学習済み表現を壊さずに、連続制御用のアクション専門家を統合する一般的な方法</strong>が存在しない。</li>
+<li>その結果、
+<ul>
+<li>学習が遅い</li>
+<li>推論が遅い</li>
+<li>汎化が悪い<br>
+といった実用上の問題が生じる。</li>
+</ul>
+</li>
+</ul>
+<p>したがって、<strong>「VLMバックボーンを“絶縁”しつつ、連続アクション専門家をうまく統合する技術」</strong> を設計することが、本論文が解決しようとしている<strong>中核的な課題</strong>です。</p>
+<h2 id="提案手法">提案手法</h2>
+<p>ご指定のarXiv版論文（<strong>Knowledge Insulating Vision-Language-Action Models</strong>）では、先述の課題に対して、<strong>「Knowledge Insulation（知識絶縁）」</strong> という具体的な手法を提案しています<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a>。</p>
+<p>以下では、PDF本文の記述を引用しながら、<strong>どのように課題を解決しているか</strong>を整理します。</p>
+<h3 id="1-課題の再確認pdfの文脈">1. 課題の再確認（PDFの文脈）</h3>
+<p>PDFでは、次のような問題意識が示されています（要約）：</p>
+<ul>
+<li><strong>大規模VLMの意味知識</strong>をロボット制御に転移したいが、</li>
+<li><strong>連続アクション専門家（diffusion / flow matching）</strong> を素朴に組み込むと、
+<ul>
+<li>VLMバックボーンの知識が<strong>劣化</strong>し、</li>
+<li><strong>学習が遅くなり</strong>、</li>
+<li><strong>汎化も悪くなる</strong>。</li>
+</ul>
+</li>
+</ul>
+<p>この「VLMバックボーンが壊れる」問題を解決するために、<strong>Knowledge Insulation</strong>が提案されています。</p>
+<h3 id="2-提案手法の全体像">2. 提案手法の全体像</h3>
+<p>PDFの「Proposed Method」セクションでは、Knowledge Insulation の枠組みが次のように説明されています。</p>
+<blockquote>
+<p><strong>‘knowledge insulation’ involves fine-tuning the VLM backbone with discretized actions (using FAST tokenizer) while simultaneously training an action expert for continuous actions (flow matching) without backpropagating the expert’s gradients into the VLM.</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<p>ここから分かるポイントは：</p>
+<ul>
+<li><strong>VLMバックボーン</strong>は、<strong>離散化されたアクション（FASTトークナイザによる離散アクション）</strong> を用いてファインチューニングされる。</li>
+<li>一方で、<strong>連続アクションを出力するアクション専門家（flow matchingベース）</strong> は、<strong>VLMには勾配を逆伝播させずに</strong>別途学習される。</li>
+<li>つまり、<strong>VLMとアクション専門家を“分離”して学習</strong>し、<strong>VLM側には連続アクション専門家の勾配が入らないようにする</strong>ことで、<br>
+VLMの事前学習済み表現を<strong>壊さない</strong>設計になっています。</li>
+</ul>
+<p>イメージは以下で連続アクションと離散アクションをそのまま勾配伝播させない設計をベースのアイデアとしているとのことです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\19_Knowledge_Insulating_VLA\1783142809061.png" alt="1783142809061"></p>
+<h3 id="3-vlmバックボーンの扱い方">3. VLMバックボーンの扱い方</h3>
+<p>VLMバックボーンについては、次のように記述されています。</p>
+<blockquote>
+<p><strong>The backbone (initialized from PaliGemma) is trained via next-token prediction to learn robotic representations without disruption.</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<p>ここから分かること：</p>
+<ul>
+<li>VLMバックボーンは、<strong>PaliGemma</strong>などの事前学習済みVLMで初期化される。</li>
+<li>ロボティクス表現を学ぶ際も、<strong>next-token prediction（次トークン予測）</strong> というVLM本来の学習方式を維持し、<strong>連続アクション専門家の勾配で“破壊”されない</strong>ようにしている。</li>
+</ul>
+<p>これにより、<strong>VLMの意味知識を維持したまま、ロボットタスクに適応</strong>させることが可能になります。</p>
+<h3 id="4-vlmとアクション専門家の接続方法stop-gradient">4. VLMとアクション専門家の接続方法（stop-gradient）</h3>
+<p>VLMとアクション専門家の接続方法は、<strong>アテンション層＋stop-gradient</strong>で実現されています。</p>
+<blockquote>
+<p><strong>The backbone and action expert interact via attention layers, where a ‘stop-gradient operator’ (sg) is applied to the key and value projections of the backbone when attended to by the action expert: ‘Pab sg(Kb(Xb)T)’ and ‘Pab sg(Vb(Xb))’.</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<p>ここでの仕組みは：</p>
+<ul>
+<li>VLMの出力特徴（key, value）は、<strong>アクション専門家側のアテンション層</strong>から参照される。</li>
+<li>しかし、その際に**stop-gradient演算子（sg）**を適用し、<br>
+<strong>アクション専門家側の損失がVLMバックボーンに逆伝播しない</strong>ようにしている。</li>
+<li>つまり、
+<ul>
+<li>VLMの特徴は <strong>“読まれる”</strong> が、</li>
+<li>VLMのパラメータは <strong>“更新されない”</strong> （あるいは、別の損失でのみ更新される）。</li>
+</ul>
+</li>
+</ul>
+<p>これが <strong>「Knowledge Insulation（知識絶縁）」</strong> の核となる設計です。</p>
+<h3 id="5-学習速度の改善fast並みに速い">5. 学習速度の改善（「FAST並みに速い」）</h3>
+<p>学習速度については、次のように述べられています。</p>
+<blockquote>
+<p><strong>our method ‘trains as quickly as FAST’ and notes that ‘π0 trains significantly slower, requiring 7.5 times as many training steps to reach a similar performance.’</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<p>ここから分かること：</p>
+<ul>
+<li>提案手法は、<strong>FAST（離散アクションベースの既存手法）と同等の学習速度</strong>で動作する。</li>
+<li>一方、<strong>純粋な拡散モデルベースのπ0</strong>は、<br>
+<strong>同程度の性能に達するまでに7.5倍の学習ステップ</strong>を必要とする。</li>
+</ul>
+<p>つまり、<strong>連続アクション専門家を“素朴に”組み込むと学習が極端に遅くなる</strong>という課題に対し、<br>
+Knowledge Insulation によって<strong>学習速度を大幅に改善</strong>していることが示されています。</p>
+<h3 id="6-知識転移と汎化の改善vlm知識の保持ood汎化">6. 知識転移と汎化の改善（VLM知識の保持・OOD汎化）</h3>
+<p>知識転移と汎化については、次のように述べられています。</p>
+<blockquote>
+<p><strong>The approach ‘retains VLM knowledge’ and ‘co-training on VLM data is particularly important for this generalization’ to novel objects (OOD Follow Rate).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<p>ここから分かること：</p>
+<ul>
+<li>Knowledge Insulation により、<strong>VLMの知識が保持される</strong>。</li>
+<li>さらに、<strong>VLMデータとの共同学習（co-training）</strong> を行うことで、<br>
+<strong>未知の物体に対するゼロショット汎化（OOD Follow Rate）</strong> が向上する。</li>
+</ul>
+<p>これは、<strong>VLMバックボーンを壊さずに連続制御を学習する</strong>ことで、</p>
+<ul>
+<li>事前学習済みの意味知識を活かしつつ、</li>
+<li>新しい物体や環境にも<strong>強く汎化できる</strong>ことを意味します。</li>
+</ul>
+<h2 id="実験">実験</h2>
+<p>以下では、arXiv版論文（<strong>Knowledge Insulating Vision-Language-Action Models</strong>）の実験セクションに基づき、<strong>実験設定</strong>と<strong>実験結果</strong>を引用付きで整理します<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a>。</p>
+<h3 id="1-実験設定タスク環境ベースライン">1. 実験設定（タスク・環境・ベースライン）</h3>
+<p><strong>1.1 タスクと環境</strong></p>
+<p>PDFでは、実験対象として<strong>多指ハンド・長期操作タスク</strong>と<strong>モバイルマニピュレーションタスク</strong>が挙げられています。</p>
+<blockquote>
+<p><strong>The experimental evaluation encompasses dexterous, long-horizon manipulation tasks: ‘table bussing’, ‘shirt-folding’ (bimanual), ‘items in drawer’ (unseen environments), and mobile manipulation tasks like ‘dishes in sink’ (Section 6, Figure 3).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<p>具体的には：</p>
+<ul>
+<li><strong>Dexterous / Long-horizon manipulation</strong>
+<ul>
+<li><strong>table bussing</strong>（テーブル上の食器片付け）</li>
+<li><strong>shirt-folding</strong>（シャツのたたみ、両手操作）</li>
+<li><strong>items in drawer</strong>（引き出し内のアイテム操作、<strong>未見環境</strong>）</li>
+</ul>
+</li>
+<li><strong>Mobile manipulation</strong>
+<ul>
+<li><strong>dishes in sink</strong>（シンク内の食器片付け）</li>
+</ul>
+</li>
+</ul>
+<p>また、ベンチマークとして<strong>DROID</strong>および<strong>LIBERO（LIBERO-90, LIBERO-Spatial）</strong> が使用されています。</p>
+<p><strong>1.2 ベースライン</strong></p>
+<p>比較対象となるベースラインは、次のように列挙されています。</p>
+<blockquote>
+<p><strong>Baselines evaluated include π0 (flow matching), π0-FAST (autoregressive), OpenVLA-OFT (parallel decoding), Transfusion, and HybridVLA (Section 6).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<ul>
+<li><strong>π0</strong>: 連続アクションを<strong>flow matching</strong>で学習する拡散モデルベースのVLA。</li>
+<li><strong>π0-FAST</strong>: 離散アクション（FASTトークナイザ）を用いた<strong>自己回帰モデル</strong>。</li>
+<li><strong>OpenVLA-OFT</strong>: OpenVLAベースで<strong>並列デコーディング</strong>を行う手法。</li>
+<li><strong>Transfusion</strong>: 拡散モデルと自己回帰モデルを組み合わせた<strong>ハイブリッド手法</strong>。</li>
+<li><strong>HybridVLA</strong>: 同様にハイブリッドなVLAアプローチ。</li>
+</ul>
+<p><strong>1.3 評価指標</strong></p>
+<p>使用される評価指標は以下の通りです。</p>
+<blockquote>
+<p><strong>Metrics used are task completion/success rate (%), language following rate (%), inference time, and convergence speed in training steps (Figures 4, 5, 6).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<ul>
+<li><strong>タスク成功率（task success rate）</strong></li>
+<li><strong>言語指示追従率（language following rate）</strong></li>
+<li><strong>推論時間（inference time）</strong></li>
+<li><strong>収束に要する学習ステップ数（convergence speed）</strong></li>
+</ul>
+<h3 id="2-主な実験結果">2. 主な実験結果</h3>
+<p><strong>2.1 学習速度（Training Speed）</strong></p>
+<p>学習速度については、次の結果が報告されています。</p>
+<blockquote>
+<p><strong>The proposed method trains as fast as π0-FAST and 7.5x faster than π0 (Fig 6b).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<ul>
+<li>提案手法は、<strong>π0-FAST（離散アクション自己回帰モデル）と同等の学習速度</strong>で動作する。</li>
+<li>一方、<strong>π0（純粋なflow matchingベース）<strong>は、<br>
+同程度の性能に達するまでに</strong>7.5倍の学習ステップ</strong>を必要とする。</li>
+</ul>
+<p>→ <strong>Knowledge Insulation により、連続アクション専門家を組み込みつつ、自己回帰モデル並みの高速学習を実現</strong>していることが示されています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\19_Knowledge_Insulating_VLA\1783143040648.png" alt="1783143040648"></p>
+<p><strong>2.2 タスク性能（Performance）</strong></p>
+<p>タスク成功率については、次のように述べられています。</p>
+<blockquote>
+<p><strong>Highest performance in ‘items in drawer’ and ‘table bussing’ (Fig 4a, 5).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<ul>
+<li><strong>items in drawer</strong>（未見環境での引き出し操作）および<br>
+<strong>table bussing</strong>（テーブル片付け）において、<br>
+提案手法は<strong>ベースライン中最も高い成功率</strong>を達成。</li>
+<li>特に、<strong>未見環境や長期タスク</strong>において、<br>
+VLM知識を保持したまま連続制御を学習する利点が発揮されています。</li>
+</ul>
+<p><strong>2.3 Knowledge Insulation の効果（知識保持・言語追従）</strong></p>
+<p>Knowledge Insulation（stop-gradient）の効果については、次の結果が示されています。</p>
+<blockquote>
+<p><strong>Stopping gradient flow from the action expert to the backbone (‘knowledge insulation’) prevents corruption of pre-trained VLM weights, significantly improving language following (Fig 4b).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<ul>
+<li><strong>アクション専門家からVLMバックボーンへの勾配を遮断</strong>することで、<br>
+<strong>事前学習済みVLMの重みが破壊されるのを防ぎ</strong>、<br>
+<strong>言語追従率（language following）が大幅に向上</strong>。</li>
+<li>これは、<strong>VLMの意味知識を維持したままロボット制御を学習できる</strong>ことを定量的に示しています。</li>
+</ul>
+<p><strong>2.4 OOD汎化（未知物体への一般化）</strong></p>
+<p>未知物体（Out-of-Distribution, OOD）への汎化については、次のように述べられています。</p>
+<blockquote>
+<p><strong>Co-training with VLM data is ‘particularly important’ for generalizing to novel objects (Fig 7).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<ul>
+<li>**VLMデータとの共同学習（co-training）**を行うことで、<br>
+**未知の物体に対するゼロショット汎化（OOD Follow Rate）**が特に向上。</li>
+<li>Knowledge Insulation によりVLM知識を保持しつつ、<br>
+VLMデータで追加学習することで、<strong>より強力な一般化能力</strong>が得られることが示されています。</li>
+</ul>
+<p><strong>2.5 SOTA達成（LIBEROベンチマーク）</strong></p>
+<p>LIBEROベンチマークにおける結果は次の通りです。</p>
+<blockquote>
+<p><strong>Achieves new SOTA on LIBERO-90 and LIBERO-Spatial (Table 1).</strong><br>
+<a href="https://arxiv.org/pdf/2505.23705">arXiv PDF</a></p>
+</blockquote>
+<ul>
+<li><strong>LIBERO-90</strong>および<strong>LIBERO-Spatial</strong>において、<br>
+提案手法は**新たなState-of-the-Art（SOTA）**を達成。</li>
+<li>これは、<strong>VLM知識の保持＋連続制御の効率化</strong>という設計が、<br>
+既存のVLA手法よりも<strong>総合的に優れている</strong>ことを示しています。</li>
+</ul>
+<h3 id="3-実験結果のまとめ">3. 実験結果のまとめ</h3>
+<p>論文の実験結果を整理すると、次のようになります。</p>
+<ol>
+<li>
+<p><strong>学習速度</strong></p>
+<ul>
+<li>π0-FASTと同等の高速学習を実現し、<br>
+π0より<strong>7.5倍速く収束</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>タスク性能</strong></p>
+<ul>
+<li>table bussing, items in drawer などで<strong>最高成功率</strong>を達成。</li>
+<li>特に<strong>未見環境・長期タスク</strong>で優位。</li>
+</ul>
+</li>
+<li>
+<p><strong>知識保持・言語追従</strong></p>
+<ul>
+<li>Knowledge Insulation により、<br>
+<strong>VLMバックボーンの事前知識が破壊されず</strong>、<br>
+<strong>言語追従率が大幅に向上</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>OOD汎化</strong></p>
+<ul>
+<li>VLMデータとのco-trainingにより、<br>
+<strong>未知物体に対するゼロショット汎化が特に向上</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>SOTA達成</strong></p>
+<ul>
+<li>LIBERO-90, LIBERO-Spatial で<strong>新SOTA</strong>を達成。</li>
+</ul>
+</li>
+</ol>
+<p>これらの結果から、**「VLMバックボーンを絶縁しつつ連続アクション専門家を統合する」**という<br>
+Knowledge Insulation の設計が、<strong>学習速度・性能・知識保持・汎化のすべてにおいて有効</strong>であることが示されています。</p>
+<p>論文の図5、この結果が主張する結論の部分です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\doc\image\19_Knowledge_Insulating_VLA\1783143084623.png" alt="1783143084623"></p>
+<h2 id="総括">総括</h2>
+<p>ここまでの話をまとめていきます。</p>
+<p>この論文は、<strong>「大規模VLMの意味知識」と「ロボットの連続制御」を両立させたいが、素朴に組み合わせるとVLMの知識が壊れ、学習も遅くなり、汎化も悪くなる</strong>という問題に取り組んでいます。</p>
+<p><strong>核心のアイデア</strong>は、<strong>Knowledge Insulation（知識絶縁）</strong> です。</p>
+<ul>
+<li>VLMバックボーンは、<strong>離散アクション（FASTトークナイザ）</strong> を用いた<strong>next-token prediction</strong>でファインチューニングし、</li>
+<li>連続アクション専門家（flow matching）は、<strong>VLMには勾配を逆伝播させず</strong>、<br>
+<strong>stop-gradient付きのアテンション</strong>でVLM特徴を参照するだけにします。</li>
+</ul>
+<p>これにより、</p>
+<ul>
+<li><strong>VLMの事前学習済み表現を壊さず</strong>に、</li>
+<li><strong>連続制御を高速に学習</strong>でき、</li>
+<li><strong>言語追従・OOD汎化・タスク成功率が向上</strong>し、</li>
+<li>LIBERO-90 / LIBERO-Spatial で<strong>新SOTA</strong>を達成しています。</li>
+</ul>
+<p>要するに、<strong>「VLMは知識を提供するだけにし、連続制御は別モジュールに任せる」</strong> という設計で、<br>
+<strong>学習が速く、推論も速く、汎化も良いVLAモデル</strong>を実現した、というのが本論文の総括です。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+            
+        </body>
+        </html>
