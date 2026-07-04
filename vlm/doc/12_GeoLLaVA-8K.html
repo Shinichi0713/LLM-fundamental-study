@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日に引き続き<a href="">NeurIPS 2025</a>の採択論文を読んでいきます。
+今回もビジョンを用いたLLM=VLMに関s瑠うものです。</p>
+<p>人工衛星のような上空から撮影されるデータは地上の目線とは異なり広域の情報を得ることが出来ます。
+しかし、データの重量が大きく、処理が難しいという課題があります。
+本日はそんな課題に対する方法を提案した論文を扱います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>NeurIPS 2025の採択論文でリモートセンシング対応したGeoLLaVA-8Kについて理解してみる</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="概要">概要</h2>
+<p>この論文は、<strong>超高解像度（8Kクラス）のリモートセンシング画像</strong>に特化したマルチモーダル大規模言語モデル（MLLM）<strong>GeoLLaVA-8K</strong>を提案するものです。</p>
+<h3 id="1-背景と課題">1. 背景と課題</h3>
+<ul>
+<li>衛星画像などの <strong>Ultra-High-Resolution (UHR) リモートセンシング画像</strong>は、地球観測・防災・都市計画などに有用ですが、既存の MLLM には 2 つの大きなボトルネックがあります。
+<ol>
+<li><strong>超高解像度データの学習データ不足</strong><br>
+8K×8K のような巨大画像に対応した大規模な vision-language データセットがほとんど存在しない。</li>
+<li><strong>トークン爆発（token explosion）</strong><br>
+8K 画像をそのまま Vision Transformer に入力するとトークン数が膨大になり、メモリ・計算コストが爆発的に増える。</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-提案データセット">2. 提案データセット</h3>
+<p>なんと、論文の著者らは、UHR リモートセンシング向けの大規模 vision-language データセットを 2 つ構築しています。</p>
+<ol>
+<li>
+<p><strong>SuperRS-VQA</strong></p>
+<ul>
+<li>約 <strong>12K サンプル</strong>、平均解像度 <strong>8,376×8,376</strong> という、現時点で最も高解像度なリモートセンシング VQA データセット。</li>
+<li>手動アノテーションによる高品質な対話データで、22 種類の現実タスク（例：物体検出、変化検知、土地利用分類など）をカバー。</li>
+</ul>
+</li>
+<li>
+<p><strong>HighRS-VQA</strong></p>
+<ul>
+<li>平均解像度 <strong>2,000×1,912</strong> 程度の高解像度データセット。</li>
+<li>GPT-4o を用いた半自動アノテーションと、LESS フレームワークによる影響度ベースのサンプル選択を組み合わせて構築。</li>
+</ul>
+</li>
+</ol>
+<p>これらにより、<strong>超高解像度リモートセンシング画像に対する大規模な対話学習</strong>が可能になりました<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\doc\image\12_GeoLLaVA-8K\1783146404225.png" alt="1783146404225"></p>
+<h3 id="3-提案手法geollava-8k-の設計とトークン削減戦略">3. 提案手法：GeoLLaVA-8K の設計とトークン削減戦略</h3>
+<p>GeoLLaVA-8K は、LLaVA フレームワークをベースにしつつ、<strong>8K×8K までの入力</strong>を扱えるように設計されています。<br>
+大きな画像をそのまま扱うとトークン数が膨大になるため、著者らは「<strong>冗長な背景を削り、重要な物体トークンだけを残す</strong>」という発想で、以下の 2 段階戦略を提案しています。</p>
+<p><strong>(1) Background Token Pruning (BTP)</strong></p>
+<ul>
+<li>リモートセンシング画像では、<strong>海・森林・農地などの広い背景領域が多く、情報密度が低い</strong>ことが多い。</li>
+<li>BTP では、<strong>意味的類似度に基づく適応的トークンクラスタリング</strong>を行い、冗長な自然背景トークンをまとめて削減します。</li>
+<li>これにより、<strong>メモリ使用量を大幅に削減</strong>しつつ、重要な情報を保持します。</li>
+</ul>
+<p><strong>(2) Anchored Token Selection (ATS)</strong></p>
+<ul>
+<li>Vision Transformer の <strong>[CLS] トークンのアテンションマップ</strong>を利用し、<strong>意味的に重要なトークンや小さな物体トークン</strong>を特定して残します。</li>
+<li>これにより、**物体中心のトークン（object-centric tokens）**を選択的に保持し、性能を落とさずにトークン数を削減できます。</li>
+</ul>
+<p>この 2 つの戦略を組み合わせることで、<strong>8K 解像度の画像を効率的に処理できる MLLM</strong>を実現しています<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</p>
+<h3 id="4-性能評価">4. 性能評価</h3>
+<ul>
+<li>GeoLLaVA-8K（7B パラメータ）は、<strong>XLRS-Bench</strong> という超高解像度リモートセンシングベンチマークで評価されています。</li>
+<li>その結果、<strong>オープンソースモデルだけでなく、Qwen2.5-VL-72B や GPT-4o などのクローズドソースモデルも上回る</strong> SOTA 性能を達成したと報告されています<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+<h3 id="5-まとめ">5. まとめ</h3>
+<ul>
+<li><strong>GeoLLaVA-8K</strong> は、超高解像度リモートセンシング画像向けに設計された、<strong>初の 8K 対応リモートセンシング MLLM</strong> です。</li>
+<li><strong>SuperRS-VQA / HighRS-VQA</strong> という大規模高解像度データセットと、</li>
+<li><strong>Background Token Pruning</strong> と <strong>Anchored Token Selection</strong> による効率的なトークン削減戦略により、</li>
+<li><strong>トークン爆発とデータ不足を同時に解決し、SOTA 性能を達成</strong>した点が本論文の主な貢献です。</li>
+</ul>
+<p>コードとデータセットは GitHub で公開されています<a href="https://github.com/wang-fengxiang/GeoLLaVA-8K">GitHub</a>。</p>
+<h2 id="解決したい課題">解決したい課題</h2>
+<p>この論文が対象とする主な「課題」は、<strong>超高解像度（Ultra-High-Resolution, UHR）リモートセンシング画像をマルチモーダル大規模言語モデル（MLLM）で扱う際の根本的なボトルネック</strong>です。大きく分けて以下の2点が中心です。</p>
+<h3 id="1-超高解像度リモートセンシング画像のデータ不足">1. 超高解像度リモートセンシング画像の「データ不足」</h3>
+<ul>
+<li>衛星画像などでは、<strong>8K×8K クラスの超高解像度画像</strong>が地球観測・防災・都市計画などで重要ですが、そのような <strong>巨大画像に対応した大規模な vision-language データセットがほとんど存在しません</strong>。</li>
+<li>既存のリモートセンシング向け MLLM は、比較的低解像度の画像で学習・評価されることが多く、<strong>8K クラスの超高解像度画像を対象とした対話・VQA・物体検出などのタスク用データが不足</strong>していました。</li>
+<li>その結果、<strong>超高解像度画像に特化した MLLM を学習・評価するための基盤データが欠けている</strong>という課題がありました<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+<h3 id="2-トークン爆発token-explosionと計算効率の悪さ">2. トークン爆発（token explosion）と計算効率の悪さ</h3>
+<ul>
+<li>8K×8K の画像を Vision Transformer にそのまま入力すると、<strong>トークン数が膨大になり、メモリと計算コストが爆発的に増大</strong>します。</li>
+<li>既存の MLLM は、一般画像（例：768×768 程度）を前提に設計されているため、<strong>8K 解像度のリモートセンシング画像を直接扱うと、GPU メモリが足りない・推論が極端に遅い</strong>といった問題が生じます。</li>
+<li>単純に画像を縮小すると、<strong>小さな物体や細かい構造が失われ、リモートセンシング特有の高解像度の利点が消えてしまう</strong>というトレードオフもありました。</li>
+</ul>
+<h3 id="3-リモートセンシング画像特有の背景冗長性">3. リモートセンシング画像特有の「背景冗長性」</h3>
+<ul>
+<li>リモートセンシング画像では、<strong>海・森林・農地などの広い背景領域が多く、情報密度が低い</strong>一方で、重要な情報は<strong>局所的な物体（建物、道路、船舶など）に集中</strong>しています。</li>
+<li>既存の MLLM は、画像全体をほぼ均等にトークン化するため、<strong>情報の少ない背景トークンに多くの計算リソースを浪費</strong>してしまうという問題がありました。</li>
+<li>著者らのパイロットスタディでは、<strong>背景トークンを削減しても性能が落ちないどころか、むしろ改善するケースがある</strong>ことが示され、「<strong>背景冗長性をどう削るか</strong>」が重要な課題として浮かび上がりました<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+<h3 id="4-既存-mllm-のリモートセンシング特化性の不足">4. 既存 MLLM の「リモートセンシング特化性の不足」</h3>
+<ul>
+<li>一般画像向けに設計された MLLM（例：LLaVA 系、Qwen-VL、GPT-4V など）は、<br>
+リモートセンシング特有の<strong>高解像度・広域・物体スケールの多様性</strong>を十分に考慮していません。</li>
+<li>そのため、<strong>超高解像度リモートセンシング画像に対する精度・効率の両面で最適化されていない</strong>という課題がありました。</li>
+</ul>
+<h2 id="提案手法">提案手法</h2>
+<p>この論文の「提案手法」は、<strong>超高解像度（8Kクラス）リモートセンシング画像に特化したマルチモーダル大規模言語モデル「GeoLLaVA-8K」</strong> と、その<strong>トークン削減戦略</strong>です。<br>
+主な構成要素は以下の通りです。</p>
+<h3 id="1-全体アーキテクチャllava-ベースの-8k-対応-mllm">1. 全体アーキテクチャ：LLaVA ベースの 8K 対応 MLLM</h3>
+<ul>
+<li><strong>ベースモデル</strong>：LLaVA フレームワークをベースにした vision-language モデルです。</li>
+<li><strong>入力解像度</strong>：最大 <strong>8K×8K</strong> の超高解像度リモートセンシング画像を扱えるように設計されています。</li>
+<li>構成はおおむね
+<ul>
+<li>Vision Encoder（ViT 系）</li>
+<li>Projection Layer（画像トークン → LLM 入力）</li>
+<li>LLM（言語モデル）<br>
+という標準的な MLLM 構成ですが、<strong>8K 画像をそのまま扱うとトークン数が爆発する</strong>ため、以下の 2 段階戦略でトークンを削減します<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\doc\image\12_GeoLLaVA-8K\1783146430706.png" alt="1783146430706"></p>
+<h3 id="2-background-token-pruning-btp">2. Background Token Pruning (BTP)</h3>
+<p><strong>目的</strong>：リモートセンシング画像に多い「情報の少ない広い背景」を効率的に削減し、メモリと計算コストを下げる。</p>
+<ul>
+<li>
+<p><strong>背景冗長性の観察</strong><br>
+著者らのパイロットスタディでは、リモートセンシング画像では</p>
+<ul>
+<li>海・森林・農地などの広い背景領域は情報密度が低い</li>
+<li>重要な情報は局所的な物体（建物、道路、船舶など）に集中<br>
+していることが確認されました。</li>
+</ul>
+</li>
+<li>
+<p><strong>適応的トークンクラスタリング</strong><br>
+BTP では、<strong>意味的類似度（semantic affinity）に基づくクラスタリング</strong>を行い、<br>
+類似した背景トークンをまとめて削減します。</p>
+<ul>
+<li>類似した自然背景（例：広い海面、森林）をグループ化し、代表トークンだけを残す。</li>
+<li>これにより、<strong>冗長な背景トークンを大幅に削減</strong>しつつ、重要な情報を保持します。</li>
+</ul>
+</li>
+<li>
+<p><strong>効果</strong><br>
+背景トークンを削減しても性能が落ちないどころか、<strong>場合によっては性能が向上する</strong>ことが示されています。<br>
+これは、MLLM が「ノイズのような背景」に注意を割かなくて済むためと考えられます<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</p>
+</li>
+</ul>
+<h3 id="3-anchored-token-selection-ats">3. Anchored Token Selection (ATS)</h3>
+<p><strong>目的</strong>：BTP で背景を削った後も、<strong>意味的に重要な物体トークンや小さな物体トークンを見逃さないようにする</strong>。</p>
+<ul>
+<li>
+<p><strong>[CLS] トークンのアテンションマップを利用</strong><br>
+Vision Transformer の <strong>[CLS] トークンがどの画像トークンに強く注意を向けているか</strong>を分析し、<br>
+そのアテンションマップに基づいてトークンを選択します。</p>
+</li>
+<li>
+<p><strong>物体中心トークンの選択</strong></p>
+<ul>
+<li>アテンションが高いトークンは、<strong>意味的に重要な領域（物体、構造物など）</strong> に対応していると考えられます。</li>
+<li>特に、<strong>小さな物体や細かい構造</strong>に対応するトークンも、アテンションが高ければ優先的に残します。</li>
+</ul>
+</li>
+<li>
+<p><strong>BTP との組み合わせ</strong></p>
+<ul>
+<li>まず BTP で背景トークンを削減し、</li>
+<li>次に ATS で [CLS] アテンションに基づき重要なトークンを残す<br>
+という 2 段階で、<strong>冗長性を削りつつ重要な情報を保持</strong>します<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-データセットsuperrs-vqa-と-highrs-vqa">4. データセット：SuperRS-VQA と HighRS-VQA</h3>
+<p>提案手法を学習・評価するために、著者らは 2 つの高解像度 vision-language データセットを構築しています。</p>
+<ol>
+<li>
+<p><strong>SuperRS-VQA</strong></p>
+<ul>
+<li>約 <strong>12K サンプル</strong>、平均解像度 <strong>8,376×8,376</strong>。</li>
+<li>現時点で<strong>最も高解像度なリモートセンシング VQA データセット</strong>。</li>
+<li>22 種類の現実タスク（物体検出、変化検知、土地利用分類など）をカバーする<strong>手動アノテーション</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>HighRS-VQA</strong></p>
+<ul>
+<li>平均解像度 <strong>2,000×1,912</strong> 程度。</li>
+<li>GPT-4o を用いた半自動アノテーションと、LESS フレームワークによる影響度ベースのサンプル選択を組み合わせて構築。</li>
+</ul>
+</li>
+</ol>
+<p>これらにより、<strong>超高解像度リモートセンシング画像に対する大規模な対話学習</strong>が可能になり、<br>
+GeoLLaVA-8K は 8K 解像度の画像を扱う能力を獲得しています<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</p>
+<h2 id="実験結果">実験結果</h2>
+<p>以下では、本論文の<strong>実験設定</strong>と<strong>実験結果</strong>をまとめます。</p>
+<h3 id="1-実験設定">1. 実験設定</h3>
+<p><strong>1.1 使用ベンチマーク</strong></p>
+<ul>
+<li><strong>XLRS-Bench</strong>
+<ul>
+<li>平均解像度 <strong>8K</strong> クラスの超高解像度リモートセンシング画像を対象としたベンチマーク。</li>
+<li>視覚的質問応答（VQA）、物体検出、変化検知など、多様なタスクを含む。</li>
+</ul>
+</li>
+<li><strong>LRS-VQA</strong>
+<ul>
+<li>比較的低解像度のリモートセンシング VQA ベンチマーク。</li>
+<li>既存研究との比較や、汎用性の確認に使用。</li>
+</ul>
+</li>
+</ul>
+<p><strong>1.2 比較対象モデル</strong></p>
+<ul>
+<li><strong>リモートセンシング専用モデル</strong>
+<ul>
+<li>GeoChat など、既存の RS 特化 MLLM。</li>
+</ul>
+</li>
+<li><strong>クローズドソース MLLM</strong>
+<ul>
+<li>GPT-4o</li>
+<li>Claude 3.7 Sonnet</li>
+<li>Gemini 2.0 Flash</li>
+</ul>
+</li>
+<li><strong>オープンソース MLLM</strong>
+<ul>
+<li>LLaVA-Next</li>
+<li>InternVL2.5 / InternVL3</li>
+<li>Qwen2-VL / Qwen2.5-VL（最大 72B パラメータを含む）</li>
+</ul>
+</li>
+</ul>
+<p><strong>1.3 評価指標</strong></p>
+<ul>
+<li><strong>Accuracy（平均精度）</strong> ：各タスクの正答率の平均。</li>
+<li><strong>TFLOPs</strong>：推論時の計算量（浮動小数点演算数）。</li>
+<li><strong>Latency（推論遅延）</strong> ：1サンプルあたりの推論時間。</li>
+</ul>
+<h3 id="2-主な実験結果">2. 主な実験結果</h3>
+<p><strong>2.1 XLRS-Bench での SOTA 達成</strong></p>
+<ul>
+<li><strong>GeoLLaVA-8K（7B）</strong> は、XLRS-Bench で <strong>51.5% の平均精度</strong>を達成。</li>
+<li>これは、
+<ul>
+<li>オープンソースモデル（LLaVA-Next, InternVL, Qwen2.5-VL-72B など）</li>
+<li>クローズドソースモデル（GPT-4o, Claude 3.7 Sonnet, Gemini 2.0 Flash など）<br>
+を<strong>すべて上回る SOTA 性能</strong>です<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 計算効率（TFLOPs / Latency）</strong></p>
+<ul>
+<li><strong>Background Token Pruning (BTP)</strong> と <strong>Anchored Token Selection (ATS)</strong> により、<br>
+トークン数を最大 <strong>96倍圧縮</strong>し、TFLOPs を<strong>約 1/4 に低減</strong>。</li>
+<li>これにより、<strong>8K 解像度画像を扱いながらも、計算コストと推論遅延を大幅に抑えられる</strong>ことが示されました<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+<h3 id="3-アブレーションスタディ提案要素の寄与分析">3. アブレーションスタディ（提案要素の寄与分析）</h3>
+<p><strong>3.1 高解像度データセットの効果</strong></p>
+<ul>
+<li><strong>SuperRS-VQA / HighRS-VQA</strong> を用いて学習した場合、<br>
+XLRS-Bench の精度が <strong>+4.4% 向上</strong>。</li>
+<li>これは、<strong>超高解像度リモートセンシング画像に対する大規模な対話学習</strong>が、<br>
+モデルの理解能力を大きく高めることを示しています<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+<p><strong>3.2 BTP / ATS の効果</strong></p>
+<ul>
+<li><strong>BTP + ATS を両方適用</strong>した場合、<br>
+XLRS-Bench の精度が <strong>+2.4% 向上</strong>。</li>
+<li>特に、<strong>小規模オブジェクト（小さな物体）を含むサブセット</strong>では、<br>
+LLaVA-Next に対して <strong>+6.2% の改善</strong>を示しました。</li>
+<li>これは、
+<ul>
+<li>BTP で背景冗長性を削減し、</li>
+<li>ATS で [CLS] アテンションに基づき小さな物体トークンを保持<br>
+することで、<strong>小規模オブジェクトのセマンティクスをうまく保持できている</strong>ことを示しています<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-実験結果の要点">4. 実験結果の要点</h3>
+<ul>
+<li><strong>性能面</strong>
+<ul>
+<li>GeoLLaVA-8K（7B）は、XLRS-Bench で <strong>51.5% の平均精度</strong>を達成し、<br>
+既存のオープン・クローズドソース MLLM を<strong>すべて上回る SOTA</strong>を記録。</li>
+</ul>
+</li>
+<li><strong>効率面</strong>
+<ul>
+<li>BTP / ATS により、トークン数を最大 96倍圧縮し、TFLOPs を約 1/4 に低減。</li>
+<li>8K 解像度画像を扱いながらも、<strong>計算コストと遅延を大幅に削減</strong>。</li>
+</ul>
+</li>
+<li><strong>アブレーション結果</strong>
+<ul>
+<li>高解像度データセット（SuperRS-VQA / HighRS-VQA）が <strong>+4.4%</strong> の精度向上に寄与。</li>
+<li>BTP / ATS 戦略が <strong>+2.4%</strong> の精度向上に寄与し、特に小規模オブジェクトで <strong>+6.2%</strong> の改善を達成。</li>
+</ul>
+</li>
+</ul>
+<p>以上より、本論文は<strong>超高解像度リモートセンシング画像に対して、精度と効率の両面で優れた MLLM</strong>を実現したことを示しています<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</p>
+<h2 id="総括">総括</h2>
+<p>GeoLLaVA-8K は、<strong>8Kクラスの超高解像度リモートセンシング画像</strong>に特化したマルチモーダルLLMです。</p>
+<p><strong>課題</strong></p>
+<ul>
+<li>8K 画像を扱うとトークン数が爆発し、計算コストが膨大になる。</li>
+<li>超高解像度リモートセンシング向けの大規模な vision-language データセットが不足している。</li>
+<li>リモートセンシング画像は背景が広く情報密度が低い一方、重要な情報は局所的な物体に集中する。</li>
+</ul>
+<p><strong>提案手法</strong></p>
+<ul>
+<li>LLaVA ベースの MLLMを拡張し、<strong>8K×8K 入力</strong>を扱えるように設計。</li>
+<li><strong>Background Token Pruning (BTP)</strong> ：意味的類似度に基づくクラスタリングで冗長な背景トークンを削減。</li>
+<li><strong>Anchored Token Selection (ATS)</strong> ：[CLS] トークンのアテンションマップで重要な物体トークン（特に小物体）を選択的に保持。</li>
+<li><strong>SuperRS-VQA / HighRS-VQA</strong>：平均 8K クラスの超高解像度 VQA データセットを構築し、学習基盤を整備。</li>
+</ul>
+<p><strong>実験結果</strong></p>
+<ul>
+<li>XLRS-Bench（平均 8K 解像度）で <strong>51.5% の平均精度</strong>を達成し、Qwen2.5-VL-72B や GPT-4o を含む既存モデルを上回る SOTA を記録<a href="https://papers.nips.cc/paper_files/paper/2025/file/e95ef5c6ed4096c609e0b8b47ffaeb9b-Paper-Conference.pdf">NeurIPS 2025</a>。</li>
+<li>BTP/ATS によりトークンを最大 96 倍圧縮し、TFLOPs を約 1/4 に低減。</li>
+<li>アブレーションでは、高解像度データセットで +4.4%、BTP/ATS で +2.4%（小物体サブセットでは +6.2%）の精度向上を確認。</li>
+</ul>
+<p><strong>まとめ</strong><br>
+超高解像度リモートセンシング画像に対し、<strong>データ不足とトークン爆発を同時に解決し、精度と効率の両面で SOTA を達成した初の 8K 対応 RS-MLLM</strong>です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vlm\doc\image\12_GeoLLaVA-8K\1783146178354.png" alt="1783146178354"></p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+            
+        </body>
+        </html>
