@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b66;&#x7fd2;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/10/06/000000">前回作成したコード</a>を用いて、グリッドの位置を推測するモデルを学習、実際の推論をしてみます。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>グリッドの位置を推測するモデルを学習、実際の推論をしてみた。</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="学習">学習</h2>
+<h3 id="学習コード">学習コード</h3>
+<p>前回作ったコードの再掲です。
+<code>num_epochs</code> は 10 として学習ロスと推論の正解率を出力してみます。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch.optim <span class="hljs-keyword">as</span> optim
+
+<span class="hljs-comment"># デバイスの設定</span>
+device = torch.device(<span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Using device: <span class="hljs-subst">{device}</span>&quot;</span>)
+
+<span class="hljs-comment"># モデル・損失関数・最適化手法の設定</span>
+model = SimpleGridCNNWithAttention(grid_size=<span class="hljs-number">5</span>, img_size=<span class="hljs-number">320</span>).to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=<span class="hljs-number">0.001</span>)
+
+<span class="hljs-comment"># データローダーの準備</span>
+dataset = GridDataset(
+    annotations_file=<span class="hljs-string">&quot;dataset/annotations.txt&quot;</span>,
+    img_dir=<span class="hljs-string">&quot;dataset&quot;</span>,
+    transform=transform
+)
+
+train_loader = DataLoader(dataset, batch_size=<span class="hljs-number">32</span>, shuffle=<span class="hljs-literal">True</span>)
+
+<span class="hljs-comment"># 学習ループ</span>
+num_epochs = <span class="hljs-number">10</span>
+
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_epochs):
+    model.train()
+    running_loss = <span class="hljs-number">0.0</span>
+    correct = <span class="hljs-number">0</span>
+    total = <span class="hljs-number">0</span>
+
+    <span class="hljs-keyword">for</span> images, labels <span class="hljs-keyword">in</span> train_loader:
+        images = images.to(device)
+        labels = labels.to(device)
+
+        <span class="hljs-comment"># 勾配の初期化</span>
+        optimizer.zero_grad()
+
+        <span class="hljs-comment"># 順伝播</span>
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+
+        <span class="hljs-comment"># 逆伝播</span>
+        loss.backward()
+        optimizer.step()
+
+        <span class="hljs-comment"># 統計情報</span>
+        running_loss += loss.item()
+        _, predicted = torch.<span class="hljs-built_in">max</span>(outputs.data, <span class="hljs-number">1</span>)
+        total += labels.size(<span class="hljs-number">0</span>)
+        correct += (predicted == labels).<span class="hljs-built_in">sum</span>().item()
+
+    epoch_loss = running_loss / <span class="hljs-built_in">len</span>(train_loader)
+    epoch_acc = <span class="hljs-number">100.0</span> * correct / total
+
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch [<span class="hljs-subst">{epoch+<span class="hljs-number">1</span>}</span>/<span class="hljs-subst">{num_epochs}</span>], Loss: <span class="hljs-subst">{epoch_loss:<span class="hljs-number">.4</span>f}</span>, Acc: <span class="hljs-subst">{epoch_acc:<span class="hljs-number">.2</span>f}</span>%&quot;</span>)
+</code></pre>
+<h3 id="学習の結果">学習の結果</h3>
+<p>10 epochでのロス関数の推移を表示します。
+まだ少し良くなる可能性はありそうですが、ほぼ収束していることが確認されました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\grid_cnn\doc\image\6_result_regressive\1782627480623.png" alt="1782627480623"></p>
+<p>このモデルを使って実際にグリッドの推論を行ってみます。
+画像がグリッドと黒く塗りつぶされた位置を示します。
+画像上に出ている () 部が実際の座標の推論結果で、 (<code>縦方向の座標</code>, <code>横方向の座標</code>) の対応です。</p>
+<p>全問正解のようです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\grid_cnn\doc\image\6_result_regressive\1782627414246.png" alt="1782627414246"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\grid_cnn\doc\image\6_result_regressive\1782627424202.png" alt="1782627424202"></p>
+<p>座標推論は今回のCNNで十分に推論が可能な問題と思われます。</p>
+<h2 id="cnnにアテンション機構の追加">CNNにアテンション機構の追加</h2>
+<p>ついでですので、CNNにアテンション機構を追加してみようと思います。</p>
+<h3 id="1-アテンションとは何か">1. アテンションとは何か</h3>
+<p><strong>アテンション（Attention）</strong> は、ざっくり言うと<br>
+<strong>「どこにどれだけ注目するかを表す重み」</strong> です。</p>
+<ul>
+<li>人間が文章を読むとき、すべての単語を同じ重要度で読むわけではなく、<br>
+キーワードや重要な部分に「注目」します。</li>
+<li>画像を見るときも、全体をぼんやり見るのではなく、<br>
+顔や文字など「大事そうな部分」に視線を向けます。</li>
+</ul>
+<p>機械学習モデルにも、この「注目の度合い」を<strong>数値として</strong>与える仕組みが<br>
+<strong>アテンション機構</strong>です。</p>
+<p><strong>具体的なイメージ</strong></p>
+<ul>
+<li>画像処理の場合：<br>
+各ピクセル（または特徴マップ上の各位置）に「重要度」を割り当て、<br>
+その重みを使って特徴を強調・抑制します。</li>
+<li>自然言語処理の場合：<br>
+各単語（トークン）に「どれだけ重要か」を表す重みを付け、<br>
+その重みを使って文脈を集約します。</li>
+</ul>
+<h3 id="2-アテンションの役割">2. アテンションの役割</h3>
+<p>アテンションには主に次のような役割があります。</p>
+<ol>
+<li>
+<p><strong>情報の選択・強調</strong><br>
+重要な部分の特徴を強め、あまり重要でない部分の特徴を弱めます。</p>
+</li>
+<li>
+<p><strong>解釈性の向上</strong><br>
+「モデルがどこを見て判断したか」を、<br>
+アテンションの重みとして人間が確認できます。</p>
+</li>
+<li>
+<p><strong>長いシーケンス・広い画像への対応</strong><br>
+すべての情報を均等に扱うのではなく、<br>
+必要な部分に集中して処理できるようになります。</p>
+</li>
+</ol>
+<h3 id="3-アテンションをヒートマップにすると何が分かるか">3. アテンションをヒートマップにすると何が分かるか</h3>
+<p><strong>アテンションをヒートマップ</strong>にすると、<br>
+<strong>「モデルが入力のどの部分を重視して予測したか」</strong> が視覚的に分かります。</p>
+<p><strong>(1) 画像の場合（CNN＋空間アテンション）</strong></p>
+<ul>
+<li>元画像の上に、アテンション重みを色の濃さ（赤〜青など）で重ねます。</li>
+<li><strong>赤い（値が大きい）部分</strong>：モデルが「ここが重要だ」と判断した領域</li>
+<li><strong>青い（値が小さい）部分</strong>：あまり重視していない領域</li>
+</ul>
+<p>例：</p>
+<ul>
+<li>「黒マスの位置を予測するモデル」で、<br>
+実際に黒マスがある場所が赤く光っていれば、<br>
+「モデルは正しく黒マスを見て判断している」と解釈できます。</li>
+<li>逆に、黒マスとは関係ない場所が赤くなっていれば、<br>
+「モデルが間違った手がかりを見ているかもしれない」と気づけます。</li>
+</ul>
+<p><strong>(2) 自然言語処理の場合（トークンレベルのアテンション）</strong></p>
+<ul>
+<li>各単語の上に色を付けることで、<br>
+「どの単語に注目して回答を出したか」が分かります。</li>
+<li>例：質問応答モデルで、答えの根拠となる単語が強調されていれば、<br>
+モデルの判断理由を確認できます。</li>
+</ul>
+<h3 id="4-ヒートマップから分かることの具体例">4. ヒートマップから分かることの具体例</h3>
+<p><strong>モデルの挙動の理解</strong></p>
+<ul>
+<li>「なぜこのクラスに分類したのか」<br>
+→ ヒートマップを見ると、
+<ul>
+<li>猫の画像で「耳や目」が赤くなっていれば、<br>
+猫らしい特徴を見ていると理解できる。</li>
+<li>逆に背景のテクスチャが赤くなっていれば、<br>
+誤った手がかりで判断している可能性がある。</li>
+</ul>
+</li>
+</ul>
+<p><strong>モデルの弱点の発見</strong></p>
+<ul>
+<li>ヒートマップが常に画像の端やノイズ部分に集中している場合、<br>
+「学習データに偏りがある」「前処理が不適切」などの問題に気づけます。</li>
+</ul>
+<p><strong>デバッグ・改善のヒント</strong></p>
+<ul>
+<li>アテンションが意図しない場所に集中している場合、
+<ul>
+<li>データ拡張の方法</li>
+<li>モデル構造（受容野の大きさ、プーリングの位置など）</li>
+<li>損失関数や正則化<br>
+を見直すきっかけになります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-注意点">5. 注意点</h3>
+<ul>
+<li>アテンションヒートマップは <strong>「モデルがどこを見たか」</strong> を示しますが、<br>
+<strong>「なぜその判断をしたか」を完全に説明するものではありません</strong>。</li>
+<li>アテンションが正しい場所にあっても、<br>
+モデルがその特徴を正しく解釈しているとは限りません。</li>
+<li>逆に、アテンションが少しずれていても、<br>
+周辺の情報から正しく推論している場合もあります。</li>
+</ul>
+<h3 id="6-アテンション機構とヒートマップ化">6. アテンション機構とヒートマップ化</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleGridCNNWithAttention</span>(nn.Module):
+    <span class="hljs-string">&quot;&quot;&quot;
+    5x5グリッド画像から黒マスの位置を予測するCNNモデル
+    空間アテンション機構を追加し、可視化も可能
+    &quot;&quot;&quot;</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, grid_size=<span class="hljs-number">5</span>, img_size=<span class="hljs-number">320</span></span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.grid_size = grid_size
+        self.num_classes = grid_size * grid_size  <span class="hljs-comment"># 25クラス</span>
+
+        <span class="hljs-comment"># 畳み込み層</span>
+        self.conv1 = nn.Conv2d(<span class="hljs-number">1</span>, <span class="hljs-number">32</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-number">1</span>)
+        self.conv2 = nn.Conv2d(<span class="hljs-number">32</span>, <span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-number">1</span>)
+        self.pool = nn.MaxPool2d(<span class="hljs-number">2</span>)
+
+        <span class="hljs-comment"># 全結合層の入力サイズを計算</span>
+        self.fc_input_size = self._get_fc_input_size(img_size)
+
+        <span class="hljs-comment"># 全結合層</span>
+        self.fc1 = nn.Linear(self.fc_input_size, <span class="hljs-number">128</span>)
+        self.fc2 = nn.Linear(<span class="hljs-number">128</span>, self.num_classes)
+
+        <span class="hljs-comment"># 空間アテンション用の層</span>
+        <span class="hljs-comment"># 特徴マップのチャネル数を1に圧縮し、空間ごとの重要度を出す</span>
+        self.spatial_attention = nn.Sequential(
+            nn.Conv2d(<span class="hljs-number">64</span>, <span class="hljs-number">32</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-number">1</span>),
+            nn.ReLU(),
+            nn.Conv2d(<span class="hljs-number">32</span>, <span class="hljs-number">1</span>, kernel_size=<span class="hljs-number">1</span>),  <span class="hljs-comment"># 出力: (batch, 1, H, W)</span>
+            nn.Sigmoid()  <span class="hljs-comment"># 0〜1の重み</span>
+        )
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_get_fc_input_size</span>(<span class="hljs-params">self, img_size</span>):
+        x = torch.zeros(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, img_size, img_size)
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        <span class="hljs-keyword">return</span> x.numel()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, return_attention=<span class="hljs-literal">False</span></span>):
+        <span class="hljs-string">&quot;&quot;&quot;
+        x: (batch_size, 1, img_size, img_size)
+        return_attention: Trueならアテンション重みも返す
+        &quot;&quot;&quot;</span>
+        <span class="hljs-comment"># 特徴抽出</span>
+        x = F.relu(self.conv1(x))
+        x = self.pool(x)  <span class="hljs-comment"># (B, 32, H/2, W/2)</span>
+
+        x = F.relu(self.conv2(x))
+        x = self.pool(x)  <span class="hljs-comment"># (B, 64, H/4, W/4)</span>
+
+        <span class="hljs-comment"># 空間アテンションの計算</span>
+        attention_weights = self.spatial_attention(x)  <span class="hljs-comment"># (B, 1, H/4, W/4)</span>
+
+        <span class="hljs-comment"># アテンション適用（重み付き特徴マップ）</span>
+        attended_x = x * attention_weights  <span class="hljs-comment"># 要素ごとの積</span>
+
+        <span class="hljs-comment"># フラット化</span>
+        x_flat = attended_x.view(attended_x.size(<span class="hljs-number">0</span>), -<span class="hljs-number">1</span>)
+
+        <span class="hljs-comment"># 全結合層</span>
+        x_flat = F.relu(self.fc1(x_flat))
+        logits = self.fc2(x_flat)
+
+        <span class="hljs-keyword">if</span> return_attention:
+            <span class="hljs-comment"># アテンション重みを(バッチ, H, W)に整形して返す</span>
+            att = attention_weights.squeeze(<span class="hljs-number">1</span>)  <span class="hljs-comment"># (B, H, W)</span>
+            <span class="hljs-keyword">return</span> logits, att
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">return</span> logits
+</code></pre>
+<p>学習したモデルからヒートマップを出してみると、以下のようにグリッドの位置に大きなアテンションがかかっていることが確認出来ます。
+モデルが画像内の特定の場所を重く見たかが確認できました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\grid_cnn\doc\image\6_result_regressive\1783226945015.png" alt="1783226945015"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\grid_cnn\doc\image\6_result_regressive\1783226955469.png" alt="1783226955469"></p>
+<h2 id="総括">総括</h2>
+<p>以下、ご提示いただいた内容の要約・総括です。</p>
+<h3 id="1-学習の概要">1. 学習の概要</h3>
+<ul>
+<li><strong>目的</strong>：5×5グリッド画像から黒マスの位置（25クラス分類）を予測するCNNモデルを学習。</li>
+<li><strong>モデル</strong>：<code>SimpleGridCNNWithAttention</code>（CNN＋空間アテンション付き）。</li>
+<li><strong>学習設定</strong>：
+<ul>
+<li>エポック数：10</li>
+<li>最適化手法：Adam（lr=0.001）</li>
+<li>損失関数：CrossEntropyLoss</li>
+<li>バッチサイズ：32</li>
+</ul>
+</li>
+<li><strong>結果</strong>：
+<ul>
+<li>10エポックでロスがほぼ収束し、学習が安定。</li>
+<li>推論ではテスト画像すべてで正しいグリッド位置を予測できた。</li>
+</ul>
+</li>
+</ul>
+<p>→ このタスクは、比較的単純なCNNでも十分に解けることが確認されました。</p>
+<h3 id="2-アテンション機構の追加と役割">2. アテンション機構の追加と役割</h3>
+<p><strong>アテンションとは</strong></p>
+<ul>
+<li>「どこにどれだけ注目するか」を数値で表す<strong>重み</strong>。</li>
+<li>画像処理では、特徴マップ上の各位置に重要度を割り当て、<br>
+重要な部分を強調し、不要な部分を抑制する。</li>
+</ul>
+<p><strong>今回の実装</strong></p>
+<ul>
+<li>CNNの最終特徴マップ（<code>(B, 64, H/4, W/4)</code>）に対して<br>
+<code>Conv2d → Conv2d(1) → Sigmoid</code> で空間アテンションを計算。</li>
+<li>出力は <code>(B, 1, H/4, W/4)</code> の0〜1の重みマップ。</li>
+<li><code>forward(..., return_attention=True)</code> で<br>
+ロジットとアテンションマップの両方を返すようにした。</li>
+</ul>
+<p><strong>ヒートマップ化の意味</strong></p>
+<ul>
+<li>アテンションをヒートマップとして可視化することで、<br>
+「モデルが画像のどの部分を重視して予測したか」が視覚的に分かる。</li>
+<li>今回の例では、黒マスがあるグリッド位置に強いアテンションがかかっており、<br>
+モデルが<strong>正しい場所を見て判断している</strong>ことが確認できた。</li>
+</ul>
+<h3 id="3-得られた知見総括">3. 得られた知見・総括</h3>
+<ol>
+<li>
+<p><strong>タスクの難易度</strong></p>
+<ul>
+<li>5×5グリッドの黒マス位置推定は、単純なCNN＋全結合で十分に解ける問題。</li>
+<li>10エポック程度で高い精度が得られ、実用上も扱いやすい。</li>
+</ul>
+</li>
+<li>
+<p><strong>アテンションの効果</strong></p>
+<ul>
+<li>空間アテンションを追加することで、
+<ul>
+<li>モデルがどこを見ているか（ヒートマップ）</li>
+<li>その挙動が妥当かどうか（黒マス位置に集中しているか）<br>
+を確認できる。</li>
+</ul>
+</li>
+<li>解釈性が向上し、モデルの信頼性評価に役立つ。</li>
+</ul>
+</li>
+<li>
+<p><strong>今後の応用・発展の可能性</strong></p>
+<ul>
+<li>より複雑な画像（ノイズが多い、グリッドが歪んでいるなど）では、<br>
+アテンションがどこに集中するかを観察することで、<br>
+モデルの弱点や改善点（データ拡張、モデル構造の変更など）を検討できる。</li>
+<li>チャネルアテンション（SEブロック、CBAMなど）を追加すれば、<br>
+さらに表現力・解釈性を高めることも可能。</li>
+</ul>
+</li>
+</ol>
+<h3 id="4-まとめ">4. まとめ</h3>
+<ul>
+<li>5×5グリッドの黒マス位置推定タスクにおいて、<br>
+CNN＋空間アテンションを用いたモデルを10エポック学習し、<br>
+高い精度と安定した収束を確認した。</li>
+<li>アテンションをヒートマップとして可視化することで、<br>
+モデルが黒マス位置に正しく注目していることが視覚的に確認でき、<br>
+モデルの挙動理解とデバッグに有用であることが示された。</li>
+</ul>
+<p>もし「より複雑なグリッド画像での性能評価」や<br>
+「他のアテンション機構（SE, CBAM, Non-localなど）の比較」についても検討したい場合は、<br>
+その方向での追加実験案もご提案できます。</p>
+<h2 id="ここまでの経緯">ここまでの経緯</h2>
+<h3 id="問題設定">問題設定</h3>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/10/02/000000">https://yoshishinnze.hatenablog.com/entry/2025/10/02/000000</a></p>
+<h3 id="分類問題としての解法cnnモデル構築">分類問題としての解法(CNNモデル構築)</h3>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/10/03/000000">https://yoshishinnze.hatenablog.com/entry/2025/10/03/000000</a></p>
+<h3 id="分類問題としての解法cnnモデル学習">分類問題としての解法(CNNモデル学習)</h3>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/10/04/000000">https://yoshishinnze.hatenablog.com/entry/2025/10/04/000000</a></p>
+<h3 id="回帰問題としての解法データローダ構築">回帰問題としての解法(データローダ構築)</h3>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/10/05/000000">https://yoshishinnze.hatenablog.com/entry/2025/10/05/000000</a></p>
+<h3 id="回帰問題としての解法cnnモデル構築と学習ループ実装">回帰問題としての解法(CNNモデル構築と学習ループ実装)</h3>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/10/06/000000">https://yoshishinnze.hatenablog.com/entry/2025/10/06/000000</a></p>
+<h3 id="回帰問題としての解法学習とアテンション機構追加">回帰問題としての解法(学習とアテンション機構追加)</h3>
+<p>本記事です。</p>
+
+            
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/MEmvk3ZSs0M?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+
+        </body>
+        </html>
