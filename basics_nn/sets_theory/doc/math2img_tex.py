@@ -171,3 +171,4 @@ if __name__ == "__main__":
     main()
 
 # python math2img_tex.py D:\PycharmProjects\LLM-research\LLM-fundamental-study\basics_nn\sets_theory\doc\3_indexed_set.md --dpi 150 --img-dir tmp -o D:\PycharmProjects\LLM-research\LLM-fundamental-study\basics_nn\sets_theory\doc\3_indexed_set_converted.md
+# python math2img_tex.py D:\PycharmProjects\LLM-research\LLM-fundamental-study\basics_nn\sets_theory\doc\merged_output.md --dpi 150 --img-dir tmp -o D:\PycharmProjects\LLM-research\LLM-fundamental-study\basics_nn\sets_theory\doc\merged_output_converted.md
