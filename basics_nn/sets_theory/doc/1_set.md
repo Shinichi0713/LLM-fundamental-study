@@ -913,7 +913,7 @@ __出力の意味__
 ### 体を一言で言うと
 
 > 集合論でいう体＝  
-> 「足し算と掛け算が定義された集合で、足し算は可換群、0 以外の元は掛け算でも可換群になり、分配法則を満たすもの」
+> 「**足し算と掛け算が定義された集合**で、足し算は可換群、0 以外の元は掛け算でも可換群になり、分配法則を満たすもの」
 
 です。
 
@@ -931,8 +931,7 @@ __1. 「四則演算が自由にできる世界」を厳密に定義するため
 __2. 線形代数・ベクトル空間の土台として__
 
 - ベクトル空間は「体上の加群」として定義されます。
-- スカラー倍（λv）や基底・次元・線形写像などの概念は、  
-  **スカラーが体であること**を前提に成り立ちます。
+- スカラー倍（λv）や基底・次元・線形写像などの概念は、**スカラーが体であること**を前提に成り立ちます。
 - 体がないと、線形代数の理論（行列・行列式・固有値など）がきちんと構築できない。
 
 __3. 方程式の解法・代数拡大を扱うため__
@@ -956,9 +955,7 @@ __5. 応用（符号・暗号・物理）の基礎として__
 __つまり__
 
 > 体が必要だったのは、  
-> 「四則演算が自由にできる数の世界」を厳密に定義し、  
-> 線形代数・方程式論・幾何・符号・暗号・物理など、  
-> 広い分野で共通の土台として使うため。
+> 「四則演算が自由にできる数の世界」を厳密に定義し、線形代数・方程式論・幾何・符号・暗号・物理など、広い分野で共通の土台として使うため。
 
 です。
 
@@ -989,7 +986,7 @@ __2. 実数体 ℝ__
   - 0 以外の実数は乗法について可換群（単位元 1、逆元 $1/a$）
   - 分配法則が成り立つ
 - **特徴**：
-  - **完備な順序体**（実数の連続性・極限が定義できる）
+  - **完備な順序体**（順序数は9章で扱う概念実数の連続性・極限が定義できる）
   - 解析学（微積分）の舞台
 
 __3. 複素数体 ℂ__
@@ -1062,8 +1059,214 @@ __8. その他の例__
 - **ℂ(x)**：複素数係数の有理関数体
 - **有限体の拡大体** 𝔽_{p^n}：素数べき個の元を持つ体（ガロア体）
 
+### Pythonでイメージ
 
-## まとめ
+__1. 有限体 𝔽ₚと複素数体 ℂ__
+
+有限体 𝔽ₚと複素数体 ℂを例として、加法・乗法の演算表の可視化を行います。
+体としての性質（零因子の有無、逆元の存在）を可視化してイメージできるようにしてみます。
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_finite_field(p=5):
+    """
+    有限体 𝔽ₚ の加法・乗法表と逆元の分布を可視化
+    """
+    if not (isinstance(p, int) and p > 1):
+        raise ValueError("p は 2 以上の整数で指定してください")
+
+    values = list(range(p))
+    size = p
+
+    # 加法表 (mod p)
+    add_table = np.zeros((size, size), dtype=int)
+    for i, a in enumerate(values):
+        for j, b in enumerate(values):
+            add_table[i, j] = (a + b) % p
+
+    # 乗法表 (mod p)
+    mul_table = np.zeros((size, size), dtype=int)
+    for i, a in enumerate(values):
+        for j, b in enumerate(values):
+            mul_table[i, j] = (a * b) % p
+
+    # 逆元のチェック（0 以外）
+    inverses = {}
+    for a in range(1, p):
+        for b in range(1, p):
+            if (a * b) % p == 1:
+                inverses[a] = b
+                break
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    # 加法表
+    im0 = axes[0].imshow(add_table, cmap='viridis', interpolation='nearest')
+    axes[0].set_title(f'加法表 𝔽_{p} (mod {p})', fontsize=14)
+    axes[0].set_xticks(range(size))
+    axes[0].set_yticks(range(size))
+    axes[0].set_xticklabels(values)
+    axes[0].set_yticklabels(values)
+    axes[0].set_xlabel('b')
+    axes[0].set_ylabel('a')
+    plt.colorbar(im0, ax=axes[0])
+
+    # 乗法表（逆元を強調）
+    im1 = axes[1].imshow(mul_table, cmap='viridis', interpolation='nearest')
+    axes[1].set_title(f'乗法表 𝔽_{p} (逆元を強調)', fontsize=14)
+    axes[1].set_xticks(range(size))
+    axes[1].set_yticks(range(size))
+    axes[1].set_xticklabels(values)
+    axes[1].set_yticklabels(values)
+    axes[1].set_xlabel('b')
+    axes[1].set_ylabel('a')
+
+    # 逆元の位置をマーキング（a の逆元が b なら (a,b) に印）
+    for a, inv in inverses.items():
+        axes[1].plot(inv, a, 'ro', markersize=8, markeredgecolor='white')
+
+    plt.colorbar(im1, ax=axes[1])
+    plt.tight_layout()
+    plt.show()
+
+    # 逆元の情報をテキストで表示
+    print(f"𝔽_{p} の乗法の逆元:")
+    for a in range(1, p):
+        print(f"  {a} の逆元: {inverses[a]} ({a} × {inverses[a]} ≡ 1 mod {p})")
+
+# 実行例
+plot_finite_field(p=5)  # 素数の例（体）
+plot_finite_field(p=7)  # 別の素数の例
+```
+
+__実行結果__
+
+コードで表示する左側は加法表で右側は乗法表です。
+
+- 加法表は対称で、0 の列・行が単位元。
+- 乗法表で、0 以外の行には必ず 1 が現れる（逆元の存在）。
+
+赤丸は「a の逆元が b」であることを示し、0 以外のすべての元に逆元があることが視覚的にわかると思います。
+
+<img src="image/1_set/1783234409052.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+```
+𝔽_5 の乗法の逆元:
+  1 の逆元: 1 (1 × 1 ≡ 1 mod 5)
+  2 の逆元: 3 (2 × 3 ≡ 1 mod 5)
+  3 の逆元: 2 (3 × 2 ≡ 1 mod 5)
+  4 の逆元: 4 (4 × 4 ≡ 1 mod 5)
+```
+
+<img src="image/1_set/1783234420812.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+```
+𝔽_7 の乗法の逆元:
+  1 の逆元: 1 (1 × 1 ≡ 1 mod 7)
+  2 の逆元: 4 (2 × 4 ≡ 1 mod 7)
+  3 の逆元: 5 (3 × 5 ≡ 1 mod 7)
+  4 の逆元: 2 (4 × 2 ≡ 1 mod 7)
+  5 の逆元: 3 (5 × 3 ≡ 1 mod 7)
+  6 の逆元: 6 (6 × 6 ≡ 1 mod 7)
+```
+
+__複素数体 ℂ の可視化__
+
+次は複素隊 ℂ が体であるということを確認してみようと思います。
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_complex_field():
+    """
+    複素数体 ℂ の加法・乗法を幾何的に可視化
+    """
+    # 例として z = 1+2i, w = 2+1i を選ぶ
+    z = complex(1, 2)
+    w = complex(2, 1)
+
+    # 加法: z + w
+    add_result = z + w
+
+    # 乗法: z * w
+    mul_result = z * w
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    # 加法の可視化（ベクトルの和）
+    axes[0].quiver(0, 0, z.real, z.imag, angles='xy', scale_units='xy', scale=1, color='blue', label=f'z = {z}')
+    axes[0].quiver(z.real, z.imag, w.real, w.imag, angles='xy', scale_units='xy', scale=1, color='green', label=f'w = {w}')
+    axes[0].quiver(0, 0, add_result.real, add_result.imag, angles='xy', scale_units='xy', scale=1, color='red', label=f'z+w = {add_result}')
+    axes[0].set_xlim(-1, 5)
+    axes[0].set_ylim(-1, 5)
+    axes[0].set_aspect('equal')
+    axes[0].grid(True)
+    axes[0].set_title('複素数の加法 (ベクトルの和)', fontsize=14)
+    axes[0].legend()
+
+    # 乗法の可視化（極形式：絶対値と偏角）
+    r_z, theta_z = np.abs(z), np.angle(z)
+    r_w, theta_w = np.abs(w), np.angle(w)
+    r_mul, theta_mul = np.abs(mul_result), np.angle(mul_result)
+
+    # 極座標プロット
+    angles = [theta_z, theta_w, theta_mul]
+    radii = [r_z, r_w, r_mul]
+    labels = [f'z (r={r_z:.2f}, θ={theta_z:.2f})',
+              f'w (r={r_w:.2f}, θ={theta_w:.2f})',
+              f'z×w (r={r_mul:.2f}, θ={theta_mul:.2f})']
+    colors = ['blue', 'green', 'red']
+
+    for i, (theta, r, label, color) in enumerate(zip(angles, radii, labels, colors)):
+        axes[1].plot([0, r*np.cos(theta)], [0, r*np.sin(theta)], color=color, linewidth=2, label=label)
+
+    axes[1].set_xlim(-1, 6)
+    axes[1].set_ylim(-1, 6)
+    axes[1].set_aspect('equal')
+    axes[1].grid(True)
+    axes[1].set_title('複素数の乗法 (絶対値と偏角)', fontsize=14)
+    axes[1].legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    # テキストでの説明
+    print("複素数体 ℂ の性質:")
+    print(f"  加法: {z} + {w} = {add_result} (ベクトルの和)")
+    print(f"  乗法: {z} × {w} = {mul_result}")
+    print(f"    絶対値: |z|×|w| = {r_z:.2f}×{r_w:.2f} = {r_mul:.2f}")
+    print(f"    偏角: arg(z)+arg(w) = {theta_z:.2f} + {theta_w:.2f} = {theta_mul:.2f} rad")
+    print("  0 以外の複素数は逆元を持つ（例: 1/z など）")
+
+# 実行例
+plot_complex_field()
+```
+
+__実行結果__
+
+先程のと同様で左が加法、右が乗法の結果を可視化したものです。
+
+- 加法：複素数を平面ベクトルとして足し算（平行四辺形の法則）。
+- 乗法： 絶対値は掛け算、偏角は足し算になる（極形式）。
+
+これにより、ℂ が「足し算・掛け算・引き算・割り算（0 以外）が自由にできる体」であることが幾何的にイメージできます。
+
+
+<img src="image/1_set/1783235551360.png" alt="代替テキスト" width="500" style="display: block; margin: 0 auto;">
+
+```
+複素数体 ℂ の性質:
+  加法: (1+2j) + (2+1j) = (3+3j) (ベクトルの和)
+  乗法: (1+2j) × (2+1j) = 5j
+    絶対値: |z|×|w| = 2.24×2.24 = 5.00
+    偏角: arg(z)+arg(w) = 1.11 + 0.46 = 1.57 rad
+  0 以外の複素数は逆元を持つ（例: 1/z など）
+```
+
+### まとめ
 
 - 体は「足し算・掛け算・引き算・割り算（0 以外）が自由にできる集合」です。
 - 代表例として、
@@ -1074,6 +1277,8 @@ __8. その他の例__
   - ℚₚ（p-進数体）
   などがあります。
 - これらはすべて、集合論の枠組みの中で「集合と2つの演算の組」として厳密に定義できます。
+
+
 
 ## 演習
 
