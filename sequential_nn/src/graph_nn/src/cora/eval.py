@@ -76,3 +76,120 @@ for node_id in node_ids:
     print(f"ノード {node_id:4d}: 予測 {pred_label} ({class_names[pred_label]:20s}) | "
           f"正解 {true_label} ({class_names[true_label]:20s}) | {match}")
     
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+
+print(f"test_data.x.shape: {test_data.x.shape}")  # 例: [num_nodes, num_features]
+
+# 先頭から20ノード分の特徴ベクトルを抽出
+num_samples = 20
+sample_x = test_data.x[:num_samples].cpu().numpy()  # shape: [20, num_features]
+
+print(f"サンプルデータ形状: {sample_x.shape}")
+
+plt.figure(figsize=(12, 6))
+
+# ヒートマップ描画
+im = plt.imshow(sample_x, cmap='coolwarm', aspect='auto', interpolation='nearest')
+
+# カラーバー
+plt.colorbar(im, label='feature value')
+
+# 軸ラベル
+plt.xlabel('feature order')
+plt.ylabel('node no (0-19)')
+plt.title('heatmap test_data.x \n (red: high, blue: low value)')
+
+# グリッド線（任意）
+plt.grid(True, linestyle='--', alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+import networkx as nx
+from sklearn.manifold import TSNE
+
+# モデルを評価モードに
+model.eval()
+
+# 埋め込み z を取得
+with torch.no_grad():
+    z = model(test_data.x, test_data.edge_index)  # shape: [num_nodes, hidden_dim]
+    pred_logits = model.decode(z, test_data.edge_label_index)
+    pred = torch.sigmoid(pred_logits).cpu().numpy()
+
+# 正解ラベル（1: 正例, 0: 負例）
+true_labels = test_data.edge_label.cpu().numpy()
+
+# テストエッジの端点
+src, dst = test_data.edge_label_index.cpu().numpy()
+
+# t-SNE でノード埋め込みを2次元に圧縮
+tsne = TSNE(n_components=2, random_state=42, perplexity=30)
+z_2d = tsne.fit_transform(z.cpu().numpy())
+
+# 対象ノード（例: 先頭20ノード）
+target_nodes = list(range(20))  # [0, 1, 2, ..., 19]
+num_target_nodes = len(target_nodes)
+
+# 予測スコアが 0.6 以上のエッジを抽出
+threshold = 0.6
+high_prob_indices = np.where(pred >= threshold)[0]
+
+# その中で、端点が両方とも target_nodes に含まれるエッジだけを選ぶ
+selected_indices = []
+for idx in high_prob_indices:
+    u, v = src[idx], dst[idx]
+    if u in target_nodes and v in target_nodes:
+        selected_indices.append(idx)
+
+print(f"Number of edges with predicted score ≥ {threshold} and endpoints in target_nodes: {len(selected_indices)}")
+
+# 対象ノードだけを含む部分グラフを作成
+G_sub = nx.Graph()
+for i in target_nodes:
+    G_sub.add_node(i, pos=z_2d[i])
+
+# 実際に存在するエッジ（正例）のうち、端点が target_nodes 内のものを抽出
+true_edge_indices = np.where(true_labels == 1)[0]
+true_edges_in_subset = []
+for idx in true_edge_indices:
+    u, v = src[idx], dst[idx]
+    if u in target_nodes and v in target_nodes:
+        true_edges_in_subset.append((u, v))
+
+plt.figure(figsize=(10, 8))
+
+# ノードをプロット
+pos_sub = nx.get_node_attributes(G_sub, 'pos')
+nx.draw_networkx_nodes(G_sub, pos_sub, node_size=50, node_color='lightgray', alpha=0.8)
+
+# 実際に存在するエッジ（薄いグレー）
+nx.draw_networkx_edges(G_sub, pos_sub, edgelist=true_edges_in_subset,
+                       edge_color='lightgray', width=1, alpha=0.3,
+                       label='Actual edges')
+
+# モデルが高スコアと予測したエッジ
+for idx in selected_indices:
+    u, v = src[idx], dst[idx]
+    if true_labels[idx] == 1:
+        # True positive (red)
+        nx.draw_networkx_edges(G_sub, {u: pos_sub[u], v: pos_sub[v]}, edgelist=[(u, v)],
+                               edge_color='red', width=2, alpha=0.7,
+                               label='True positive' if idx == selected_indices[0] else "")
+    else:
+        # False positive (blue)
+        nx.draw_networkx_edges(G_sub, {u: pos_sub[u], v: pos_sub[v]}, edgelist=[(u, v)],
+                               edge_color='blue', width=1, alpha=0.5,
+                               label='False positive' if idx == selected_indices[0] else "")
+
+plt.title(f'Cora Link Prediction: Predicted vs Actual (Score ≥ {threshold})\n(Gray: Actual edges, Red: True positive, Blue: False positive)')
+plt.legend()
+plt.axis('off')
+plt.tight_layout()
+plt.show()

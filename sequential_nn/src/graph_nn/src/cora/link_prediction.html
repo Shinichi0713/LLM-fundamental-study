@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x554f;&#x984c;&#x8a2d;&#x5b9a;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日<a href="https://yoshishinnze.hatenablog.com/entry/2026/07/03/043000">Cora問題でノード分類</a>を扱いました。
+前回は問題の分かりやすさからテーマを設定していましたが、まだ解いていないが、ニーズがありそうな引用ネットワーク予測を扱っていきます。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>Coraを使って、論文の引用予測を行ってみる。</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="問題設定">問題設定</h2>
+<p>Cora でのリンク予測タスクは、<strong>「まだ引用されていない論文ペアのうち、将来引用される可能性が高いペアを予測する」</strong> 問題として設定できます。</p>
+<p>以下、具体的な問題設定を整理します。</p>
+<h3 id="1-タスクの定義">1. タスクの定義</h3>
+<ul>
+<li><strong>グラフ</strong>: Cora 引用ネットワーク
+<ul>
+<li>ノード: 論文</li>
+<li>エッジ: 引用関係（論文 A → 論文 B）</li>
+</ul>
+</li>
+<li><strong>タスク</strong>: リンク予測（Link Prediction）
+<ul>
+<li>与えられた 2 つの論文ノード <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(u, v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> について、</li>
+<li>「将来、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> が <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> を引用するかどうか」を予測する（2値分類）</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-入力と出力">2. 入力と出力</h3>
+<p><strong>2.1 入力</strong></p>
+<ul>
+<li><strong>ノード特徴量</strong>:
+<ul>
+<li>各論文の単語ベクトル（Bag-of-Words）: <code>data.x</code></li>
+</ul>
+</li>
+<li><strong>既存の引用エッジ</strong>:
+<ul>
+<li><code>data.edge_index</code>（学習用に一部を隠す場合もある）</li>
+</ul>
+</li>
+<li><strong>ノードペア</strong>:
+<ul>
+<li>予測対象の論文ペア <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(u, v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 出力</strong></p>
+<ul>
+<li><strong>スコアまたは確率</strong>:
+<ul>
+<li>例: 「論文 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> が論文 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> を引用する確率」<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>u</mi><mo>→</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(u \to v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+</li>
+<li><strong>2値分類として扱う場合</strong>:
+<ul>
+<li>1: 引用あり（リンクが存在する／将来存在する）</li>
+<li>0: 引用なし（リンクが存在しない）</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-データの分割train--val--test">3. データの分割（Train / Val / Test）</h3>
+<p>リンク予測では、<strong>エッジを分割</strong>します。</p>
+<ul>
+<li><strong>学習用エッジ（正例）</strong>:
+<ul>
+<li>既存の引用エッジの一部（例: 80%）を「正例」として使用。</li>
+</ul>
+</li>
+<li><strong>検証・テスト用エッジ（正例）</strong>:
+<ul>
+<li>残りの引用エッジ（例: 10% + 10%）を隠し、モデルの性能評価に使う。</li>
+</ul>
+</li>
+<li><strong>負例（Non-links）</strong>:
+<ul>
+<li>実際には引用されていない論文ペアを「負例」としてサンプリング。</li>
+<li>学習・検証・テストそれぞれで、正例と同数（またはバランスを考慮した数）の負例を用意。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-モデルの役割">4. モデルの役割</h3>
+<ul>
+<li><strong>GNN モデル</strong>:
+<ul>
+<li>各論文ノードの埋め込み（潜在表現）を学習。</li>
+<li>例: GCN, GAT, GraphSAGE など。</li>
+</ul>
+</li>
+<li><strong>スコア関数</strong>:
+<ul>
+<li>2 つのノード埋め込みから「リンクの有無」を判定する関数。</li>
+<li>例:
+<ul>
+<li>内積: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>score</mtext><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mi mathvariant="bold">z</mi><mi>u</mi><mi mathvariant="normal">⊤</mi></msubsup><msub><mi mathvariant="bold">z</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex"> \text{score}(u, v) = \mathbf{z}_u^\top \mathbf{z}_v </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">score</span></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0961em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathbf">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊤</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathbf">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li>MLP: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>score</mtext><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo><mo>=</mo><mtext>MLP</mtext><mo stretchy="false">(</mo><mo stretchy="false">[</mo><msub><mi mathvariant="bold">z</mi><mi>u</mi></msub><mo separator="true">;</mo><msub><mi mathvariant="bold">z</mi><mi>v</mi></msub><mo stretchy="false">]</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex"> \text{score}(u, v) = \text{MLP}([\mathbf{z}_u; \mathbf{z}_v]) </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">score</span></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">MLP</span></span><span class="mopen">([</span><span class="mord"><span class="mord mathbf">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">])</span></span></span></span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>出力</strong>:
+<ul>
+<li>シグモイドなどで 0〜1 の確率に変換し、2値分類として学習。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-評価指標">5. 評価指標</h3>
+<ul>
+<li><strong>AUC-ROC</strong>:
+<ul>
+<li>「引用あり／なし」をどれだけうまく識別できているか。</li>
+</ul>
+</li>
+<li><strong>AUC-PR</strong>:
+<ul>
+<li>正例が少ない場合（スパースなリンク）に有用。</li>
+</ul>
+</li>
+<li><strong>Hit@k</strong>, <strong>MRR</strong> など:
+<ul>
+<li>推薦タスクとして扱う場合（「この論文に似た論文はどれか？」など）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-cora-での注意点">6. Cora での注意点</h3>
+<ul>
+<li><strong>有向グラフ</strong>:
+<ul>
+<li>引用は方向を持つ（A → B）ため、<strong>有向リンク予測</strong>として扱うのが自然。</li>
+</ul>
+</li>
+<li><strong>スパース性</strong>:
+<ul>
+<li>実際の引用数は全ペアに比べて非常に少ないため、負例サンプリングの設計が重要。</li>
+</ul>
+</li>
+<li><strong>時間情報</strong>:
+<ul>
+<li>Cora には公開年などの時間情報は含まれていないため、</li>
+<li>「将来の引用」を厳密に時間順で予測するのは難しい。</li>
+<li>代わりに、「まだ引用されていないペアのうち、引用されそうなペア」を予測する設定が一般的。</li>
+</ul>
+</li>
+</ul>
+<h2 id="有向リンク予測問題の注意点">有向リンク予測問題の注意点</h2>
+<p><strong>無向グラフ</strong>と<strong>有向グラフ</strong>では、GNN 上での扱いが<strong>若干変わります</strong>。<br>
+主な違いは以下の通りです。</p>
+<h3 id="1-モデル設計の違い">1. モデル設計の違い</h3>
+<p><strong>1.1 無向グラフの場合</strong></p>
+<ul>
+<li><strong>エッジの向きがない</strong>ため、隣接行列は対称（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><msup><mi>A</mi><mi mathvariant="normal">⊤</mi></msup></mrow><annotation encoding="application/x-tex">A = A^\top</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊤</span></span></span></span></span></span></span></span></span></span></span>）。</li>
+<li>GCN などの多くの標準的な GNN は、<strong>無向グラフを前提</strong>に設計されています。</li>
+<li>メッセージパッシングは「双方向」に自然に解釈される。</li>
+</ul>
+<p><strong>1.2 有向グラフの場合</strong></p>
+<ul>
+<li><strong>エッジの向きがある</strong>ため、隣接行列は非対称（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo mathvariant="normal">≠</mo><msup><mi>A</mi><mi mathvariant="normal">⊤</mi></msup></mrow><annotation encoding="application/x-tex">A \neq A^\top</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊤</span></span></span></span></span></span></span></span></span></span></span>）。</li>
+<li>そのまま GCN を適用すると、「入ってくる隣接」と「出ていく隣接」を区別せずに集約してしまう。</li>
+<li>必要に応じて、
+<ul>
+<li>入次数・出次数を分けて扱う</li>
+<li>有向 GNN（Directed GCN, D-GCN など）を使う</li>
+<li>エッジタイプを分ける（異種グラフとして扱う）
+といった工夫が必要になる場合があります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-メッセージパッシングの違い">2. メッセージパッシングの違い</h3>
+<p><strong>2.1 無向グラフ</strong></p>
+<ul>
+<li>各ノードは「隣接ノード全体」から情報を集約。</li>
+<li>例（GCN）:<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>h</mi><mi>i</mi><mrow><mo stretchy="false">(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msubsup><mo>=</mo><mi>σ</mi><mrow><mo fence="true">(</mo><munder><mo>∑</mo><mrow><mi>j</mi><mo>∈</mo><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo></mrow></munder><mfrac><mn>1</mn><msqrt><mrow><mi>deg</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo><mi>deg</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></msqrt></mfrac><msup><mi>W</mi><mrow><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msup><msubsup><mi>h</mi><mi>j</mi><mrow><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">h_i^{(l+1)} = \sigma\left( \sum_{j \in \mathcal{N}(i)} \frac{1}{\sqrt{\deg(i)\deg(j)}} W^{(l)} h_j^{(l)} \right)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.3217em;vertical-align:-0.2769em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2769em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.6em;vertical-align:-1.55em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.05em;"><span style="top:-4.05em;"><span class="pstrut" style="height:5.6em;"></span><span style="width:0.875em;height:3.600em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="3.600em" viewBox="0 0 875 3600"><path d="M863,9c0,-2,-2,-5,-6,-9c0,0,-17,0,-17,0c-12.7,0,-19.3,0.3,-20,1
+c-5.3,5.3,-10.3,11,-15,17c-242.7,294.7,-395.3,682,-458,1162c-21.3,163.3,-33.3,349,
+-36,557 l0,84c0.2,6,0,26,0,60c2,159.3,10,310.7,24,454c53.3,528,210,
+949.7,470,1265c4.7,6,9.7,11.7,15,17c0.7,0.7,7,1,19,1c0,0,18,0,18,0c4,-4,6,-7,6,-9
+c0,-2.7,-3.3,-8.7,-10,-18c-135.3,-192.7,-235.5,-414.3,-300.5,-665c-65,-250.7,-102.5,
+-544.7,-112.5,-882c-2,-104,-3,-167,-3,-189
+l0,-92c0,-162.7,5.7,-314,17,-454c20.7,-272,63.7,-513,129,-723c65.3,
+-210,155.3,-396.3,270,-559c6.7,-9.3,10,-15.3,10,-18z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.55em;"><span></span></span></span></span></span></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.809em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">∈</span><span class="mord mathcal mtight" style="margin-right:0.14736em;">N</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">i</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.516em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.175em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.935em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mop">de<span style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">de<span style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05724em;">j</span><span class="mclose">)</span></span></span><span style="top:-2.895em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.28em" viewBox="0 0 400000 1296" preserveAspectRatio="xMinYMin slice"><path d="M263,681c0.7,0,18,39.7,52,119
+c34,79.3,68.167,158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120
+c340,-704.7,510.7,-1060.3,512,-1067
+l0 -0
+c4.7,-7.3,11,-11,19,-11
+H40000v40H1012.3
+s-271.3,567,-271.3,567c-38.7,80.7,-84,175,-136,283c-52,108,-89.167,185.3,-111.5,232
+c-22.3,46.7,-33.8,70.3,-34.5,71c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1
+s-109,-253,-109,-253c-72.7,-168,-109.3,-252,-110,-252c-10.7,8,-22,16.7,-34,26
+c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26s76,-59,76,-59s76,-60,76,-60z
+M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.305em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.13em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0448em;"><span style="top:-2.4231em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span><span style="top:-3.2198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.413em;"><span></span></span></span></span></span></span><span class="mclose"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.05em;"><span style="top:-4.05em;"><span class="pstrut" style="height:5.6em;"></span><span style="width:0.875em;height:3.600em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="3.600em" viewBox="0 0 875 3600"><path d="M76,0c-16.7,0,-25,3,-25,9c0,2,2,6.3,6,13c21.3,28.7,42.3,60.3,
+63,95c96.7,156.7,172.8,332.5,228.5,527.5c55.7,195,92.8,416.5,111.5,664.5
+c11.3,139.3,17,290.7,17,454c0,28,1.7,43,3.3,45l0,9
+c-3,4,-3.3,16.7,-3.3,38c0,162,-5.7,313.7,-17,455c-18.7,248,-55.8,469.3,-111.5,664
+c-55.7,194.7,-131.8,370.3,-228.5,527c-20.7,34.7,-41.7,66.3,-63,95c-2,3.3,-4,7,-6,11
+c0,7.3,5.7,11,17,11c0,0,11,0,11,0c9.3,0,14.3,-0.3,15,-1c5.3,-5.3,10.3,-11,15,-17
+c242.7,-294.7,395.3,-681.7,458,-1161c21.3,-164.7,33.3,-350.7,36,-558
+l0,-144c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
+-470,-1265c-4.7,-6,-9.7,-11.7,-15,-17c-0.7,-0.7,-6.7,-1,-18,-1z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.55em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span></span></span></span> はノード <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> の隣接集合（向きなし）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 有向グラフ</strong></p>
+<ul>
+<li><strong>入隣接（in-neighbors）</strong> と<strong>出隣接（out-neighbors）</strong> を区別する必要がある場合があります。</li>
+<li>例:
+<ul>
+<li>入隣接からのメッセージのみを集約（「誰から引用されているか」を重視）</li>
+<li>出隣接からのメッセージのみを集約（「誰を引用しているか」を重視）</li>
+<li>両方を別々に集約し、最後に結合する</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-実装上の扱いpytorch-geometric-の場合">3. 実装上の扱い（PyTorch Geometric の場合）</h3>
+<p><strong>3.1 無向グラフ</strong></p>
+<ul>
+<li><code>edge_index</code> は <code>[2, num_edges]</code> で、<code>(src, dst)</code> のペアを格納。</li>
+<li>無向グラフとして扱う場合は、<strong>両方向のエッジを入れる</strong>ことが多いです。
+<ul>
+<li>例: <code>edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>3.2 有向グラフ</strong></p>
+<ul>
+<li><code>edge_index</code> はそのまま<strong>有向エッジ</strong>として扱われます。</li>
+<li>GCNConv などはデフォルトで「隣接ノード」を集約するため、
+<ul>
+<li>有向グラフをそのまま渡すと、「出隣接」のみを集約する形になります。</li>
+</ul>
+</li>
+<li>入隣接も考慮したい場合は、
+<ul>
+<li>転置した隣接行列を追加する（無向化に近い）</li>
+<li>別の GNN 層で入隣接を集約する
+などの対応が必要です。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-cora-での具体例">4. Cora での具体例</h3>
+<ul>
+<li>Cora は<strong>有向グラフ</strong>（論文 A → 論文 B）ですが、
+<ul>
+<li>ノード分類タスクでは、多くの実装で<strong>無向グラフとして扱われている</strong>ことが多いです。</li>
+<li>理由: 「引用関係がある＝互いに近い」と解釈し、双方向に情報を伝播させた方が性能が良いことが多いため。</li>
+</ul>
+</li>
+<li>リンク予測タスクでは、
+<ul>
+<li><strong>有向リンク</strong>として扱う（A → B と B → A は別物）</li>
+<li>そのため、モデル設計で「方向」を意識する必要があります。</li>
+</ul>
+</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>Cora でのリンク予測を行うには、</p>
+<ol>
+<li>データ読み込み</li>
+<li>正例・負例エッジの生成（Train/Val/Test 分割）</li>
+<li>GNN モデル構築（ノード埋め込み学習）</li>
+<li>リンクスコア関数の定義（内積など）</li>
+<li>学習・評価ループ</li>
+</ol>
+<p>という流れで進めていきます。</p>
+<h3 id="1-データ読み込みと前処理">1. データ読み込みと前処理</h3>
+<p>まずはデータロード。
+ここはいつも通りです。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> torch_geometric.datasets <span class="hljs-keyword">import</span> Planetoid
+<span class="hljs-keyword">from</span> torch_geometric.utils <span class="hljs-keyword">import</span> negative_sampling
+
+<span class="hljs-comment"># Cora データセットの読み込み</span>
+dataset = Planetoid(root=<span class="hljs-string">&#x27;./data&#x27;</span>, name=<span class="hljs-string">&#x27;Cora&#x27;</span>)
+data = dataset[<span class="hljs-number">0</span>]
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;ノード数: <span class="hljs-subst">{data.num_nodes}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;エッジ数: <span class="hljs-subst">{data.edge_index.size(<span class="hljs-number">1</span>)}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;特徴量次元: <span class="hljs-subst">{data.num_features}</span>&quot;</span>)
+</code></pre>
+<h3 id="2-リンク予測用の正例負例エッジ生成">2. リンク予測用の正例・負例エッジ生成</h3>
+<p>エッジの引用の存在があるか、ないかを明確に分けることが必要となるため、
+正例・負例エッジが必要となります。
+→正例・負例エッジがどの程度の比率か確認していきます。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 既存のエッジを正例とする</span>
+pos_edge_index = data.edge_index  <span class="hljs-comment"># 形状: [2, num_edges]</span>
+
+<span class="hljs-comment"># 負例エッジをサンプリング（既存エッジと被らないように）</span>
+neg_edge_index = negative_sampling(
+    edge_index=pos_edge_index,
+    num_nodes=data.num_nodes,
+    num_neg_samples=pos_edge_index.size(<span class="hljs-number">1</span>)  <span class="hljs-comment"># 正例と同数</span>
+)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;正例エッジ数: <span class="hljs-subst">{pos_edge_index.size(<span class="hljs-number">1</span>)}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;負例エッジ数: <span class="hljs-subst">{neg_edge_index.size(<span class="hljs-number">1</span>)}</span>&quot;</span>)
+</code></pre>
+<p>因みに、半々です。</p>
+<pre><code>正例エッジ数: 10556
+負例エッジ数: 10556
+</code></pre>
+<blockquote>
+<p><strong><strong>正例</strong>と<strong>負例</strong></strong>
+リンク予測における<strong>正例</strong>と<strong>負例</strong>の違いは、<strong>「そのエッジ（リンク）が実際に存在するかどうか」</strong> です。
+Cora の引用ネットワークを例に、具体的に説明します。
+<strong>1. 正例（Positive Examples）</strong></p>
+<ul>
+<li><strong>定義</strong>:</li>
+<li><strong>実際に存在する引用エッジ</strong>です。</li>
+<li>例: 論文 A が論文 B を引用している → エッジ (A → B) は正例。</li>
+<li><strong>Cora での意味</strong>:</li>
+<li><code>data.edge_index</code> に含まれるすべてのエッジが正例です。</li>
+<li><strong>タスクでの役割</strong>:</li>
+<li>モデルに「このような引用関係は存在する（=1）」と学習させるための<strong>正の教師信号</strong>です。
+<strong>2. 負例（Negative Examples）</strong></li>
+<li><strong>定義</strong>:</li>
+<li><strong>実際には存在しない引用エッジ</strong>です。</li>
+<li>例: 論文 C と論文 D の間に引用関係がない → エッジ (C → D) は負例。</li>
+<li><strong>Cora での意味</strong>:</li>
+<li>全ノードペアのうち、<code>edge_index</code> に含まれないペアが候補になります。</li>
+<li><strong>タスクでの役割</strong>:</li>
+<li>モデルに「このような引用関係は存在しない（=0）」と学習させるための<strong>負の教師信号</strong>です。</li>
+<li><strong>サンプリングの注意点</strong>:</li>
+<li>全ノードペア数は非常に多いため、<strong>ランダムに一部をサンプリング</strong>して負例とします。</li>
+<li>PyTorch Geometric の <code>negative_sampling</code> や <code>RandomLinkSplit</code> がこれを自動で行ってくれます。
+<strong>3. リンク予測タスクでの扱い</strong></li>
+<li><strong>入力</strong>: ノードペア <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(u, v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span></li>
+<li><strong>ラベル</strong>:</li>
+<li>正例: 1（リンクが存在する）</li>
+<li>負例: 0（リンクが存在しない）</li>
+<li><strong>モデルの出力</strong>:</li>
+<li>スコアまたは確率 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>u</mi><mo>→</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(u \to v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span>（0〜1）</li>
+<li><strong>学習</strong>:</li>
+<li>正例ではスコアを 1 に近づける</li>
+<li>負例ではスコアを 0 に近づける</li>
+</ul>
+</blockquote>
+<h3 id="3-train--val--test-分割">3. Train / Val / Test 分割</h3>
+<p>学習用データ、検証用データ、テスト用データで分割していきます。
+有向グラフとして扱うので <code>is_undirected</code> は <code>False</code> とます。</p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> torch_geometric.transforms <span class="hljs-keyword">import</span> RandomLinkSplit
+
+<span class="hljs-comment"># リンク予測用の分割変換</span>
+transform = RandomLinkSplit(
+    num_val=<span class="hljs-number">0.1</span>,  <span class="hljs-comment"># 検証用 10%</span>
+    num_test=<span class="hljs-number">0.1</span>, <span class="hljs-comment"># テスト用 10%</span>
+    is_undirected=<span class="hljs-literal">False</span>,  <span class="hljs-comment"># Cora は有向グラフとして扱う</span>
+    add_negative_train_samples=<span class="hljs-literal">True</span>  <span class="hljs-comment"># 学習用に負例も追加</span>
+)
+
+train_data, val_data, test_data = transform(data)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;=== 分割後のエッジ数 ===&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;学習用 正例: <span class="hljs-subst">{train_data.edge_index.size(<span class="hljs-number">1</span>)}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;学習用 負例: <span class="hljs-subst">{train_data.edge_label_index.size(<span class="hljs-number">1</span>) - train_data.edge_index.size(<span class="hljs-number">1</span>)}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;検証用 正例: <span class="hljs-subst">{val_data.edge_label_index.size(<span class="hljs-number">1</span>) // <span class="hljs-number">2</span>}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;検証用 負例: <span class="hljs-subst">{val_data.edge_label_index.size(<span class="hljs-number">1</span>) // <span class="hljs-number">2</span>}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;テスト用 正例: <span class="hljs-subst">{test_data.edge_label_index.size(<span class="hljs-number">1</span>) // <span class="hljs-number">2</span>}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;テスト用 負例: <span class="hljs-subst">{test_data.edge_label_index.size(<span class="hljs-number">1</span>) // <span class="hljs-number">2</span>}</span>&quot;</span>)
+</code></pre>
+<p>Cora の元データは、以下のような情報を持っています。</p>
+<ul>
+<li>論文（ノード）:
+<ul>
+<li>ID</li>
+<li>タイトル</li>
+<li>アブストラクト（要約）</li>
+<li>研究分野（ラベル）</li>
+</ul>
+</li>
+</ul>
+<p>引用関係（エッジ）:</p>
+<ul>
+<li>論文 A が論文 B を引用している、という情報</li>
+</ul>
+<p>PyTorch Geometric 版の Cora では、このうちタイトルとアブストラクト中の単語を特徴量としたものです。
+データの中身を可視化してみるとこんな分布になります。
+まあ、すかすかですね。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\sequential_nn\src\graph_nn\src\cora\image\link_prediction\1783207359604.png" alt="1783207359604"></p>
+<h3 id="4-gnn-モデルノード埋め込み学習">4. GNN モデル（ノード埋め込み学習）</h3>
+<p>推論を行うGNNモデルの構築です。
+一旦一番シンプルなモデルで行きますが、推論の精度が良くなければ上位モデルとしていこうと思います。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
+<span class="hljs-keyword">from</span> torch_geometric.nn <span class="hljs-keyword">import</span> GCNConv
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GCNEncoder</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, in_channels, hidden_channels, out_channels</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.conv1 = GCNConv(in_channels, hidden_channels)
+        self.conv2 = GCNConv(hidden_channels, out_channels)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, edge_index</span>):
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = F.dropout(x, training=self.training)
+        x = self.conv2(x, edge_index)
+        <span class="hljs-keyword">return</span> x
+
+<span class="hljs-comment"># モデルとデバイス設定</span>
+device = torch.device(<span class="hljs-string">&#x27;cuda&#x27;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&#x27;cpu&#x27;</span>)
+model = GCNEncoder(
+    in_channels=dataset.num_features,
+    hidden_channels=<span class="hljs-number">128</span>,
+    out_channels=<span class="hljs-number">64</span>
+).to(device)
+
+train_data = train_data.to(device)
+val_data = val_data.to(device)
+test_data = test_data.to(device)
+</code></pre>
+<h3 id="5-リンクスコア関数内積ベース">5. リンクスコア関数（内積ベース）</h3>
+<p>GNNから出力されるノード埋め込み z からエッジの「類似度スコア（内積）」を計算する関数です。</p>
+<ul>
+<li>内積が大きい → 2つのノードの埋め込みが似た方向を向いている → 「つながりやすい（引用関係がありそう）」とモデルが判断。</li>
+<li>内積が小さい（負） → 埋め込みが異なる方向 → 「つながりにくい（引用関係はなさそう）」と判断。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">decode</span>(<span class="hljs-params">z, edge_index</span>):
+    <span class="hljs-comment"># ノード埋め込みからリンクスコア（内積）を計算</span>
+    src, dst = edge_index
+    <span class="hljs-keyword">return</span> (z[src] * z[dst]).<span class="hljs-built_in">sum</span>(dim=<span class="hljs-number">1</span>)
+
+<span class="hljs-comment"># 例: 学習用エッジのスコアを計算</span>
+z = model(train_data.x, train_data.edge_index)
+pos_score = decode(z, train_data.edge_index)
+neg_score = decode(z, train_data.edge_label_index[:, train_data.edge_label_index.size(<span class="hljs-number">1</span>)//<span class="hljs-number">2</span>:])
+</code></pre>
+<h3 id="6-学習ループbce-損失">6. 学習ループ（BCE 損失）</h3>
+<p>実際に学習していきます。</p>
+<pre><code class="language-python">optimizer = torch.optim.Adam(model.parameters(), lr=<span class="hljs-number">0.01</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">train</span>():
+    model.train()
+    optimizer.zero_grad()
+    
+    <span class="hljs-comment"># ノード埋め込みを取得</span>
+    z = model(train_data.x, train_data.edge_index)
+    
+    <span class="hljs-comment"># 正例・負例のスコアを計算</span>
+    pos_score = decode(z, train_data.edge_index)
+    neg_score = decode(z, train_data.edge_label_index[:, train_data.edge_label_index.size(<span class="hljs-number">1</span>)//<span class="hljs-number">2</span>:])
+    
+    <span class="hljs-comment"># ラベル（正例=1, 負例=0）</span>
+    pos_labels = torch.ones(pos_score.size(<span class="hljs-number">0</span>), device=device)
+    neg_labels = torch.zeros(neg_score.size(<span class="hljs-number">0</span>), device=device)
+    
+    scores = torch.cat([pos_score, neg_score], dim=<span class="hljs-number">0</span>)
+    labels = torch.cat([pos_labels, neg_labels], dim=<span class="hljs-number">0</span>)
+    
+    <span class="hljs-comment"># BCE 損失</span>
+    loss = F.binary_cross_entropy_with_logits(scores, labels)
+    loss.backward()
+    optimizer.step()
+    <span class="hljs-keyword">return</span> loss.item()
+
+<span class="hljs-meta">@torch.no_grad()</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">test</span>(<span class="hljs-params">data</span>):
+    model.<span class="hljs-built_in">eval</span>()
+    z = model(data.x, data.edge_index)
+    
+    <span class="hljs-comment"># 正例・負例のスコア</span>
+    pos_score = decode(z, data.edge_label_index[:, :data.edge_label_index.size(<span class="hljs-number">1</span>)//<span class="hljs-number">2</span>])
+    neg_score = decode(z, data.edge_label_index[:, data.edge_label_index.size(<span class="hljs-number">1</span>)//<span class="hljs-number">2</span>:])
+    
+    scores = torch.cat([pos_score, neg_score], dim=<span class="hljs-number">0</span>).cpu().numpy()
+    labels = torch.cat([
+        torch.ones(pos_score.size(<span class="hljs-number">0</span>)),
+        torch.zeros(neg_score.size(<span class="hljs-number">0</span>))
+    ], dim=<span class="hljs-number">0</span>).cpu().numpy()
+    
+    <span class="hljs-comment"># AUC-ROC を計算（scikit-learn を使用）</span>
+    <span class="hljs-keyword">from</span> sklearn.metrics <span class="hljs-keyword">import</span> roc_auc_score
+    <span class="hljs-keyword">return</span> roc_auc_score(labels, scores)
+
+<span class="hljs-comment"># 学習ループ</span>
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">101</span>):
+    loss = train()
+    <span class="hljs-keyword">if</span> epoch % <span class="hljs-number">10</span> == <span class="hljs-number">0</span>:
+        train_auc = test(train_data)
+        val_auc = test(val_data)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;Epoch: <span class="hljs-subst">{epoch:03d}</span>, Loss: <span class="hljs-subst">{loss:<span class="hljs-number">.4</span>f}</span>, Train AUC: <span class="hljs-subst">{train_auc:<span class="hljs-number">.4</span>f}</span>, Val AUC: <span class="hljs-subst">{val_auc:<span class="hljs-number">.4</span>f}</span>&#x27;</span>)
+</code></pre>
+<p>全然精度良かったです。</p>
+<pre><code>Epoch: 010, Loss: 0.6408, Train AUC: 0.9018, Val AUC: 0.8660
+Epoch: 020, Loss: 0.5236, Train AUC: 0.9419, Val AUC: 0.9156
+Epoch: 030, Loss: 0.4434, Train AUC: 0.9667, Val AUC: 0.9409
+Epoch: 040, Loss: 0.4008, Train AUC: 0.9827, Val AUC: 0.9530
+Epoch: 050, Loss: 0.3686, Train AUC: 0.9903, Val AUC: 0.9556
+Epoch: 060, Loss: 0.3401, Train AUC: 0.9946, Val AUC: 0.9532
+Epoch: 070, Loss: 0.3167, Train AUC: 0.9964, Val AUC: 0.9507
+Epoch: 080, Loss: 0.2932, Train AUC: 0.9977, Val AUC: 0.9465
+Epoch: 090, Loss: 0.2745, Train AUC: 0.9985, Val AUC: 0.9426
+Epoch: 100, Loss: 0.2424, Train AUC: 0.9989, Val AUC: 0.9356
+</code></pre>
+<h3 id="7-テスト評価">7. テスト評価</h3>
+<pre><code class="language-python">test_auc = test(test_data)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&#x27;最終テスト AUC: <span class="hljs-subst">{test_auc:<span class="hljs-number">.4</span>f}</span>&#x27;</span>)
+</code></pre>
+<p>学習した状態のモデルで予測したAUC-ROCの結果です。
+いうことないくらい良いですね。
+確信度の閾値がそこそこでも良い精度が出ていると判断できる値です。</p>
+<pre><code>最終テスト AUC: 0.9567
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>今回の記事の内容をまとめます。</p>
+<h3 id="タスク設定">タスク設定</h3>
+<ul>
+<li><strong>グラフ</strong>: Cora 引用ネットワーク
+<ul>
+<li>ノード: 論文</li>
+<li>エッジ: 引用関係（有向）</li>
+</ul>
+</li>
+<li><strong>タスク</strong>: リンク予測（Link Prediction）
+<ul>
+<li>与えられた 2 つの論文ノード <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(u, v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> について、</li>
+<li>「将来、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> が <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> を引用するかどうか」を予測する 2 値分類問題。</li>
+</ul>
+</li>
+</ul>
+<h3 id="結果">結果</h3>
+<ul>
+<li>Cora のリンク予測タスクは、
+<ul>
+<li><strong>ノード特徴量（単語 BoW）<strong>と</strong>引用ネットワーク構造</strong>を GNN で統合し、</li>
+<li>ノード埋め込みの内積をリンクスコアとして用いることで、</li>
+<li>「まだ引用されていない論文ペアのうち、引用されそうなペア」を高い精度で予測できる。</li>
+</ul>
+</li>
+<li>実装は PyTorch Geometric を用い、GCN + 内積デコーダ + BCE 損失というシンプルな構成で十分な性能が得られることが確認できました。</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/MEmvk3ZSs0M?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
