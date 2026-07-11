@@ -206,6 +206,19 @@ index = PropertyGraphIndex.from_documents(
 
 print("✨ スキーマに沿った綺麗なグラフの登録が完了しました！")
 
+from llama_index.core.indices.property_graph import (
+    LLMSynonymRetriever,
+    VectorContextRetriever,
+)
+
+query_engine = index.as_query_engine(
+    sub_retrievers=[
+        LLMSynonymRetriever(index.property_graph_store, llm=Settings.llm),
+        VectorContextRetriever(index.property_graph_store, embed_model=Settings.embed_model),
+    ],
+    include_text=True,
+)
+
 # ---------------------------------------------------------
 # 6. (任意) 登録したグラフに対してクエリを実行する例
 # ---------------------------------------------------------
