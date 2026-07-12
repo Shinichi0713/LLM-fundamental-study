@@ -27,4 +27,36 @@
 !wget https://github.com/colmap/colmap/releases/download/3.11.1/south-building.zip
 !unzip south-building.zip
 
+%cd /content/colmap/build/src/colmap/exe
 
+# 1. 特徴抽出
+!/content/colmap/build/src/colmap/exe/colmap feature_extractor \
+  --database_path /content/south-building/database.db \
+  --image_path /content/south-building/images
+
+# 2. 特徴マッチング
+!/content/colmap/build/src/colmap/exe/colmap exhaustive_matcher \
+  --database_path /content/south-building/database.db
+
+# 3. SfM（スパース再構成）
+!mkdir -p /content/south-building/sparse
+!/content/colmap/build/src/colmap/exe/colmap mapper \
+  --database_path /content/south-building/database.db \
+  --image_path /content/south-building/images \
+  --output_path /content/south-building/sparse
+
+# 4. 画像の歪み補正
+!mkdir -p /content/south-building/dense
+!/content/colmap/build/src/colmap/exe/colmap image_undistorter \
+  --image_path /content/south-building/images \
+  --input_path /content/south-building/sparse/0 \
+  --output_path /content/south-building/dense \
+  --output_type COLMAP
+
+# 5. MVS（デンス再構成）
+!/content/colmap/build/src/colmap/exe/colmap patch_match_stereo \
+  --workspace_path /content/south-building/dense
+
+!/content/colmap/build/src/colmap/exe/colmap stereo_fusion \
+  --workspace_path /content/south-building/dense \
+  --output_path /content/south-building/dense/fused.ply
