@@ -7,6 +7,8 @@ from collections import deque
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import os
+import unittest
+import io
 
 class MazeEnv:
     """
@@ -443,3 +445,28 @@ class MazeEnv:
             plt.savefig(save_path, bbox_inches='tight')
             print(f"Maze image saved to {save_path}")
         plt.close(fig)
+
+
+class TestMaze(unittest.TestCase):
+    def setUp(self):
+        self.env = MazeEnv()
+
+    def test_reward(self):
+        self.env.reset()
+        _, reward, _ = self.env.step(2)  # 左
+        self.assertEqual(reward, -1, "壁にぶつかったときの報酬は -1 であるべき")
+
+    def test_reward_goal_rearch(self):
+        self.env.reset()
+        self.env.state = (self.env.goal[0] - 1, self.env.goal[1])
+        self.env.done = False
+        _, reward, done = self.env.step(1)  # 右 → ゴールへ
+        self.assertEqual(reward, 10, "ゴール到達時の報酬は +10 であるべき")
+        self.assertTrue(done, "ゴール到達時は done=True であるべき")
+
+if __name__ == "__main__":
+    loader = unittest.TestLoader()
+    suite = loader.loadTestsFromTestCase(TestMaze)
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite)
+
