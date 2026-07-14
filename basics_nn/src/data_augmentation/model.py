@@ -186,7 +186,121 @@ class TransformerQNetwork(nn.Module):
             self.mlp[-1].weight.fill_(0.0)
             self.mlp[-1].bias.fill_(0.0)
 
+import torch
+import torch.optim as optim
+import torch.nn as nn
+import numpy as np
+import random
 
+class DDQNAgent:
+    def __init__(self, action_dim, lr=1e-3, gamma=0.99,
+                 epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.995,
+                 buffer_capacity=10000, batch_size=32, target_update=100):
+        self.action_dim = action_dim
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
+        self.batch_size = batch_size
+        self.target_update = target_update
+        self.update_count = 0
+
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Qネットワークとターゲットネットワーク
+        self.q_net = TransformerQNetwork(action_dim=action_dim).to(self.device)
+        self.target_net = TransformerQNetwork(action_dim=action_dim).to(self.device)
+        self.target_net.load_state_dict(self.q_net.state_dict())
+        self.target_net.eval()
+
+        self.optimizer = optim.Adam(self.q_net.parameters(), lr=lr)
+        self.buffer = ReplayBuffer(buffer_capacity)
+
+    def _extract_agent_pos(self, state):
+        """
+        状態(C, H, W) からエージェントの位置(row, col)を特定するヘルパー関数
+        ※ 仮にインデックス0のチャンネルがエージェント位置（エージェントがいるマスが1、他が0）を表現していると想定
+        環境の仕様に合わせて必要に応じ変更してください。
+        """
+        agent_channel = state[0]
+        pos = np.argwhere(agent_channel == 1)
+        if len(pos) > 0:
+            return pos[0]  # [row, col]
+        else:
+            # 見つからない場合のフォールバック（例: [0, 0]）
+            return np.array([0, 0])
+
+    def act(self, state, greedy=False):
+        if not greedy and random.random() < self.epsilon:
+            return random.randint(0, self.action_dim - 1)
+
+        # state からエージェントの位置を抽出
+        agent_pos = self._extract_agent_pos(state)
+
+        # Tensorに変換してバッチ次元を追加
+        state_tensor = torch.FloatTensor(state).to(self.device).unsqueeze(0)
+        pos_tensor = torch.FloatTensor(agent_pos).to(self.device).unsqueeze(0)
+
+        with torch.no_grad():
+            # 新しいネットワーク引数（x, agent_pos）に対応
+            q_values = self.q_net(state_tensor, pos_tensor)
+        return q_values.argmax().item()
+
+    def update(self):
+        if len(self.buffer) < self.batch_size:
+            return
+
+        # バッチサンプリング
+        state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
+
+        # 各バッチデータからエージェントの位置を抽出
+        agent_pos_batch = np.array([self._extract_agent_pos(s) for s in state])
+        next_agent_pos_batch = np.array([self._extract_agent_pos(ns) for ns in next_state])
+
+        # 各種データをTensorに変換
+        state = torch.FloatTensor(np.stack(state)).to(self.device)
+        action = torch.LongTensor(action).to(self.device)
+        reward = torch.FloatTensor(reward).to(self.device)
+        next_state = torch.FloatTensor(np.stack(next_state)).to(self.device)
+        done = torch.BoolTensor(done).to(self.device)
+
+        # エージェント位置もテンソル化してデバイスへ送る
+        agent_pos = torch.FloatTensor(agent_pos_batch).to(self.device)
+        next_agent_pos = torch.FloatTensor(next_agent_pos_batch).to(self.device)
+
+        # 現在のQ値
+        q_values = self.q_net(state, agent_pos)
+        q_value = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
+
+        # Double DQN: 次状態での行動選択は q_net、評価は target_net
+        next_actions = self.q_net(next_state, next_agent_pos).argmax(1)
+        next_q_values = self.target_net(next_state, next_agent_pos)
+        next_q_value = next_q_values.gather(1, next_actions.unsqueeze(1)).squeeze(1)
+
+        # ターゲット値
+        target = reward + self.gamma * next_q_value * (~done)
+
+        # 損失計算と更新
+        loss = nn.MSELoss()(q_value, target.detach())
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        # εの減衰
+        if self.epsilon > self.epsilon_min:
+            self.epsilon *= self.epsilon_decay
+
+        # ターゲットネットワークの更新
+        self.update_count += 1
+        if self.update_count % self.target_update == 0:
+            self.target_net.load_state_dict(self.q_net.state_dict())
+
+    def save(self, path):
+        torch.save(self.q_net.state_dict(), path)
+
+    def load(self, path):
+        self.q_net.load_state_dict(torch.load(path))
+        self.target_net.load_state_dict(self.q_net.state_dict())
 
 # 変更前 (forward層のイメージ)
 # x = self.transformer(x)
@@ -203,7 +317,9 @@ class TransformerQNetwork(nn.Module):
         self.embedding = nn.Linear(in_channels, d_model)
         
         # ★CLSトークンは廃止し、位置エンコーディングは元のトークン数分だけ用意
-        self.pos_embedding = nn.Parameter(torch.randn(1, self.num_tokens, d_model))
+        # self.pos_embedding = nn.Parameter(torch.randn(1, self.num_tokens, d_model))
+        pos_emb = self.create_2d_sin_cos_pos_embedding(grid_size, d_model)
+        self.register_buffer('pos_embedding', pos_emb)  # これで自動的にデバイス（GPU/CPU）移動が管理されます
 
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=d_model, nhead=nhead, dim_feedforward=d_model * 2,
@@ -221,6 +337,25 @@ class TransformerQNetwork(nn.Module):
         with torch.no_grad():
             self.mlp[-1].weight.fill_(0.0)
             self.mlp[-1].bias.fill_(0.0)
+
+    def create_2d_sin_cos_pos_embedding(self, grid_size, d_model):
+        """
+        グリッドに対して、固定の2D Sin-Cos 位置エンコーディングを生成する。
+        """
+        assert d_model % 4 == 0, "d_model は4の倍数である必要があります"
+        pe = torch.zeros(grid_size, grid_size, d_model)
+        d_axis = d_model // 2
+        div_term = torch.exp(torch.arange(0, d_axis, 2).float() * -(np.log(10000.0) / d_axis))
+        
+        for y in range(grid_size):
+            for x in range(grid_size):
+                pe[y, x, 0:d_axis:2] = torch.sin(torch.tensor(x).float() * div_term)
+                pe[y, x, 1:d_axis:2] = torch.cos(torch.tensor(x).float() * div_term)
+                pe[y, x, d_axis::2]  = torch.sin(torch.tensor(y).float() * div_term)
+                pe[y, x, d_axis+1::2] = torch.cos(torch.tensor(y).float() * div_term)
+                
+        # (1, num_tokens, d_model) に平坦化して返す
+        return pe.view(1, grid_size * grid_size, d_model)
 
     def forward(self, x):
         # x の形状: (Batch, num_tokens, in_channels)

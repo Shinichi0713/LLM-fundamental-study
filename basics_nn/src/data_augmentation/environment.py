@@ -464,6 +464,68 @@ class TestMaze(unittest.TestCase):
         self.assertEqual(reward, 10, "ゴール到達時の報酬は +10 であるべき")
         self.assertTrue(done, "ゴール到達時は done=True であるべき")
 
+    def save_video(self, output_path="maze_animation.mp4", fps=2):
+        """
+        エージェントの動きを動画として保存
+        """
+        # 迷路のサイズ
+        rows = len(self.maze)
+        cols = len(self.maze[0])
+
+        # カラーマップの定義
+        cell_colors = {
+            'S': 'lightblue',  # スタート
+            'G': 'lightgreen', # ゴール
+            'W': 'black',      # 壁
+            '.': 'white',      # 通路
+            'A': 'red'         # エージェント（描画時に上書き）
+        }
+
+        fig, ax = plt.subplots(figsize=(cols, rows))
+        ax.set_xlim(-0.5, cols - 0.5)
+        ax.set_ylim(-0.5, rows - 0.5)
+        ax.set_aspect('equal')
+        ax.set_xticks(range(cols))
+        ax.set_yticks(range(rows))
+        ax.grid(True)
+
+        # 背景（迷路）を描画
+        for i in range(rows):
+            for j in range(cols):
+                cell = self.maze[i][j]
+                color = cell_colors.get(cell, 'white')
+                rect = plt.Rectangle((j - 0.5, rows - i - 1.5), 1, 1,
+                                     facecolor=color, edgecolor='gray')
+                ax.add_patch(rect)
+                # ラベル（S, G, W, .）を表示
+                if cell in ['S', 'G', 'W', '.']:
+                    ax.text(j, rows - i - 1, cell,
+                            ha='center', va='center', fontsize=12)
+
+        # エージェントの位置を示すマーカー
+        agent_marker, = ax.plot([], [], 'o', markersize=20, color='red')
+
+        def init():
+            agent_marker.set_data([], [])
+            return agent_marker,
+
+        def update(frame):
+            if frame >= len(self.history):
+                return agent_marker,
+            x, y = self.history[frame]
+            # 座標変換（matplotlibはy軸が下向きなので反転）
+            plot_y = rows - x - 1
+            agent_marker.set_data([y], [plot_y])
+            return agent_marker,
+
+        anim = FuncAnimation(fig, update, frames=len(self.history),
+                            init_func=init, blit=True, interval=1000/fps)
+
+        # MP4として保存（ffmpegが必要）
+        anim.save(output_path, writer='ffmpeg', fps=fps)
+        plt.close(fig)
+        print(f"Animation saved to {output_path}")
+
 if __name__ == "__main__":
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromTestCase(TestMaze)
