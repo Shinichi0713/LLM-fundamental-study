@@ -367,3 +367,80 @@ class TransformerQNetwork(nn.Module):
         # ★全マスの関係性を保持したまま平坦化してMLPへ送る
         x = x.flatten(start_dim=1) 
         return self.mlp(x)
+    
+
+class MLPExpert(nn.Module):
+    def __init__(self, d_model, d_ff):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(d_model, d_ff),
+            nn.GELU(),
+            nn.Linear(d_ff, d_model)
+        )
+
+    def forward(self, x):
+        return self.net(x)
+    
+
+class MoELayer(nn.Module):
+    def __init__(self, d_module, d_ff, num_experts=4):
+        self.num_experts = num_experts
+        self.experts = nn.ModuleList(
+            [MLPExpert(d_module, d_ff) for _ in range(num_experts)]
+        )
+        # 2. どのトークンをどの専門家に送るかを決めるゲート（線形層）
+        self.gate = nn.Linear(d_module, num_experts)
+
+    def forward(self, x):
+        # x: (Batch, Tokens, d_model)
+        batch_size, num_tokens, d_model = x.shape
+        
+        # トークンごとに独立してルーティングを決定するため、バッチとトークンをフラットにする
+        flat_x = x.view(-1, d_model) # (Batch * Tokens, d_model)
+        
+        # 各トークンに対する各エキスパートの推薦スコアを計算
+        gate_logits = self.gate(flat_x) # (Batch * Tokens, num_experts)
+        
+        # 最もスコアの高いエキスパートのインデックスと、その重み（Softmax値）を取得 (Top-1)
+        gate_weights = F.softmax(gate_logits, dim=-1)
+        max_weights, expert_indices = torch.max(gate_weights, dim=-1, keepdim=True) # (Batch * Tokens, 1)
+        
+        # 出力を格納するゼロテンソルを準備
+        flat_out = torch.zeros_like(flat_x)
+        
+        # 各エキスパートごとに、自分にアサインされたトークンだけをまとめて一括処理（効率化）
+        for i in range(self.num_experts):
+            mask = (expert_indices == i).squeeze(-1) # このエキスパートが担当するトークンのマスク
+            if mask.any():
+                # 担当トークンを専門家に通し、ゲートの重みを掛け算して出力に加算
+                expert_in = flat_x[mask]
+                expert_out = self.experts[i](expert_in)
+                flat_out[mask] = expert_out * max_weights[mask]
+                
+        # 元の形状 (Batch, Tokens, d_model) に戻して返す
+        return flat_out.view(batch_size, num_tokens, d_model)
+
+
+class MoETransformerEncoderLayer(nn.Module):
+    """FFN部分をMoEに置き換えたTransformerレイヤー"""
+    def __init__(self, d_model, nhead, d_ff, num_experts=4):
+        super().__init__()
+        # Pre-LN 構成
+        self.attn_norm = nn.LayerNorm(d_model)
+        self.self_attn = nn.MultiheadAttention(d_model, nhead, batch_first=True)
+        
+        self.moe_norm = nn.LayerNorm(d_model)
+        self.moe = MoELayer(d_model, d_ff, num_experts=num_experts)
+        
+    def forward(self, x):
+        # 1. Multi-Head Attention (Pre-LN & Residual)
+        norm_x = self.attn_norm(x)
+        attn_out, _ = self.self_attn(norm_x, norm_x, norm_x)
+        x = x + attn_out
+        
+        # 2. MoE FFN (Pre-LN & Residual)
+        norm_x2 = self.moe_norm(x)
+        moe_out = self.moe(norm_x2)
+        x = x + moe_out
+        
+        return x
