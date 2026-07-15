@@ -307,6 +307,78 @@ class DDQNAgent:
 # cls_out = x[:, 0, :] # CLSトークンだけを抜く (表現力の限界)
 # return self.mlp(cls_out)
 
+class DDQNAgent:
+    def __init__(self, action_dim, lr=1e-3, gamma=0.99,
+                 epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.995,
+                 buffer_capacity=10000, batch_size=32, target_update=100):
+        self.action_dim = action_dim
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
+        self.batch_size = batch_size
+        self.target_update = target_update
+        self.update_count = 0
+
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Qネットワークとターゲットネットワーク
+        self.q_net = TransformerQNetwork(action_dim=action_dim).to(self.device)
+        self.target_net = TransformerQNetwork(action_dim=action_dim).to(self.device)
+        self.target_net.load_state_dict(self.q_net.state_dict())
+        self.target_net.eval()
+
+        self.optimizer = optim.Adam(self.q_net.parameters(), lr=lr)
+        self.buffer = ReplayBuffer(buffer_capacity)
+
+    def act(self):
+        if len(self.buffer) < self.batch_size:
+            return
+        
+        # バッチサンプリング
+        state, action, reward, state_next, done = self.buffer.sample(self.batch_size)
+
+        # 画像データをTensorに変換
+        state = torch.FloatTensor(np.stack(state)).to(self.device)
+        action = torch.LongTensor(action).to(self.device)
+        reward = torch.FloatTensor(reward).to(self.device)
+        state_next = torch.FloatTensor(np.stack(state_next)).to(self.device)
+        done = torch.BoolTensor(done).to(self.device)
+
+        # 現在のQ値
+        q_value = self.q_net(state)
+        q_value = q_value.gather(1, action.unsqueeze(1)).squeeze(1)
+
+        # DDQN 
+        action_next = self.q_net(state_next).argmax(1)
+        next_q_values = self.target_net(state_next)
+        next_q_value = next_q_values.gather(1, action_next.unsqueeze(1)).squeeze(1)
+
+        # ターゲット
+        target = reward + self.gamma * next_q_value * (~done)
+
+        # 損失計算と更新
+        loss = nn.MSELoss()(q_value, target.detach())
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        # εの減衰
+        if self.epsilon > self.epsilon_min:
+            self.epsilon *= self.epsilon_decay
+
+        # ターゲットネットワークの更新
+        self.update_count += 1
+        if self.update_count % self.target_update == 0:
+            self.target_net.load_state_dict(self.q_net.state_dict())
+    
+    def save(self, path):
+        torch.save(self.q_net.state_dict(), path)
+
+    def load(self, path):
+        self.q_net.load_state_dict(torch.load(path))
+        self.target_net.load_state_dict(self.q_net.state_dict())
+
 # 変更後 (Flatten方式)
 class TransformerQNetwork(nn.Module):
     def __init__(self, in_channels=4, grid_size=5, d_model=64, nhead=4, num_layers=2, action_dim=4, hidden_size=128):
@@ -444,3 +516,62 @@ class MoETransformerEncoderLayer(nn.Module):
         x = x + moe_out
         
         return x
+    
+
+
+"""
+DDQN（Double DQN）は、DQN が抱える「Q値の過大評価（overestimation）」という問題を軽減するために提案された改良版です。
+
+主な効果は次の2点です。
+
+---
+
+### 1. Q値の過大評価を抑える
+
+DQN では、行動選択（どの行動を取るか）と Q値の評価（その行動の価値をどう見積もるか）に同じネットワークを使います。  
+そのため、**最大値を取るステップ（max 操作）** が入ると、たまたま高く推定された行動が選ばれやすくなり、Q値が実際より大きく見積もられてしまう「過大評価バイアス」が生じます。
+
+DDQN では、  
+- **行動選択用のネットワーク**（オンライン側）  
+- **Q値評価用のネットワーク**（ターゲット側）  
+
+を分け、  
+「オンライン側で選んだ行動」に対して「ターゲット側でその行動の Q値を評価」する、という二段構えにします。  
+これにより、**行動選択と評価が独立に行われる**ため、特定の行動に対する一時的な過大評価が学習全体に波及しにくくなり、Q値の推定がより正確になります[ダブルDQNとは](https://e-words.jp/w/%E3%83%80%E3%83%96%E3%83%ABDQN.html)。
+
+---
+
+### 2. 学習の安定化と性能向上
+
+Q値の過大評価が抑えられると、  
+- 実際には良くない行動でも「良さそうに見える」状態が減る  
+- その結果、**学習が安定しやすく、最終的な性能も向上しやすい**  
+
+ことが、Atari などのベンチマークで確認されています[Deep Reinforcement Learning with Double Q-learning](https://arxiv.org/abs/1509.06461)。
+
+DQN に比べると、  
+- 計算コストはほぼ同じ（ネットワークは2つあるが、更新頻度や構造はほぼ同等）  
+- 実装も DQN のターゲットネットワークを少し使い方を変えるだけ  
+
+なので、**手軽に導入できる割に、性能改善の効果が大きい**のが特徴です。
+
+---
+
+### まとめ：DQN と DDQN の違い
+
+| 項目 | DQN | DDQN |
+|------|-----|------|
+| ネットワークの使い方 | 行動選択と評価に同じネットワークを使う | 行動選択と評価を別々のネットワークで行う |
+| Q値の推定 | 過大評価バイアスが大きい | 過大評価を抑え、より正確 |
+| 学習の安定性 | 不安定になりやすい場面がある | 比較的安定しやすい |
+| 実装の複雑さ | 標準的な DQN | DQN のターゲットネットワークの使い方を少し変えるだけ |
+
+**結論として**、DDQN は DQN に対して  
+- Q値の過大評価を抑える  
+- その結果、学習が安定し、性能が向上しやすい  
+
+という効果があります。  
+DQN を実装する際には、ほぼ追加コストなしで導入できるため、**ほぼ標準的な改良手法**として使われることが多いです。
+"""
+
+
