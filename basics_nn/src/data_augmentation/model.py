@@ -574,4 +574,157 @@ DQN に比べると、
 DQN を実装する際には、ほぼ追加コストなしで導入できるため、**ほぼ標準的な改良手法**として使われることが多いです。
 """
 
+"""
+DDQN の実装は、**DQN の実装をほぼそのまま流用し、ターゲット Q 値の計算部分だけを書き換える**形で行うのが一般的です。
 
+ここでは、DQN をすでに実装している前提で、**DDQN に変更するために必要な部分**に絞って説明します。
+
+---
+
+## 1. DDQN の実装のポイント
+
+DQN との違いは、**「次状態での最適行動の選択」と「その行動の Q 値評価」を別々のネットワークで行う**ことです。
+
+- DQN（標準）  
+  - 次状態 `s'` の Q 値は、ターゲットネットワーク `Q_target` だけで計算  
+  - `max_a Q_target(s', a)` をそのまま教師信号に使う
+
+- DDQN  
+  - 次状態 `s'` の**最適行動**は、オンラインネットワーク `Q_online` で選ぶ  
+  - その行動の**Q 値**は、ターゲットネットワーク `Q_target` で評価する  
+  - `Q_target(s', argmax_a Q_online(s', a))` を教師信号に使う
+
+これにより、Q 値の過大評価を抑えつつ、DQN とほぼ同じ計算量で実装できます。
+
+---
+
+## 2. 実装の流れ（DQN からの差分）
+
+### 2.1 ネットワークの準備
+
+DQN と同様に、  
+- オンラインネットワーク `Q_online`  
+- ターゲットネットワーク `Q_target`  
+
+の2つを用意します（構造は同じで、パラメータだけ別）。
+
+```python
+# PyTorch 風の例
+class QNetwork(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super().__init__()
+        self.fc1 = nn.Linear(state_dim, 128)
+        self.fc2 = nn.Linear(128, 128)
+        self.out = nn.Linear(128, action_dim)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        return self.out(x)
+
+# オンラインとターゲットを別インスタンスで持つ
+q_online = QNetwork(state_dim, action_dim)
+q_target = QNetwork(state_dim, action_dim)
+q_target.load_state_dict(q_online.state_dict())  # 初期は同じ重み
+```
+
+ここまでは DQN と同じです。
+
+---
+
+### 2.2 ターゲット Q 値の計算（DDQN の核心）
+
+DQN では、ミニバッチ `(s, a, r, s', done)` に対して：
+
+```python
+# DQN のターゲット Q 値計算（擬似コード）
+with torch.no_grad():
+    next_q_values = q_target(next_states)           # shape: [batch_size, n_actions]
+    max_next_q = next_q_values.max(dim=1)[0]        # max over actions
+    target_q = rewards + gamma * max_next_q * (1 - dones)
+```
+
+DDQN では、**行動選択に `q_online` を使い、評価に `q_target` を使う**ようにします：
+
+```python
+# DDQN のターゲット Q 値計算（擬似コード）
+with torch.no_grad():
+    # 1. オンラインネットワークで次状態の Q 値を計算
+    next_q_online = q_online(next_states)           # shape: [batch_size, n_actions]
+    # 2. オンライン側で「最適行動」を選ぶ
+    best_actions = next_q_online.argmax(dim=1)      # shape: [batch_size]
+
+    # 3. ターゲットネットワークで次状態の Q 値を計算
+    next_q_target = q_target(next_states)            # shape: [batch_size, n_actions]
+    # 4. オンライン側で選んだ行動に対応するターゲット Q 値を取得
+    max_next_q = next_q_target.gather(1, best_actions.unsqueeze(1)).squeeze(1)
+
+    # 5. 教師信号（ターゲット Q 値）を計算
+    target_q = rewards + gamma * max_next_q * (1 - dones)
+```
+
+この `gather` 部分が DDQN の肝で、  
+「`q_online` が選んだ行動 `best_actions` について、`q_target` が評価した Q 値」を取ってきています。
+
+---
+
+### 2.3 損失計算と更新
+
+損失計算は DQN と同じです。
+
+```python
+# 現在の Q 値（オンライン側）
+current_q = q_online(states).gather(1, actions.unsqueeze(1)).squeeze(1)
+
+# 損失（MSE など）
+loss = F.mse_loss(current_q, target_q)
+
+# 勾配をゼロにして逆伝播
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()
+```
+
+---
+
+### 2.4 ターゲットネットワークの更新
+
+ターゲットネットワークの更新も DQN と同じで、  
+一定ステップごとにオンライン側の重みをコピーする、あるいはソフトアップデート（Polyak averaging）を使います。
+
+```python
+# 一定ステップごとに完全コピー（例）
+if step % target_update_interval == 0:
+    q_target.load_state_dict(q_online.state_dict())
+
+# ソフトアップデート（例：tau=0.005）
+# for tp, p in zip(q_target.parameters(), q_online.parameters()):
+#     tp.data.copy_(tau * p.data + (1 - tau) * tp.data)
+```
+
+---
+
+## 3. 実装の注意点
+
+- **DQN をすでに実装しているなら、変更箇所はほぼターゲット Q 値の計算部分だけ**です。  
+  そのため、まずは DQN をきちんと動かしてから DDQN に移行するのがおすすめです。
+
+- 学習率やターゲット更新頻度は、DQN と同様にタスクに合わせて調整する必要があります。
+
+- 実装例としては、以下のような記事が参考になります（PyTorch ベース）：
+  - [PyTorchで深層強化学習（DQN、DoubleDQN）を実装してみた](https://ie110704.net/2017/10/15/pytorch%E3%81%A7%E6%B7%B1%E5%B1%A4%E5%BC%B7%E5%8C%96%E5%AD%A6%E7%BF%92%EF%BC%88dqn%E3%80%81doubledqn%EF%BC%89%E3%82%92%E5%AE%9F%E8%A3%85%E3%81%97%E3%81%A6%E3%81%BF%E3%81%9F)[PyTorchで深層強化学習（DQN、DoubleDQN）を実装してみた](https://ie110704.net/2017/10/15/pytorch%E3%81%A7%E6%B7%B1%E5%B1%A4%E5%BC%B7%E5%8C%96%E5%AD%A6%E7%BF%92%EF%BC%88dqn%E3%80%81doubledqn%EF%BC%89%E3%82%92%E5%AE%9F%E8%A3%85%E3%81%97%E3%81%A6%E3%81%BF%E3%81%9F)
+  - [Gymで強化学習㉖Double DQN:実践編](https://note.com/kikaben/n/n7d9d1b9c9442)[Gymで強化学習㉖Double DQN:実践編](https://note.com/kikaben/n/n7d9d1b9c9442)
+
+---
+
+## 4. まとめ
+
+- DDQN の実装は、**DQN のターゲット Q 値計算部分だけを書き換える**だけで済みます。
+- 具体的には、  
+  - 次状態の最適行動を `q_online` で選び  
+  - その行動の Q 値を `q_target` で評価する  
+  という2段構えにします。
+- これにより、Q 値の過大評価を抑えつつ、DQN とほぼ同じ計算量で性能向上が期待できます。
+
+もし「DQN の実装から全部書きたい」ということであれば、その前提でフルコード例もお出しできますので、お知らせください。
+"""
