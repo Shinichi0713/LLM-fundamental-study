@@ -5,7 +5,190 @@ import torch.nn as nn
 import torch.optim as optim
 from collections import deque
 
+import numpy as np
 
+class QLearningAgent:
+    """
+    Q学習エージェント（迷路用）
+    """
+    def __init__(self, env, alpha=0.1, gamma=0.99, epsilon=0.1):
+        self.env = env
+        self.alpha = alpha  # 学習率
+        self.gamma = gamma  # 割引率
+        self.epsilon = epsilon  # 探索率
+
+        # Qテーブルの初期化（状態: (x,y), 行動: 0~3）
+        self.q_table = {}
+
+    def get_q_value(self, state, action):
+        """状態・行動に対するQ値を取得（未登録なら0で初期化）"""
+        if state not in self.q_table:
+            self.q_table[state] = np.zeros(4)  # 4行動分
+        return self.q_table[state][action]
+
+    def choose_action(self, state):
+        """ε-greedy法で行動を選択"""
+        if np.random.random() < self.epsilon:
+            # 探索: ランダム行動
+            return np.random.randint(4)
+        else:
+            # 活用: Q値が最大の行動を選択
+            q_values = [self.get_q_value(state, a) for a in range(4)]
+            return np.argmax(q_values)
+
+    def update_q_value(self, state, action, reward, next_state):
+        """Q値を更新（Q学習の更新式）"""
+        current_q = self.get_q_value(state, action)
+        # 次の状態での最大Q値
+        next_max_q = max([self.get_q_value(next_state, a) for a in range(4)])
+        # Q学習の更新式
+        new_q = current_q + self.alpha * (reward + self.gamma * next_max_q - current_q)
+        self.q_table[state][action] = new_q
+
+    def train(self, episodes=1000):
+        """学習ループ"""
+        for episode in range(episodes):
+            state = self.env.reset()
+            done = False
+            total_reward = 0
+
+            while not done:
+                action = self.choose_action(state)
+                next_state, reward, done = self.env.step(action)
+                self.update_q_value(state, action, reward, next_state)
+                state = next_state
+                total_reward += reward
+
+            if episode % 100 == 0:
+                print(f"Episode {episode}, Total Reward: {total_reward}")
+
+    def play(self, max_steps=50):
+        """学習済みポリシーで1エピソードプレイ"""
+        state = self.env.reset()
+        done = False
+        steps = 0
+        while not done and steps < max_steps:
+            action = np.argmax([self.get_q_value(state, a) for a in range(4)])
+            next_state, reward, done = self.env.step(action)
+            self.env.render()  # 可視化
+            state = next_state
+            steps += 1
+
+import torch
+import torch.optim as optim
+import torch.nn as nn
+import numpy as np
+import random
+
+class DDQNAgent:
+    def __init__(self, action_dim, lr=1e-3, gamma=0.99,
+                 epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.995,
+                 buffer_capacity=10000, batch_size=32, target_update=100):
+        self.action_dim = action_dim
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
+        self.batch_size = batch_size
+        self.target_update = target_update
+        self.update_count = 0
+
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Qネットワークとターゲットネットワーク
+        self.q_net = TransformerQNetwork(action_dim=action_dim).to(self.device)
+        self.target_net = TransformerQNetwork(action_dim=action_dim).to(self.device)
+        self.target_net.load_state_dict(self.q_net.state_dict())
+        self.target_net.eval()
+
+        self.optimizer = optim.Adam(self.q_net.parameters(), lr=lr)
+        self.buffer = ReplayBuffer(buffer_capacity)
+
+    def _extract_agent_pos(self, state):
+        """
+        状態(C, H, W) からエージェントの位置(row, col)を特定するヘルパー関数
+        ※ 仮にインデックス0のチャンネルがエージェント位置（エージェントがいるマスが1、他が0）を表現していると想定
+        環境の仕様に合わせて必要に応じ変更してください。
+        """
+        agent_channel = state[0]
+        pos = np.argwhere(agent_channel == 1)
+        if len(pos) > 0:
+            return pos[0]  # [row, col]
+        else:
+            # 見つからない場合のフォールバック（例: [0, 0]）
+            return np.array([0, 0])
+
+    def act(self, state, greedy=False):
+        if not greedy and random.random() < self.epsilon:
+            return random.randint(0, self.action_dim - 1)
+
+        # state からエージェントの位置を抽出
+        agent_pos = self._extract_agent_pos(state)
+
+        # Tensorに変換してバッチ次元を追加
+        state_tensor = torch.FloatTensor(state).to(self.device).unsqueeze(0)
+        pos_tensor = torch.FloatTensor(agent_pos).to(self.device).unsqueeze(0)
+
+        with torch.no_grad():
+            # 新しいネットワーク引数（x, agent_pos）に対応
+            q_values = self.q_net(state_tensor, pos_tensor)
+        return q_values.argmax().item()
+
+    def update(self):
+        if len(self.buffer) < self.batch_size:
+            return
+
+        # バッチサンプリング
+        state, action, reward, next_state, done = self.buffer.sample(self.batch_size)
+
+        # 各バッチデータからエージェントの位置を抽出
+        agent_pos_batch = np.array([self._extract_agent_pos(s) for s in state])
+        next_agent_pos_batch = np.array([self._extract_agent_pos(ns) for ns in next_state])
+
+        # 各種データをTensorに変換
+        state = torch.FloatTensor(np.stack(state)).to(self.device)
+        action = torch.LongTensor(action).to(self.device)
+        reward = torch.FloatTensor(reward).to(self.device)
+        next_state = torch.FloatTensor(np.stack(next_state)).to(self.device)
+        done = torch.BoolTensor(done).to(self.device)
+
+        # エージェント位置もテンソル化してデバイスへ送る
+        agent_pos = torch.FloatTensor(agent_pos_batch).to(self.device)
+        next_agent_pos = torch.FloatTensor(next_agent_pos_batch).to(self.device)
+
+        # 現在のQ値
+        q_values = self.q_net(state, agent_pos)
+        q_value = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
+
+        # Double DQN: 次状態での行動選択は q_net、評価は target_net
+        next_actions = self.q_net(next_state, next_agent_pos).argmax(1)
+        next_q_values = self.target_net(next_state, next_agent_pos)
+        next_q_value = next_q_values.gather(1, next_actions.unsqueeze(1)).squeeze(1)
+
+        # ターゲット値
+        target = reward + self.gamma * next_q_value * (~done)
+
+        # 損失計算と更新
+        loss = nn.MSELoss()(q_value, target.detach())
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        # εの減衰
+        if self.epsilon > self.epsilon_min:
+            self.epsilon *= self.epsilon_decay
+
+        # ターゲットネットワークの更新
+        self.update_count += 1
+        if self.update_count % self.target_update == 0:
+            self.target_net.load_state_dict(self.q_net.state_dict())
+
+    def save(self, path):
+        torch.save(self.q_net.state_dict(), path)
+
+    def load(self, path):
+        self.q_net.load_state_dict(torch.load(path))
+        self.target_net.load_state_dict(self.q_net.state_dict())
 
 class QNetwork(nn.Module):
     def __init__(self, state_dim, action_dim, hidden_size=64):
@@ -1157,3 +1340,176 @@ python test_replay_buffer.py
 
 このテストコードをベースに、実際の ReplayBuffer 実装に合わせて微調整していただければ、動作確認に役立つと思います。
 """
+
+
+
+
+class TransformerDQNAgent:
+    def __init__(
+        self,
+        env,  # Gym 風の環境（reset(), step() を持つ）
+        in_channels=4,
+        grid_size=5,
+        d_model=64,
+        nhead=4,
+        num_layers=2,
+        action_dim=4,
+        hidden_size=128,
+        lr=1e-4,
+        gamma=0.99,
+        epsilon_start=1.0,
+        epsilon_end=0.01,
+        epsilon_decay=0.995,
+        buffer_capacity=10000,
+        batch_size=32,
+        target_update_interval=1000,
+        device="cuda" if torch.cuda.is_available() else "cpu"
+    ):
+        self.env = env
+        self.action_dim = action_dim
+        self.gamma = gamma
+        self.epsilon = epsilon_start
+        self.epsilon_end = epsilon_end
+        self.epsilon_decay = epsilon_decay
+        self.batch_size = batch_size
+        self.target_update_interval = target_update_interval
+        self.device = device
+
+        # Qネットワーク（オンライン）
+        self.q_online = TransformerQNetwork(
+            in_channels=in_channels,
+            grid_size=grid_size,
+            d_model=d_model,
+            nhead=nhead,
+            num_layers=num_layers,
+            action_dim=action_dim,
+            hidden_size=hidden_size
+        ).to(device)
+
+        # ターゲットネットワーク
+        self.q_target = TransformerQNetwork(
+            in_channels=in_channels,
+            grid_size=grid_size,
+            d_model=d_model,
+            nhead=nhead,
+            num_layers=num_layers,
+            action_dim=action_dim,
+            hidden_size=hidden_size
+        ).to(device)
+        self.q_target.load_state_dict(self.q_online.state_dict())
+        self.q_target.eval()
+
+        self.optimizer = optim.Adam(self.q_online.parameters(), lr=lr)
+        self.buffer = ReplayBuffer(capacity=buffer_capacity)
+
+        self.step_count = 0
+
+    def select_action(self, state):
+        """
+        ε-greedy で行動を選択
+        state: (grid_size, grid_size, in_channels) の numpy 配列 or テンソル
+        """
+        if random.random() < self.epsilon:
+            return random.randrange(self.action_dim)
+
+        # 推論モード
+        self.q_online.eval()
+        with torch.no_grad():
+            # state を (1, num_tokens, in_channels) に変換
+            state_tensor = self._preprocess_state(state).to(self.device)
+            q_values = self.q_online(state_tensor)  # (1, action_dim)
+            action = q_values.argmax(dim=1).item()
+        self.q_online.train()
+        return action
+
+    def _preprocess_state(self, state):
+        """
+        環境から返される state を TransformerQNetwork の入力形式に変換
+        - state: (grid_size, grid_size, in_channels) の numpy 配列 or テンソル
+        - 返り値: (1, num_tokens, in_channels) の torch.Tensor
+        """
+        if isinstance(state, np.ndarray):
+            state = torch.from_numpy(state).float()
+        # (grid_size, grid_size, in_channels) -> (1, num_tokens, in_channels)
+        state = state.view(-1, self.q_online.num_tokens, self.q_online.in_channels)
+        return state
+
+    def store_experience(self, state, action, reward, next_state, done):
+        """
+        経験をバッファに保存
+        """
+        self.buffer.push(state, action, reward, next_state, done)
+
+    def update(self):
+        """
+        経験再生バッファからミニバッチをサンプリングし、Qネットワークを更新（DDQN 風）
+        """
+        if len(self.buffer) < self.batch_size:
+            return
+
+        # バッファからサンプリング
+        states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size)
+
+        # テンソルに変換
+        states = torch.stack([self._preprocess_state(s).squeeze(0) for s in states]).to(self.device)
+        next_states = torch.stack([self._preprocess_state(s).squeeze(0) for s in next_states]).to(self.device)
+        actions = torch.tensor(actions, dtype=torch.long).to(self.device)
+        rewards = torch.tensor(rewards, dtype=torch.float).to(self.device)
+        dones = torch.tensor(dones, dtype=torch.float).to(self.device)
+
+        # 現在の Q 値
+        current_q = self.q_online(states).gather(1, actions.unsqueeze(1)).squeeze(1)
+
+        # ターゲット Q 値（DDQN 方式）
+        with torch.no_grad():
+            # オンライン側で次状態の最適行動を選択
+            next_q_online = self.q_online(next_states)
+            best_actions = next_q_online.argmax(dim=1)
+
+            # ターゲット側でその行動の Q 値を評価
+            next_q_target = self.q_target(next_states)
+            max_next_q = next_q_target.gather(1, best_actions.unsqueeze(1)).squeeze(1)
+
+            target_q = rewards + self.gamma * max_next_q * (1 - dones)
+
+        # 損失計算と更新
+        loss = nn.MSELoss()(current_q, target_q)
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        # εの減衰
+        self.epsilon = max(self.epsilon_end, self.epsilon * self.epsilon_decay)
+
+        # ターゲットネットワークの更新
+        self.step_count += 1
+        if self.step_count % self.target_update_interval == 0:
+            self.q_target.load_state_dict(self.q_online.state_dict())
+
+    def train(self, num_episodes=1000, max_steps_per_episode=1000):
+        """
+        学習ループ
+        """
+        for episode in range(num_episodes):
+            state = self.env.reset()
+            episode_reward = 0
+
+            for step in range(max_steps_per_episode):
+                action = self.select_action(state)
+                next_state, reward, done, _ = self.env.step(action)
+
+                self.store_experience(state, action, reward, next_state, done)
+                self.update()
+
+                state = next_state
+                episode_reward += reward
+
+                if done:
+                    break
+
+            # ログ出力（任意）
+            if episode % 10 == 0:
+                print(f"Episode {episode}, Reward: {episode_reward:.2f}, Epsilon: {self.epsilon:.3f}")
+
+        print("Training finished.")
