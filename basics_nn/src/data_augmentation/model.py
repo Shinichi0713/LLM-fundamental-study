@@ -770,6 +770,56 @@ def demo_buffer():
         states, actions, rewards, next_states, dones = buffer.sample(batch_size)
         # DQN の損失計算などに使う
 
+import unittest
+from collections import deque
+import random
+
+
+class TestReplayBuffer(unittest.TestCase):
+
+    def setUp(self):
+        """各テストの前に呼ばれるセットアップ"""
+        self.capacity = 5
+        self.buffer = ReplayBuffer(self.capacity)
+
+    def text_initialization(self):
+        self.assertEqual(len(self.buffer), 0)
+        self.assertEqual(self.buffer.buffer.maxlen, self.capacity)
+
+    def test_push_over_capacity(self):
+        """容量を超えて push したときの挙動テスト（FIFO）"""
+        # 容量いっぱいまで追加
+        for i in range(self.capacity):
+            self.buffer.push(state=i, action=i, reward=float(i), next_state=i+1, done=False)
+
+        self.assertEqual(len(self.buffer), self.capacity)
+
+        # さらに1つ追加 → 最初の要素が消える
+        self.buffer.push(state=99, action=99, reward=99.0, next_state=100, done=True)
+        self.assertEqual(len(self.buffer), self.capacity)  # サイズは変わらない
+
+        # バッファの最初の要素が最初に追加したものではなくなっていることを確認
+        first_exp = self.buffer.buffer[0]
+        # 最初に追加したのは (state=0, ...) だが、それが押し出されて (state=99, ...) になっている
+        self.assertEqual(first_exp[0], 99)  # state=99 が先頭にある
+
+    def test_sample_batch_size_1(self):
+        """バッチサイズ1のサンプリングテスト"""
+        self.buffer.push(state=1, action=0, reward=1.0, next_state=2, done=False)
+        self.buffer.push(state=3, action=1, reward=0.0, next_state=4, done=True)
+
+        states, actions, rewards, next_states, dones = self.buffer.sample(batch_size=1)
+
+        self.assertEqual(len(states), 1)
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(len(rewards), 1)
+        self.assertEqual(len(next_states), 1)
+        self.assertEqual(len(dones), 1)
+
+        # サンプリングされた経験がバッファ内のいずれかであることを確認
+        exp_in_buffer = (states[0], actions[0], rewards[0], next_states[0], dones[0])
+        self.assertIn(exp_in_buffer, list(self.buffer.buffer))
+
 """
 経験バッファ（Experience Replay Buffer）は、DQN などの深層強化学習で「過去の経験を貯めてランダムに学習に使う」ための仕組みです。  
 ここでは、**どのような設計で構築すべきか**と、**Python での具体的な実装例**を説明します。
@@ -935,4 +985,175 @@ dones = np.array(dones)
 
 このような設計で経験バッファを構築すれば、DQN などのアルゴリズムを安定して学習させることができます。  
 もし「優先度付き経験再生」や「マルチステップ報酬」など、より高度なバッファ設計についても知りたい場合は、その点に絞ってさらに詳しく説明できます。
+
+
+はい、作成できます。  
+ここでは、前回提示した `ReplayBuffer` クラス（deque ベース）を対象に、Python の `unittest` を使ったテストコード例を示します。
+
+---
+
+## 1. テスト対象の ReplayBuffer（再掲）
+
+```python
+from collections import deque
+import random
+
+class ReplayBuffer:
+    def __init__(self, capacity):
+        self.buffer = deque(maxlen=capacity)
+
+    def push(self, state, action, reward, next_state, done):
+        experience = (state, action, reward, next_state, done)
+        self.buffer.append(experience)
+
+    def sample(self, batch_size):
+        batch = random.sample(self.buffer, batch_size)
+        states, actions, rewards, next_states, dones = zip(*batch)
+        return states, actions, rewards, next_states, dones
+
+    def __len__(self):
+        return len(self.buffer)
+```
+
+---
+
+## 2. unittest を使ったテストコード例
+
+```python
+import unittest
+from collections import deque
+import random
+
+# 上記の ReplayBuffer クラスをここに定義 or import する
+
+class TestReplayBuffer(unittest.TestCase):
+
+    def setUp(self):
+        self.capacity = 5
+        self.buffer = ReplayBuffer(self.capacity)
+
+    def test_initialization(self):
+        self.assertEqual(len(self.buffer), 0)
+        self.assertEqual(self.buffer.buffer.maxlen, self.capacity)
+
+    def test_push_and_len(self):
+        self.buffer.push(state=1, action=0, reward=1.0, next_state=2, done=False)
+        self.assertEqual(len(self.buffer), 1)
+
+        # もう1つ追加
+        self.buffer.push(state=3, action=1, reward=0.0, next_state=4, done=True)
+        self.assertEqual(len(self.buffer), 2)
+
+    def test_push_over_capacity(self):
+        # 容量いっぱいまで追加
+        for i in range(self.capacity):
+            self.buffer.push(state=i, action=i, reward=float(i), next_state=i+1, done=False)
+
+        self.assertEqual(len(self.buffer), self.capacity)
+
+        # さらに1つ追加 → 最初の要素が消える
+        self.buffer.push(state=99, action=99, reward=99.0, next_state=100, done=True)
+        self.assertEqual(len(self.buffer), self.capacity)  # サイズは変わらない
+
+        # バッファの最初の要素が最初に追加したものではなくなっていることを確認
+        first_exp = self.buffer.buffer[0]
+        # 最初に追加したのは (state=0, ...) だが、それが押し出されて (state=99, ...) になっている
+        self.assertEqual(first_exp[0], 99)  # state=99 が先頭にある
+
+    def test_sample_batch_size_1(self):
+        self.buffer.push(state=1, action=0, reward=1.0, next_state=2, done=False)
+        self.buffer.push(state=3, action=1, reward=0.0, next_state=4, done=True)
+
+        states, actions, rewards, next_states, dones = self.buffer.sample(batch_size=1)
+
+        self.assertEqual(len(states), 1)
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(len(rewards), 1)
+        self.assertEqual(len(next_states), 1)
+        self.assertEqual(len(dones), 1)
+
+        # サンプリングされた経験がバッファ内のいずれかであることを確認
+        exp_in_buffer = (states[0], actions[0], rewards[0], next_states[0], dones[0])
+        self.assertIn(exp_in_buffer, list(self.buffer.buffer))
+
+    def test_sample_batch_size_equal_len(self):
+        for i in range(3):
+            self.buffer.push(state=i, action=i, reward=float(i), next_state=i+1, done=False)
+
+        states, actions, rewards, next_states, dones = self.buffer.sample(batch_size=3)
+
+        self.assertEqual(len(states), 3)
+        self.assertEqual(len(actions), 3)
+        self.assertEqual(len(rewards), 3)
+        self.assertEqual(len(next_states), 3)
+        self.assertEqual(len(dones), 3)
+
+        # 返ってきた経験の集合がバッファの内容と一致する（順不同）
+        sampled_set = set(zip(states, actions, rewards, next_states, dones))
+        buffer_set = set(self.buffer.buffer)
+        self.assertEqual(sampled_set, buffer_set)
+
+    def test_sample_empty_buffer(self):
+        # 現状の実装では random.sample が ValueError を投げる
+        with self.assertRaises(ValueError):
+            self.buffer.sample(batch_size=1)
+
+    def test_sample_batch_size_larger_than_len(self):
+        self.buffer.push(state=1, action=0, reward=1.0, next_state=2, done=False)
+
+        # 現状の実装では random.sample が ValueError を投げる
+        with self.assertRaises(ValueError):
+            self.buffer.sample(batch_size=2)
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+---
+
+## 3. テストのポイント
+
+1. **初期化**  
+   - 容量が正しく設定されているか  
+   - 初期状態で長さが 0 か
+
+2. **push と __len__**  
+   - 経験を追加すると長さが増えるか  
+   - 容量を超えたときに古い経験が正しく捨てられるか（FIFO）
+
+3. **sample**  
+   - バッチサイズ分の経験が返ってくるか  
+   - 返ってきた経験がバッファ内のものと一致するか  
+   - バッチサイズがバッファ長より大きいときのエラーハンドリング
+
+4. **エッジケース**  
+   - 空のバッファからのサンプリング  
+   - バッチサイズ＝バッファ長のときの挙動
+
+---
+
+## 4. 実行方法
+
+上記コードを `test_replay_buffer.py` などに保存し、ターミナルで以下を実行します。
+
+```bash
+python -m unittest test_replay_buffer.py
+```
+
+または、ファイル内で `unittest.main()` を呼んでいる場合は、
+
+```bash
+python test_replay_buffer.py
+```
+
+でテストが実行されます。
+
+---
+
+## 5. 必要に応じての拡張
+
+- **優先度付き経験再生（PER）**を実装した場合は、優先度の更新やサンプリング確率のテストも追加します。
+- **マルチステップ報酬**など、経験の形式が変わる場合は、それに合わせてテストデータとアサーションを変更します。
+
+このテストコードをベースに、実際の ReplayBuffer 実装に合わせて微調整していただければ、動作確認に役立つと思います。
 """
