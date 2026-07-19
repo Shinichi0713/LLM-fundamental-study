@@ -1513,3 +1513,339 @@ class TransformerDQNAgent:
                 print(f"Episode {episode}, Reward: {episode_reward:.2f}, Epsilon: {self.epsilon:.3f}")
 
         print("Training finished.")
+
+
+import random
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from collections import deque
+
+# ユーザーが提示した TransformerQNetwork（Flatten方式）
+class TransformerQNetwork(nn.Module):
+    def __init__(self, in_channels=4, grid_size=5, d_model=64, nhead=4, num_layers=2, action_dim=4, hidden_size=128):
+        super().__init__()
+        self.grid_size = grid_size
+        self.num_tokens = grid_size * grid_size
+        self.in_channels = in_channels
+
+        self.embedding = nn.Linear(in_channels, d_model)
+
+        pos_emb = self.create_2d_sin_cos_pos_embedding(grid_size, d_model)
+        self.register_buffer('pos_embedding', pos_emb)
+
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=d_model, nhead=nhead, dim_feedforward=d_model * 2,
+            activation="gelu", batch_first=True, norm_first=True
+        )
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+
+        self.mlp = nn.Sequential(
+            nn.Linear(self.num_tokens * d_model, hidden_size),
+            nn.GELU(),
+            nn.Linear(hidden_size, action_dim)
+        )
+
+        with torch.no_grad():
+            self.mlp[-1].weight.fill_(0.0)
+            self.mlp[-1].bias.fill_(0.0)
+
+    def create_2d_sin_cos_pos_embedding(self, grid_size, d_model):
+        assert d_model % 4 == 0, "d_model は4の倍数である必要があります"
+        pe = torch.zeros(grid_size, grid_size, d_model)
+        d_axis = d_model // 2
+        div_term = torch.exp(torch.arange(0, d_axis, 2).float() * -(np.log(10000.0) / d_axis))
+
+        for y in range(grid_size):
+            for x in range(grid_size):
+                pe[y, x, 0:d_axis:2] = torch.sin(torch.tensor(x).float() * div_term)
+                pe[y, x, 1:d_axis:2] = torch.cos(torch.tensor(x).float() * div_term)
+                pe[y, x, d_axis::2]  = torch.sin(torch.tensor(y).float() * div_term)
+                pe[y, x, d_axis+1::2] = torch.cos(torch.tensor(y).float() * div_term)
+
+        return pe.view(1, grid_size * grid_size, d_model)
+
+    def forward(self, x):
+        # x: (Batch, num_tokens, in_channels)
+        x = self.embedding(x)
+        x = x + self.pos_embedding
+        x = self.transformer(x)
+        x = x.flatten(start_dim=1)
+        return self.mlp(x)
+
+
+class ReplayBuffer:
+    def __init__(self, capacity):
+        self.buffer = deque(maxlen=capacity)
+
+    def push(self, state, action, reward, next_state, done):
+        self.buffer.append((state, action, reward, next_state, done))
+
+    def sample(self, batch_size):
+        batch = random.sample(self.buffer, batch_size)
+        state, action, reward, next_state, done = zip(*batch)
+        return state, action, reward, next_state, done
+
+    def __len__(self):
+        return len(self.buffer)
+
+
+class TransformerDQNAgent:
+    def __init__(
+        self,
+        env,  # MazeEnv インスタンス
+        in_channels=4,
+        grid_size=5,
+        d_model=64,
+        nhead=4,
+        num_layers=2,
+        action_dim=4,
+        hidden_size=128,
+        lr=1e-4,
+        gamma=0.99,
+        epsilon_start=1.0,
+        epsilon_end=0.01,
+        epsilon_decay=0.995,
+        buffer_capacity=10000,
+        batch_size=32,
+        target_update_interval=1000,
+        device="cuda" if torch.cuda.is_available() else "cpu"
+    ):
+        self.env = env
+        self.action_dim = action_dim
+        self.gamma = gamma
+        self.epsilon = epsilon_start
+        self.epsilon_end = epsilon_end
+        self.epsilon_decay = epsilon_decay
+        self.batch_size = batch_size
+        self.target_update_interval = target_update_interval
+        self.device = device
+
+        # Qネットワーク（オンライン）
+        self.q_online = TransformerQNetwork(
+            in_channels=in_channels,
+            grid_size=grid_size,
+            d_model=d_model,
+            nhead=nhead,
+            num_layers=num_layers,
+            action_dim=action_dim,
+            hidden_size=hidden_size
+        ).to(device)
+
+        # ターゲットネットワーク
+        self.q_target = TransformerQNetwork(
+            in_channels=in_channels,
+            grid_size=grid_size,
+            d_model=d_model,
+            nhead=nhead,
+            num_layers=num_layers,
+            action_dim=action_dim,
+            hidden_size=hidden_size
+        ).to(device)
+        self.q_target.load_state_dict(self.q_online.state_dict())
+        self.q_target.eval()
+
+        self.optimizer = optim.Adam(self.q_online.parameters(), lr=lr)
+        self.buffer = ReplayBuffer(capacity=buffer_capacity)
+
+        self.step_count = 0
+
+    def _preprocess_state(self, state_img):
+        """
+        MazeEnv.get_image_observation() の出力 (4, rows, cols) を
+        TransformerQNetwork の入力形式 (1, num_tokens, in_channels) に変換
+        """
+        # state_img: (4, rows, cols) の numpy 配列
+        if isinstance(state_img, np.ndarray):
+            state_img = torch.from_numpy(state_img).float()
+        # (4, rows, cols) -> (rows*cols, 4) -> (1, num_tokens, in_channels)
+        state_img = state_img.permute(1, 2, 0)  # (rows, cols, 4)
+        state_img = state_img.reshape(-1, self.q_online.in_channels)  # (num_tokens, in_channels)
+        state_img = state_img.unsqueeze(0)  # (1, num_tokens, in_channels)
+        return state_img
+
+    def select_action(self, state_img):
+        """
+        ε-greedy で行動を選択
+        state_img: MazeEnv.get_image_observation() の出力
+        """
+        if random.random() < self.epsilon:
+            return random.randrange(self.action_dim)
+
+        self.q_online.eval()
+        with torch.no_grad():
+            state_tensor = self._preprocess_state(state_img).to(self.device)
+            q_values = self.q_online(state_tensor)  # (1, action_dim)
+            action = q_values.argmax(dim=1).item()
+        self.q_online.train()
+        return action
+
+    def store_experience(self, state_img, action, reward, next_state_img, done):
+        """
+        経験をバッファに保存
+        """
+        self.buffer.push(state_img, action, reward, next_state_img, done)
+
+    def update(self):
+        """
+        経験再生バッファからミニバッチをサンプリングし、Qネットワークを更新（DDQN 風）
+        """
+        if len(self.buffer) < self.batch_size:
+            return
+
+        # バッファからサンプリング
+        states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size)
+
+        # テンソルに変換
+        states = torch.cat([self._preprocess_state(s) for s in states], dim=0).to(self.device)
+        next_states = torch.cat([self._preprocess_state(s) for s in next_states], dim=0).to(self.device)
+        actions = torch.tensor(actions, dtype=torch.long).to(self.device)
+        rewards = torch.tensor(rewards, dtype=torch.float).to(self.device)
+        dones = torch.tensor(dones, dtype=torch.float).to(self.device)
+
+        # 現在の Q 値
+        current_q = self.q_online(states).gather(1, actions.unsqueeze(1)).squeeze(1)
+
+        # ターゲット Q 値（DDQN 方式）
+        with torch.no_grad():
+            # オンライン側で次状態の最適行動を選択
+            next_q_online = self.q_online(next_states)
+            best_actions = next_q_online.argmax(dim=1)
+
+            # ターゲット側でその行動の Q 値を評価
+            next_q_target = self.q_target(next_states)
+            max_next_q = next_q_target.gather(1, best_actions.unsqueeze(1)).squeeze(1)
+
+            target_q = rewards + self.gamma * max_next_q * (1 - dones)
+
+        # 損失計算と更新
+        loss = nn.MSELoss()(current_q, target_q)
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        # εの減衰
+        self.epsilon = max(self.epsilon_end, self.epsilon * self.epsilon_decay)
+
+        # ターゲットネットワークの更新
+        self.step_count += 1
+        if self.step_count % self.target_update_interval == 0:
+            self.q_target.load_state_dict(self.q_online.state_dict())
+
+    def train(self, num_episodes=1000, max_steps_per_episode=1000, maze_change=True):
+        """
+        学習ループ
+        - maze_change=True: 各エピソードで迷路を再生成
+        """
+        episode_rewards = []
+
+        for episode in range(num_episodes):
+            # 迷路をリセット（必要に応じて再生成）
+            state_pos = self.env.reset(maze_change=maze_change)
+            state_img = self.env.get_image_observation()
+            episode_reward = 0
+
+            for step in range(max_steps_per_episode):
+                action = self.select_action(state_img)
+                next_state_pos, reward, done = self.env.step(action)
+                next_state_img = self.env.get_image_observation()
+
+                self.store_experience(state_img, action, reward, next_state_img, done)
+                self.update()
+
+                state_pos = next_state_pos
+                state_img = next_state_img
+                episode_reward += reward
+
+                if done:
+                    break
+
+            episode_rewards.append(episode_reward)
+
+            # ログ出力（任意）
+            if episode % 10 == 0:
+                print(f"Episode {episode}, Reward: {episode_reward:.2f}, Epsilon: {self.epsilon:.3f}")
+
+        print("Training finished.")
+        return episode_rewards
+    
+
+
+"""
+Episode 0, Reward: 6.01, Epsilon: 1.000
+Episode 10, Reward: -75.00, Epsilon: 0.060
+Episode 20, Reward: -29.00, Epsilon: 0.010
+Episode 30, Reward: -24.00, Epsilon: 0.010
+Episode 40, Reward: -99.00, Epsilon: 0.010
+Episode 50, Reward: -98.00, Epsilon: 0.010
+Episode 60, Reward: -34.91, Epsilon: 0.010
+Episode 70, Reward: -10.00, Epsilon: 0.010
+Episode 80, Reward: -94.00, Epsilon: 0.010
+Episode 90, Reward: 6.00, Epsilon: 0.010
+Episode 100, Reward: -97.00, Epsilon: 0.010
+Episode 110, Reward: -26.00, Epsilon: 0.010
+Episode 120, Reward: 0.00, Epsilon: 0.010
+Episode 130, Reward: -58.00, Epsilon: 0.010
+Episode 140, Reward: -43.00, Epsilon: 0.010
+Episode 150, Reward: -15.00, Epsilon: 0.010
+Episode 160, Reward: 9.00, Epsilon: 0.010
+Episode 170, Reward: -97.00, Epsilon: 0.010
+Episode 180, Reward: -35.00, Epsilon: 0.010
+Episode 190, Reward: -93.00, Epsilon: 0.010
+Episode 200, Reward: 12.00, Epsilon: 0.010
+Episode 210, Reward: -97.00, Epsilon: 0.010
+Episode 220, Reward: -9.90, Epsilon: 0.010
+Episode 230, Reward: 11.02, Epsilon: 0.010
+Episode 240, Reward: -22.95, Epsilon: 0.010
+Episode 250, Reward: 6.00, Epsilon: 0.010
+Episode 260, Reward: -89.00, Epsilon: 0.010
+Episode 270, Reward: -99.00, Epsilon: 0.010
+Episode 280, Reward: -71.00, Epsilon: 0.010
+Episode 290, Reward: -38.00, Epsilon: 0.010
+Episode 300, Reward: -73.00, Epsilon: 0.010
+
+-------------------------------------------
+
+
+
+Episode 0, Reward: -53.65, Epsilon: 0.010
+save model
+Episode 10, Reward: -58.30, Epsilon: 0.010
+Episode 20, Reward: -59.60, Epsilon: 0.010
+Episode 30, Reward: -54.20, Epsilon: 0.010
+Episode 40, Reward: -58.35, Epsilon: 0.010
+Episode 50, Reward: -26.65, Epsilon: 0.010
+save model
+Episode 60, Reward: -2.50, Epsilon: 0.010
+Episode 70, Reward: -57.05, Epsilon: 0.010
+Episode 80, Reward: -60.00, Epsilon: 0.010
+Episode 90, Reward: -57.10, Epsilon: 0.010
+Episode 100, Reward: 10.75, Epsilon: 0.010
+save model
+Episode 110, Reward: -58.35, Epsilon: 0.010
+Episode 120, Reward: -55.80, Epsilon: 0.010
+Episode 130, Reward: -56.65, Epsilon: 0.010
+Episode 140, Reward: -57.95, Epsilon: 0.010
+Episode 150, Reward: -33.30, Epsilon: 0.010
+save model
+Episode 160, Reward: -58.40, Epsilon: 0.010
+Episode 170, Reward: 2.95, Epsilon: 0.010
+Episode 180, Reward: -7.50, Epsilon: 0.010
+Episode 190, Reward: -10.45, Epsilon: 0.010
+Episode 200, Reward: -7.50, Epsilon: 0.010
+save model
+Episode 210, Reward: -57.50, Epsilon: 0.010
+Episode 220, Reward: -59.20, Epsilon: 0.010
+Episode 230, Reward: -18.75, Epsilon: 0.010
+Episode 240, Reward: -57.95, Epsilon: 0.010
+Episode 250, Reward: 10.25, Epsilon: 0.010
+save model
+Episode 260, Reward: -58.75, Epsilon: 0.010
+Episode 270, Reward: 9.90, Epsilon: 0.010
+Episode 280, Reward: -17.55, Epsilon: 0.010
+Episode 290, Reward: -16.65, Epsilon: 0.010
+Episode 300, Reward: -56.60, Epsilon: 0.010
+"""
+
