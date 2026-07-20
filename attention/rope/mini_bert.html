@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>miniBERT&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>近年のLLMはサイズが大きくなりすぎて要素レベルの改善がどの程度モデルの性能に寄与するかがみにくい点が悩みです。
+そこで、LLMの要素単位の改善での効果を簡単に計測できるモデルがないかを情報探してみました。
+結果出てきたのが2018年にGoogleが発表したBERTを更に簡略化した軽量モデルであるminiBERTなるものがありました。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>miniBERTがどのようなものか、miniBERTを簡単に触って説明してみようと思います。</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="minibertとは">miniBERTとは</h2>
+<p>「miniBERT」という名前は、<strong>BERTを大幅に簡略化した軽量モデル</strong>を指す総称として複数の文脈で使われています。代表的なものを挙げると、以下の2つがあります。</p>
+<h3 id="1-liumルマン大学のminibert-a-simple-and-explainable-bert-model">1. LIUM（ル・マン大学）の「MiniBERT: a simple and explainable BERT model」</h3>
+<ul>
+<li>
+<p><strong>位置づけ</strong><br>
+BERTの「極端な簡略版（extreme simplification of the BERT model）」として設計されたモデルです<a href="https://lium.univ-lemans.fr/en/minibert-a-simple-and-explainable-bert-model">LIUM</a>。</p>
+</li>
+<li>
+<p><strong>目的</strong><br>
+SNCF（フランス国鉄）向けのプロジェクト「PolysEmY」で、<strong>技術文書中の多義語（polysemy）を扱うこと</strong>と、<strong>モデルをシンプルかつ説明可能にすること</strong>を主目的としています<a href="https://lium.univ-lemans.fr/en/minibert-a-simple-and-explainable-bert-model">LIUM</a>。</p>
+</li>
+<li>
+<p><strong>BERTとの違い</strong></p>
+<ul>
+<li>BERTやGPT-3のような「巨大な汎用モデル」ではなく、<strong>特定の技術コーパスとタスク（多義語の捕捉）に特化</strong>しています。</li>
+<li>パラメータ数を大幅に削減し、<strong>シンプルさと説明可能性を優先</strong>しています。</li>
+<li>アテンション機構を使って「どの単語ペアが意味的に影響し合っているか」を明示的に扱う設計になっています。</li>
+</ul>
+</li>
+<li>
+<p><strong>特徴</strong></p>
+<ul>
+<li>一般のBERTに比べて<strong>はるかに小規模</strong>で、計算コストが低い。</li>
+<li>アテンションの重みを見ることで「なぜその予測になったか」を<strong>説明しやすい</strong>ことが強調されています。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-github-上のminibert-lightweight-emotion-classification-model">2. GitHub 上の「MiniBERT: Lightweight Emotion Classification Model」</h3>
+<ul>
+<li>
+<p><strong>位置づけ</strong><br>
+「compact, BERT-inspired language model for emotion classification」と説明される、<strong>BERT風の軽量トランスフォーマー</strong>です<a href="https://github.com/Habiba-Abdelrehim/MiniBERT">GitHub - MiniBERT</a>。</p>
+</li>
+<li>
+<p><strong>目的</strong><br>
+**感情分類（emotion classification）**に特化したモデルで、GoEmotionsデータセットでファインチューニングされています<a href="https://github.com/Habiba-Abdelrehim/MiniBERT">GitHub - MiniBERT</a>。</p>
+</li>
+<li>
+<p><strong>規模</strong></p>
+<ul>
+<li>パラメータ数は約 <strong>1,800万（18M）</strong> と、標準的なBERT-base（約1.1億）より<strong>大幅に少ない</strong>軽量モデルです<a href="https://github.com/Habiba-Abdelrehim/MiniBERT">GitHub - MiniBERT</a>。</li>
+</ul>
+</li>
+<li>
+<p><strong>BERTとの関係</strong></p>
+<ul>
+<li>BERTのアーキテクチャを参考にしつつ、<strong>独自に設計されたコンパクトなTransformer</strong>であり、BERTの直接的な圧縮版というより「BERT風の軽量モデル」です。</li>
+<li>速度・効率を重視し、クラス不均衡などの課題を抱えつつも、標準BERTとの比較・ベンチマークを目指しています<a href="https://github.com/Habiba-Abdelrehim/MiniBERT">GitHub - MiniBERT</a>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="qucikstart">QucikStart</h2>
+<p>とりあえずパッと使ってみようと思います。
+Hugging Faceに<strong>軽量なBERT系モデル</strong>として公開されている <code>boltuix/bert-mini</code> を「miniBERT」の代わりに使うのが実用的です。<br>
+このモデルは約800万パラメータ・約15MBと非常に軽量で、MLM（Masked Language Modeling）がそのまま使えます<a href="https://huggingface.co/boltuix/bert-mini">Hugging Face - boltuix/bert-mini</a>。</p>
+<h3 id="必要なライブラリ">必要なライブラリ</h3>
+<pre><code class="language-bash">pip install transformers torch
+</code></pre>
+<ul>
+<li><code>transformers</code> はHugging Faceのモデル・トークナイザを扱うライブラリです。</li>
+<li><code>torch</code> はPyTorch本体です（GPUを使う場合はCUDA対応版を入れてください）。</li>
+</ul>
+<h3 id="automodelformaskedlm--autotokenizer"><code>AutoModelForMaskedLM</code> + <code>AutoTokenizer</code></h3>
+<p>では動かしてみましょう。
+CPUしかないPCで十分に動作します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> AutoModelForMaskedLM, AutoTokenizer
+
+<span class="hljs-comment"># モデルとトークナイザのロード</span>
+model_name = <span class="hljs-string">&quot;boltuix/bert-mini&quot;</span>
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForMaskedLM.from_pretrained(model_name)
+
+<span class="hljs-comment"># 入力テキスト（[MASK] を含む）</span>
+text = <span class="hljs-string">&quot;The lecture was held in the [MASK] hall.&quot;</span>
+
+<span class="hljs-comment"># トークナイズ</span>
+inputs = tokenizer(text, return_tensors=<span class="hljs-string">&quot;pt&quot;</span>)
+mask_token_index = torch.where(inputs[<span class="hljs-string">&quot;input_ids&quot;</span>] == tokenizer.mask_token_id)[<span class="hljs-number">1</span>]
+
+<span class="hljs-comment"># 推論（勾配計算なし）</span>
+model.<span class="hljs-built_in">eval</span>()
+<span class="hljs-keyword">with</span> torch.no_grad():
+    outputs = model(**inputs)
+    logits = outputs.logits
+
+<span class="hljs-comment"># [MASK] 位置のロジットから上位5単語を取得</span>
+mask_logits = logits[<span class="hljs-number">0</span>, mask_token_index, :]
+top_5 = torch.topk(mask_logits, <span class="hljs-number">5</span>, dim=<span class="hljs-number">1</span>)
+
+<span class="hljs-comment"># トークンIDを単語に戻して表示</span>
+<span class="hljs-keyword">for</span> i, (token_id, score) <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(<span class="hljs-built_in">zip</span>(top_5.indices[<span class="hljs-number">0</span>], top_5.values[<span class="hljs-number">0</span>])):
+    token = tokenizer.decode(token_id)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{i+<span class="hljs-number">1</span>}</span>: <span class="hljs-subst">{token}</span> (score=<span class="hljs-subst">{score:<span class="hljs-number">.4</span>f}</span>)&quot;</span>)
+</code></pre>
+<p><strong>出力例</strong></p>
+<p>上記のコードをコピー＆ペースの上実行下さい。
+以下のようにHuggingFaceよりモデルをロードして出力が確認出来ます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\attention\rope\doc\image\mini_bert\1784447825138.png" alt="1784447825138"></p>
+<p>カーネギーホールが初めに出てきました。
+こういうことが起こるのはデータのバイアスがあるからです。
+兎にも角にもMLMは可能そうです。</p>
+<pre><code>1: carnegie (score=8.6277)
+2: city (score=8.0210)
+3: memorial (score=7.8888)
+4: national (score=7.8867)
+5: lecture (score=7.6196)
+</code></pre>
+<ul>
+<li><code>AutoModelForMaskedLM</code> を使うと、ロジットやスコアを直接取得できます。</li>
+<li>バッチ処理や独自のマスク戦略を組み込む場合にも拡張しやすいです。</li>
+</ul>
+<h3 id="日本語で試したい場合">日本語で試したい場合</h3>
+<p><code>boltuix/bert-mini</code> は英語用ですが、日本語の軽量BERTモデル（例: <code>cl-tohoku/bert-base-japanese</code> やその小型版）を使えば、同じコードで日本語のMLMも可能です。<br>
+その場合は <code>model_name</code> を日本語モデルに置き換えてください。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 例: 日本語BERT-base（MLM対応モデル）</span>
+model_name = <span class="hljs-string">&quot;cl-tohoku/bert-base-japanese&quot;</span>
+text = <span class="hljs-string">&quot;今日は[MASK]に行きました。&quot;</span>
+</code></pre>
+<h2 id="モデルのコード作成">モデルのコード作成</h2>
+<p>後はモデルの構造を解析しにいき、実態のコードを掴みに行きます。
+上記を実行の後、以下を実行下さい。</p>
+<pre><code class="language-python"><span class="hljs-built_in">print</span>(model)
+</code></pre>
+<p>するとモデルのアーキテクチャが得られます。
+何のことはない、通常のBERTでした。</p>
+<pre><code>BertForMaskedLM(
+  (bert): BertModel(
+    (embeddings): BertEmbeddings(
+      (word_embeddings): Embedding(30522, 128, padding_idx=0)
+      (position_embeddings): Embedding(512, 128)
+      (token_type_embeddings): Embedding(2, 128)
+      (LayerNorm): LayerNorm((128,), eps=1e-12, elementwise_affine=True)
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (encoder): BertEncoder(
+      (layer): ModuleList(
+        (0-3): 4 x BertLayer(
+          (attention): BertAttention(
+            (self): BertSelfAttention(
+              (query): Linear(in_features=128, out_features=128, bias=True)
+              (key): Linear(in_features=128, out_features=128, bias=True)
+              (value): Linear(in_features=128, out_features=128, bias=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (output): BertSelfOutput(
+              (dense): Linear(in_features=128, out_features=128, bias=True)
+              (LayerNorm): LayerNorm((128,), eps=1e-12, elementwise_affine=True)
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+          (intermediate): BertIntermediate(
+            (dense): Linear(in_features=128, out_features=512, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): BertOutput(
+            (dense): Linear(in_features=512, out_features=128, bias=True)
+            (LayerNorm): LayerNorm((128,), eps=1e-12, elementwise_affine=True)
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+      )
+    )
+  )
+  (cls): BertOnlyMLMHead(
+    (predictions): BertLMPredictionHead(
+      (transform): BertPredictionHeadTransform(
+        (dense): Linear(in_features=128, out_features=128, bias=True)
+        (transform_act_fn): GELUActivation()
+        (LayerNorm): LayerNorm((128,), eps=1e-12, elementwise_affine=True)
+      )
+      (decoder): Linear(in_features=128, out_features=30522, bias=True)
+    )
+  )
+)
+</code></pre>
+<p>モデルのコードは以下レポジトリを参考下さい。
+<a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/attention/rope/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/attention/rope/src</a></p>
+<p>パラメータだけ合わしてHuggingFaceのパラメータをロードしてみます。
+今回の小さいBERTのパラメータは以下通りでした。</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">load_hf_model_and_copy_weights</span>(<span class="hljs-params">model_name=<span class="hljs-string">&quot;boltuix/bert-mini&quot;</span></span>):
+    <span class="hljs-comment"># Hugging Faceのモデルとトークナイザをロード</span>
+    hf_model = AutoModelForMaskedLM.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+    <span class="hljs-comment"># 自作モデルを指定されたconfigで初期化（すべてハードコーディング）</span>
+    custom_model = CustomBertForMaskedLM(
+        vocab_size=<span class="hljs-number">30522</span>,
+        hidden_size=<span class="hljs-number">128</span>,
+        num_hidden_layers=<span class="hljs-number">4</span>,
+        num_attention_heads=<span class="hljs-number">2</span>,
+        intermediate_size=<span class="hljs-number">512</span>,
+        max_position_embeddings=<span class="hljs-number">512</span>,
+        type_vocab_size=<span class="hljs-number">2</span>,
+        dropout_prob=<span class="hljs-number">0.1</span>,  <span class="hljs-comment"># hidden_dropout_prob=0.1 に対応</span>
+    )
+
+    <span class="hljs-comment"># 重みをコピー（名前が一致するもののみ）</span>
+    hf_state_dict = hf_model.state_dict()
+    custom_state_dict = custom_model.state_dict()
+
+    <span class="hljs-comment"># 名前マッピング（必要に応じて調整）</span>
+    name_map = {}
+    <span class="hljs-keyword">for</span> name, param <span class="hljs-keyword">in</span> hf_state_dict.items():
+        <span class="hljs-keyword">if</span> name <span class="hljs-keyword">in</span> custom_state_dict:
+            name_map[name] = name
+
+    <span class="hljs-comment"># コピー実行</span>
+    <span class="hljs-keyword">for</span> hf_name, custom_name <span class="hljs-keyword">in</span> name_map.items():
+        <span class="hljs-keyword">if</span> hf_name <span class="hljs-keyword">in</span> hf_state_dict <span class="hljs-keyword">and</span> custom_name <span class="hljs-keyword">in</span> custom_state_dict:
+            <span class="hljs-keyword">if</span> hf_state_dict[hf_name].shape == custom_state_dict[custom_name].shape:
+                custom_state_dict[custom_name].copy_(hf_state_dict[hf_name])
+            <span class="hljs-keyword">else</span>:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[WARN] Shape mismatch: <span class="hljs-subst">{hf_name}</span> <span class="hljs-subst">{hf_state_dict[hf_name].shape}</span> vs <span class="hljs-subst">{custom_name}</span> <span class="hljs-subst">{custom_state_dict[custom_name].shape}</span>&quot;</span>)
+
+    custom_model.load_state_dict(custom_state_dict, strict=<span class="hljs-literal">False</span>)  <span class="hljs-comment"># strict=Falseで一部だけコピー</span>
+    <span class="hljs-keyword">return</span> custom_model, tokenizer
+</code></pre>
+<p>ロードして実行すると以下のような結果が得られます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\attention\rope\doc\image\mini_bert\1784448543051.png" alt="1784448543051"></p>
+<p>先程と結果変わりありません。
+ということで内部構造のベースはご紹介したコードで、何か検証するときはHuggingFaceからネットワークパラメータをロードして使うことで比較できるようになりました。</p>
+<h2 id="総括">総括</h2>
+<p>ということで今回はLLMの要素技術を検証するためのベースとなるモデルの導入を行いました。
+このモデルの良い点は</p>
+<ul>
+<li>CPUでも軽快に動作する</li>
+<li>ライセンスフリー</li>
+<li>ベースはTransformerなので、発見した技術を適用できる先が沢山存在する</li>
+</ul>
+<p>ということです。
+是非ご参考下さい。</p>
+<p>最後に本のご紹介です。
+著者はLLMからニューラルネットワークに本格的に入っていきました。
+当初の勉強はLLMの基礎というよりいきなりTransformerの教科書から入っていきました。
+また、昨年読んで基礎から最近のLLMまで網羅してある本も面白かったです。</p>
+<p>以下の２冊が該当する教科書です。上が著者が初めて手にした教科書、下が昨年面白かった本です。
+LLMの勉強を始めようという方、知識のアップデートを図ろうという方、是非ご覧ください。</p>
+<div class="shop-card">
+    <div class="shop-card-image">
+        <img src="https://m.media-amazon.com/images/I/71oOctdyAHS._SL1290_.jpg" alt="商品画像">
+    </div>
+    <div class="shop-card-content">
+        <div class="shop-card-title">BERTによる自然言語処理入門: Transformersを使った実践プログラミング</div>
+        <div class="shop-card-description">自然言語処理の標準モデル、BERTを使いこなせるようになる!
+BERTはGoogleが2018年末に発表した自然言語処理モデルです。「文脈」を考慮した処理が特徴的であり、言語理解を評価する11個のタスクについて最高精度を達成し、今や標準的なモデルとしての地位を確立しています。
+</div>
+        <div class="shop-card-link">
+            <a href="https://amzn.to/4b4t43U" target="_blank" rel="noopener">Amazonで詳細を見る</a>
+        </div>
+    </div>
+</div>
+<div class="shop-card">
+    <div class="shop-card-image">
+        <img src="https://m.media-amazon.com/images/I/91D8pDhoI5L._SL1500_.jpg" alt="商品画像">
+    </div>
+    <div class="shop-card-content">
+        <div class="shop-card-title">大規模言語モデル入門</div>
+        <div class="shop-card-description">ChatGPTに代表される大規模言語モデルが自然言語処理の幅広いタスクで高い性能を獲得し、大きな話題となっています。大規模言語モデルは、大規模なテキストデータで訓練された大規模なパラメータで構成されるニューラルネットワークです。2020年以降、自然言語処理や機械学習の知見をもとに、パラメータ数とテキストデータの拡大により、性能が飛躍的に向上しました。
+Hugging Face社の""transformers""というPythonライブラリを利用することで、プログラミングの経験があれば、モデルの操作やデータからの学習がかんたんにできます。モデルを訓練するための日本語もしくは日本語を含む多言語のデータセットも充実してきており、すぐに業務に使える実用的なモデルを作ることが可能な時代がやってきました。
+本書は、大規模言語モデルの理論と実装の両方を解説した入門書です。大規模言語モデルの技術や自然言語処理の課題について理解し、実際の問題に対処できるようになることを目指しています。以下のような構成によって、理論とプログラミングの双方の側面から、大規模言語モデルに関する情報を提供します。
+</div>
+        <div class="shop-card-link">
+            <a href="https://amzn.to/4f6943e" target="_blank" rel="noopener">Amazonで詳細を見る</a>
+        </div>
+    </div>
+</div>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/LU11IdCl8jc?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
