@@ -3,6 +3,7 @@ import torch.nn as nn
 import math
 from transformers import BertConfig, BertModel
 from transformers.models.bert.modeling_bert import BertSelfAttention
+from transformers import BertTokenizer
 
 # ==========================================
 # 1. RoPE（回転位置埋め込み）のヘルパークラス
@@ -172,4 +173,104 @@ if __name__ == "__main__":
     print("RoPE-BERT Last Hidden State Shape:", out_rope.last_hidden_state.shape)
     print("正しく両方のモデルからテンソルが出力されました。")
 
+
+
+
+def test_models_pipeline():
+    print("=== 1. トークナイザとモデルの準備 ===")
+    model_name = "bert-base-uncased"
+    tokenizer = BertTokenizer.from_pretrained(model_name)
     
+    # Baseline と RoPE-BERT をビルド
+    baseline_model, rope_model = build_experiment_models(model_name)
+    
+    # 分類タスク（実験1）を想定し、簡単な線形層（ヘッド）を後ろに結合する
+    # ここでは2クラス分類（ポジ・ネガ等）と仮定
+    num_labels = 2
+    baseline_head = nn.Linear(baseline_model.config.hidden_size, num_labels)
+    rope_head = nn.Linear(rope_model.config.hidden_size, num_labels)
+    
+    criterion = nn.CrossEntropyLoss()
+    
+    print("\n=== 2. テスト用データの作成 ===")
+    # 実験1を模したサンプルテキスト（標準的な長さ）と正解ラベル
+    sample_texts = [
+        "Large language models are transforming the field of artificial intelligence.",
+        "Rotary position embedding scales effectively to longer contexts in transformers.",
+        "This is a short sentence to verify the baseline capability of the model.",
+        "We need to ensure that modifying the attention block does not break initial weights."
+    ]
+    # ダミーの正解ラベル (0か1)
+    labels = torch.tensor([1, 1, 0, 0], dtype=torch.long)
+    
+    # トークナイズ処理 (BERTの標準上限である512未満、ここではパディング込みで最大長に合わせる)
+    inputs = tokenizer(
+        sample_texts,
+        padding=True,
+        truncation=True,
+        max_length=128,
+        return_tensors="pt"
+    )
+    
+    print(f"入力テンソルの形状 (Batch, SeqLen): {inputs['input_ids'].shape}")
+    
+    print("\n=== 3. Baselineモデルのテスト (Train Mode) ===")
+    baseline_model.train()
+    baseline_head.train()
+    
+    # 順伝播 (Forward)
+    outputs_base = baseline_model(
+        input_ids=inputs["input_ids"],
+        attention_mask=inputs["attention_mask"],
+        token_type_ids=inputs["token_type_ids"]
+    )
+    # [CLS]トークンの表現を取り出して分類器へ
+    cls_base = outputs_base.last_hidden_state[:, 0, :]
+    logits_base = baseline_head(cls_base)
+    loss_base = criterion(logits_base, labels)
+    
+    print(f"Baseline - Loss: {loss_base.item():.4f}")
+    
+    # 逆伝播 (Backward) の検証
+    loss_base.backward()
+    print("✓ Baseline: 逆伝播と勾配計算に成功しました。")
+    
+    print("\n=== 4. RoPE-BERTモデルのテスト (Train Mode) ===")
+    rope_model.train()
+    rope_head.train()
+    
+    # 順伝播 (Forward) 
+    # ※内部のBertSelfAttentionがRoPE版に差し替わっているため、自動的に回転行列が適用されます
+    outputs_rope = rope_model(
+        input_ids=inputs["input_ids"],
+        attention_mask=inputs["attention_mask"],
+        token_type_ids=inputs["token_type_ids"]
+    )
+    # [CLS]トークンの表現を取り出して分類器へ
+    cls_rope = outputs_rope.last_hidden_state[:, 0, :]
+    logits_rope = rope_head(cls_rope)
+    loss_rope = criterion(logits_rope, labels)
+    
+    print(f"RoPE-BERT - Loss: {loss_rope.item():.4f}")
+    
+    # 逆伝播 (Backward) の検証
+    loss_rope.backward()
+    print("✓ RoPE-BERT: 逆伝播と勾配計算に成功しました。")
+    
+    print("\n=== 5. パラメータ固定状態の最終チェック ===")
+    # 実験計画通り、絶対位置埋め込みの勾配が固定（False）されているか確認
+    rope_pos_emb_grad = rope_model.embeddings.position_embeddings.weight.requires_grad
+    print(f"RoPE-BERTの旧絶対位置埋め込みの更新可否 (Expected: False): {rope_pos_emb_grad}")
+    
+    # RoPEアテンション内の重みが勾配を持っているか確認
+    sample_rope_weight = rope_model.encoder.layer[0].attention.self.query.weight.grad
+    has_grad = sample_rope_weight is not None
+    print(f"RoPE-BERTのアテンション層に勾配が正しく伝播しているか (Expected: True): {has_grad}")
+    
+    if not rope_pos_emb_grad and has_grad:
+        print("\n[SUCCESS] すべてのテストをパスしました！実験1の追加学習フェーズに移行可能です。")
+    else:
+        print("\n[FAILURE] 一部モデルの設定が意図通りになっていません。")
+
+if __name__ == "__main__":
+    test_models_pipeline()
