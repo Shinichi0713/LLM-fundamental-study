@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>RoPE&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>本ブログで以前<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/22/000000">RoPE</a>を論文から読んで説明していました。
+そして、最近出てくるLLMは基本、位置エンコーディングはRoPEで実装するというのが標準的になってきました。</p>
+<p>RoPE単体の性能にフォーカスしたインターネット記事が少なく(RoPEが入ったモデルをファインチューニングという事例は沢山あります)、個人的にもどの程度性能に寄与するか知りたいと考えました。</p>
+<p>そこでどの程度性能改善の効果があるかを確認してみようと思います。
+本日はまず、RoPEのおさらいの上で、どういうタスクであれば性能の違いを考えられるかについて考察し、実験の問題設定を行います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="ropeとは">RoPEとは</h2>
+<p>RoPE（Rotary Positional Embedding）は、Transformerモデルにおける<strong>位置情報の表現方法</strong>の一種で、<strong>トークンの埋め込みベクトルを「回転」させることで位置を表現する</strong>手法です。</p>
+<h3 id="概要">概要</h3>
+<ul>
+<li>RoPEは、各トークンのクエリ・キー・バリュー表現に対して、<strong>位置に応じた回転（複素平面上の位相シフト）</strong> を適用します。</li>
+<li>これにより、Attentionの内積計算が<strong>相対位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m-n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> にのみ依存する形</strong>に自然と整理され、モデルが相対的な位置関係を直接扱えるようになります。</li>
+<li>回転角は連続的なパラメータなので、<strong>学習時より長いシーケンスにも自然に外挿できる</strong>という利点があります。</li>
+</ul>
+<h3 id="開発者">開発者</h3>
+<p>RoPEは、<strong>Jianlin Suら</strong>によって提案されました。<br>
+論文タイトルは「RoFormer: Enhanced Transformer with Rotary Position Embedding」です。</p>
+<h3 id="解決した主な課題">解決した主な課題</h3>
+<ol>
+<li>
+<p><strong>相対位置情報の明示的な扱い</strong></p>
+<ul>
+<li>従来の加算型位置埋め込み（Sinusoidal / Learned）では、Attentionが<strong>絶対位置</strong>に強く依存し、相対位置は暗黙的に学習される形でした。</li>
+<li>RoPEは、クエリとキーの内積が<strong>相対位置のみ</strong>に依存するように設計されており、相対的な距離感を直接表現できます。</li>
+</ul>
+</li>
+<li>
+<p><strong>長さ外挿（長さ方向の一般化）の難しさ</strong></p>
+<ul>
+<li>Learned位置埋め込みは、学習時に見た最大長までしか位置ベクトルを持たず、それ以上の長さでは性能が大きく低下しがちでした。</li>
+<li>RoPEは回転角の連続性により、<strong>任意の位置に対しても回転を定義できる</strong>ため、長いシーケンスへの外挿が比較的容易です。</li>
+</ul>
+</li>
+<li>
+<p><strong>計算効率と実装のしやすさ</strong></p>
+<ul>
+<li>RoPEは、クエリ・キーの各次元ペアごとに回転を適用する形で実装でき、GPU上でも効率的に計算できます。</li>
+<li>その結果、<strong>相対位置を明示的に扱いつつ、実用的な計算コスト</strong>で動作する位置エンコーディングとして広く採用されています（LLaMA系、GPT-NeoX系など）。</li>
+</ul>
+</li>
+</ol>
+<h2 id="ropeと通常のpeとの違い">RoPEと通常のPEとの違い</h2>
+<p>RoPEと「通常の」位置エンコーダ（ここでは代表例として Sinusoidal と Learned を主に想定）の違いを、大きく4つの観点で整理します。</p>
+<h3 id="1-位置情報の付け方の違い">1. 位置情報の「付け方」の違い</h3>
+<p><strong>通常の位置エンコーダ（例：Sinusoidal / Learned）</strong></p>
+<ul>
+<li>
+<p><strong>位置情報を「足す」</strong>（加算型）<br>
+各トークンの埋め込みベクトルに、位置ごとのベクトルを<strong>加算</strong>します。</p>
+<ul>
+<li>Sinusoidal: 固定の三角関数で位置を表現し、それを加算</li>
+<li>Learned: 学習可能な位置埋め込み行列を使い、位置IDに対応するベクトルを加算</li>
+</ul>
+</li>
+<li>
+<p>数式的には</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">h</mi><mi>i</mi></msub><mo>=</mo><msub><mi mathvariant="bold">e</mi><mi>i</mi></msub><mo>+</mo><msub><mi mathvariant="bold">p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{h}_i = \mathbf{e}_i + \mathbf{p}_i
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>ここで</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">e</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{e}_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>: トークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> の埋め込み</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{p}_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>: 位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> の位置埋め込み</li>
+</ul>
+</li>
+<li>
+<p>特徴</p>
+<ul>
+<li>位置情報は<strong>加算的に</strong>トークン埋め込みに混ざる</li>
+<li>Attention の計算時には、クエリ・キー・バリューのベクトルに位置情報がすでに含まれている</li>
+</ul>
+</li>
+</ul>
+<p><strong>RoPE（Rotary Positional Embedding）</strong></p>
+<ul>
+<li>
+<p><strong>位置情報を「回転」として掛ける</strong>（乗算型）<br>
+各トークンの埋め込みベクトルを、<strong>位置に応じた回転</strong>で変換します。</p>
+</li>
+<li>
+<p>数式的には（クエリ・キーを例に）</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">q</mi><mi>m</mi></msub><mo>=</mo><msub><mi>f</mi><mi>q</mi></msub><mo stretchy="false">(</mo><msub><mi mathvariant="bold">x</mi><mi>m</mi></msub><mo separator="true">,</mo><mi>m</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">Θ</mi><mo separator="true">,</mo><mi>m</mi></mrow></msub><mtext> </mtext><msub><mi>W</mi><mi>q</mi></msub><mtext> </mtext><msub><mi mathvariant="bold">x</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{q}_m = f_q(\mathbf{x}_m, m) = R_{\Theta, m} \, W_q \, \mathbf{x}_m
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Θ</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">k</mi><mi>n</mi></msub><mo>=</mo><msub><mi>f</mi><mi>k</mi></msub><mo stretchy="false">(</mo><msub><mi mathvariant="bold">x</mi><mi>n</mi></msub><mo separator="true">,</mo><mi>n</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">Θ</mi><mo separator="true">,</mo><mi>n</mi></mrow></msub><mtext> </mtext><msub><mi>W</mi><mi>k</mi></msub><mtext> </mtext><msub><mi mathvariant="bold">x</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{k}_n = f_k(\mathbf{x}_n, n) = R_{\Theta, n} \, W_k \, \mathbf{x}_n
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Θ</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>ここで</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mrow><mi mathvariant="normal">Θ</mi><mo separator="true">,</mo><mi>m</mi></mrow></msub></mrow><annotation encoding="application/x-tex">R_{\Theta, m}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Θ</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> は位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> に対応する回転行列</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Θ</mi></mrow><annotation encoding="application/x-tex">\Theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Θ</span></span></span></span> は周波数パラメータ（次元ごとに異なる）</li>
+</ul>
+</li>
+<li>
+<p>特徴</p>
+<ul>
+<li>位置情報は**回転（複素平面上の位相シフト）**として表現される</li>
+<li>Attention の内積 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="bold">q</mi><mi>m</mi><mi mathvariant="normal">⊤</mi></msubsup><msub><mi mathvariant="bold">k</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{q}_m^\top \mathbf{k}_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0961em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathbf">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊤</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathbf">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> は、<strong>相対位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m-n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> にのみ依存する形</strong>に自然と整理される</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-相対位置の扱いの違い">2. 相対位置の扱いの違い</h3>
+<p><strong>通常の位置エンコーダ</strong></p>
+<ul>
+<li>
+<p>多くの場合、<strong>絶対位置</strong>を前提に設計されています。</p>
+<ul>
+<li>Sinusoidal: 位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> の sin/cos パターンは固定</li>
+<li>Learned: 位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> ごとに別のベクトルを学習</li>
+</ul>
+</li>
+<li>
+<p>相対位置の情報は、Attention の計算を通じて<strong>暗黙的に</strong>学習される形になります。</p>
+<ul>
+<li>モデルは「位置 3 と位置 7 の関係」を、埋め込みの組み合わせから学習する必要がある</li>
+</ul>
+</li>
+</ul>
+<p><strong>RoPE</strong></p>
+<ul>
+<li>
+<p><strong>明示的に相対位置を扱う</strong>ように設計されています。</p>
+<ul>
+<li>クエリ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">q</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{q}_m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbf">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> とキー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">k</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{k}_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> の内積は、回転の性質により<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi mathvariant="bold">q</mi><mi>m</mi><mi mathvariant="normal">⊤</mi></msubsup><msub><mi mathvariant="bold">k</mi><mi>n</mi></msub><mo>=</mo><mo stretchy="false">(</mo><msubsup><mi mathvariant="bold">x</mi><mi>m</mi><mi mathvariant="normal">⊤</mi></msubsup><msubsup><mi>W</mi><mi>q</mi><mi mathvariant="normal">⊤</mi></msubsup><mo stretchy="false">)</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">Θ</mi><mo separator="true">,</mo><mi>m</mi><mo>−</mo><mi>n</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>W</mi><mi>k</mi></msub><msub><mi mathvariant="bold">x</mi><mi>n</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{q}_m^\top \mathbf{k}_n = (\mathbf{x}_m^\top W_q^\top) R_{\Theta, m-n} (W_k \mathbf{x}_n)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1461em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathbf">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊤</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathbf">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2822em;vertical-align:-0.3831em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊤</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-2.453em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">⊤</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3831em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Θ</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">m</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+のように、<strong>相対位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m-n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> にのみ依存</strong>する形に整理できます（実際の実装では複素数表現で簡潔に書けます）。</li>
+</ul>
+</li>
+<li>
+<p>これにより：</p>
+<ul>
+<li>相対的な距離感（例：2トークン離れている、10トークン離れている）を<strong>直接的に</strong>表現できる</li>
+<li>長いシーケンスへの一般化や、長さ外挿（長さを伸ばした推論）が比較的しやすい</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-長さ外挿長さ方向の一般化のしやすさ">3. 長さ外挿（長さ方向の一般化）のしやすさ</h3>
+<p><strong>通常の位置エンコーダ</strong></p>
+<ul>
+<li>
+<p>Sinusoidal:</p>
+<ul>
+<li>理論上は任意の長さに外挿可能（sin/cos は連続関数）</li>
+<li>ただし、実際の Transformer では学習時の長さに強く依存し、外挿性能は限定的なことが多い</li>
+</ul>
+</li>
+<li>
+<p>Learned:</p>
+<ul>
+<li>学習時に見た最大長までしか位置埋め込みが存在しない</li>
+<li>それより長いシーケンスでは、未学習の位置埋め込みが必要になり、性能が大きく落ちやすい</li>
+</ul>
+</li>
+</ul>
+<p><strong>RoPE</strong></p>
+<ul>
+<li>回転角 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> は連続的なパラメータなので、<strong>任意の位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> に対して回転行列を定義できる</strong>。</li>
+<li>そのため：
+<ul>
+<li>学習時より長いシーケンスに対しても、<strong>自然に外挿</strong>できる</li>
+<li>実際、LLaMA や GPT-NeoX 系モデルなどで、RoPE をベースにした長さ外挿手法が多く提案・利用されています</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-実装計算コストの違い">4. 実装・計算コストの違い</h3>
+<p><strong>通常の位置エンコーダ</strong></p>
+<ul>
+<li>
+<p>Sinusoidal:</p>
+<ul>
+<li>事前計算した位置埋め込みテーブルを用意し、加算するだけ</li>
+<li>実装がシンプルで計算コストも小さい</li>
+</ul>
+</li>
+<li>
+<p>Learned:</p>
+<ul>
+<li>位置埋め込み行列を保持する必要があり、最大長に比例してメモリ使用量が増える</li>
+<li>ただし、計算自体は加算のみで軽い</li>
+</ul>
+</li>
+</ul>
+<p><strong>RoPE</strong></p>
+<ul>
+<li>
+<p>実装はやや複雑：</p>
+<ul>
+<li>クエリ・キーの各次元ペアごとに回転を適用する必要がある</li>
+<li>多くの実装では、複素数表現や 2×2 回転行列のブロックとして扱う</li>
+</ul>
+</li>
+<li>
+<p>計算コスト：</p>
+<ul>
+<li>通常の加算型よりはわずかに重いが、GPU 上では効率的に実装可能</li>
+<li>近年の Transformer 実装では、RoPE 用の高速カーネルが整備されているため、実用上のオーバーヘッドは小さい</li>
+</ul>
+</li>
+</ul>
+<h3 id="まとめ">まとめ</h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>通常の位置エンコーダ（Sinusoidal / Learned）</th>
+<th>RoPE（Rotary Positional Embedding）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>位置の付け方</td>
+<td>ベクトルを<strong>加算</strong></td>
+<td>ベクトルを<strong>回転</strong>（位相シフト）</td>
+</tr>
+<tr>
+<td>相対位置の扱い</td>
+<td>暗黙的（Attention で学習）</td>
+<td>明示的（内積が相対位置のみに依存）</td>
+</tr>
+<tr>
+<td>長さ外挿</td>
+<td>Sinusoidal は理論上可能だが実用上は限定的、Learned は困難</td>
+<td>比較的容易（回転角の連続性）</td>
+</tr>
+<tr>
+<td>実装・計算</td>
+<td>シンプルで軽い</td>
+<td>やや複雑だが、現代の実装では十分高速</td>
+</tr>
+</tbody>
+</table>
+<p>RoPE は、<strong>相対位置を明示的に扱い、長さ外挿にも強い</strong>という点で、従来の加算型位置エンコーダと比べて大きな利点があります。そのため、最近の大規模言語モデル（LLaMA 系列、GPT-NeoX 系列など）では RoPE が広く採用されています。</p>
+<p>もし「通常の位置エンコーダ」として ALiBi や T5 の相対位置埋め込みなど、他の方式を想定されていましたら、それらとの比較も補足できます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\attention\rope\image\logic\1784431525955.png" alt="1784431525955"></p>
+<h2 id="実験設定">実験設定</h2>
+<p>次にRoPEを用いた性能差を評価するための実験を考えていきます。</p>
+<h3 id="1-実験目的">1. 実験目的</h3>
+<p>本実験の目的は、BERTの標準的な位置表現である「絶対位置エンベディング」を「RoPE（相対位置表現）」に置き換えた際の影響を、RoPEの持つ数理的特性に基づいて多角的に検証することである。具体的には、以下の3つの問いに対して定量的な答えを得ることを目的とします。</p>
+<ul>
+<li><strong>特性検証1：長距離依存性の向上（Long-range Decayの検証）</strong>
+距離が離れるにつれてアテンションの重みを減衰させるRoPEの特性が、長文コンテキスト内でのピンポイントな情報抽出（QAタスク等）において、従来の絶対位置表現より優位に働くか。</li>
+<li><strong>特性検証2：位置の外挿性（Extrapolationの検証）</strong>
+訓練時に経験していない未知の入力長（シーケンス長）に対して、位置表現の数式的な拡張性（回転角の継続）のみでモデルを崩壊させずに推論を維持できるか。</li>
+<li><strong>特性検証3：基本性能の維持（Short-context Robustnessの検証）</strong>
+位置表現をドラスティックに変更したことで、BERTが本来得意としていた短文〜標準長のタスクにおける基礎的な言語理解能力が損なわれていないか。</li>
+</ul>
+<h3 id="2-実験対象モデル">2. 実験対象モデル</h3>
+<p>検証の公平性を期すため、以下の2つのモデルを用意して同一条件で比較する。</p>
+<ul>
+<li><strong>Baseline</strong>: 標準的な絶対位置エンベディングを使用するBERT（例: <code>bert-base-uncased</code>）</li>
+<li><strong>Proposed (RoPE-BERT)</strong>: 標準BERTの <code>BertSelfAttention</code> にRoPEを組み込み、入力層の <code>position_embeddings</code> を無効化したモデル</li>
+</ul>
+<h3 id="3-実験内容3つの検証ステップ">3. 実験内容（3つの検証ステップ）</h3>
+<p><strong>実験Ⅰ：短文〜標準長における基本性能検証（目的：特性検証3）</strong></p>
+<p>位置表現の変更が、既存のBERTの強みを破壊していないかを担保する。</p>
+<ul>
+<li><strong>使用タスク・データセット</strong>: <strong>SQuAD v2.0</strong>（標準長データ）、または <strong>GLUEベンチマーク</strong>（SST-2、MRPCなど短文主体のもの）</li>
+<li><strong>学習条件</strong>: 最大入力長を「512トークン」以下に設定し、両モデルを同一エポック数ファインチューニングする。</li>
+<li><strong>評価指標</strong>: F1スコア、Exact Match（SQuAD）、または正解率（GLUE）</li>
+<li><strong>期待される結果</strong>: 両モデルのスコアが同等、もしくはRoPE版がわずかに上回ること（RoPEの導入によって短文性能が劣化しないことの確認）。</li>
+</ul>
+<p><strong>実験Ⅱ：長文読解における長距離依存性の検証（目的：特性検証1）</strong></p>
+<p>コンテキストが長くなった際、RoPEの「相対的な位置関係の保持能力」がどう活きるかを検証する。</p>
+<ul>
+<li><strong>使用タスク・データセット</strong>: <strong>SQuAD v2.0</strong> のうちコンテキスト長が400〜512トークンのサンプルのみを抽出したサブセット、または <strong>HotpotQA</strong>（ノイズ混じりの長文QA）</li>
+<li><strong>学習条件</strong>: 実験Ⅰで512トークンを上限として学習したモデルをそのまま使用する。</li>
+<li><strong>評価指標</strong>: F1スコア / Exact Match</li>
+<li><strong>期待される結果</strong>: 入力長が512トークンの限界に近づくにつれ、絶対位置BERTは位置のボトネックにより精度が低下しやすい。一方、RoPEはクエリとキーの相対距離を正しく捉えるため、高精度を維持できる（差の可視化）。</li>
+</ul>
+<p><strong>実験Ⅲ：最大長を超えた「外挿性」の限界検証（目的：特性検証2）</strong></p>
+<p>RoPEの最大の強みである「未知の長さへの対応力」をストレステストする。</p>
+<ul>
+<li><strong>使用タスク・データセット</strong>: 実験Ⅰ・Ⅱで学習したモデルに対し、推論時のみ最大入力長を「768トークン」や「1024トークン」に拡張し、長文QAデータ（または人工的な <strong>Needle In A Haystack（干し草のなかの針）タスク</strong>）を入力する。</li>
+<li><strong>評価指標</strong>: 各入力長（512, 768, 1024）における推論精度</li>
+<li><strong>期待される結果</strong>:</li>
+<li><strong>絶対位置BERT</strong>: 512を超えた時点で未学習の位置埋め込み（またはインデックス範囲外エラー）により、アテンション行列が異常な値となり精度が著しく崩壊（ランダム予測レベルに低下）する。</li>
+<li><strong>RoPE-BERT</strong>: 訓練長を超えても位置の回転角が数式通りに継続するため、<strong>精度が緩やかに減衰する程度に踏みとどまる</strong>。</li>
+</ul>
+<h3 id="4-実験の進め方注意点">4. 実験の進め方・注意点</h3>
+<ul>
+<li><strong>追加学習のステップについて</strong>:
+位置表現の構造が大きく変わるため、可能であればファインチューニングの前に、Wikipedia等のテキストを用いて数k〜数十kステップの「マスク言語モデル（MLM）による継続事前学習」を挟むことが推奨される。これにより、RoPEの回転角に対するモデルの適応（ウォームアップ）が進み、実験Ⅱ・Ⅲでの差がより綺麗に出やすくなる。</li>
+<li><strong>計算リソースの考慮</strong>:
+512トークンを超える推論（実験Ⅲ）を行う際は、アテンションの計算量が二乗で増えるため、評価時のバッチサイズを小さくするなどのVRAM管理を行う。</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>これまでの内容を抽象化すると、本試験で問われているのは次のようなポイントです。</p>
+<h3 id="1-位置エンコーディングの表現方法の違い">1. 位置エンコーディングの「表現方法」の違い</h3>
+<ul>
+<li><strong>従来の位置エンコーダ</strong>（Sinusoidal / Learned など）<br>
+→ 位置ベクトルを<strong>加算</strong>する（絶対位置を足し込む）。</li>
+<li><strong>RoPE</strong><br>
+→ 埋め込みベクトルを<strong>回転</strong>させる（位相シフト）ことで位置を表現する。</li>
+</ul>
+<p><strong>抽象化すると</strong>：<br>
+位置情報を「足す」か「回す」か、という<strong>表現形式の違い</strong>が本質。</p>
+<h3 id="2-相対位置の扱い方の違い">2. 相対位置の扱い方の違い</h3>
+<ul>
+<li>従来方式：Attention が<strong>絶対位置</strong>に依存し、相対位置は暗黙的に学習される。</li>
+<li>RoPE：クエリ・キーの内積が<strong>相対位置のみ</strong>に依存するように設計されている。</li>
+</ul>
+<p><strong>抽象化すると</strong>：<br>
+RoPE は、<strong>相対位置を明示的に扱う設計</strong>になっている点が重要な特徴。</p>
+<h3 id="3-長さ外挿一般化のしやすさ">3. 長さ外挿（一般化）のしやすさ</h3>
+<ul>
+<li>Learned 位置埋め込み：学習時の最大長までしか対応できず、外挿が難しい。</li>
+<li>RoPE：回転角は連続パラメータなので、<strong>任意の位置に対しても回転を定義できる</strong>。</li>
+</ul>
+<p><strong>抽象化すると</strong>：<br>
+RoPE は、<strong>連続的な位置表現</strong>により、長さ方向の一般化（外挿）がしやすい。</p>
+<h3 id="4-開発背景と解決した課題の抽象化">4. 開発背景と解決した課題の抽象化</h3>
+<ul>
+<li>開発者：Jianlin Su ら（RoFormer 論文）。</li>
+<li>解決した主な課題：
+<ol>
+<li><strong>相対位置を明示的に扱いたい</strong></li>
+<li><strong>長いシーケンスへの外挿を容易にしたい</strong></li>
+<li><strong>計算効率を保ちつつ、これらを両立したい</strong></li>
+</ol>
+</li>
+</ul>
+<p><strong>抽象化すると</strong>：<br>
+RoPE は、「<strong>相対位置を明示的に扱い、長さ外挿にも強い、実用的な位置エンコーディング</strong>」として設計された技術。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/LU11IdCl8jc?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+        </body>
+        </html>
