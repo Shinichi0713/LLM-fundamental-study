@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>RoPE&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/07/31/000000">先日のRoPEの特性検証</a>のうち1つ目：基本性能の維持（Short-context Robustnessの検証）について扱っていきます。</p>
+<p>ですが、通常のBERTレベルでも触れるマシンがないためGoogle Colabで実験できる内容で試行を進めていこうと思います。
+以前技術要素研究のため、マシンスペックが限定されていても使える<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/10/043000">miniBERT</a>を導入しました。
+今度はこれをアテンションと位置エンコーディングを設計変更して<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/22/000000">RoPE</a>版miniBERTにした上でMLMで学習させた状態にしようと思います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="ropeとは">RoPEとは</h2>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/07/31/000000">こちらの記事</a>をご一読いただければと思います。</p>
+<p>著者の記事の内容を引用すると、</p>
+<blockquote>
+<p>RoPE（Rotary Positional Embedding）は、Transformerモデルにおける<strong>位置情報の表現方法</strong>の一種で、<strong>トークンの埋め込みベクトルを「回転」させることで位置を表現する</strong>手法です。</p>
+<ul>
+<li>RoPEは、各トークンのクエリ・キー・バリュー表現に対して、<strong>位置に応じた回転（複素平面上の位相シフト）</strong> を適用します。</li>
+<li>これにより、Attentionの内積計算が<strong>相対位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m-n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> にのみ依存する形</strong>に自然と整理され、モデルが相対的な位置関係を直接扱えるようになります。</li>
+<li>回転角は連続的なパラメータなので、<strong>学習時より長いシーケンスにも自然に外挿できる</strong>という利点があります。
+RoPE は、<strong>相対位置を明示的に扱い、長さ外挿にも強い</strong>という点で、従来の加算型位置エンコーダと比べて大きな利点があります。そのため、最近の大規模言語モデル（LLaMA 系列、GPT-NeoX 系列など）では RoPE が広く採用されています。</li>
+</ul>
+</blockquote>
+<p>となります。
+長文の読解で特に優位性があるため、近年のLLMには好んでRoPEが使われています。</p>
+<h2 id="評価内容">評価内容</h2>
+<p>「特性検証3：基本性能の維持（Short-context Robustnessの検証）」は、「長文に強くした代償として、BERTが元々得意だった短い文（512トークン以下）のタスクでバカになっていないか」を担保するための重要な防衛的検証です。</p>
+<p>位置表現を絶対位置からRoPEという動的な回転行列にガラリと変えたことで、近距離のトークン同士の密な関係性（例：主語と動詞の結びつきや、隣り合う単語のフレーズ感）がボヤけてしまうリスクがあります。</p>
+<p>元の事前学習は基本的にMLMで行います。そして元の事前学習モデルと、RoPEに実装したモデルを同じ土俵で評価するならばMLMであると良いと思います。
+その上で先述の近距離のトークン同士の密な関係性について、RoPEの実装の有無によりMLMで以下の点で評価を行うことを考えます。</p>
+<h3 id="1-タスクの要求が近距離の文法的整合性そのものであるため">1. タスクの要求が「近距離の文法的整合性」そのものであるため</h3>
+<p>MLM（穴埋め問題）を解くには、隣り合う単語のフレーズ感や、主語と動詞の結びつき（数や時制の一致）といった<strong>局所的で密な関係性の理解が不可欠</strong>です。
+位置表現の変更によって近距離の解像度がボヤけている場合、文法的に正しい単語を推測できなくなるため、これらの指標に即座に悪化（Lossの上昇、Accuracyの低下）として現れます。つまり、短文における器用さをダイレクトに引きずり出せるタスク設定になっています。</p>
+<h3 id="2-予測の確信度と絞り込み能力を数値化できるため">2. 「予測の確信度」と「絞り込み能力」を数値化できるため</h3>
+<p>短文における「バカになっていないか」の検証には、単に正解したかどうかだけでなく、「どれだけ迷わずに正解できたか」の評価が必要です。</p>
+<ul>
+<li><strong>MLM Loss と Pseudo-PPL:</strong> 正解に対する確率の高さと、候補の絞り込み度合い（迷いのなさ）を捉えます。</li>
+<li><strong>Top-5 Accuracy:</strong> 最悪でも「5択以内」という狭い選択肢の中に正しい言葉を滑り込ませる文脈のコントロール力を捉えます。</li>
+</ul>
+<p>これら3つの指標を多角的に見ることで、「近距離の関係性がボヤけて、選択肢を絞り込めずに迷っている状態」を高い感度で検出できます。</p>
+<h3 id="3-下流タスクのバイアスを排除しアーキテクチャの素性を比較できるため">3. 下流タスクのバイアスを排除し、アーキテクチャの素性を比較できるため</h3>
+<p>GLUEなどの特定の分類タスクで評価しようとすると、ヘッド（出力層）の初期化や、そのタスク固有のデータセットへの過学習（過剰適合）といった外部要因がノイズとして混入します。
+一般的な文章（OpenWebText）を使ったMLMによる直接評価であれば、タスク特有のバイアスを完全に排除し、<strong>「RoPEへの変更が、純粋に短文の言語理解力にどう影響したか」というモデルそのものの素性をフェアに測定</strong>できます。</p>
+<h2 id="ropeの実装キーポイント">RoPEの実装キーポイント</h2>
+<p>前回実装確認してわかったことですが、miniBERTはモジュールレベルではBERTです。
+違うのは隠れ層のサイズやレイヤ数のみでした。
+ですので実装変更はBERT/miniBERT兼用と考えて頂ければと思います。</p>
+<p>その上で BERT（絶対位置埋め込み）に <strong>RoPE (Rotary Position Embedding)</strong> を導入して miniBERT を構築する際の、実装上のキーポイントを整理しました。</p>
+<p>BERTへのRoPE導入は、昨今のLLM（Llamaなど）の手法をエンコーダー型に逆輸入する形になり、表現力の向上が期待できる非常に面白い試みです。実装時に絶対に外せないポイントは以下の3点です。</p>
+<h3 id="1-絶対位置から相対位置への概念切り替え">1. 「絶対」位置から「相対」位置への概念切り替え</h3>
+<p>本家BERTは、トークンごとに固定のベクトルを足す「絶対位置埋め込み（Absolute PE）」を採用しています。</p>
+<p>一方、RoPEは「クエリ（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>）とキー（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span>）のベクトルを、位置に応じた回転行列で回転させる」ことで、<strong>アテンション行列の計算時に結果として相対的な位置関係（距離）が数式上あぶり出される</strong>仕組みです。
+したがって、実装時の最初のステップとして、<strong>既存の <code>Embedding</code> レイヤーにある <code>position_embeddings</code> を完全に削除（またはスキップ）</strong> してください。</p>
+<h3 id="2-回転処理rotary-embeddingを差し込む位置">2. 回転処理（Rotary Embedding）を差し込む「位置」</h3>
+<p>RoPEを適用する正しいタイミングは、<strong>「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span> と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> に線形変換（Linear）をかけた直後、かつ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">Q K^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0358em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span> の行列積（Attention Score）を計算する直前」</strong> です。値（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>）には回転をかけません。</p>
+<p>Hugging Faceの <code>BertSelfAttention</code> などの構造をベースにする場合、具体的には以下の位置に自作の回転処理（<code>apply_rotary_emb</code>）を差し込みます。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 1. Ｑ, Ｋ, Ｖの投影 (通常通り)</span>
+mixed_query_layer = self.query(hidden_states)
+mixed_key_layer = self.key(hidden_states)
+mixed_value_layer = self.value(hidden_states)
+
+<span class="hljs-comment"># 2. [重要] ここで各ヘッドの次元に reshape した後、Q と K に RoPE を適用</span>
+query_layer = self.transpose_for_scores(mixed_query_layer)
+key_layer = self.transpose_for_scores(mixed_key_layer)
+
+<span class="hljs-comment"># 自作の RoPE 関数で Q と K を回転させる</span>
+query_layer = apply_rotary_emb(query_layer, position_ids)
+key_layer = apply_rotary_emb(key_layer, position_ids)
+
+<span class="hljs-comment"># 3. あとは通常通りのアテンション計算へ</span>
+attention_scores = torch.matmul(query_layer, key_layer.transpose(-<span class="hljs-number">1</span>, -<span class="hljs-number">2</span>))
+
+</code></pre>
+<h3 id="3-計算効率化のための複素数トリックまたはインデックスの工夫">3. 計算効率化のための複素数トリック（またはインデックスの工夫）</h3>
+<p>RoPEの理論通りに2次元ずつの回転行列（2x2）を愚直に作って行列積を行うと、計算コストが跳ね上がります。そのため、Llama等でも使われている「偶数インデックスと奇数インデックスを入れ替えて符号を変える」トリック（<code>rotate_half</code>）をPyTorchで実装するのが一般的です。</p>
+<p>ヘッドの次元数（<code>head_dim</code>）を半分に分け、以下のように計算をインプレイス（または<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/01/043000">高効率なテンソル演算</a>）で行います。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>R</mi><mrow><mi mathvariant="normal">Θ</mi><mo separator="true">,</mo><mi>m</mi></mrow><mi>d</mi></msubsup><mi mathvariant="bold">x</mi><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi mathvariant="bold">x</mi><mn>1</mn></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi mathvariant="bold">x</mi><mn>2</mn></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi mathvariant="normal">⋮</mi><mpadded height="0em" voffset="0em"><mspace mathbackground="black" width="0em" height="1.5em"></mspace></mpadded></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi mathvariant="bold">x</mi><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msub></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow><mo>⊙</mo><mi>cos</mi><mo>⁡</mo><mi>m</mi><mi>θ</mi><mo>+</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mo>−</mo><msub><mi mathvariant="bold">x</mi><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn><mo>+</mo><mn>1</mn></mrow></msub></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi mathvariant="normal">⋮</mi><mpadded height="0em" voffset="0em"><mspace mathbackground="black" width="0em" height="1.5em"></mspace></mpadded></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mo>−</mo><msub><mi mathvariant="bold">x</mi><mi>d</mi></msub></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi mathvariant="bold">x</mi><mn>1</mn></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi mathvariant="normal">⋮</mi><mpadded height="0em" voffset="0em"><mspace mathbackground="black" width="0em" height="1.5em"></mspace></mpadded></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi mathvariant="bold">x</mi><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msub></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow><mo>⊙</mo><mi>sin</mi><mo>⁡</mo><mi>m</mi><mi>θ</mi></mrow><annotation encoding="application/x-tex">R_{\Theta, m}^d \mathbf{x} = \begin{pmatrix} \mathbf{x}_1 \\ \mathbf{x}_2 \\ \vdots \\ \mathbf{x}_{d/2} \end{pmatrix} \odot \cos m\theta + \begin{pmatrix} -\mathbf{x}_{d/2+1} \\ \vdots \\ -\mathbf{x}_d \\ \mathbf{x}_1 \\ \vdots \\ \mathbf{x}_{d/2} \end{pmatrix} \odot \sin m\theta
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2822em;vertical-align:-0.3831em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-2.453em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">Θ</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">m</span></span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3831em;"><span></span></span></span></span></span></span><span class="mord mathbf">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:5.46em;vertical-align:-2.48em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.95em;"><span style="top:-4.95em;"><span class="pstrut" style="height:7.4em;"></span><span style="width:0.875em;height:5.400em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="5.400em" viewBox="0 0 875 5400"><path d="M863,9c0,-2,-2,-5,-6,-9c0,0,-17,0,-17,0c-12.7,0,-19.3,0.3,-20,1
+c-5.3,5.3,-10.3,11,-15,17c-242.7,294.7,-395.3,682,-458,1162c-21.3,163.3,-33.3,349,
+-36,557 l0,1884c0.2,6,0,26,0,60c2,159.3,10,310.7,24,454c53.3,528,210,
+949.7,470,1265c4.7,6,9.7,11.7,15,17c0.7,0.7,7,1,19,1c0,0,18,0,18,0c4,-4,6,-7,6,-9
+c0,-2.7,-3.3,-8.7,-10,-18c-135.3,-192.7,-235.5,-414.3,-300.5,-665c-65,-250.7,-102.5,
+-544.7,-112.5,-882c-2,-104,-3,-167,-3,-189
+l0,-1892c0,-162.7,5.7,-314,17,-454c20.7,-272,63.7,-513,129,-723c65.3,
+-210,155.3,-396.3,270,-559c6.7,-9.3,10,-15.3,10,-18z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.45em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.98em;"><span style="top:-5.8275em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-4.6275em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.7675em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord">⋮</span><span class="mord rule" style="border-right-width:0em;border-top-width:1.5em;bottom:0em;"></span></span></span></span><span style="top:-1.5675em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mtight">/2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.48em;"><span></span></span></span></span></span></span></span><span class="mclose"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.95em;"><span style="top:-4.95em;"><span class="pstrut" style="height:7.4em;"></span><span style="width:0.875em;height:5.400em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="5.400em" viewBox="0 0 875 5400"><path d="M76,0c-16.7,0,-25,3,-25,9c0,2,2,6.3,6,13c21.3,28.7,42.3,60.3,
+63,95c96.7,156.7,172.8,332.5,228.5,527.5c55.7,195,92.8,416.5,111.5,664.5
+c11.3,139.3,17,290.7,17,454c0,28,1.7,43,3.3,45l0,1809
+c-3,4,-3.3,16.7,-3.3,38c0,162,-5.7,313.7,-17,455c-18.7,248,-55.8,469.3,-111.5,664
+c-55.7,194.7,-131.8,370.3,-228.5,527c-20.7,34.7,-41.7,66.3,-63,95c-2,3.3,-4,7,-6,11
+c0,7.3,5.7,11,17,11c0,0,11,0,11,0c9.3,0,14.3,-0.3,15,-1c5.3,-5.3,10.3,-11,15,-17
+c242.7,-294.7,395.3,-681.7,458,-1161c21.3,-164.7,33.3,-350.7,36,-558
+l0,-1944c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
+-470,-1265c-4.7,-6,-9.7,-11.7,-15,-17c-0.7,-0.7,-6.7,-1,-18,-1z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.45em;"><span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊙</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:8.52em;vertical-align:-4.01em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.4499em;"><span style="top:-6.4499em;"><span class="pstrut" style="height:10.4em;"></span><span style="width:0.875em;height:8.400em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="8.400em" viewBox="0 0 875 8400"><path d="M863,9c0,-2,-2,-5,-6,-9c0,0,-17,0,-17,0c-12.7,0,-19.3,0.3,-20,1
+c-5.3,5.3,-10.3,11,-15,17c-242.7,294.7,-395.3,682,-458,1162c-21.3,163.3,-33.3,349,
+-36,557 l0,4884c0.2,6,0,26,0,60c2,159.3,10,310.7,24,454c53.3,528,210,
+949.7,470,1265c4.7,6,9.7,11.7,15,17c0.7,0.7,7,1,19,1c0,0,18,0,18,0c4,-4,6,-7,6,-9
+c0,-2.7,-3.3,-8.7,-10,-18c-135.3,-192.7,-235.5,-414.3,-300.5,-665c-65,-250.7,-102.5,
+-544.7,-112.5,-882c-2,-104,-3,-167,-3,-189
+l0,-4892c0,-162.7,5.7,-314,17,-454c20.7,-272,63.7,-513,129,-723c65.3,
+-210,155.3,-396.3,270,-559c6.7,-9.3,10,-15.3,10,-18z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.9501em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.51em;"><span style="top:-7.3575em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord">−</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mtight">/2</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span><span style="top:-5.4975em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord">⋮</span><span class="mord rule" style="border-right-width:0em;border-top-width:1.5em;bottom:0em;"></span></span></span></span><span style="top:-4.2975em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord">−</span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.0975em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-1.2375em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord">⋮</span><span class="mord rule" style="border-right-width:0em;border-top-width:1.5em;bottom:0em;"></span></span></span></span><span style="top:-0.0375em;"><span class="pstrut" style="height:3.6875em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mtight">/2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:4.01em;"><span></span></span></span></span></span></span></span><span class="mclose"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.4499em;"><span style="top:-6.4499em;"><span class="pstrut" style="height:10.4em;"></span><span style="width:0.875em;height:8.400em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="8.400em" viewBox="0 0 875 8400"><path d="M76,0c-16.7,0,-25,3,-25,9c0,2,2,6.3,6,13c21.3,28.7,42.3,60.3,
+63,95c96.7,156.7,172.8,332.5,228.5,527.5c55.7,195,92.8,416.5,111.5,664.5
+c11.3,139.3,17,290.7,17,454c0,28,1.7,43,3.3,45l0,4809
+c-3,4,-3.3,16.7,-3.3,38c0,162,-5.7,313.7,-17,455c-18.7,248,-55.8,469.3,-111.5,664
+c-55.7,194.7,-131.8,370.3,-228.5,527c-20.7,34.7,-41.7,66.3,-63,95c-2,3.3,-4,7,-6,11
+c0,7.3,5.7,11,17,11c0,0,11,0,11,0c9.3,0,14.3,-0.3,15,-1c5.3,-5.3,10.3,-11,15,-17
+c242.7,-294.7,395.3,-681.7,458,-1161c21.3,-164.7,33.3,-350.7,36,-558
+l0,-4944c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
+-470,-1265c-4.7,-6,-9.7,-11.7,-15,-17c-0.7,-0.7,-6.7,-1,-18,-1z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.9501em;"><span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊙</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span></span></p>
+<p>これをPyTorchで実装する際のコアパーツは以下のようになります。</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">rotate_half</span>(<span class="hljs-params">x</span>):
+    <span class="hljs-string">&quot;&quot;&quot;xの後半と前半を入れ替えて、後半の符号を反転させる&quot;&quot;&quot;</span>
+    x1 = x[..., :x.shape[-<span class="hljs-number">1</span>] // <span class="hljs-number">2</span>]
+    x2 = x[..., x.shape[-<span class="hljs-number">1</span>] // <span class="hljs-number">2</span>:]
+    <span class="hljs-keyword">return</span> torch.cat((-x2, x1), dim=-<span class="hljs-number">1</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">apply_rotary_emb</span>(<span class="hljs-params">x, cos, sin</span>):
+    <span class="hljs-comment"># cos, sin のシェイプをブロードキャスト可能な形 [batch, head, seq_len, head_dim] に調整</span>
+    <span class="hljs-keyword">return</span> (x * cos) + (rotate_half(x) * sin)
+
+</code></pre>
+<blockquote>
+<p><code>rotate_half</code> は、<strong>RoPE（Rotary Positional Embedding）の「回転」を実数ベクトルで効率的に計算するためのトリック</strong>です。
+<strong>1. RoPE の数式（複素平面での回転）</strong><br>
+RoPE では、各次元ペア <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub><mo separator="true">,</mo><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(x_{2k}, x_{2k+1})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> を複素数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>k</mi></msub><mo>=</mo><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub><mo>+</mo><mi>i</mi><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">z_k = x_{2k} + i x_{2k+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8679em;vertical-align:-0.2083em;"></span><span class="mord mathnormal">i</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span></span></span></span> とみなし、位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> に応じて</p>
+</blockquote>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>z</mi><mi>k</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><msub><mi>z</mi><mi>k</mi></msub><mo>⋅</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>m</mi><msub><mi>θ</mi><mi>k</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">z_k&#x27; = z_k \cdot e^{i m \theta_k}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0489em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-2.453em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.5945em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8991em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">im</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3488em;margin-left:-0.0278em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1512em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<blockquote>
+<p>と回転させます。<br>
+これを実数で書くと</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msubsup><mi>x</mi><mrow><mn>2</mn><mi>k</mi></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub><mi>cos</mi><mo>⁡</mo><mi>m</mi><msub><mi>θ</mi><mi>k</mi></msub><mo>−</mo><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow></msub><mi>sin</mi><mo>⁡</mo><mi>m</mi><msub><mi>θ</mi><mi>k</mi></msub></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msubsup><mi>x</mi><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub><mi>sin</mi><mo>⁡</mo><mi>m</mi><msub><mi>θ</mi><mi>k</mi></msub><mo>+</mo><msub><mi>x</mi><mrow><mn>2</mn><mi>k</mi><mo>+</mo><mn>1</mn></mrow></msub><mi>cos</mi><mo>⁡</mo><mi>m</mi><msub><mi>θ</mi><mi>k</mi></msub></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+x_{2k}&#x27; &amp;= x_{2k} \cos m\theta_k - x_{2k+1} \sin m\theta_k \\
+x_{2k+1}&#x27; &amp;= x_{2k} \sin m\theta_k + x_{2k+1} \cos m\theta_k
+\end{aligned}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3053em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">m</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>となります。
+<strong>2. <code>rotate_half</code> の役割</strong><br>
+この式をテンソル演算でまとめて書くと、</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>rotated</mtext><mo>=</mo><mi>x</mi><mo>⊙</mo><mi>cos</mi><mo>⁡</mo><mo>+</mo><mtext>rotate_half</mtext><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>⊙</mo><mi>sin</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\text{rotated} = x \odot \cos + \text{rotate\_half}(x) \odot \sin
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">rotated</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊙</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">+</span><span class="mord text"><span class="mord">rotate_half</span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊙</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mop">sin</span></span></span></span></span></p>
+<p>という形になります。<br>
+<code>rotate_half</code> は</p>
+<ul>
+<li>ベクトルの前半（偶数インデックス相当）と後半（奇数インデックス相当）を入れ替え</li>
+<li>後半の符号を反転
+することで、上記の「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>cos</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\cos</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mop">cos</span></span></span></span> 項と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>sin</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\sin</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mop">sin</span></span></span></span> 項を組み合わせた回転」を一度のテンソル演算で表現しています。
+<strong>3. なぜこの形で回転になるか</strong>
+<code>x1 = x[..., :d/2]</code> が偶数インデックス側、<code>x2 = x[..., d/2:]</code> が奇数インデックス側に対応します。<br>
+<code>torch.cat([-x2, x1], dim=-1)</code> は</li>
+<li>前半に <code>-x2</code>（奇数側を符号反転して持ってくる）</li>
+<li>後半に <code>x1</code>（偶数側を持ってくる）
+という並び替えをしており、これに <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>sin</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\sin</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mop">sin</span></span></span></span> を掛けることで、元の回転行列の <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>sin</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\sin</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mop">sin</span></span></span></span> 項の符号付き組み合わせを再現しています。</li>
+</ul>
+</blockquote>
+<p>※事前学習（MLM）の前に、あらかじめ最大系列長（<code>max_position_embeddings</code>）分の <code>cos</code> と <code>sin</code> の値をキャッシュ（固定テンソルとして保持）しておくことで、毎ステップの余計な三角関数の計算を減らすことができます。</p>
+<h3 id="4-rope実装時の処理フロー図">4. RoPE実装時の処理フロー図</h3>
+<p>実装の処理フローは以下のようになります。</p>
+<pre class="mermaid" style="all: unset;">flowchart TD
+    A[Input hidden_states] --&gt; B[Linear: Q, K, V projections]
+    B --&gt; C[Reshape for multi-head]
+    C --&gt; D{Apply RoPE?}
+    D -- Yes --&gt; E[Apply RoPE to Q, K]
+    D -- No --&gt; F[Skip RoPE]
+    E --&gt; G[Compute Attention Scores]
+    F --&gt; G
+    G --&gt; H[Apply attention_mask]
+    H --&gt; I[Softmax + Dropout]
+    I --&gt; J[Weighted sum with V]
+    J --&gt; K[Reshape back]
+    K --&gt; L[Output context layer]</pre>
+<h3 id="5-ropeを組み込む意味">5. RoPEを組み込む意味</h3>
+<p>RoPEを組みこむ意味について改めて説明します。</p>
+<p>RoPEを組み込む前後で変わるのは、<strong>「クエリ（Q）とキー（K）の内積が位置にどう依存するか」という振る舞い</strong>です。<br>
+具体的には、RoPEを組み込むことでアテンションは<strong>位置が離れるほど内積が小さくなる（＝相関が減衰する）</strong> ように設計されています。</p>
+<p><strong>1. RoPE適用前のQK（位置情報なし）</strong></p>
+<ul>
+<li>Q・K は単に「トークンの内容ベクトル」です。</li>
+<li>内積 <code>Q_i @ K_j^T</code> は、<strong>内容の類似度</strong>だけに依存します。
+<ul>
+<li>例：<code>i=1</code>（「猫」）と <code>j=2</code>（「犬」）は近い意味なので内積が大きい。</li>
+<li>しかし、<code>i=1</code>（「猫」）と <code>j=100</code>（「猫」）は、<strong>位置が離れていても内積が同じ</strong>になります。</li>
+</ul>
+</li>
+<li>つまり、<strong>位置が離れても内容が同じなら相関が高いまま</strong>で、長い文脈では「遠くのトークン」との関係が強くなりすぎる問題があります。</li>
+</ul>
+<p><strong>2. RoPE適用後のQK（位置情報あり）</strong></p>
+<p>RoPEは、クエリ（Q）とキー（K）の各次元を<strong>位置に応じて回転</strong>させます。</p>
+<ul>
+<li>
+<p>位置が近い（<code>|i - j|</code> が小さい）<br>
+→ 回転角の差が小さい<br>
+→ ベクトルの向きがほぼ同じ<br>
+→ 内積が大きい（相関が高い）</p>
+</li>
+<li>
+<p>位置が離れる（<code>|i - j|</code> が大きい）<br>
+→ 回転角の差が大きい<br>
+→ ベクトルの向きがバラバラ<br>
+→ 内積が小さくなる（相関が減衰）</p>
+</li>
+</ul>
+<p>数式的には内積がコサイン関数で表され、位置差が大きくなるほど平均的に 0 に近づきます。<br>
+そのため、<strong>「内容が同じでも、位置が離れると相関が自然に減衰する」</strong> という性質が生まれます。</p>
+<p><strong>3. 何が変わるか（まとめ）</strong></p>
+<p>RoPEを組み込む前後で変わるのは：</p>
+<ol>
+<li>
+<p><strong>位置依存性の導入</strong></p>
+<ul>
+<li>前：内積は内容のみに依存（位置が離れても相関が高いまま）。</li>
+<li>後：内積は内容＋位置差に依存（位置が離れると相関が減衰）。</li>
+</ul>
+</li>
+<li>
+<p><strong>長距離依存の制御</strong></p>
+<ul>
+<li>前：遠くのトークンとも強い相関を持ちやすく、ノイズが増える可能性。</li>
+<li>後：近傍のトークンとの相関が強く、遠くのトークンとは自然に弱くなる。</li>
+</ul>
+</li>
+<li>
+<p><strong>計算上のメリット</strong></p>
+<ul>
+<li>RoPEは<strong>線形演算（回転）</strong> として実装できるため、Attention の計算グラフに自然に組み込めます。</li>
+<li>相対位置情報を<strong>乗算的に</strong>埋め込むため、学習が安定しやすい。</li>
+</ul>
+</li>
+</ol>
+<p><strong>4. 直感的なイメージ</strong></p>
+<ul>
+<li><strong>RoPE適用前</strong>：<br>
+「猫」という単語は、文のどこにあっても同じように「猫」として扱われる。</li>
+<li><strong>RoPE適用後</strong>：<br>
+「猫」は、近くの単語とは強く関連し、遠くの単語とは弱く関連する。<br>
+→ <strong>位置に応じた「文脈の重み付け」</strong> が自動的に行われる。</li>
+</ul>
+<p>このように、RoPEは <strong>「内容ベクトルに位置情報を乗せる」ことで、Attention が自然に近傍優先になる</strong> ように設計されています。</p>
+<p>RoPEによる位置インデックス（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mi>o</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">pos</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mord mathnormal">os</span></span></span></span>）および各次元（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>）ごとの値（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>cos</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\cos</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mop">cos</span></span></span></span> または <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>sin</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\sin</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6679em;"></span><span class="mop">sin</span></span></span></span> の回転成分）を可視化してみます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\1_mini_bert_verificiation\1784618906091.png" alt="1784618906091"></p>
+<p>この画像の意味については以下通りです。</p>
+<p><strong>4-1. 軸と要素の意味</strong></p>
+<ul>
+<li>
+<p><strong>縦軸（Position Index <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mi>o</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">pos</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mord mathnormal">os</span></span></span></span> : <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>∼</mo><mn>63</mn></mrow><annotation encoding="application/x-tex">0 \sim 63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">63</span></span></span></span>）</strong></p>
+</li>
+<li>
+<p>文章中の「何番目のトークンか（単語の位置）」を表します。</p>
+</li>
+<li>
+<p>上（0番目）から下（63番目）に向かって文章が進んでいきます。</p>
+</li>
+<li>
+<p><strong>横軸（Dimension Index <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> : <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>∼</mo><mn>63</mn></mrow><annotation encoding="application/x-tex">0 \sim 63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">63</span></span></span></span>）</strong></p>
+</li>
+<li>
+<p>トークン表現ベクトル（Head Dimensionなど）の次元インデックスです。</p>
+</li>
+<li>
+<p>偶数インデックス（0, 2, 4...）には <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>cos</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>p</mi><mi>o</mi><mi>s</mi><mo>⋅</mo><msub><mi>θ</mi><mi>k</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\cos(pos \cdot \theta_k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">cos</span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mord mathnormal">os</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>、奇数インデックス（1, 3, 5...）には <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>sin</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>p</mi><mi>o</mi><mi>s</mi><mo>⋅</mo><msub><mi>θ</mi><mi>k</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\sin(pos \cdot \theta_k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">sin</span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mord mathnormal">os</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> の値が入っています。</p>
+</li>
+<li>
+<p><strong>色（Encoding Value : <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1.0</mn><mo>∼</mo><mo>+</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">-1.0 \sim +1.0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">1.0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">+</span><span class="mord">1.0</span></span></span></span>）</strong></p>
+</li>
+<li>
+<p>黄色＝<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">+1.0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">+</span><span class="mord">1.0</span></span></span></span>、紫色＝<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">-1.0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">1.0</span></span></span></span> 付近を表します。</p>
+</li>
+<li>
+<p>2次元（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>cos</mi><mo>⁡</mo><mo separator="true">,</mo><mi>sin</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\cos, \sin</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8623em;vertical-align:-0.1944em;"></span><span class="mop">cos</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">sin</span></span></span></span>）ごとの「回転角度の波形（複素平面上の位相）」を示しています。</p>
+</li>
+</ul>
+<p><strong>4-2. 画像から読み取れる3つの重要な特徴</strong></p>
+<p><strong>① 左側（低次元領域：0〜15列付近）＝ 高周波（細かく変化）</strong></p>
+<ul>
+<li><strong>見た目:</strong> 紫と黄色がめまぐるしく交互に現れ、細かく縞模様が変動しています。</li>
+<li><strong>直感的意味:</strong> <strong>「すぐ隣の単語」を見分けるための感度</strong>を担っています。位置が <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> ずれただけでも回転角度が大きく変化するため、隣接するトークン同士の距離や順序を鋭く検知します。</li>
+</ul>
+<p><strong>② 中央部（15〜30列付近）＝ 緩やかな傾斜パターン</strong></p>
+<ul>
+<li><strong>見た目:</strong> 左上から右下に向かって、斜めに流れるような綺麗なグラデーションが形成されています。</li>
+<li><strong>直感的意味:</strong> <strong>「数トークン〜十数トークン離れた関係性」</strong> を捉える領域です。文章の句節やフレーズのまとまりなど、少し離れた位置関係を滑らかに表現します。</li>
+</ul>
+<p><strong>③ 右側（高次元領域：30〜63列付近）＝ 低周波（ゆったり変化）</strong></p>
+<ul>
+<li><strong>見た目:</strong> 縦方向（位置の変化）に対して色がほとんど変わらず、黄色の太い帯（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">+1.0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">+</span><span class="mord">1.0</span></span></span></span> 付近）が一直線に伸びています。</li>
+<li><strong>直感的意味:</strong> <strong>「大域的なコンテキスト（文章全体の大まかな位置）」</strong> を担っています。位置がかなり離れても角度がほとんど動かないため、文頭や文章全体の遠い記憶を保持するのに役立ちます。</li>
+</ul>
+<p><strong>4-3. なぜこのような模様になるのか？（RoPEの仕組み）</strong></p>
+<p>RoPEでは、次元ごとに異なる周波数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>k</mi></msub><mo>=</mo><mfrac><mn>1</mn><msup><mn>10000</mn><mrow><mn>2</mn><mi>k</mi><mi mathvariant="normal">/</mi><mi>d</mi></mrow></msup></mfrac></mrow><annotation encoding="application/x-tex">\theta_k = \frac{1}{10000^{2k/d}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2305em;vertical-align:-0.3854em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.6146em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1000</span><span class="mord mtight"><span class="mord mtight">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.822em;"><span style="top:-2.822em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5357em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mord mtight">/</span><span class="mord mathnormal mtight">d</span></span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3854em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> を割り当てます。</p>
+<ul>
+<li>低い次元指数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>（左側） <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">\theta_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> が大きいため、<strong>高速で回転</strong>する（波長が短い）</li>
+<li>高い次元指数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>（右側） <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">\theta_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> が非常に小さいため、<strong>超低速で回転</strong>する（波長が極めて長い）</li>
+</ul>
+<p>この「素早く回る時計の針（左）」と「ゆっくり回る時計の針（右）」の組み合わせによって、全64位置（縦方向）のそれぞれに対し、<strong>重なりのないユニークな回転の組み合わせ（指紋のような特徴パターン）</strong> が一意に割り当てられていることが、このヒートマップから視覚的に確認できます。</p>
+<h3 id="注意エンコーダーbertならではの留意点">注意：エンコーダー（BERT）ならではの留意点</h3>
+<p>GPTのようなデコーダー型モデルでは、過去のトークンの <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> をキャッシュ（KV Cache）するため、RoPEの計算は「新しく入ってきた1トークン分」だけで済みます。しかし、<strong>BERTは双方向（Bidirectional）エンコーダー</strong>です。
+毎ステップ、常に全トークン（<code>seq_len</code> 全体）に対して同時に <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span> と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> の回転計算が走るため、ここの実装が非効率だと事前学習のスピード（Throughput）が著しく低下します。テンソルのスライシングや結合（<code>torch.cat</code>）ができるだけ無駄に発生しないよう、綺麗にベクトル化された実装を意識してみてください。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\1_mini_bert_verificiation\1784545909729.png" alt="1784545909729"></p>
+<h2 id="実装">実装</h2>
+<h3 id="実装コード">実装コード</h3>
+<p>以下レポジトリをご参考下さい。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/attention/rope/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/attention/rope/src</a></p>
+<p>実装は以下レポジトリですが、事前学習の重みを一からするのは億劫です。
+ということで変更元のminiBERTの重みで使える部分は利用してMLMで学習させます。</p>
+<h3 id="重み再利用">重み再利用</h3>
+<p>ざっくりと言うと、同じ名前、サイズのレイヤは重みをそのまま利用。
+違う部分は後続のMLMで調整していこうと思います。</p>
+<p>重みは既存のものをHugginFaceから取得下さい。
+以下は例です。</p>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BertForMaskedLM, BertTokenizer
+
+<span class="hljs-comment"># miniBERT のモデルとトークナイザをロード</span>
+model_name = <span class="hljs-string">&quot;prajjwal1/bert-mini&quot;</span>  <span class="hljs-comment"># または &quot;boltuix/bert-mini&quot;</span>
+hf_model = BertForMaskedLM.from_pretrained(model_name)
+tokenizer = BertTokenizer.from_pretrained(model_name)
+
+<span class="hljs-comment"># miniBERT の state_dict</span>
+hf_state_dict = hf_model.state_dict()
+
+<span class="hljs-comment"># 自前モデルの state_dict</span>
+custom_state_dict = model.state_dict()
+
+<span class="hljs-comment"># パラメータ名の対応表（例）</span>
+name_mapping = {
+    <span class="hljs-comment"># embeddings</span>
+    <span class="hljs-string">&quot;bert.embeddings.word_embeddings.weight&quot;</span>: <span class="hljs-string">&quot;bert.embeddings.word_embeddings.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.embeddings.position_embeddings.weight&quot;</span>: <span class="hljs-string">&quot;bert.embeddings.position_embeddings.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.embeddings.token_type_embeddings.weight&quot;</span>: <span class="hljs-string">&quot;bert.embeddings.token_type_embeddings.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.embeddings.LayerNorm.weight&quot;</span>: <span class="hljs-string">&quot;bert.embeddings.LayerNorm.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.embeddings.LayerNorm.bias&quot;</span>: <span class="hljs-string">&quot;bert.embeddings.LayerNorm.bias&quot;</span>,
+
+    <span class="hljs-comment"># encoder layers</span>
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.query.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.query.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.query.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.query.bias&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.key.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.key.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.key.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.key.bias&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.value.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.value.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.value.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.self.value.bias&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.dense.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.dense.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.dense.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.dense.bias&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.LayerNorm.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.LayerNorm.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.LayerNorm.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.attention.output.LayerNorm.bias&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.intermediate.dense.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.intermediate.dense.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.intermediate.dense.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.intermediate.dense.bias&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.output.dense.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.output.dense.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.output.dense.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.output.dense.bias&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.output.LayerNorm.weight&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.output.LayerNorm.weight&quot;</span>,
+    <span class="hljs-string">&quot;bert.encoder.layer.{}.output.LayerNorm.bias&quot;</span>: <span class="hljs-string">&quot;bert.encoder.layer.{}.output.LayerNorm.bias&quot;</span>,
+
+    <span class="hljs-comment"># MLM head</span>
+    <span class="hljs-string">&quot;cls.predictions.transform.dense.weight&quot;</span>: <span class="hljs-string">&quot;cls.predictions.transform.dense.weight&quot;</span>,
+    <span class="hljs-string">&quot;cls.predictions.transform.dense.bias&quot;</span>: <span class="hljs-string">&quot;cls.predictions.transform.dense.bias&quot;</span>,
+    <span class="hljs-string">&quot;cls.predictions.transform.LayerNorm.weight&quot;</span>: <span class="hljs-string">&quot;cls.predictions.transform.LayerNorm.weight&quot;</span>,
+    <span class="hljs-string">&quot;cls.predictions.transform.LayerNorm.bias&quot;</span>: <span class="hljs-string">&quot;cls.predictions.transform.LayerNorm.bias&quot;</span>,
+    <span class="hljs-string">&quot;cls.predictions.decoder.weight&quot;</span>: <span class="hljs-string">&quot;cls.predictions.decoder.weight&quot;</span>,
+    <span class="hljs-string">&quot;cls.predictions.decoder.bias&quot;</span>: <span class="hljs-string">&quot;cls.predictions.decoder.bias&quot;</span>,
+    <span class="hljs-string">&quot;cls.predictions.bias&quot;</span>: <span class="hljs-string">&quot;cls.predictions.bias&quot;</span>,
+}
+
+<span class="hljs-comment"># 実際のキー名を確認（デバッグ用）</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;miniBERT keys (一部):&quot;</span>)
+<span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">list</span>(hf_state_dict.keys())[:<span class="hljs-number">10</span>]:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot; &quot;</span>, k)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\nour model keys (一部):&quot;</span>)
+<span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">list</span>(custom_state_dict.keys())[:<span class="hljs-number">10</span>]:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot; &quot;</span>, k)
+
+<span class="hljs-comment"># パラメータをコピー</span>
+<span class="hljs-keyword">for</span> hf_key, custom_key <span class="hljs-keyword">in</span> name_mapping.items():
+    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;{}&quot;</span> <span class="hljs-keyword">in</span> hf_key:
+        <span class="hljs-comment"># レイヤーごとのキー</span>
+        <span class="hljs-keyword">for</span> layer_idx <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(model.bert.encoder.num_hidden_layers):
+            hk = hf_key.<span class="hljs-built_in">format</span>(layer_idx)
+            ck = custom_key.<span class="hljs-built_in">format</span>(layer_idx)
+            <span class="hljs-keyword">if</span> hk <span class="hljs-keyword">in</span> hf_state_dict <span class="hljs-keyword">and</span> ck <span class="hljs-keyword">in</span> custom_state_dict:
+                <span class="hljs-keyword">if</span> hf_state_dict[hk].shape == custom_state_dict[ck].shape:
+                    custom_state_dict[ck].copy_(hf_state_dict[hk])
+                <span class="hljs-keyword">else</span>:
+                    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[WARN] Shape mismatch: <span class="hljs-subst">{hk}</span> vs <span class="hljs-subst">{ck}</span>&quot;</span>)
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">if</span> hf_key <span class="hljs-keyword">in</span> hf_state_dict <span class="hljs-keyword">and</span> custom_key <span class="hljs-keyword">in</span> custom_state_dict:
+            <span class="hljs-keyword">if</span> hf_state_dict[hf_key].shape == custom_state_dict[custom_key].shape:
+                custom_state_dict[custom_key].copy_(hf_state_dict[hf_key])
+            <span class="hljs-keyword">else</span>:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[WARN] Shape mismatch: <span class="hljs-subst">{hf_key}</span> vs <span class="hljs-subst">{custom_key}</span>&quot;</span>)
+
+<span class="hljs-comment"># 自前モデルに state_dict をロード</span>
+model.load_state_dict(custom_state_dict, strict=<span class="hljs-literal">False</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;パラメータロード完了（strict=False のため一部未使用でもOK）&quot;</span>)
+</code></pre>
+<h3 id="mlmで再チューニング">MLMで再チューニング</h3>
+<p>当然wikipediaをMLMにして学習します。
+以下のレポジトリからdataloader.pyを実行下さい。</p>
+<p>その上で以下を実行下さい。</p>
+<pre><code class="language-python">
+device = torch.device(<span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)
+model.to(device)
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=<span class="hljs-number">5e-5</span>)
+criterion = nn.CrossEntropyLoss(ignore_index=-<span class="hljs-number">100</span>)  <span class="hljs-comment"># パディング部分は無視</span>
+
+num_epochs = <span class="hljs-number">1</span>
+total_steps = <span class="hljs-built_in">len</span>(dataloader) * num_epochs
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=total_steps)
+
+model.train()
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(num_epochs):
+    total_loss = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> step, batch <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(dataloader):
+        input_ids = batch[<span class="hljs-string">&quot;input_ids&quot;</span>].to(device)
+        attention_mask = batch[<span class="hljs-string">&quot;attention_mask&quot;</span>].to(device)
+
+        <span class="hljs-comment"># 例: (batch_size, seq_len) にしたい場合</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(attention_mask.shape) == <span class="hljs-number">1</span>:
+            <span class="hljs-comment"># もし1次元なら batch 方向に拡張</span>
+            attention_mask = attention_mask.unsqueeze(<span class="hljs-number">0</span>)
+        <span class="hljs-comment"># モデルが期待する形状に整形</span>
+        attention_mask = attention_mask.unsqueeze(<span class="hljs-number">1</span>).unsqueeze(<span class="hljs-number">2</span>)  <span class="hljs-comment"># -&gt; [16, 1, 1, 128]</span>
+
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+        labels = batch[<span class="hljs-string">&quot;labels&quot;</span>].to(device)
+
+        optimizer.zero_grad()
+
+        <span class="hljs-comment"># モデルの出力</span>
+        <span class="hljs-comment"># outputs = model(input_ids=input_ids, attention_mask=attention_mask)</span>
+        logits = outputs[<span class="hljs-string">&quot;logits&quot;</span>]  <span class="hljs-comment"># (batch_size, seq_len, vocab_size)</span>
+
+        <span class="hljs-comment"># MLM 損失の計算</span>
+        loss = criterion(logits.view(-<span class="hljs-number">1</span>, logits.size(-<span class="hljs-number">1</span>)), labels.view(-<span class="hljs-number">1</span>))
+
+        loss.backward()
+        optimizer.step()
+        scheduler.step()
+
+        total_loss += loss.item()
+
+        <span class="hljs-keyword">if</span> step % <span class="hljs-number">100</span> == <span class="hljs-number">0</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch <span class="hljs-subst">{epoch+<span class="hljs-number">1</span>}</span>, Step <span class="hljs-subst">{step}</span>, Loss: <span class="hljs-subst">{loss.item():<span class="hljs-number">.4</span>f}</span>&quot;</span>)
+        <span class="hljs-keyword">if</span> step % <span class="hljs-number">200</span> == <span class="hljs-number">0</span>:
+            model.cpu()
+            torch.save(model.state_dict(), save_path)
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Model saved to <span class="hljs-subst">{save_path}</span>&quot;</span>)
+            model.to(device)
+
+    avg_loss = total_loss / <span class="hljs-built_in">len</span>(dataloader)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Epoch <span class="hljs-subst">{epoch+<span class="hljs-number">1</span>}</span> finished. Average Loss: <span class="hljs-subst">{avg_loss:<span class="hljs-number">.4</span>f}</span>&quot;</span>)
+</code></pre>
+<p>学習の経過は以下でした。
+ファインチューニングに準じる学習なのでロスは小さめです。
+恐らく、Epochは1ですが、これでほぼ十分な状態になったのではと思います。</p>
+<pre><code>Epoch 1, Step 0, Loss: 0.3656
+Model saved to /content/drive/MyDrive/mini_rope_bert.pth
+Epoch 1, Step 100, Loss: 0.4405
+Epoch 1, Step 200, Loss: 0.3416
+Model saved to /content/drive/MyDrive/mini_rope_bert.pth
+Epoch 1, Step 300, Loss: 0.3819
+Epoch 1, Step 400, Loss: 0.3491
+Model saved to /content/drive/MyDrive/mini_rope_bert.pth
+Epoch 1, Step 500, Loss: 0.3513
+Epoch 1, Step 600, Loss: 0.3567
+Model saved to /content/drive/MyDrive/mini_rope_bert.pth
+Epoch 1 finished. Average Loss: 0.3955
+</code></pre>
+<h2 id="評価">評価</h2>
+<p>本当はGLUEなどのベンチマークを使って基に対してどの程度変化したかを評価したいところですが、実際に評価するとなると結構重作業です。
+今回は簡易的にということで、学習したことがないMLMデータセットを用いて、元のminiBERTと正誤の判断の比較をすることで評価しようと思います。</p>
+<p>学習は英語なので使うデータセットは、使ったデータよりも新しい年代で英語のデータセットです。
+これ( <code>https://huggingface.co/datasets/Skylion007/openwebtext</code> )を使うことにしました。</p>
+<p>評価した指標は以下です。
+MLMのベースの力量を見るという意図で、自信の解答の適切性、解答でどの程度迷うか、解答の正確さの3種類です。</p>
+<p>再掲となりますが、各種指標は以下の通りです。</p>
+<ul>
+<li><strong>MLM Loss（間違い度合い）</strong>
+穴埋め問題の「答えの外し具合」です。予測が的確であるほど <code>0</code> に近づきます。</li>
+<li><strong>Pseudo-PPL（迷いの度数）</strong>
+モデルが「平均して何単語の候補の中で迷っているか」です。語彙（3万語）の中から約27語にまで絞り込めている状態を意味し、数値が低いほど優秀です。</li>
+<li><strong>Top-5 Accuracy（5択以内の正解率）</strong>
+モデルが挙げた「上位5つの候補の中に、本物の正解が含まれていた確率」です。今回は約61%の確率で5択以内に正解が入っています。高ければ高いほど優秀です。</li>
+</ul>
+<p>評価の結果ですが以下の通りです。
+全てRoPE付きのBERTが上回る結果ということになりました。
+うーん。。。同等くらいがよかったんですが。</p>
+<p>まあ、よくなったので結果よしですね。</p>
+<pre><code>[Original miniBERT (Absolute PE)]
+  - MLM Loss        : 3.3113
+  - Pseudo-PPL      : 27.42
+  - Top-5 Accuracy  : 60.92%
+
+[Custom miniBERT (RoPE)]
+  - MLM Loss        : 2.5239
+  - Pseudo-PPL      : 12.48
+  - Top-5 Accuracy  : 71.12%
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>今回のMLMによる評価結果に基づき、RoPEを導入したminiBERTの性能について、客観的な事実のみを簡潔に総括します。</p>
+<h3 id="1-各指標における性能の向上">1. 各指標における性能の向上</h3>
+<p>未学習の共通データセットを用いた評価において、すべての指標でRoPE付きモデルが従来の絶対位置埋め込みモデルを上回る数値を記録しました。</p>
+<ul>
+<li><strong>MLM Loss（3.3113 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 2.5239）</strong>
+正解の単語に対する予測確率が全体的に高くなっています。</li>
+<li><strong>Pseudo-PPL（27.42 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 12.48）</strong>
+予測時における候補単語の絞り込み数が、平均して約27語から約12語へと減少しており、文脈からの予測精度が高まっていることを示しています。</li>
+<li><strong>Top-5 Accuracy（60.92% <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 71.12%）</strong>
+モデルが予測した上位5つの候補の中に正解が含まれる確率が約10%向上しています。</li>
+</ul>
+<h3 id="2-結果に対する考察">2. 結果に対する考察</h3>
+<p>この差が生まれた要因としては、以下の2点が挙げられます。</p>
+<ul>
+<li><strong>RoPEによる相対位置表現の効果</strong>
+トークン間の距離関係を直接アテンション計算に反映するRoPEの構造が、絶対位置埋め込みよりも効率的な文脈理解を可能にしていると考えられます。</li>
+<li><strong>追加学習による適応</strong>
+既存のモデルの重みを引き継いだ上で、Wikipediaデータを用いた1エポックの追加学習を行ったことで、モデルのパラメータがRoPEの構造に正しく適応し、言語モデルとしての予測能力が更新された結果と言えます。</li>
+</ul>
+<h3 id="結論">結論</h3>
+<p>通常のMLMタスクにおいて、今回作成したRoPE付きminiBERTは、元のminiBERTと比較して「文脈から不足している単語をより正確に推測できる能力」を備えていると判断できます。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/QgtDgADXHS4?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
