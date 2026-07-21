@@ -1,276 +1,371 @@
 import torch
 import torch.nn as nn
+from transformers import AutoModelForMaskedLM, AutoTokenizer
+import torch.nn.functional as F
 import math
-from transformers import BertConfig, BertModel
-from transformers.models.bert.modeling_bert import BertSelfAttention
-from transformers import BertTokenizer
 
-# ==========================================
-# 1. RoPE（回転位置埋め込み）のヘルパークラス
-# ==========================================
-class RotaryEmbedding(nn.Module):
-    def __init__(self, dim, max_position_embeddings=2048, base=10000):
-        super().__init__()
-        # 各次元に対する回転角の周波数を計算
-        inv_freq = 1.0 / (base ** (torch.arange(0, dim, 2).float() / dim))
-        self.register_buffer("inv_freq", inv_freq, persistent=False)
-        self.max_seq_len_cached = max_position_embeddings
-        
-        # あらかじめ大きめのサイズで sin, cos のキャッシュを作成
-        t = torch.arange(self.max_seq_len_cached, dtype=torch.float32)
-        freqs = torch.einsum("i,j->ij", t, self.inv_freq)
-        emb = torch.cat((freqs, freqs), dim=-1)
-        
-        # [max_len, dim] -> [1, 1, max_len, dim] に整形してバッファ登録
-        self.register_buffer("cos_cached", emb.cos()[None, None, :, :], persistent=False)
-        self.register_buffer("sin_cached", emb.sin()[None, None, :, :], persistent=False)
-
-    def forward(self, x, seq_len=None):
-        # x: [batch, num_heads, seq_len, head_dim]
-        return (
-            self.cos_cached[:, :, :seq_len, ...].to(x.device),
-            self.sin_cached[:, :, :seq_len, ...].to(x.device)
-        )
-
+# ==============================
+# RoPE ヘルパー関数
+# ==============================
 def rotate_half(x):
-    # ベクトルの前半と後半を分けて回転させるための処理
-    x1 = x[..., :x.shape[-1] // 2]
-    x2 = x[..., x.shape[-1] // 2:]
+    """
+    x: (batch_size, seq_len, num_heads, head_dim)
+    """
+    x1 = x[..., : x.shape[-1] // 2]
+    x2 = x[..., x.shape[-1] // 2 :]
     return torch.cat((-x2, x1), dim=-1)
 
-def apply_rotary_pos_emb(q, k, cos, sin):
-    # RoPEの数式: R_theta * x = x * cos + rotate_half(x) * sin
-    q_embed = (q * cos) + (rotate_half(q) * sin)
-    k_embed = (k * cos) + (rotate_half(k) * sin)
-    return q_embed, k_embed
+
+def apply_rotary_pos_emb(x, cos, sin):
+    """
+    x: (batch_size, num_heads, seq_len, head_dim)
+    cos, sin: (seq_len, head_dim)
+    """
+    seq_len = x.size(2)  # seq_len は第2次元
+
+    # cos, sin を seq_len に合わせてスライス
+    cos = cos[:seq_len, :]  # (seq_len, head_dim)
+    sin = sin[:seq_len, :]  # (seq_len, head_dim)
+
+    # (batch, num_heads, seq_len, head_dim) にブロードキャストできるよう次元拡張
+    cos = cos.unsqueeze(0).unsqueeze(0)  # (1, 1, seq_len, head_dim)
+    sin = sin.unsqueeze(0).unsqueeze(0)  # (1, 1, seq_len, head_dim)
+
+    # RoPEの適用
+    return (x * cos) + (rotate_half(x) * sin)
+
+# ==============================
+# 1. 各コンポーネントの定義（Hugging FaceのBert構造を模倣）
+# ==============================
+
+class RotaryPositionEmbedding(nn.Module):
+    """RoPE用の cos/sin テーブルを生成するクラス"""
+    def __init__(self, dim, max_seq_len=512):
+        super().__init__()
+        inv_freq = 1.0 / (10000 ** (torch.arange(0, dim, 2).float() / dim))
+        t = torch.arange(max_seq_len, dtype=inv_freq.dtype)
+        freqs = torch.einsum("i,j->ij", t, inv_freq)  # (max_seq_len, dim/2)
+        emb = torch.cat((freqs, freqs), dim=-1)       # (max_seq_len, dim)
+
+        self.register_buffer("cos_cached", emb.cos())
+        self.register_buffer("sin_cached", emb.sin())
+
+    def forward(self, x, seq_len=None):
+        # x: (batch, heads, seq_len, head_dim)
+        # 返す cos, sin: (seq_len, head_dim)
+        if seq_len is None:
+            seq_len = x.size(2)
+        return (
+            self.cos_cached[:seq_len, ...].to(dtype=x.dtype),
+            self.sin_cached[:seq_len, ...].to(dtype=x.dtype),
+        )
+
+class BertEmbeddings(nn.Module):
+    def __init__(self, vocab_size=30522, hidden_size=128, max_position_embeddings=512, type_vocab_size=2, dropout_prob=0.1):
+        super().__init__()
+        self.word_embeddings = nn.Embedding(vocab_size, hidden_size, padding_idx=0)
+        self.position_embeddings = nn.Embedding(max_position_embeddings, hidden_size)
+        self.token_type_embeddings = nn.Embedding(type_vocab_size, hidden_size)
+        self.LayerNorm = nn.LayerNorm(hidden_size, eps=1e-12)
+        self.dropout = nn.Dropout(dropout_prob)
+
+    def forward(self, input_ids, token_type_ids=None, position_ids=None):
+        if token_type_ids is None:
+            token_type_ids = torch.zeros_like(input_ids)
+        if position_ids is None:
+            position_ids = torch.arange(input_ids.size(1), dtype=torch.long, device=input_ids.device).unsqueeze(0)
+
+        words_embeddings = self.word_embeddings(input_ids)
+        position_embeddings = self.position_embeddings(position_ids)
+        token_type_embeddings = self.token_type_embeddings(token_type_ids)
+
+        embeddings = words_embeddings + position_embeddings + token_type_embeddings
+        embeddings = self.LayerNorm(embeddings)
+        embeddings = self.dropout(embeddings)
+        return embeddings
 
 
-# ==========================================
-# 2. BERTのSelfAttentionをRoPE対応に拡張
-# ==========================================
-class RoBERTSelfAttention(BertSelfAttention):
-    def __init__(self, config):
-        super().__init__(config)
-        # ヘッドごとの次元数（例: 768 / 12 = 64）
-        self.head_dim = config.hidden_size // config.num_attention_heads
-        # RoPEモジュールの初期化
-        self.rotary_emb = RotaryEmbedding(dim=self.head_dim)
+class BertSelfAttention(nn.Module):
+    def __init__(self, hidden_size=128, num_attention_heads=4, dropout_prob=0.1, max_position_embeddings=512):
+        super().__init__()
+        if hidden_size % num_attention_heads != 0:
+            raise ValueError(f"hidden_size {hidden_size} must be divisible by num_attention_heads {num_attention_heads}")
+        self.num_attention_heads = num_attention_heads
+        self.attention_head_size = hidden_size // num_attention_heads
+        self.all_head_size = self.num_attention_heads * self.attention_head_size
 
-    def forward(
-        self,
-        hidden_states,
-        attention_mask=None,
-        head_mask=None,
-        encoder_hidden_states=None,
-        encoder_attention_mask=None,
-        past_key_value=None,
-        output_attentions=False,
-    ):
-        # 通常のBERTと同様に Query, Key, Value を線形変換
+        self.query = nn.Linear(hidden_size, self.all_head_size)
+        self.key = nn.Linear(hidden_size, self.all_head_size)
+        self.value = nn.Linear(hidden_size, self.all_head_size)
+        self.dropout = nn.Dropout(dropout_prob)
+
+        # RoPE用の位置埋め込み
+        self.rotary_pos_emb = RotaryPositionEmbedding(
+            dim=self.attention_head_size,
+            max_seq_len=max_position_embeddings,
+        )
+
+    def transpose_for_scores(self, x):
+        new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
+        x = x.view(*new_x_shape)
+        return x.permute(0, 2, 1, 3)
+
+    def forward(self, hidden_states, attention_mask=None):
+        # hidden_states: (batch, seq_len, hidden_size)
+
+        # Q, K, V を計算
         mixed_query_layer = self.query(hidden_states)
-        key_layer = self.transpose_for_scores(self.key(hidden_states))
-        value_layer = self.transpose_for_scores(self.value(hidden_states))
-        query_layer = self.transpose_for_scores(mixed_query_layer)
+        mixed_key_layer = self.key(hidden_states)
+        mixed_value_layer = self.value(hidden_states)
 
-        # ----------------------------------------------------
-        # RoPEの適用ステップ
-        # ----------------------------------------------------
-        seq_len = query_layer.shape[2]
-        cos, sin = self.rotary_emb(query_layer, seq_len=seq_len)
-        
-        # QueryとKeyに回転行列を適用（Valueはそのまま）
-        query_layer, key_layer = apply_rotary_pos_emb(query_layer, key_layer, cos, sin)
-        # ----------------------------------------------------
+        # マルチヘッド用に形状変換
+        query_layer = self.transpose_for_scores(mixed_query_layer)  # (batch, heads, seq_len, head_dim)
+        key_layer = self.transpose_for_scores(mixed_key_layer)
+        value_layer = self.transpose_for_scores(mixed_value_layer)
 
-        # 以降は通常のBERTのアテンション行列計算（Softmax -> Valueとの積）
+        # RoPEを適用（Q, K のみ）
+        cos, sin = self.rotary_pos_emb(query_layer)
+        query_layer = apply_rotary_pos_emb(query_layer, cos, sin)
+        key_layer = apply_rotary_pos_emb(key_layer, cos, sin)
+
+        # スケールド・ドットプロダクトアテンション
         attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
-        attention_scores = attention_scores / math.sqrt(self.head_dim)
-        
+        attention_scores = attention_scores / (self.attention_head_size ** 0.5)
+
+        # --- 修正後 ---
         if attention_mask is not None:
+            # attention_mask が [batch_size, seq_len] や [batch_size, 1, 1, seq_len] など
+            # どんな形状であっても [batch_size, 1, 1, seq_len] に統一してブロードキャスト可能にします
+            if attention_mask.dim() == 2:
+                # [batch_size, seq_len] -> [batch_size, 1, 1, seq_len]
+                attention_mask = attention_mask.unsqueeze(1).unsqueeze(2)
+            elif attention_mask.dim() == 3:
+                # [batch_size, 1, seq_len] などの場合
+                attention_mask = attention_mask.unsqueeze(1)
+
+            # 必要に応じて、マスクの値が 1/0 の場合はパディング除去用に非常に小さな負の値（-10000.0など）に変換する
+            # もしすでに Hugging Face の BertModel 内部を通った後の拡張済みマスク（0 or -10000）ならそのまま足せます
             attention_scores = attention_scores + attention_mask
 
-        attention_probs = nn.functional.softmax(attention_scores, dim=-1)
+        attention_probs = F.softmax(attention_scores, dim=-1)
         attention_probs = self.dropout(attention_probs)
-
-        if head_mask is not None:
-            attention_probs = attention_probs * head_mask
 
         context_layer = torch.matmul(attention_probs, value_layer)
         context_layer = context_layer.permute(0, 2, 1, 3).contiguous()
         new_context_layer_shape = context_layer.size()[:-2] + (self.all_head_size,)
-        context_layer = context_layer.view(new_context_layer_shape)
-
-        outputs = (context_layer, attention_probs) if output_attentions else (context_layer,)
-        return outputs
+        context_layer = context_layer.view(*new_context_layer_shape)
+        return context_layer
 
 
-# ==========================================
-# 3. 実験用モデルのビルド関数
-# ==========================================
-def build_experiment_models(model_name="bert-base-uncased"):
-    """
-    実験1に必要な Baseline (標準BERT) と Proposed (RoPE BERT) を読み込む関数
-    """
-    print(f"Loading baseline model: {model_name}")
-    # ① Baseline: 標準BERT（絶対位置）
-    baseline_model = BertModel.from_pretrained(model_name)
-    
-    print(f"Building RoPE modified model...")
-    # ② Proposed: RoPE BERT
-    # configを取得し、同じ重みで一度初期化する
-    config = BertConfig.from_pretrained(model_name)
-    rope_model = BertModel.from_pretrained(model_name)
-    
-    # 既存の絶対位置埋め込み（Absolute Position Embeddings）を無効化（ゼロクリア）
-    # これにより、モデルは入力層で位置情報を足さなくなります
-    nn.init.zeros_(rope_model.embeddings.position_embeddings.weight)
-    rope_model.embeddings.position_embeddings.weight.requires_grad = False
-    
-    # BERTの全LayerのSelfAttentionクラスを、RoPE版（RoBERTSelfAttention）に差し替える
-    for i in range(config.num_hidden_layers):
-        # 既存の重みをコピーするために現在の状態を保持
-        old_attention = rope_model.encoder.layer[i].attention.self
-        
-        # RoPE版アテンションをインスタンス化
-        new_attention = RoBERTSelfAttention(config)
-        
-        # Query, Key, Value, Dropout などの学習済み重みをそのまま移植
-        new_attention.query.load_state_dict(old_attention.query.state_dict())
-        new_attention.key.load_state_dict(old_attention.key.state_dict())
-        new_attention.value.load_state_dict(old_attention.value.state_dict())
-        
-        # 差し替えを実行
-        rope_model.encoder.layer[i].attention.self = new_attention
+class BertSelfOutput(nn.Module):
+    def __init__(self, hidden_size=128, dropout_prob=0.1):
+        super().__init__()
+        self.dense = nn.Linear(hidden_size, hidden_size)
+        self.LayerNorm = nn.LayerNorm(hidden_size, eps=1e-12)
+        self.dropout = nn.Dropout(dropout_prob)
 
-    return baseline_model, rope_model
+    def forward(self, hidden_states, input_tensor):
+        hidden_states = self.dense(hidden_states)
+        hidden_states = self.dropout(hidden_states)
+        hidden_states = self.LayerNorm(hidden_states + input_tensor)
+        return hidden_states
 
 
-# ==========================================
-# 4. 動作確認用のテストコード
-# ==========================================
-if __name__ == "__main__":
-    # モデルのビルド
-    baseline, rope_bert = build_experiment_models("bert-base-uncased")
-    
-    # ダミー入力の作成 (Batch=2, Seq_Len=10)
-    dummy_input_ids = torch.randint(0, 30000, (2, 10))
-    dummy_mask = torch.ones((2, 10))
-    
-    # 拡張されたアテンションマスク（HFのモデル内部で処理される形式を模倣）
-    extended_mask = dummy_mask.unsqueeze(1).unsqueeze(2)
-    extended_mask = (1.0 - extended_mask) * -10000.0
-    
-    # 推論テスト
-    baseline.eval()
-    rope_bert.eval()
-    
-    with torch.no_grad():
-        out_base = baseline(dummy_input_ids, attention_mask=extended_mask)
-        out_rope = rope_bert(dummy_input_ids, attention_mask=extended_mask)
-        
-    print("\n--- Test Output ---")
-    print("Baseline Last Hidden State Shape:", out_base.last_hidden_state.shape)
-    print("RoPE-BERT Last Hidden State Shape:", out_rope.last_hidden_state.shape)
-    print("正しく両方のモデルからテンソルが出力されました。")
+class BertAttention(nn.Module):
+    def __init__(self, hidden_size=128, num_attention_heads=4, dropout_prob=0.1, max_position_embeddings=512):
+        super().__init__()
+        self.self = BertSelfAttention(hidden_size, num_attention_heads, dropout_prob, max_position_embeddings)
+        self.output = BertSelfOutput(hidden_size, dropout_prob)
+
+    def forward(self, hidden_states, attention_mask=None):
+        self_outputs = self.self(hidden_states, attention_mask)
+        attention_output = self.output(self_outputs, hidden_states)
+        return attention_output
 
 
+class BertIntermediate(nn.Module):
+    def __init__(self, hidden_size=128, intermediate_size=512):
+        super().__init__()
+        self.dense = nn.Linear(hidden_size, intermediate_size)
+        self.intermediate_act_fn = nn.GELU()  # BERT のデフォルトは GELU
+
+    def forward(self, hidden_states):
+        hidden_states = self.dense(hidden_states)
+        hidden_states = self.intermediate_act_fn(hidden_states)
+        return hidden_states
+
+class BertLayer(nn.Module):
+    def __init__(self, hidden_size=128, num_attention_heads=4, intermediate_size=512, dropout_prob=0.1, max_position_embeddings=512):
+        super().__init__()
+        self.attention = BertAttention(hidden_size, num_attention_heads, dropout_prob, max_position_embeddings)
+        self.intermediate = BertIntermediate(hidden_size, intermediate_size)
+        self.output = BertOutput(hidden_size, intermediate_size, dropout_prob)
+
+    def forward(self, hidden_states, attention_mask=None):
+        attention_output = self.attention(hidden_states, attention_mask)
+        intermediate_output = self.intermediate(attention_output)
+        layer_output = self.output(intermediate_output, attention_output)
+        return layer_output
 
 
-def test_models_pipeline():
-    print("=== 1. トークナイザとモデルの準備 ===")
-    model_name = "bert-base-uncased"
-    tokenizer = BertTokenizer.from_pretrained(model_name)
-    
-    # Baseline と RoPE-BERT をビルド
-    baseline_model, rope_model = build_experiment_models(model_name)
-    
-    # 分類タスク（実験1）を想定し、簡単な線形層（ヘッド）を後ろに結合する
-    # ここでは2クラス分類（ポジ・ネガ等）と仮定
-    num_labels = 2
-    baseline_head = nn.Linear(baseline_model.config.hidden_size, num_labels)
-    rope_head = nn.Linear(rope_model.config.hidden_size, num_labels)
-    
-    criterion = nn.CrossEntropyLoss()
-    
-    print("\n=== 2. テスト用データの作成 ===")
-    # 実験1を模したサンプルテキスト（標準的な長さ）と正解ラベル
-    sample_texts = [
-        "Large language models are transforming the field of artificial intelligence.",
-        "Rotary position embedding scales effectively to longer contexts in transformers.",
-        "This is a short sentence to verify the baseline capability of the model.",
-        "We need to ensure that modifying the attention block does not break initial weights."
-    ]
-    # ダミーの正解ラベル (0か1)
-    labels = torch.tensor([1, 1, 0, 0], dtype=torch.long)
-    
-    # トークナイズ処理 (BERTの標準上限である512未満、ここではパディング込みで最大長に合わせる)
-    inputs = tokenizer(
-        sample_texts,
-        padding=True,
-        truncation=True,
-        max_length=128,
-        return_tensors="pt"
+class BertEncoder(nn.Module):
+    def __init__(self, num_hidden_layers=4, hidden_size=128, num_attention_heads=4, intermediate_size=512, dropout_prob=0.1, max_position_embeddings=512):
+        super().__init__()
+        self.num_hidden_layers = num_hidden_layers  # ここで保存
+        self.layer = nn.ModuleList([
+            BertLayer(hidden_size, num_attention_heads, intermediate_size, dropout_prob, max_position_embeddings)
+            for _ in range(num_hidden_layers)
+        ])
+
+    def forward(self, hidden_states, attention_mask=None):
+        for layer_module in self.layer:
+            hidden_states = layer_module(hidden_states, attention_mask)
+        return hidden_states
+
+class BertPredictionHeadTransform(nn.Module):
+    def __init__(self, hidden_size=128):
+        super().__init__()
+        self.dense = nn.Linear(hidden_size, hidden_size)
+        self.transform_act_fn = nn.GELU()
+        self.LayerNorm = nn.LayerNorm(hidden_size, eps=1e-12)
+
+    def forward(self, hidden_states):
+        hidden_states = self.dense(hidden_states)
+        hidden_states = self.transform_act_fn(hidden_states)
+        hidden_states = self.LayerNorm(hidden_states)
+        return hidden_states
+
+
+class BertLMPredictionHead(nn.Module):
+    def __init__(self, hidden_size=128, vocab_size=30522):
+        super().__init__()
+        self.transform = BertPredictionHeadTransform(hidden_size)
+        self.decoder = nn.Linear(hidden_size, vocab_size)
+
+    def forward(self, hidden_states):
+        hidden_states = self.transform(hidden_states)
+        hidden_states = self.decoder(hidden_states)
+        return hidden_states
+
+
+class BertOnlyMLMHead(nn.Module):
+    def __init__(self, hidden_size=128, vocab_size=30522):
+        super().__init__()
+        self.predictions = BertLMPredictionHead(hidden_size, vocab_size)
+
+    def forward(self, sequence_output):
+        prediction_scores = self.predictions(sequence_output)
+        return prediction_scores
+
+class BertOutput(nn.Module):
+    def __init__(self, hidden_size=128, intermediate_size=512, dropout_prob=0.1):
+        super().__init__()
+        self.dense = nn.Linear(intermediate_size, hidden_size)
+        self.LayerNorm = nn.LayerNorm(hidden_size, eps=1e-12)
+        self.dropout = nn.Dropout(dropout_prob)
+
+    def forward(self, hidden_states, input_tensor):
+        hidden_states = self.dense(hidden_states)
+        hidden_states = self.dropout(hidden_states)
+        hidden_states = self.LayerNorm(hidden_states + input_tensor)
+        return hidden_states
+
+class BertModel(nn.Module):
+    def __init__(self, vocab_size=30522, hidden_size=128, num_hidden_layers=4, num_attention_heads=4,
+                 intermediate_size=512, max_position_embeddings=512, type_vocab_size=2, dropout_prob=0.1):
+        super().__init__()
+        self.embeddings = BertEmbeddings(
+            vocab_size=vocab_size,
+            hidden_size=hidden_size,
+            max_position_embeddings=max_position_embeddings,
+            type_vocab_size=type_vocab_size,
+            dropout_prob=dropout_prob,
+        )
+        self.encoder = BertEncoder(
+            num_hidden_layers=num_hidden_layers,
+            hidden_size=hidden_size,
+            num_attention_heads=num_attention_heads,
+            intermediate_size=intermediate_size,
+            dropout_prob=dropout_prob,
+            max_position_embeddings=max_position_embeddings,  # RoPE対応で追加した引数
+        )
+
+    def forward(self, input_ids, attention_mask=None, token_type_ids=None, position_ids=None):
+        embedding_output = self.embeddings(input_ids, token_type_ids, position_ids)
+        encoder_outputs = self.encoder(embedding_output, attention_mask)
+        return encoder_outputs
+
+
+class CustomBertForMaskedLM(nn.Module):
+    def __init__(self, vocab_size=30522, hidden_size=128, num_hidden_layers=4, num_attention_heads=4,
+                 intermediate_size=512, max_position_embeddings=512, type_vocab_size=2, dropout_prob=0.1):
+        super().__init__()
+        self.bert = BertModel(
+            vocab_size=vocab_size,
+            hidden_size=hidden_size,
+            num_hidden_layers=num_hidden_layers,
+            num_attention_heads=num_attention_heads,
+            intermediate_size=intermediate_size,
+            max_position_embeddings=max_position_embeddings,
+            type_vocab_size=type_vocab_size,
+            dropout_prob=dropout_prob,
+        )
+        self.cls = BertOnlyMLMHead(hidden_size, vocab_size)
+
+    def forward(self, input_ids, attention_mask=None, token_type_ids=None, position_ids=None, labels=None):
+        outputs = self.bert(input_ids, attention_mask, token_type_ids, position_ids)
+        sequence_output = outputs
+        prediction_scores = self.cls(sequence_output)
+
+        loss = None
+        if labels is not None:
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(prediction_scores.view(-1, self.cls.predictions.decoder.out_features), labels.view(-1))
+
+        return {
+            "loss": loss,
+            "logits": prediction_scores,
+        }
+
+
+# ==============================
+# 2. Hugging Faceのモデルをロードして重みをコピー
+# ==============================
+def load_hf_model_and_copy_weights(model_name="boltuix/bert-mini"):
+    # Hugging Faceのモデルとトークナイザをロード
+    hf_model = AutoModelForMaskedLM.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+    # 自作モデルを指定されたconfigで初期化（すべてハードコーディング）
+    custom_model = CustomBertForMaskedLM(
+        vocab_size=30522,
+        hidden_size=128,
+        num_hidden_layers=4,
+        num_attention_heads=2,
+        intermediate_size=512,
+        max_position_embeddings=512,
+        type_vocab_size=2,
+        dropout_prob=0.1,  # hidden_dropout_prob=0.1 に対応
     )
-    
-    print(f"入力テンソルの形状 (Batch, SeqLen): {inputs['input_ids'].shape}")
-    
-    print("\n=== 3. Baselineモデルのテスト (Train Mode) ===")
-    baseline_model.train()
-    baseline_head.train()
-    
-    # 順伝播 (Forward)
-    outputs_base = baseline_model(
-        input_ids=inputs["input_ids"],
-        attention_mask=inputs["attention_mask"],
-        token_type_ids=inputs["token_type_ids"]
-    )
-    # [CLS]トークンの表現を取り出して分類器へ
-    cls_base = outputs_base.last_hidden_state[:, 0, :]
-    logits_base = baseline_head(cls_base)
-    loss_base = criterion(logits_base, labels)
-    
-    print(f"Baseline - Loss: {loss_base.item():.4f}")
-    
-    # 逆伝播 (Backward) の検証
-    loss_base.backward()
-    print("✓ Baseline: 逆伝播と勾配計算に成功しました。")
-    
-    print("\n=== 4. RoPE-BERTモデルのテスト (Train Mode) ===")
-    rope_model.train()
-    rope_head.train()
-    
-    # 順伝播 (Forward) 
-    # ※内部のBertSelfAttentionがRoPE版に差し替わっているため、自動的に回転行列が適用されます
-    outputs_rope = rope_model(
-        input_ids=inputs["input_ids"],
-        attention_mask=inputs["attention_mask"],
-        token_type_ids=inputs["token_type_ids"]
-    )
-    # [CLS]トークンの表現を取り出して分類器へ
-    cls_rope = outputs_rope.last_hidden_state[:, 0, :]
-    logits_rope = rope_head(cls_rope)
-    loss_rope = criterion(logits_rope, labels)
-    
-    print(f"RoPE-BERT - Loss: {loss_rope.item():.4f}")
-    
-    # 逆伝播 (Backward) の検証
-    loss_rope.backward()
-    print("✓ RoPE-BERT: 逆伝播と勾配計算に成功しました。")
-    
-    print("\n=== 5. パラメータ固定状態の最終チェック ===")
-    # 実験計画通り、絶対位置埋め込みの勾配が固定（False）されているか確認
-    rope_pos_emb_grad = rope_model.embeddings.position_embeddings.weight.requires_grad
-    print(f"RoPE-BERTの旧絶対位置埋め込みの更新可否 (Expected: False): {rope_pos_emb_grad}")
-    
-    # RoPEアテンション内の重みが勾配を持っているか確認
-    sample_rope_weight = rope_model.encoder.layer[0].attention.self.query.weight.grad
-    has_grad = sample_rope_weight is not None
-    print(f"RoPE-BERTのアテンション層に勾配が正しく伝播しているか (Expected: True): {has_grad}")
-    
-    if not rope_pos_emb_grad and has_grad:
-        print("\n[SUCCESS] すべてのテストをパスしました！実験1の追加学習フェーズに移行可能です。")
-    else:
-        print("\n[FAILURE] 一部モデルの設定が意図通りになっていません。")
 
-if __name__ == "__main__":
-    test_models_pipeline()
+    # 重みをコピー（名前が一致するもののみ）
+    hf_state_dict = hf_model.state_dict()
+    custom_state_dict = custom_model.state_dict()
+
+    # 名前マッピング（必要に応じて調整）
+    name_map = {}
+    for name, param in hf_state_dict.items():
+        if name in custom_state_dict:
+            name_map[name] = name
+
+    # コピー実行
+    for hf_name, custom_name in name_map.items():
+        if hf_name in hf_state_dict and custom_name in custom_state_dict:
+            if hf_state_dict[hf_name].shape == custom_state_dict[custom_name].shape:
+                custom_state_dict[custom_name].copy_(hf_state_dict[hf_name])
+            else:
+                print(f"[WARN] Shape mismatch: {hf_name} {hf_state_dict[hf_name].shape} vs {custom_name} {custom_state_dict[custom_name].shape}")
+
+    custom_model.load_state_dict(custom_state_dict, strict=False)  # strict=Falseで一部だけコピー
+    return custom_model, tokenizer
+

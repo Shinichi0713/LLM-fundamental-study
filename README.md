@@ -326,6 +326,21 @@ I visualized the positional embeddings (PE) of each token for both methods.
 
 ![1762981322548](image/README/1762981322548.png)
 
+## Implementation of mini RoPE-BERT
+
+On the OpenWebText dataset (unseen during training), the RoPE-equipped miniBERT outperformed the original miniBERT (with absolute positional embeddings) across all MLM evaluation metrics.
+
+- MLM Loss improved from 3.3113 to 2.5239  
+- Pseudo-PPL improved from 27.42 to 12.48  
+- Top-5 Accuracy improved from 60.92% to 71.12%
+
+These gains suggest that the relative positional encoding provided by RoPE, combined with one additional epoch of Wikipedia-based MLM pretraining, enhanced the model’s ability to understand short-context relationships (up to 512 tokens) and predict masked tokens more accurately.
+
+In conclusion, the RoPE-based miniBERT is a more accurate masked language model than the original miniBERT on standard MLM tasks.
+
+implementation code:
+https://github.com/Shinichi0713/LLM-fundamental-study/blob/main/attention/rope/src/mini_bert.py
+
 ## Inner Features
 
 with VLM-Lens, we analysis the inner feature.
