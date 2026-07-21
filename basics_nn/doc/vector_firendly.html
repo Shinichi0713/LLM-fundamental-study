@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30c6;&#x30f3;&#x30bd;&#x30eb;&#x6f14;&#x7b97;&#x3068;&#x30d9;&#x30af;&#x30c8;&#x30eb;&#x6f14;&#x7b97;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>ニューラルネットワークの演算は<a href="https://yoshishinnze.hatenablog.com/entry/2026/02/28/175306">テンソル演算</a>により計算されます。
+その計算量は非常に膨大で、計算をいかに高速にするかでニューラルネットワークをリアルタイムに使えるか否かが決定することになると思います。</p>
+<p>本日はそんなテンソル演算の高速化について説明していきます。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="テンソル演算とベクトル演算">テンソル演算とベクトル演算</h2>
+<p>テンソル演算はベクトル演算によって構成される演算です。
+まず、関係性について扱っていきます。</p>
+<h3 id="1-数学的な定義の違い">1. 数学的な定義の違い</h3>
+<p><strong>ベクトル（vector）</strong></p>
+<ul>
+<li>1次元の配列として表される量です。</li>
+<li>例：3次元空間の位置ベクトル<br>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">v</mi><mo>=</mo><mo stretchy="false">(</mo><msub><mi>v</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>v</mi><mn>2</mn></msub><mo separator="true">,</mo><msub><mi>v</mi><mn>3</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex"> \mathbf{v} = (v_1, v_2, v_3) </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></li>
+<li>数学的には「階数1のテンソル」と見なせます。</li>
+</ul>
+<p><strong>テンソル（tensor）</strong></p>
+<ul>
+<li>複数のインデックスを持つ量で、<strong>階数（rank）</strong> で次元を表します。
+<ul>
+<li>スカラー：階数0（0次元テンソル）</li>
+<li>ベクトル：階数1（1次元テンソル）</li>
+<li>行列：階数2（2次元テンソル）</li>
+<li>3次元以上の配列：階数3以上</li>
+</ul>
+</li>
+<li>例：
+<ul>
+<li>行列（階数2テンソル）：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex"> A_{ij} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">ij</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li>3階テンソル：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mrow><mi>i</mi><mi>j</mi><mi>k</mi></mrow></msub></mrow><annotation encoding="application/x-tex"> T_{ijk} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">ijk</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></li>
+</ul>
+</li>
+</ul>
+<p>つまり、<strong>ベクトルは「階数1のテンソル」に含まれる</strong>ため、<br>
+「ベクトル演算 ⊂ テンソル演算」という包含関係になります。</p>
+<h3 id="2-計算機科学gpu機械学習でのテンソル">2. 計算機科学・GPU・機械学習での「テンソル」</h3>
+<p>GPUやディープラーニングフレームワーク（PyTorch, TensorFlowなど）では、<strong>多次元配列（multi-dimensional array）のことを「テンソル」と呼ぶ</strong>ことが多いです。</p>
+<p>この文脈では：</p>
+<ul>
+<li><strong>ベクトル</strong>：1次元配列（例：<code>[1, 2, 3]</code>）</li>
+<li><strong>行列</strong>：2次元配列（例：<code>[[1,2],[3,4]]</code>）</li>
+<li><strong>テンソル</strong>：3次元以上の配列（例：<code>(batch, channel, height, width)</code>）</li>
+</ul>
+<p>ここでも、ベクトルは「1階テンソル」、行列は「2階テンソル」として扱われます。</p>
+<h3 id="3-テンソル演算とベクトル演算の関係">3. 「テンソル演算」と「ベクトル演算」の関係</h3>
+<p><strong>共通点</strong></p>
+<ul>
+<li>どちらも<strong>配列に対する要素ごとの演算</strong>（加算、スカラー倍など）を指すことが多いです。</li>
+<li>GPUでは、どちらもSIMT（スレッド並列）で効率的に処理できます。</li>
+</ul>
+<p><strong>違い</strong></p>
+<ul>
+<li><strong>ベクトル演算</strong>：主に1次元配列に対する演算（例：<code>y[i] = a*x[i] + b</code>）</li>
+<li><strong>テンソル演算</strong>：多次元配列に対する演算全般を指し、ベクトル演算も含みます。
+<ul>
+<li>例：行列積、テンソル縮約（einsum）、畳み込み、バッチ処理など</li>
+</ul>
+</li>
+</ul>
+<h2 id="gpuフレンドリーなベクトル演算">GPUフレンドリーなベクトル演算</h2>
+<p>GPUフレンドリーなベクトル演算は、<strong>「GPUのアーキテクチャ特性を理解し、その強みを最大限引き出すようにアルゴリズム・データ構造・メモリアクセスを設計すること」</strong> で実現されます。<br>
+以下、主な観点ごとに整理します。</p>
+<h3 id="1-メモリアクセスの局所性と連続性coalesced-access">1. メモリアクセスの局所性と連続性（Coalesced Access）</h3>
+<p>GPUは「ワープ／ウェーブ」単位で多数のスレッドが同じ命令を実行するSIMT型のアーキテクチャです。<br>
+このとき、<strong>隣接スレッドが連続したメモリアドレスにアクセスする</strong>と、DRAMへのアクセスがまとまり、帯域を効率よく使えます。</p>
+<p><strong>実現方法の例</strong></p>
+<ul>
+<li><strong>配列の要素を「スレッドインデックス順」に並べる</strong>
+<ul>
+<li>例：<code>a[threadIdx.x + blockIdx.x * blockDim.x]</code> のように、連続したインデックスでアクセスする。</li>
+</ul>
+</li>
+<li><strong>AoS（Array of Structs）ではなく SoA（Struct of Arrays）を優先</strong>
+<ul>
+<li>AoS: <code>struct { float x, y, z; } points[N];</code></li>
+<li>SoA: <code>struct { float x[N], y[N], z[N]; }</code></li>
+<li>SoAにすると、同じフィールド（x, y, z）が連続領域に並び、ベクトルロードやキャッシュ利用が効率化されます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-ベクトル化を阻害する分岐の回避branch-divergence-最小化">2. ベクトル化を阻害する分岐の回避（Branch Divergence 最小化）</h3>
+<p>SIMTでは、ワープ内のスレッドが異なる分岐を取ると、<strong>分岐した両パスを順次実行</strong>するため、性能が低下します。</p>
+<p><strong>実現方法の例</strong></p>
+<ul>
+<li><strong>条件分岐を「マスク＋選択」に置き換える</strong>
+<ul>
+<li>例：<code>if (x &gt; 0) y = a; else y = b;</code><br>
+→ <code>mask = (x &gt; 0); y = mask * a + (1 - mask) * b;</code></li>
+</ul>
+</li>
+<li><strong>データを事前にソートして分岐を減らす</strong>
+<ul>
+<li>例：正負で処理が変わる場合、事前に符号でソートしておくと、ワープ内で同じ分岐を取りやすくなります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-メモリ階層の活用共有メモリレジスタキャッシュ">3. メモリ階層の活用（共有メモリ・レジスタ・キャッシュ）</h3>
+<p>GPUには、グローバルメモリ（DRAM）、L2/L1キャッシュ、共有メモリ（shared memory）、レジスタ（register）といった階層があります。<br>
+<strong>データ再利用が多い場合、共有メモリやレジスタに載せてから演算する</strong>と、グローバルメモリ帯域のボトルネックを緩和できます。</p>
+<p><strong>実現方法の例</strong></p>
+<ul>
+<li><strong>行列積（GEMM）のタイル化</strong>
+<ul>
+<li>グローバルメモリからタイル（小行列）を共有メモリにロードし、そのタイル内で多くの演算を行う。</li>
+</ul>
+</li>
+<li><strong>リダクション（総和・最大値など）の段階的集約</strong>
+<ul>
+<li>各スレッドブロック内で共有メモリを使って部分和を取り、最後にグローバルで統合する。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-演算強度arithmetic-intensityの向上">4. 演算強度（Arithmetic Intensity）の向上</h3>
+<p>「演算強度」＝（演算回数）÷（メモリアクセス量）<br>
+GPUは演算能力が高い一方、メモリ帯域は相対的に有限です。<br>
+<strong>1回のメモリアクセスでより多くの演算を行う</strong>と、GPUの演算ユニットを飽和させやすくなります。</p>
+<p><strong>実現方法の例</strong></p>
+<ul>
+<li><strong>ループ展開（loop unrolling）</strong>
+<ul>
+<li>1回のロードで複数回の演算を行うようにする。</li>
+</ul>
+</li>
+<li><strong>演算の融合（kernel fusion）</strong>
+<ul>
+<li>例：<code>y = a*x + b</code> と <code>z = exp(y)</code> を別カーネルにせず、1つのカーネルにまとめることで、中間結果をメモリに書き戻さずに済む。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-ベクトル型組み込み関数の活用float4-half2-など">5. ベクトル型・組み込み関数の活用（float4, half2 など）</h3>
+<p>多くのGPUでは、32ビット幅のメモリインターフェースに対して、<strong>より広いベクトル型（float4, int4など）でアクセスする</strong>と、帯域利用効率が上がります。</p>
+<p><strong>実現方法の例</strong></p>
+<ul>
+<li>CUDA の <code>float4</code> 型や、ROCm/HIP の <code>float4</code> 等を使い、1スレッドが4要素をまとめてロード・ストアする。</li>
+<li>ただし、スレッドごとに独立した4要素を扱えるようにデータ配置を設計する必要があります。</li>
+</ul>
+<h3 id="6-ライブラリフレームワークの活用cublas-onemkl-thrust-など">6. ライブラリ・フレームワークの活用（cuBLAS, oneMKL, Thrust など）</h3>
+<p>「自前で最適化する」よりも、<strong>GPUベンダーが提供する最適化済みライブラリ</strong>を使うのが最も確実です。</p>
+<p><strong>代表例</strong></p>
+<ul>
+<li>NVIDIA: cuBLAS（BLAS）、cuFFT（FFT）、Thrust（アルゴリズム集）</li>
+<li>AMD: rocBLAS、rocFFT</li>
+<li>Intel: oneMKL（GPU対応あり）</li>
+</ul>
+<p>これらは、ハードウェアごとにチューニングされており、多くの場合、手書きカーネルより高速です。</p>
+<h3 id="7-実装レベルでの具体的な工夫簡易例">7. 実装レベルでの具体的な工夫（簡易例）</h3>
+<p>例：ベクトル加算 <code>c[i] = a[i] + b[i]</code> をGPUフレンドリーに</p>
+<ul>
+<li>メモリレイアウト：SoAまたは連続配列</li>
+<li>アクセスパターン：スレッドID順に連続アクセス</li>
+<li>分岐：基本的に不要（単純な加算のみ）</li>
+<li>演算強度：1ロード＋1ストアに対して1演算と低めだが、メモリ帯域をほぼ上限まで使える</li>
+</ul>
+<pre><code class="language-cuda">__global__ void vec_add(float *c, const float *a, const float *b, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i &lt; n) {
+        c[i] = a[i] + b[i];
+    }
+}
+</code></pre>
+<p>このように、<strong>「連続アクセス＋スレッド並列性の最大化」</strong> が基本となります。</p>
+<h2 id="例題">例題</h2>
+<p>実際に計算速度の違いを確かめてみましょう。
+以下にGoogle ColabでGPUを使い、「GPUフレンドリーな実装」と「非効率な実装」の速度差を体感できる例題を用意します。<br>
+Colab上ではCUDA C/C++のコンパイルが面倒なため、<strong>PyTorch（GPUテンソル）</strong> を使ったPythonコードで比較します。</p>
+<h3 id="例題ベクトル加算の速度比較colab--pytorch">例題：ベクトル加算の速度比較（Colab + PyTorch）</h3>
+<p><strong>環境準備（Colab上で実行）</strong></p>
+<p>まずはGoogle ColabでGPUが実行可能であることを確認してください。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\vector_firendly\1784602889406.png" alt="1784602889406"></p>
+<p>念のため以下を実行して<code>True</code>と表示されるか確認しておきましょう。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> time
+
+<span class="hljs-comment"># GPUが使えるか確認</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;CUDA available:&quot;</span>, torch.cuda.is_available())
+device = torch.device(<span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Device:&quot;</span>, device)
+</code></pre>
+<p><strong>問題設定</strong></p>
+<ul>
+<li>配列サイズ：<code>N = 10**7</code>（1000万要素）</li>
+<li>データ型：<code>float32</code></li>
+<li>演算：<code>c[i] = a[i] + b[i]</code></li>
+<li>比較する2パターン：
+<ol>
+<li><strong>GPUフレンドリー</strong>：SoA（別配列）＋連続アクセス</li>
+<li><strong>非効率</strong>：AoS（構造体配列）＋ランダムアクセス</li>
+</ol>
+</li>
+</ul>
+<p><strong>1. GPUフレンドリーな実装（SoA＋連続アクセス）</strong></p>
+<p>この処理が連続アクセスとなるのは、PyTorchテンソルのメモリレイアウトが「C-contiguous（行優先）」であり、要素がメモリ上に連続して並ぶためです。
+PyTorchのデフォルトのテンソルは「C-contiguous」です。1次元配列（ベクトル）の場合、要素はメモリ上に次のように並びます。</p>
+<pre><code class="language-python">N = <span class="hljs-number">10</span>**<span class="hljs-number">7</span>
+
+<span class="hljs-comment"># SoA: a, b, c を別々の配列としてGPU上に確保</span>
+a_good = torch.randn(N, dtype=torch.float32, device=device)
+b_good = torch.randn(N, dtype=torch.float32, device=device)
+c_good = torch.empty(N, dtype=torch.float32, device=device)
+
+<span class="hljs-comment"># 計測</span>
+torch.cuda.synchronize()
+start = time.time()
+c_good = a_good + b_good  <span class="hljs-comment"># 連続アクセス＋SoA</span>
+torch.cuda.synchronize()
+elapsed_good = time.time() - start
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[Good] SoA + contiguous: <span class="hljs-subst">{elapsed_good:<span class="hljs-number">.4</span>f}</span> s&quot;</span>)
+</code></pre>
+<p>結果は以下でした。</p>
+<pre><code>[Good] SoA + contiguous: 0.0469 s
+</code></pre>
+<p><strong>2. 非効率な実装（AoS＋ランダムアクセス）</strong></p>
+<p>以下はわざと配列をランダムアクセスにしました。</p>
+<ul>
+<li>indices は [100, 5, 73, ...] のようなランダム順です。</li>
+<li>GPUカーネル内では、スレッド0が points[100, 0]、スレッド1が points[5, 0]、スレッド2が points[73, 0]… とアクセスします。</li>
+</ul>
+<p>→つまり、隣接スレッドがアクセスするメモリアドレスがバラバラになります。</p>
+<p>更に効率を阻害する要因が以下のように計算した配列をバラバラにする計算です。</p>
+<ul>
+<li>points[indices, 0] のような整数配列によるインデックス（advanced indexing） は、PyTorch内部で次のような処理になります。</li>
+<li>indices に基づいて要素を集めて新しいテンソルを作る（gather 的な操作）
+そのテンソルに対して演算を行い、結果を points[indices, 2] に書き戻す（scatter 的な操作）</li>
+</ul>
+<p>この「集めて→演算→散らす」の過程で、</p>
+<ul>
+<li>一時テンソルの確保・コピー</li>
+<li>メモリアクセスの不連続性</li>
+</ul>
+<p>が発生し、純粋な連続アクセス演算よりオーバーヘッドが増えます。</p>
+<pre><code class="language-python"><span class="hljs-comment"># AoS: 構造体風に x, y, z を持つ配列を1本で表現</span>
+<span class="hljs-comment"># ここでは単純化のため、x=a, y=b, z=c を1つの2次元テンソルで表現</span>
+<span class="hljs-comment"># shape: (N, 3) → points[i, 0]=a[i], points[i, 1]=b[i], points[i, 2]=c[i]</span>
+points = torch.randn(N, <span class="hljs-number">3</span>, dtype=torch.float32, device=device)
+
+<span class="hljs-comment"># ランダムなインデックス順にアクセスするためのインデックス配列</span>
+indices = torch.randperm(N, device=device)  <span class="hljs-comment"># 0..N-1 をランダムに並べ替え</span>
+
+torch.cuda.synchronize()
+start = time.time()
+
+<span class="hljs-comment"># 非効率なアクセス: ランダム順に points[i, 2] = points[i, 0] + points[i, 1] を実行</span>
+points[indices, <span class="hljs-number">2</span>] = points[indices, <span class="hljs-number">0</span>] + points[indices, <span class="hljs-number">1</span>]
+
+torch.cuda.synchronize()
+elapsed_bad = time.time() - start
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[Bad]  AoS + random access: <span class="hljs-subst">{elapsed_bad:<span class="hljs-number">.4</span>f}</span> s&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Speedup: <span class="hljs-subst">{elapsed_bad / elapsed_good:<span class="hljs-number">.2</span>f}</span>x&quot;</span>)
+</code></pre>
+<p>実行結果は以下の通りです。
+1の例に比べて1.5倍程度速度が低下しました。
+これは場合によっては更に速度差が広がるケースが存在します。</p>
+<pre><code>[Bad]  AoS + random access: 0.0699 s
+Speedup: 1.49x
+</code></pre>
+<p>GPU上での「分岐の有無」による速度差を体感できる例題として、<strong>条件付きのベクトル演算</strong>を2通りの実装で比較する課題を提案します。</p>
+<ul>
+<li>条件：<code>if x[i] &gt; 0 then y[i] = a[i] else y[i] = b[i]</code></li>
+<li>比較する2パターン：
+<ol>
+<li><strong>分岐あり</strong>：<code>torch.where</code> やループ内if相当の処理</li>
+<li><strong>分岐なし</strong>：マスク演算（<code>mask * a + (1 - mask) * b</code>）</li>
+</ol>
+</li>
+</ul>
+<p>Colab + PyTorch でそのまま動くコード例を示します。</p>
+<h3 id="例題条件付き代入の速度比較分岐あり-vs-分岐なし">例題：条件付き代入の速度比較（分岐あり vs 分岐なし）</h3>
+<p><strong>問題設定</strong></p>
+<ul>
+<li>配列サイズ：<code>N = 10**7</code>（1000万要素）</li>
+<li>データ型：<code>float32</code></li>
+<li>条件：<code>x[i] &gt; 0</code> なら <code>y[i] = a[i]</code>、そうでなければ <code>y[i] = b[i]</code></li>
+</ul>
+<p><strong>1. 分岐なし（マスク演算）の実装</strong></p>
+<p>GPUフレンドリーな「分岐なし」実装です。<br>
+条件をマスク（0 or 1）に変換し、要素ごとの演算だけで表現します。</p>
+<blockquote>
+<p><strong>マスクがifの代用になる理由</strong><br>
+マスク演算が if の代用になるのは、<strong>条件を 0/1 に変換し、その重みで a と b を線形結合する</strong>ことで、if の挙動を数式的に再現しているからです。</p>
+<ul>
+<li><code>mask = (x&gt;0).float()</code> → <code>x[i]&gt;0</code> なら 1、そうでなければ 0</li>
+<li><code>y = mask*a + (1-mask)*b</code></li>
+<li><code>mask=1</code> → <code>y=a</code></li>
+<li><code>mask=0</code> → <code>y=b</code>
+GPUでは、if を使うとワープ内で分岐発散が起きやすい一方、マスク演算はすべてのスレッドが同じ命令を実行し続けるため、SIMT効率が高くなります。</li>
+</ul>
+</blockquote>
+<pre><code class="language-python">N = <span class="hljs-number">10</span>**<span class="hljs-number">7</span>
+
+x = torch.randn(N, dtype=torch.float32, device=device)
+a = torch.randn(N, dtype=torch.float32, device=device)
+b = torch.randn(N, dtype=torch.float32, device=device)
+y_no_branch = torch.empty(N, dtype=torch.float32, device=device)
+
+<span class="hljs-comment"># マスクを作成（x &gt; 0 なら 1, そうでなければ 0）</span>
+mask = (x &gt; <span class="hljs-number">0</span>).<span class="hljs-built_in">float</span>()
+
+torch.cuda.synchronize()
+start = time.time()
+
+<span class="hljs-comment"># 分岐なし：マスク演算で条件付き代入を実現</span>
+y_no_branch = mask * a + (<span class="hljs-number">1</span> - mask) * b
+
+torch.cuda.synchronize()
+elapsed_no_branch = time.time() - start
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[No branch] Masked: <span class="hljs-subst">{elapsed_no_branch:<span class="hljs-number">.4</span>f}</span> s&quot;</span>)
+</code></pre>
+<p>結果は以下の通りです。</p>
+<pre><code>[No branch] Masked: 0.0284 s
+</code></pre>
+<p><strong>2. 分岐あり（torch.where）の実装</strong></p>
+<p>PyTorchの <code>torch.where</code> は内部的に条件分岐を伴う操作です。<br>
+GPU上では、条件がランダムな場合に「分岐発散（branch divergence）」が起こりやすく、非効率になりがちです。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 同じ入力を使う</span>
+x = torch.randn(N, dtype=torch.float32, device=device)
+a = torch.randn(N, dtype=torch.float32, device=device)
+b = torch.randn(N, dtype=torch.float32, device=device)
+y_branch = torch.empty(N, dtype=torch.float32, device=device)
+
+torch.cuda.synchronize()
+start = time.time()
+
+<span class="hljs-comment"># 分岐あり：torch.where を使用</span>
+y_branch = torch.where(x &gt; <span class="hljs-number">0</span>, a, b)
+
+torch.cuda.synchronize()
+elapsed_branch = time.time() - start
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;[Branch]   torch.where: <span class="hljs-subst">{elapsed_branch:<span class="hljs-number">.4</span>f}</span> s&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Speedup: <span class="hljs-subst">{elapsed_branch / elapsed_no_branch:<span class="hljs-number">.2</span>f}</span>x&quot;</span>)
+</code></pre>
+<p>こちらの結果は以下です。
+1.56倍のスピード低下。
+同じ計算しているのに時間は多くかかってしまうということになります。</p>
+<pre><code>[Branch]   torch.where: 0.0443 s
+Speedup: 1.56x
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>テンソル演算を高速化するキーポイントは、主に次の4点です。</p>
+<h3 id="1-メモリアクセスを連続局所化する">1. メモリアクセスを「連続・局所化」する</h3>
+<ul>
+<li>配列は<strong>連続インデックスでアクセス</strong>（<code>a[i], a[i+1], ...</code>）</li>
+<li>データ構造は**SoA（Struct of Arrays）**を優先<br>
+→ 同じフィールドがメモリ上で連続し、GPUのcoalesced accessが効く</li>
+</ul>
+<h3 id="2-分岐を減らしマスク演算で置き換える">2. 分岐を減らし、「マスク演算」で置き換える</h3>
+<ul>
+<li>if 分岐は<strong>ワープ内で分岐発散</strong>を起こしやすい</li>
+<li>条件を <code>mask = (x&gt;0).float()</code> のように0/1に変換し、<br>
+<code>y = mask*a + (1-mask)*b</code> で if を表現すると、すべてのスレッドが同じ命令を実行し続け、SIMT効率が上がる</li>
+</ul>
+<h3 id="3-演算強度演算回数メモリアクセス量を高める">3. 演算強度（演算回数÷メモリアクセス量）を高める</h3>
+<ul>
+<li>1回のメモリアクセスでより多くの演算を行う（ループ展開、カーネル融合）</li>
+<li>共有メモリ・レジスタを使い、データ再利用を増やす（行列積のタイル化など）</li>
+</ul>
+<h3 id="4-可能なら最適化済みライブラリを使う">4. 可能なら最適化済みライブラリを使う</h3>
+<ul>
+<li>cuBLAS / rocBLAS / oneMKL など、GPUベンダーがチューニング済みのライブラリを使うのが最も確実</li>
+</ul>
+<p>計算結果は変わらないのに、速度は倍やひどい時には10倍になってしまうということが出てきます。
+メモリアクセスの連続性の担保やマスクの利用、演算強度の検討など、是非試してみてください。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\vector_firendly\1784604466783.png" alt="1784604466783"></p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/QgtDgADXHS4?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
