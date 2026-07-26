@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30aa;&#x30eb;&#x30bd;&#x753b;&#x50cf;&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>地域の航空写真を撮影後、撮影した画像から広大なマップを作りたいという場合にオルソ画像という画像を使うことがあります。
+通常の画像に比べて正確な地理を理解したり、画像を接合するという面では非常に有用な画像です。</p>
+<p>本日はそんなオルソ画像について説明、実際に3Dデータから生成する処理について説明していこうと思います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="オルソ画像とは">オルソ画像とは</h2>
+<p>オルソ画像（オルソフォト）は、<strong>航空写真や衛星画像を「地図のように正しく（正射投影）」補正した画像</strong>です。</p>
+<p>通常の航空写真は、カメラのレンズ中心から放射状に写るため、地形の起伏や建物の高さの影響で、<strong>中心から離れるほど位置がずれます</strong>（遠近感や傾きが生じる）。一方、オルソ画像は、<strong>地形の高さやカメラの傾きによる歪みをすべて除去</strong>し、地図と同じように「真上から見た」状態に変換しています。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ol>
+<li>
+<p><strong>位置精度が高い</strong></p>
+<ul>
+<li>画像上の各ピクセルが、現地の座標（緯度・経度・標高）と対応しているため、<strong>距離や面積を画像上で直接計測</strong>できます。</li>
+</ul>
+</li>
+<li>
+<p><strong>地形の起伏・建物の高さの影響を除去</strong></p>
+<ul>
+<li>例えば、山の斜面に建つ建物が斜めに写るのではなく、<strong>真上から見た形</strong>で表示されます。</li>
+</ul>
+</li>
+<li>
+<p><strong>複数枚の写真をシームレスにつなぎ合わせ</strong></p>
+<ul>
+<li>広範囲をカバーするために、多数の航空写真を撮影し、重なり部分を調整して一枚の大きな画像に合成します。</li>
+</ul>
+</li>
+</ol>
+<h2 id="オルソ画像の特徴用途">オルソ画像の特徴・用途</h2>
+<p>通常の空撮画像（航空写真）とオルソ画像を比較すると、主に以下のような特徴の違いがあります。</p>
+<h3 id="1-投影方式と歪みの有無">1. 投影方式と歪みの有無</h3>
+<ul>
+<li>
+<p><strong>通常の空撮画像</strong></p>
+<ul>
+<li>カメラのレンズ中心から放射状に写る<strong>中心投影</strong>です。</li>
+<li>地形の起伏や建物の高さの影響で、<strong>中心から離れるほど位置がずれ</strong>、建物が斜めに写ったり、遠近感が強く出たりします。</li>
+</ul>
+</li>
+<li>
+<p><strong>オルソ画像</strong></p>
+<ul>
+<li>地形の高さやカメラの傾きによる歪みを除去し、**真上から見た状態（正射投影）**に変換しています。</li>
+<li>画像上の各点が、<strong>地図と同じように正確な位置</strong>に対応します。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-計測測量への向き">2. 計測・測量への向き</h3>
+<ul>
+<li>
+<p><strong>通常の空撮画像</strong></p>
+<ul>
+<li>見た目の把握には優れますが、<strong>距離や面積をそのまま画像上で測るのは難しい</strong>です。</li>
+<li>中心から離れた部分は歪みが大きく、正確な計測には向きません。</li>
+</ul>
+</li>
+<li>
+<p><strong>オルソ画像</strong></p>
+<ul>
+<li>各ピクセルが座標と対応しているため、<strong>画像上で直接、距離・面積・座標を計測</strong>できます。</li>
+<li>GISや測量用途で「背景画像＋計測ツール」として使われます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-建物地形の見え方">3. 建物・地形の見え方</h3>
+<ul>
+<li>
+<p><strong>通常の空撮画像</strong></p>
+<ul>
+<li>建物の側面が見えたり、<strong>高い建物が斜めに傾いて写る</strong>ことがあります。</li>
+<li>山の斜面では、斜面に沿って建物が傾いて見えます。</li>
+</ul>
+</li>
+<li>
+<p><strong>オルソ画像</strong></p>
+<ul>
+<li>建物は<strong>真上から見た平面形状</strong>で表示され、高さによる傾きは除去されます。</li>
+<li>地形の起伏も補正されるため、<strong>平坦な地図のように見える</strong>のが特徴です。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-広域での利用つなぎ合わせ">4. 広域での利用（つなぎ合わせ）</h3>
+<ul>
+<li>
+<p><strong>通常の空撮画像</strong></p>
+<ul>
+<li>単独の写真として見る場合は問題ありませんが、<strong>複数枚をそのままつなぎ合わせると、歪みの影響でズレや段差が目立つ</strong>ことがあります。</li>
+</ul>
+</li>
+<li>
+<p><strong>オルソ画像</strong></p>
+<ul>
+<li>各写真を正射投影に変換したうえで<strong>シームレスにつなぎ合わせる</strong>ため、広範囲を一枚の大きな画像として扱えます。</li>
+<li>都市全体や広域の土地利用図として利用しやすいです。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-作成の手間とコスト">5. 作成の手間とコスト</h3>
+<ul>
+<li>
+<p><strong>通常の空撮画像</strong></p>
+<ul>
+<li>撮影だけなら比較的シンプルで、<strong>低コスト・短時間</strong>で取得できます。</li>
+</ul>
+</li>
+<li>
+<p><strong>オルソ画像</strong></p>
+<ul>
+<li>撮影に加えて、<strong>標高データ（DEM）やレーザー測量データを用いた補正処理</strong>が必要です。</li>
+<li>複数画像の位置合わせ・補正・合成を行うため、<strong>処理に時間とコストがかかる</strong>傾向があります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="作成方法のイメージ">作成方法のイメージ</h3>
+<ol>
+<li>航空機やドローンで<strong>多数の写真を撮影</strong>（隣り合う写真が重なるように）。</li>
+<li>レーザー測量（LiDAR）や既存の標高データ（DEM）を使って<strong>地形の高さを把握</strong>。</li>
+<li>写真の各ピクセルを、地形の高さを考慮しながら<strong>正射投影変換</strong>。</li>
+<li>変換後の画像を<strong>つなぎ合わせて一枚のオルソ画像</strong>に合成。</li>
+</ol>
+<p>このように、オルソ画像は「写真のリアルさ」と「地図の正確さ」を両立させた画像であり、測量・地図作成・都市計画など幅広い分野で重要な基盤データとして使われています。</p>
+<h2 id="lazファイルからオルソ生成">LAZファイルからオルソ生成</h2>
+<p>3次元点群データ（LAS形式の圧縮版）があればオルソ画像を生成することが可能です。
+以下に処理の流れを説明します。</p>
+<h3 id="処理の基本的な流れ">処理の基本的な流れ</h3>
+<p>LAZファイルは圧縮された3次元点群データ（LAS形式の圧縮版）です。点群データからオルソ画像（真上から見下ろした正投影画像）を作成する場合、点群に含まれる情報によって作成方法が2パターンに分かれます。</p>
+<ol>
+<li><strong>RGB（色）情報が含まれている場合:</strong> 点の色（赤・緑・青）を2Dの格子（グリッド）に投影し、オルソカラー画像を作成できます。</li>
+<li><strong>RGB情報が含まれていない場合（標高データのみ）:</strong> 点のZ値（高さ）や反射強度（Intensity）を画像化して、標高画像（DEM/DSM）や反射強度オルソ画像を作成します。</li>
+</ol>
+<p>点群からオルソ画像を作る処理は、実質的に3Dの散乱点を2Dの規則正しいグリッドに落とし込む処理（ラスタライズ）です。
+具体的なステップは以下の4段階です。</p>
+<ul>
+<li><strong>LAZファイルの読み込み:</strong> <code>laspy</code> ライブラリを使用してデータを展開・読み込みます。</li>
+<li><strong>2Dグリッド（ピクセル）の設定:</strong> 解像度（例: 1ピクセル = 10cm など）を決めて、画像を格納する2次元配列を準備します。</li>
+<li><strong>グリッドへの割り当て:</strong> 各点群の (X, Y) 座標がどのピクセルに入るかを計算し、そのピクセルに RGB値や標高値（Z）を割り当てます。</li>
+<li><strong>GeoTIFFなどの画像出力:</strong> <code>rasterio</code> を使って位置情報（CRS）付きの画像ファイルとして保存します。</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\ortho_image\image\laz_to_ortho\1785061225364.png" alt="1785061225364"></p>
+<h2 id="実験">実験</h2>
+<p>以下の公開された富士山の点群データ(las形式)を用いてオルソ画像化してみようと思います。</p>
+<p>公開元データの配布場所：<a href="https://gsj-seamless.jp/pointCloud/sample/crater/">https://gsj-seamless.jp/pointCloud/sample/crater/</a></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\ortho_image\image\laz_to_ortho\1785062336446.png" alt="1785062336446"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\ortho_image\image\laz_to_ortho\1785063568309.png" alt="1785063568309"></p>
+<p>因みに3D点群を立体的に可視化したコードはこれです。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> laspy
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> plotly.graph_objects <span class="hljs-keyword">as</span> go
+
+las = laspy.read(<span class="hljs-string">&quot;08ME3562.las&quot;</span>)
+
+<span class="hljs-comment"># 描画負荷を軽くするため100点に1点抽出（ダウンサンプリング）</span>
+skip = <span class="hljs-number">100</span>
+x = las.x[::skip]
+y = las.y[::skip]
+z = las.z[::skip]
+
+<span class="hljs-comment"># RGBカラーの生成 (0-255表記に変換)</span>
+r = (las.red[::skip] / <span class="hljs-number">256</span>).astype(<span class="hljs-built_in">int</span>)
+g = (las.green[::skip] / <span class="hljs-number">256</span>).astype(<span class="hljs-built_in">int</span>)
+b = (las.blue[::skip] / <span class="hljs-number">256</span>).astype(<span class="hljs-built_in">int</span>)
+color_strings = [<span class="hljs-string">f&#x27;rgb(<span class="hljs-subst">{r_i}</span>,<span class="hljs-subst">{g_i}</span>,<span class="hljs-subst">{b_i}</span>)&#x27;</span> <span class="hljs-keyword">for</span> r_i, g_i, b_i <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(r, g, b)]
+
+<span class="hljs-comment"># Plotlyで3D散布図を描画</span>
+fig = go.Figure(data=[go.Scatter3d(
+    x=x, y=y, z=z,
+    mode=<span class="hljs-string">&#x27;markers&#x27;</span>,
+    marker=<span class="hljs-built_in">dict</span>(
+        size=<span class="hljs-number">1.5</span>,
+        color=color_strings,
+        opacity=<span class="hljs-number">0.8</span>
+    )
+)])
+
+fig.update_layout(
+    scene=<span class="hljs-built_in">dict</span>(aspectmode=<span class="hljs-string">&#x27;data&#x27;</span>),
+    title=<span class="hljs-string">&quot;富士山火口 3D点群プレビュー (Plotly)&quot;</span>
+)
+
+fig.show()
+</code></pre>
+<h3 id="pythonによるオルソ化">Pythonによるオルソ化</h3>
+<p>以下は、<code>laspy</code> と <code>numpy</code> を使用して、LAZファイルからRGBオルソ画像（GeoTIFF形式）を生成する最小限の実装例です。</p>
+<p>事前に必要なライブラリをインストールしてください：</p>
+<pre><code class="language-bash">pip install laspy[lazrs] numpy rasterio
+
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> laspy
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> rasterio
+<span class="hljs-keyword">from</span> rasterio.transform <span class="hljs-keyword">import</span> from_origin
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+laz_file = <span class="hljs-string">&quot;08ME3562.las&quot;</span>
+
+<span class="hljs-comment"># 3. LAZファイルの読み込み</span>
+las = laspy.read(laz_file)
+
+<span class="hljs-comment"># 座標の取得</span>
+x = las.x
+y = las.y
+
+<span class="hljs-comment"># RGB情報の取得（16bitから8bitへ変換）</span>
+<span class="hljs-comment"># ※データによってはRGBがなくIntensity（反射強度）のみの場合もあります</span>
+r = (las.red / <span class="hljs-number">256</span>).astype(np.uint8)
+g = (las.green / <span class="hljs-number">256</span>).astype(np.uint8)
+b = (las.blue / <span class="hljs-number">256</span>).astype(np.uint8)
+
+<span class="hljs-comment"># 4. 2Dグリッド（ピクセル）の設定</span>
+pixel_size = <span class="hljs-number">1.0</span>  <span class="hljs-comment"># 1ピクセル = 1m （処理を軽量化するため1mに設定）</span>
+
+x_min, x_max = np.<span class="hljs-built_in">min</span>(x), np.<span class="hljs-built_in">max</span>(x)
+y_min, y_max = np.<span class="hljs-built_in">min</span>(y), np.<span class="hljs-built_in">max</span>(y)
+
+width = <span class="hljs-built_in">int</span>(np.ceil((x_max - x_min) / pixel_size))
+height = <span class="hljs-built_in">int</span>(np.ceil((y_max - y_min) / pixel_size))
+
+<span class="hljs-comment"># ピクセルインデックスの計算</span>
+col_idx = np.floor((x - x_min) / pixel_size).astype(<span class="hljs-built_in">int</span>)
+row_idx = np.floor((y_max - y) / pixel_size).astype(<span class="hljs-built_in">int</span>)
+
+<span class="hljs-comment"># 範囲外のインデックスを制限</span>
+col_idx = np.clip(col_idx, <span class="hljs-number">0</span>, width - <span class="hljs-number">1</span>)
+row_idx = np.clip(row_idx, <span class="hljs-number">0</span>, height - <span class="hljs-number">1</span>)
+
+<span class="hljs-comment"># 5. グリッドへRGBを配置</span>
+ortho_image = np.zeros((height, width, <span class="hljs-number">3</span>), dtype=np.uint8)
+
+<span class="hljs-comment"># 点群の色を割り当て</span>
+ortho_image[row_idx, col_idx, <span class="hljs-number">0</span>] = r
+ortho_image[row_idx, col_idx, <span class="hljs-number">1</span>] = g
+ortho_image[row_idx, col_idx, <span class="hljs-number">2</span>] = b
+
+<span class="hljs-comment"># 6. GeoTIFFとして保存</span>
+transform = from_origin(x_min, y_max, pixel_size, pixel_size)
+output_tif = <span class="hljs-string">&quot;output_ortho.tif&quot;</span>
+
+<span class="hljs-keyword">with</span> rasterio.<span class="hljs-built_in">open</span>(
+    output_tif,
+    <span class="hljs-string">&#x27;w&#x27;</span>,
+    driver=<span class="hljs-string">&#x27;GTiff&#x27;</span>,
+    height=height,
+    width=width,
+    count=<span class="hljs-number">3</span>,
+    dtype=ortho_image.dtype,
+    crs=las.header.parse_crs() <span class="hljs-keyword">if</span> las.header.parse_crs() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;EPSG:2992&quot;</span>, <span class="hljs-comment"># フォールバック座標系</span>
+    transform=transform,
+) <span class="hljs-keyword">as</span> dst:
+    dst.write(ortho_image[:, :, <span class="hljs-number">0</span>], <span class="hljs-number">1</span>)
+    dst.write(ortho_image[:, :, <span class="hljs-number">1</span>], <span class="hljs-number">2</span>)
+    dst.write(ortho_image[:, :, <span class="hljs-number">2</span>], <span class="hljs-number">3</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;GeoTIFFの生成が完了しました！&quot;</span>)
+
+<span class="hljs-comment"># 7. 生成したオルソ画像のプレビュー表示</span>
+plt.figure(figsize=(<span class="hljs-number">10</span>, <span class="hljs-number">10</span>))
+plt.imshow(ortho_image)
+plt.title(<span class="hljs-string">&quot;Generated Ortho Image from LAZ&quot;</span>)
+plt.axis(<span class="hljs-string">&#x27;off&#x27;</span>)
+plt.show()
+
+</code></pre>
+<p>実際に実行した結果は以下です。
+うーん。見事に上空写真、それも遠近感のゆがみがなくなった画像になりました。
+それがオルソ画像です(笑)</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\ortho_image\image\laz_to_ortho\1785062883869.png" alt="1785062883869"></p>
+<h3 id="実際に作成する際のポイント">実際に作成する際のポイント</h3>
+<ul>
+<li><strong>データの欠損（隙間）対策:</strong> 点群の密度が低い場合、画像化した際に黒い隙間ピクセルが生じることがあります。<code>scipy.interpolate</code> などを用いて周囲のピクセルから補間（インペインティング）を行うと綺麗な画像になります。</li>
+<li><strong>最上面の優先（Z値フィルタ）:</strong> ビルや樹木が重なっている場所では、Z座標（標高）が一番高い点のRGBを優先して配置することで、見栄えの良い真上からのオルソ画像が得られます。</li>
+<li><strong>PDALの活用:</strong> より本格的・大規模に処理したい場合は、Pythonから <strong>PDAL (Point Data Abstraction Library)</strong> という点群処理ライブラリを呼び出すパイプラインを組むのも非常に強力です。</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>オルソ画像は、<strong>写真の見た目と地図の正確さを両立した画像</strong>で、主に以下の用途で使われます。</p>
+<ul>
+<li><strong>GIS・地図作成</strong>：背景画像として道路・建物・土地利用を正確に重ねる</li>
+<li><strong>都市計画・インフラ管理</strong>：開発計画や施設配置の検討</li>
+<li><strong>防災・環境モニタリング</strong>：浸水・土砂災害リスク、植生分布の把握</li>
+<li><strong>農業・林業</strong>：農地・森林の区画・樹種の把握</li>
+</ul>
+<h3 id="作成のコツ3d点群からオルソ生成">作成のコツ（3D点群からオルソ生成）</h3>
+<ul>
+<li><strong>点群のRGBをグリッドに落とす</strong>
+<ul>
+<li>各点の (X, Y) からピクセル位置を計算し、RGBをそのまま割り当てる（ラスタライズ）。</li>
+</ul>
+</li>
+<li><strong>解像度（ピクセルサイズ）を用途に合わせる</strong>
+<ul>
+<li>都市部は 10–50 cm、広域は 1 m など、必要精度で調整。</li>
+</ul>
+</li>
+<li><strong>隙間対策</strong>
+<ul>
+<li>点密度が低いと黒い穴ができるので、周囲ピクセルから補間（インペインティング）を検討。</li>
+</ul>
+</li>
+<li><strong>最上面の優先</strong>
+<ul>
+<li>建物や樹木が重なる箇所は、Z値が最大の点のRGBを採用すると見栄えが良い。</li>
+</ul>
+</li>
+<li><strong>GeoTIFFで座標情報を付与</strong>
+<ul>
+<li><code>rasterio</code> などで CRS・座標変換を設定し、GISでそのまま使えるようにする。</li>
+</ul>
+</li>
+</ul>
+<p>要するに、<strong>「3D点群を真上から見た2Dグリッドに落とし込み、隙間を埋めて座標付きで保存する」</strong> のがオルソ画像生成の基本です。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/_u42eRv3Yxg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
