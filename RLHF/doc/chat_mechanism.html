@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Chat&#x304c;&#x51fa;&#x6765;&#x308b;&#x3088;&#x3046;&#x306b;&#x306a;&#x3063;&#x305f;&#x7406;&#x7531;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>2023年の10月、11月でしたでしょうか？
+GPT3が巧みな文章を生成してから、人と対話するようになった瞬間。
+あれば、本当衝撃でした。
+その時に&quot;LLMはなぜ対話できるようになった？&quot;という疑問が満ちていましたが、今は知識として整理されています。
+本日はそんなLLMがしゃべるようになる学習についてまとめていきます。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="chatが出来るようになった理由">Chatが出来るようになった理由</h2>
+<p>ChatGPTが「チャット（対話）」ができるようになった理由は、大きく分けて次の3つです。</p>
+<h3 id="1-事前学習で会話っぽい構造を大量に学んでいる">1. 事前学習で「会話っぽい構造」を大量に学んでいる</h3>
+<ul>
+<li>GPT系モデルは、インターネット上の膨大なテキスト（Webページ、書籍、フォーラム、SNS、Q&amp;Aサイトなど）を事前学習しています。</li>
+<li>その中には「質問と回答」「会話のやりとり」「議論の流れ」など、<strong>自然な対話のパターン</strong>が大量に含まれています。</li>
+<li>モデルは「ある文脈が来たときに、次に続く言葉として何が自然か」を確率的に学習しているため、<br>
+ユーザーの発言に対して「それっぽい続き」を返すことで、結果的にチャットのような応答ができるようになっています。</li>
+</ul>
+<h3 id="2-指示追従対話形式の追加学習sft">2. 指示追従・対話形式の追加学習（SFT）</h3>
+<ul>
+<li>事前学習だけでは「汎用的な文章生成」はできますが、「ユーザーの指示に従って対話する」という挙動は弱いです。</li>
+<li>ChatGPTでは、<strong>Supervised Fine-Tuning（SFT）</strong> と呼ばれる追加学習で、
+<ul>
+<li>「ユーザー：〜」「アシスタント：〜」という形式の対話データ</li>
+<li>指示に従って回答する例（例：「要約して」「コードを書いて」など）
+を大量に与え、**「チャットボットとして振る舞う」**ようにモデルを調整しています。</li>
+</ul>
+</li>
+<li>これにより、単なる文章補完ではなく、「ユーザーの意図をくみ取って返答する」挙動が強く身につきます。</li>
+</ul>
+<h3 id="3-人間フィードバックによる強化学習rlhf">3. 人間フィードバックによる強化学習（RLHF）</h3>
+<ul>
+<li>ChatGPTでは、<strong>RLHF（Reinforcement Learning from Human Feedback）</strong> という手法も使われています。</li>
+<li>人間が「どの回答が好ましいか」を評価し、そのフィードバックをもとに強化学習を行うことで、
+<ul>
+<li>より人間にとって<strong>自然で役に立つ回答</strong></li>
+<li>より<strong>対話的に聞こえるトーン</strong>
+を優先して生成するようにモデルが調整されます。</li>
+</ul>
+</li>
+<li>これにより、「ただ正しいだけでなく、会話として心地よい」応答が増え、チャット体験が向上します。</li>
+</ul>
+<h2 id="事前学習">事前学習</h2>
+<p>GPTの「事前学習（pre-training）」とは、<strong>特定のタスクに縛られず、大量のテキストデータから「言葉の続き方」を統計的に学ぶプロセス</strong>です。<br>
+具体的には、次のようなことを行っています。</p>
+<p>実際どのような学習をしているか具体例を示しながら説明していきます。</p>
+<h3 id="1-学習データの具体例">1. 学習データの具体例</h3>
+<p>GPTは、インターネット上のさまざまなテキストを学習します。たとえば：</p>
+<p><strong>ニュース記事の一部</strong></p>
+<pre><code>「昨日、東京で大雨が降りました。その影響で、一部の電車が遅延しました。」
+</code></pre>
+<p><strong>Wikipediaの一文</strong></p>
+<pre><code>「Pythonは、1991年にオランダ人のグイド・ヴァンロッサムによって開発されたプログラミング言語である。」
+</code></pre>
+<p><strong>会話ログ（フォーラムやSNS）</strong></p>
+<pre><code>ユーザーA「この映画、面白かった？」
+ユーザーB「めっちゃ面白かった！ラストが衝撃的だった。」
+</code></pre>
+<p><strong>コードの断片</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">a, b</span>):
+    <span class="hljs-keyword">return</span> a + b
+</code></pre>
+<p>このように、<strong>ニュース・百科事典・会話・コード・小説・レシピ</strong>など、ありとあらゆるテキストが事前学習のデータになります。</p>
+<h3 id="2-どのように学習しているか次単語予測">2. どのように学習しているか（次単語予測）</h3>
+<p>GPTは、これらのテキストを「トークン」という小さな単位（単語やサブワード）に分割し、<br>
+<strong>「与えられた文脈から、次に来るトークンを予測する」</strong> という問題を解き続けます。</p>
+<p><strong>例：ニュース記事から学習する場合</strong></p>
+<p>元の文：</p>
+<blockquote>
+<p>「昨日、東京で大雨が降りました。その影響で、一部の電車が遅延しました。」</p>
+</blockquote>
+<p>モデルには、次のような「穴埋め問題」が次々に出されます。</p>
+<p><strong>ステップ1</strong></p>
+<ul>
+<li>入力：<code>「昨日、東京で</code></li>
+<li>正解：<code>大雨</code></li>
+<li>モデルが学ぶこと：「昨日、東京で」という文脈の次には「大雨」が来やすい</li>
+</ul>
+<p><strong>ステップ2</strong></p>
+<ul>
+<li>入力：<code>「昨日、東京で大雨が</code></li>
+<li>正解：<code>降り</code></li>
+<li>モデルが学ぶこと：「大雨が」の次には「降り」が来やすい</li>
+</ul>
+<p><strong>ステップ3</strong></p>
+<ul>
+<li>入力：<code>「昨日、東京で大雨が降りました。その</code></li>
+<li>正解：<code>影響</code></li>
+<li>モデルが学ぶこと：「その」の次には「影響」が来やすい（文脈が続く）</li>
+</ul>
+<p><strong>ステップ4</strong></p>
+<ul>
+<li>入力：<code>「昨日、東京で大雨が降りました。その影響で、一部の電車が</code></li>
+<li>正解：<code>遅延</code></li>
+<li>モデルが学ぶこと：「一部の電車が」の次には「遅延」が来やすい（ニュース的な表現）</li>
+</ul>
+<p>このように、<strong>一文まるごとではなく、少しずつ文脈を伸ばしながら「次に来る単語」を予測する練習</strong>を、何十億回も繰り返します。</p>
+<h3 id="3-会話データから対話の流れを学ぶ例">3. 会話データから「対話の流れ」を学ぶ例</h3>
+<p>会話ログを学習する場合も、同じ「次単語予測」のルールで学びます。</p>
+<p>元の会話：</p>
+<blockquote>
+<p>ユーザーA「この映画、面白かった？」<br>
+ユーザーB「めっちゃ面白かった！ラストが衝撃的だった。」</p>
+</blockquote>
+<p><strong>ステップ1</strong></p>
+<ul>
+<li>入力：<code>ユーザーA「この映画、面白かった？」</code></li>
+<li>正解：<code>ユーザーB</code></li>
+<li>モデルが学ぶこと：質問の後には「ユーザーB」が続く（対話の構造）</li>
+</ul>
+<p><strong>ステップ2</strong></p>
+<ul>
+<li>入力：<code>ユーザーA「この映画、面白かった？」 ユーザーB「</code></li>
+<li>正解：<code>めっちゃ</code></li>
+<li>モデルが学ぶこと：質問に対する肯定的な返答として「めっちゃ」が来やすい</li>
+</ul>
+<p><strong>ステップ3</strong></p>
+<ul>
+<li>入力：<code>ユーザーA「この映画、面白かった？」 ユーザーB「めっちゃ面白かった！</code></li>
+<li>正解：<code>ラスト</code></li>
+<li>モデルが学ぶこと：映画の感想では「ラスト」が話題になりやすい</li>
+</ul>
+<p>このように、<strong>「質問→返答」という対話の流れそのものも、次単語予測のパターンとして学習</strong>されます。</p>
+<h3 id="4-コードや専門文書から専門的な表現を学ぶ例">4. コードや専門文書から「専門的な表現」を学ぶ例</h3>
+<p>コードの断片を学習する場合も、同じルールです。</p>
+<p>元のコード：</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">a, b</span>):
+    <span class="hljs-keyword">return</span> a + b
+</code></pre>
+<p><strong>ステップ1</strong></p>
+<ul>
+<li>入力：<code>def add(a, b):</code></li>
+<li>正解：<code>return</code></li>
+<li>モデルが学ぶこと：関数定義の後には「return」が来やすい（Pythonの文法）</li>
+</ul>
+<p><strong>ステップ2</strong></p>
+<ul>
+<li>入力：<code>def add(a, b): return</code></li>
+<li>正解：<code>a</code></li>
+<li>モデルが学ぶこと：足し算関数では「a + b」というパターンが来やすい</li>
+</ul>
+<p>このように、<strong>プログラミング言語の文法や、関数名と処理内容の対応関係</strong>も、「次単語予測」を通じて統計的に学ばれます。</p>
+<h3 id="5-事前学習の効果">5. 事前学習の効果</h3>
+<p>GPTの事前学習（次単語予測）は、<br>
+**「文脈から次に来る単語を予測する」**というタスクを通じて、</p>
+<ul>
+<li>文法</li>
+<li>単語の意味</li>
+<li>事実関係</li>
+<li>概念の関連性</li>
+<li>手順・因果関係<br>
+といった<strong>知識をパターンとして身につけていく</strong>仕組みです。</li>
+</ul>
+<p><strong>1. なぜ「次単語予測」で知識が身につくのか</strong></p>
+<p>GPTの学習タスクは「次に来る単語を予測する」ことですが、<br>
+<strong>「正しい続きを予測するには、文脈の意味を理解していないと難しい」</strong> という性質があります。</p>
+<p>例として、次の文を考えます。</p>
+<blockquote>
+<p>「日本の首都は______です。」</p>
+</blockquote>
+<p>ここで「次に来る単語」を予測するには、</p>
+<ul>
+<li>「日本の首都」＝「東京」という<strong>事実（知識）</strong></li>
+<li>「〜は〜です」という<strong>文法パターン</strong></li>
+</ul>
+<p>の両方が必要です。</p>
+<p>もしモデルが「日本の首都は大阪です」と予測してしまうと、<br>
+実際のテキストデータ（Wikipediaやニュースなど）では「東京」と書かれていることが多いため、<br>
+<strong>「東京」の方が出現確率が高くなる</strong>ように学習されます。</p>
+<p>このように、「次単語予測」を繰り返すうちに、</p>
+<ul>
+<li>「日本の首都は東京」</li>
+<li>「Pythonはプログラミング言語」</li>
+<li>「光の速度は約30万km/s」</li>
+</ul>
+<p>といった<strong>事実関係</strong>も、自然と「高確率で続くパターン」としてモデルに埋め込まれていきます。</p>
+<p><strong>2. 知識が「パターン」として蓄積される</strong></p>
+<p>GPTは、知識を「データベース」のように個別に保存しているわけではありません。<br>
+代わりに、<strong>「ある文脈が来たときに、どの単語が高確率で続くか」というパターン</strong>として保持しています。</p>
+<p>例1：事実のパターン</p>
+<ul>
+<li>文脈：「日本の首都は」<br>
+→ 次に来る単語として「東京」の確率が高くなる<br>
+→ 結果的に「日本の首都＝東京」という知識が身につく</li>
+</ul>
+<p>例2：概念の関係性</p>
+<ul>
+<li>文脈：「Pythonは」<br>
+→ 次に来る単語として「プログラミング言語」の確率が高くなる<br>
+→ 「Python＝プログラミング言語」という関係性が身につく</li>
+</ul>
+<p>例3：手順・因果関係</p>
+<ul>
+<li>文脈：「卵を割って、フライパンで」<br>
+→ 次に来る単語として「焼く」「炒める」などの確率が高くなる<br>
+→ 「卵料理の手順」という知識が身につく</li>
+</ul>
+<p>このように、<strong>事実・概念・手順・因果関係</strong>などが、<br>
+「文脈→次単語」の確率分布としてモデルの中に蓄積されていきます。</p>
+<p><strong>3. ただし「完璧な知識ベース」ではない</strong></p>
+<p>一方で、GPTの知識には次のような限界もあります。</p>
+<ul>
+<li><strong>確率に基づく推測</strong>
+<ul>
+<li>「もっともらしい続き」を選ぶので、事実と異なる場合もある（ハルシネーション）</li>
+</ul>
+</li>
+<li><strong>学習データに依存</strong>
+<ul>
+<li>学習データに含まれていない最新情報やニッチな知識は持っていない</li>
+</ul>
+</li>
+<li><strong>矛盾した情報の混在</strong>
+<ul>
+<li>インターネット上には正しい情報も誤情報も混在しているため、モデルも両方を学んでしまう</li>
+</ul>
+</li>
+</ul>
+<p>そのため、GPTは「百科事典のように正確な知識ベース」というより、<br>
+<strong>「大量のテキストから学んだ、確率に基づく知識の集合体」</strong> と考えるのが近いです。</p>
+<h2 id="sft">SFT</h2>
+<p>SFT（Supervised Fine-Tuning：教師あり微調整）とは、<br>
+<strong>事前学習済みのGPTモデルに対して、「指示に従う」「チャットボットとして振る舞う」といった特定の挙動を、教師データを使って追加で学習させるプロセス</strong>です。</p>
+<p>ここでは、</p>
+<ul>
+<li>SFTが何を目的としているか</li>
+<li>どんなデータを使うか（具体例）</li>
+<li>どうやって学習するか（具体例）</li>
+</ul>
+<p>の順に説明します。</p>
+<h3 id="1-sftの目的事前学習モデルを役に立つアシスタントに仕立てる">1. SFTの目的：事前学習モデルを「役に立つアシスタント」に仕立てる</h3>
+<ul>
+<li><strong>事前学習</strong>：<br>
+大量のテキストから「次単語予測」を学び、<strong>汎用的な言語能力</strong>（文法・知識・文脈理解）を身につける。</li>
+<li><strong>SFT</strong>：<br>
+そのモデルに、「ユーザーの指示に従って回答する」「対話形式で応答する」といった<strong>特定の振る舞い</strong>を追加で教え込む。</li>
+</ul>
+<p>つまり、SFTは「基礎学力はあるが、まだ何でも自由に書くだけのモデル」を、<br>
+**「チャットボットとして使えるアシスタント」**に育てるためのステップです。</p>
+<h3 id="2-sftで使うデータの具体例">2. SFTで使うデータの具体例</h3>
+<p>SFTでは、「入力（プロンプト）」と「望ましい出力（回答）」のペアを大量に用意します。<br>
+形式は主に次のようなものです。</p>
+<p><strong>例1：対話形式（チャットボット用）</strong></p>
+<p><strong>入力（プロンプト）</strong></p>
+<pre><code>ユーザー：PythonでHello Worldを出力するコードを書いてください。
+</code></pre>
+<p><strong>望ましい出力（教師データ）</strong></p>
+<p>アシスタント：以下はPythonで「Hello World」を出力するコードです。</p>
+<pre><code class="language-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Hello World&quot;</span>)
+</code></pre>
+<p>このコードを実行すると、コンソールに「Hello World」と表示されます。</p>
+<p><strong>例2：指示に従うタスク（要約）</strong></p>
+<p><strong>入力（プロンプト）</strong></p>
+<pre><code>以下の文章を3行で要約してください。
+
+【文章】
+昨日、東京で大雨が降りました。その影響で、一部の電車が遅延しました。多くの通勤客が駅に足止めされ、SNSでは「電車が動かない」といった投稿が相次ぎました。気象庁は、今後も注意を呼びかけています。
+</code></pre>
+<p><strong>望ましい出力（教師データ）</strong></p>
+<pre><code>アシスタント：東京で大雨が降り、電車が遅延して通勤客に影響が出ました。SNSでは不満の声が相次ぎ、気象庁は今後も注意を呼びかけています。
+</code></pre>
+<p><strong>例3：フォーマット指定（表形式など）</strong></p>
+<p><strong>入力（プロンプト）</strong></p>
+<pre><code>以下の商品リストを表形式で整理してください。
+
+商品名：ノートPC、価格：10万円、在庫：5台
+商品名：マウス、価格：3,000円、在庫：20個
+商品名：キーボード、価格：5,000円、在庫：15個
+</code></pre>
+<p><strong>望ましい出力（教師データ）</strong></p>
+<pre><code>アシスタント：商品リストを表形式で整理しました。
+
+| 商品名   | 価格   | 在庫 |
+|----------|--------|------|
+| ノートPC | 10万円 | 5台  |
+| マウス   | 3,000円| 20個 |
+| キーボード| 5,000円| 15個 |
+</code></pre>
+<p>このように、<strong>「ユーザーの指示」と「それに対する理想的な回答」のペア</strong>を大量に用意し、モデルに「こういうときはこう答えなさい」と教えます。</p>
+<h3 id="3-sftの学習方法具体例">3. SFTの学習方法（具体例）</h3>
+<p>SFTでは、事前学習済みモデルに対して、<strong>教師データの「出力部分」を正解として学習</strong>させます。</p>
+<p><strong>学習のイメージ</strong></p>
+<ul>
+<li>モデルへの入力：<br>
+<code>ユーザー：PythonでHello Worldを出力するコードを書いてください。</code></li>
+<li>モデルが生成するテキスト（学習前はバラバラ）：
+<ul>
+<li>「Pythonはプログラミング言語です。」</li>
+<li>「Hello Worldは伝統的な例です。」</li>
+<li>など、事前学習の延長で自由に文章を続けてしまう。</li>
+</ul>
+</li>
+</ul>
+<p>ここで、教師データの出力：</p>
+<pre><code>アシスタント：以下はPythonで「Hello World」を出力するコードです。
+
+print(&quot;Hello World&quot;)
+
+このコードを実行すると、コンソールに「Hello World」と表示されます。
+</code></pre>
+<p>を<strong>正解ラベル</strong>として与え、モデルがこのテキストを出力するように<strong>交差エントロピー損失</strong>で最適化します。</p>
+<p>つまり、</p>
+<ul>
+<li>入力：<code>ユーザー：PythonでHello Worldを出力するコードを書いてください。</code></li>
+<li>モデルが出力すべき正解：<br>
+<code>アシスタント：以下はPythonで...（教師データの通り）</code></li>
+</ul>
+<p>という対応を、大量の例で繰り返し学習させます。</p>
+<h3 id="4-sftによって何が変わるか具体例">4. SFTによって何が変わるか（具体例）</h3>
+<p><strong>学習前（事前学習だけのモデル）</strong></p>
+<ul>
+<li>入力：「PythonでHello Worldを出力するコードを書いてください。」</li>
+<li>出力例（ありがちな挙動）：
+<ul>
+<li>「Pythonは1991年に開発されたプログラミング言語です。Hello Worldは...」（百科事典的な説明）</li>
+<li>「PythonでHello Worldを出力するには、print関数を使います。」（中途半端な説明）</li>
+</ul>
+</li>
+</ul>
+<p>→ 事前学習では「次単語予測」が中心なので、<strong>指示に従ってコードを書く</strong>という挙動は弱い。</p>
+<p><strong>学習後（SFT済みモデル）</strong></p>
+<ul>
+<li>入力：「PythonでHello Worldを出力するコードを書いてください。」</li>
+<li>出力例：<pre><code>アシスタント：以下はPythonで「Hello World」を出力するコードです。
+
+print(&quot;Hello World&quot;)
+
+このコードを実行すると、コンソールに「Hello World」と表示されます。
+</code></pre>
+</li>
+</ul>
+<p>→ SFTによって、</p>
+<ul>
+<li>「ユーザーの指示に従う」</li>
+<li>「アシスタントとして振る舞う」</li>
+<li>「コードブロックを使う」</li>
+<li>「説明を添える」</li>
+</ul>
+<p>といった<strong>特定の振る舞い</strong>が強く身につきます。</p>
+<h3 id="5-sftの評価法">5. SFTの評価法</h3>
+<p>SFTの学習はあくまで模範解答と同一文章を生成したかです。</p>
+<p><strong>1. 学習中の評価：トークンレベルの一致（単語の一致）</strong></p>
+<ul>
+<li><strong>評価基準</strong>：<br>
+教師データの出力テキストを「正解」とし、モデルが出力したテキストと<strong>1単語（トークン）ずつ比較</strong>します。</li>
+<li><strong>使われる指標</strong>：<br>
+交差エントロピー損失（Cross-Entropy Loss）</li>
+<li><strong>挙動</strong>：
+<ul>
+<li>教師データと<strong>完全に同じ単語列</strong>を出力すれば損失が小さくなる</li>
+<li><strong>単語が1つでも違う</strong>と、その部分にペナルティがかかる</li>
+</ul>
+</li>
+<li><strong>特徴</strong>：
+<ul>
+<li>「意味が同じかどうか」は見ていない</li>
+<li>あくまで <strong>「教師データの通りに書けているか」</strong> を評価</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 学習後の評価：タスクごとのベンチマーク</strong></p>
+<p>但し同じ文章が生成したかだけではうまくいかないため、人がその後評価して、学習データの調整を行うことになります。</p>
+<ul>
+<li><strong>目的</strong>：<br>
+SFTによって「指示に従う」「要約する」「コードを書く」などの<strong>特定の振る舞い</strong>が身についたかを確認する。</li>
+<li><strong>評価方法の例</strong>：
+<ul>
+<li>要約タスク：要約の正確さ・情報の抜け漏れを人間や別のLLMが評価</li>
+<li>コード生成：コンパイル・実行テストで正しさを確認</li>
+<li>対話タスク：ユーザー満足度やタスク達成率を測る</li>
+</ul>
+</li>
+<li><strong>特徴</strong>：
+<ul>
+<li>ここで初めて <strong>「意味・有用性」</strong> が評価される</li>
+<li>ただし、SFTの学習そのものには直接反映されない（主に検証用）</li>
+</ul>
+</li>
+</ul>
+<h2 id="rlhf">RLHF</h2>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/12/31/082922">RLHF（Reinforcement Learning from Human Feedback：人間フィードバックによる強化学習）</a>は、<strong>人間が「どの回答が良いか」を評価し、その評価をもとにモデルを強化学習で調整する手法</strong>です。</p>
+<p>ChatGPTなどでは、SFTの後にRLHFを行うことで、</p>
+<ul>
+<li>より人間にとって<strong>自然で役に立つ回答</strong></li>
+<li>より<strong>安全で望ましい挙動</strong></li>
+</ul>
+<p>を身につけさせています。</p>
+<p>RLHFは、大きく次の3ステップで行われます。</p>
+<h3 id="1-ステップ1sft済みモデルを用意する">1. ステップ1：SFT済みモデルを用意する</h3>
+<ul>
+<li>まず、<strong>SFT（教師あり微調整）</strong> で、
+<ul>
+<li>「ユーザーの指示に従う」</li>
+<li>「チャットボットとして振る舞う」
+といった基礎的な挙動を身につけたモデルを用意します。</li>
+</ul>
+</li>
+<li>このモデルは、<strong>事前学習＋SFT</strong>によって、
+<ul>
+<li>文法</li>
+<li>知識</li>
+<li>指示への基本的な従属性
+は備えていますが、まだ「人間にとって本当に良い回答か」は調整されていません。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-ステップ2報酬モデルreward-modelを学習する">2. ステップ2：報酬モデル（Reward Model）を学習する</h3>
+<p>次に、<strong>「どの回答が良いか」を自動で評価するモデル（報酬モデル）</strong> を、人間の評価データから学習します。</p>
+<p><strong>(1) 人間が回答を評価する</strong></p>
+<ul>
+<li>同じプロンプトに対して、モデルが複数の回答（例：A, B, C）を生成します。</li>
+<li>人間がそれらを比較し、
+<ul>
+<li>「Aが一番良い」</li>
+<li>「Bはまあまあ」</li>
+<li>「Cは良くない」
+といった<strong>相対的な評価</strong>を行います。</li>
+</ul>
+</li>
+</ul>
+<p><strong>例：プロンプト</strong><br>
+「PythonでHello Worldを出力するコードを書いてください。」</p>
+<p><strong>モデル出力の例</strong></p>
+<ul>
+<li>A：コード例と簡単な説明を添えた丁寧な回答</li>
+<li>B：コードだけの簡潔な回答</li>
+<li>C：Pythonの歴史の説明だけ（質問に答えていない）</li>
+</ul>
+<p>→ 人間は「A &gt; B &gt; C」と評価します。</p>
+<p><strong>(2) 報酬モデルを学習する</strong></p>
+<ul>
+<li>これらの「プロンプト＋回答＋人間の評価」データを使って、<strong>報酬モデル</strong>を学習します。</li>
+<li>報酬モデルは、
+<ul>
+<li>入力：プロンプトとモデル出力</li>
+<li>出力：<strong>報酬スコア（高いほど良い回答）</strong>
+を返すように訓練されます。</li>
+</ul>
+</li>
+<li>これにより、<strong>人間が評価しなくても「どの回答が良いか」を自動でスコア付けできるモデル</strong>ができます。</li>
+</ul>
+<h3 id="3-ステップ3強化学習でモデルを調整する">3. ステップ3：強化学習でモデルを調整する</h3>
+<p>最後に、報酬モデルを使って、<strong>元のモデル（方策）を強化学習で更新</strong>します。</p>
+<p><strong>(1) 強化学習の設定</strong></p>
+<ul>
+<li><strong>環境</strong>：テキスト生成タスク</li>
+<li><strong>エージェント</strong>：SFT済みモデル（方策）</li>
+<li><strong>行動</strong>：単語（トークン）を1つずつ生成する</li>
+<li><strong>報酬</strong>：回答全体に対して報酬モデルが付与するスコア</li>
+</ul>
+<p><strong>(2) 学習の流れ（PPOなどのアルゴリズムを使う）</strong></p>
+<ol>
+<li>モデルがプロンプトに対して回答を生成する</li>
+<li>報酬モデルがその回答に<strong>報酬スコア</strong>を付ける</li>
+<li>強化学習アルゴリズム（例：PPO）が、
+<ul>
+<li>報酬が高くなるようにモデルのパラメータを少しずつ更新する</li>
+</ul>
+</li>
+<li>これを大量のプロンプト・回答に対して繰り返す</li>
+</ol>
+<p><strong>例：</strong></p>
+<ul>
+<li>プロンプト：「PythonでHello Worldを出力するコードを書いてください。」</li>
+<li>モデル出力が「コード＋丁寧な説明」になると報酬が高い</li>
+<li>モデル出力が「Pythonの歴史の説明だけ」になると報酬が低い</li>
+<li>→ モデルは「コード＋丁寧な説明」を生成する方向に調整される</li>
+</ul>
+<p><strong>(3) 何が変わるか</strong></p>
+<ul>
+<li><strong>有用性</strong>：質問にちゃんと答える、役に立つ情報を提供する回答が報酬高→増える</li>
+<li><strong>安全性</strong>：有害・不適切な回答は報酬低→減る</li>
+<li><strong>スタイル</strong>：丁寧で読みやすい回答が報酬高→好ましいトーンが身につく</li>
+</ul>
+<h3 id="4-rlhfの役割まとめ">4. RLHFの役割まとめ</h3>
+<ul>
+<li><strong>SFT</strong>：
+<ul>
+<li>「指示に従う」「チャットボットとして振る舞う」といった<strong>基礎的な挙動</strong>を身につける</li>
+</ul>
+</li>
+<li><strong>RLHF</strong>：
+<ul>
+<li>人間の好み（有用性・安全性・スタイル）を<strong>報酬モデルを通じて学習</strong>し、</li>
+<li>強化学習でモデルを調整することで、
+<ul>
+<li>より<strong>人間にとって良い回答</strong></li>
+<li>より<strong>安全で一貫した挙動</strong>
+を実現する</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>このように、RLHFは「人間が良いと思う回答」を基準にモデルを育てる仕組みであり、ChatGPTが「人間らしくて役に立つ」と感じられる理由の一つになっています。</p>
+<h2 id="総括">総括</h2>
+<p>LLMが「しゃべる（チャットする）」ようになるのは、大きく3つのステップで構成されています。</p>
+<h3 id="1-事前学習言葉の基礎を身につける">1. 事前学習：言葉の基礎を身につける</h3>
+<ul>
+<li><strong>何をするか</strong><br>
+大量のテキスト（ニュース・百科事典・会話・コードなど）から、「次に来る単語を予測する」練習をひたすら繰り返す。</li>
+<li><strong>何が身につくか</strong>
+<ul>
+<li>文法・単語の意味・文脈の流れ</li>
+<li>事実関係（例：「日本の首都は東京」）</li>
+<li>対話のパターン（質問→回答の流れ）</li>
+</ul>
+</li>
+<li><strong>キーポイント</strong><br>
+「次単語予測」を通じて、<strong>言語の基礎能力と知識の土台</strong>ができる。</li>
+</ul>
+<h3 id="2-sft教師あり微調整チャットボットとして振る舞うように調整">2. SFT（教師あり微調整）：チャットボットとして振る舞うように調整</h3>
+<ul>
+<li><strong>何をするか</strong><br>
+「ユーザー：〜」「アシスタント：〜」形式の対話データや、指示に従う例を大量に与え、<strong>教師データ通りに回答するように学習</strong>させる。</li>
+<li><strong>何が身につくか</strong>
+<ul>
+<li>ユーザーの指示に従う</li>
+<li>対話形式で応答する</li>
+<li>要約・コード生成など、特定のタスクをこなす</li>
+</ul>
+</li>
+<li><strong>キーポイント</strong><br>
+事前学習モデルを、「<strong>チャットボットとして使えるアシスタント</strong>」に仕立てる。</li>
+</ul>
+<h3 id="3-rlhf人間フィードバックによる強化学習人間にとって良い回答に磨き上げる">3. RLHF（人間フィードバックによる強化学習）：人間にとって「良い回答」に磨き上げる</h3>
+<ul>
+<li><strong>何をするか</strong><br>
+人間が「どの回答が良いか」を評価し、その評価をもとに<strong>報酬モデルを学習 → 強化学習でモデルを調整</strong>する。</li>
+<li><strong>何が身につくか</strong>
+<ul>
+<li>より<strong>自然で役に立つ回答</strong></li>
+<li>より<strong>安全で望ましい挙動</strong></li>
+<li>丁寧で読みやすいトーン</li>
+</ul>
+</li>
+<li><strong>キーポイント</strong><br>
+「<strong>人間が良いと思う回答</strong>」を基準に、モデルをさらに磨き上げる。</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\RLHF\doc\image\chat_mechanism\1785037184887.png" alt="1785037184887"></p>
+<p>これ一つ一つが結構な分量のデータを必要とすることになります。
+LLMがしゃべるということがこれほどのボリューミーな学習から構成されているということが伝わると幸いです。</p>
+
+            
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/_u42eRv3Yxg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+
+        </body>
+        </html>
