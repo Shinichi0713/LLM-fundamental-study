@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>DroidSlam&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>画像で収集した情報を基に3D点群と呼ばれる仮想空間上に3Dの世界を構築する技術があります。
+その中でもリアルタイム性と精度を両立する手法として深層学習を用いるSLAMなるジャンルの手法が存在します。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>深層学習を応用したSLAM手法であるDroidSlamを試行してみる</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="droidslamとは">DroidSlamとは</h2>
+<p>DroidSlam（DROID-SLAM）は、<strong>深層学習を活用した高精度な視覚SLAM（Simultaneous Localization and Mapping）手法</strong>です。<br>
+単眼（monocular）、ステレオ（stereo）、RGB-Dカメラのいずれにも対応し、<strong>ロバストなカメラ姿勢推定と3次元マップ構築</strong>を同時に行うことを目的としています。</p>
+<h3 id="1-基本コンセプト">1. 基本コンセプト</h3>
+<ul>
+<li><strong>SLAM</strong>：カメラが動きながら、自分の位置・姿勢（Localization）と周囲の3D環境（Mapping）を同時に推定する問題です。</li>
+<li>DroidSlamは、従来の特徴点ベースSLAM（ORB-SLAMなど）と異なり、<strong>ディープラーニングによる特徴抽出とマッチング</strong>を中核に据えています。</li>
+<li>特に、<strong>時系列的な視覚情報を利用した強力なトラッキング</strong>と、<strong>グラフ最適化による高精度なバンドル調整</strong>を組み合わせている点が特徴です。</li>
+</ul>
+<blockquote>
+<p><strong>バンドル調整</strong><br>
+バンドル調整（Bundle Adjustment, BA）は、<strong>カメラの姿勢（位置・向き）と3次元点群の位置を同時に最適化する手法</strong>です。</p>
+<ul>
+<li>入力：複数の画像から得た<strong>対応点（マッチングされた特徴点）</strong></li>
+<li>出力：各カメラの<strong>姿勢</strong>と、対応する3D点の<strong>座標</strong>
+<strong>直感的なイメージ</strong></li>
+<li>カメラが複数の場所から同じ物体を撮影したとします。</li>
+<li>各画像で対応する点（例：ある角の点）を結びつけます。</li>
+<li>バンドル調整は、「<strong>すべてのカメラ姿勢と3D点の位置を、観測された2D画像上の位置と最もよく一致するように調整する</strong>」最適化です。
+<strong>数式的なイメージ（簡略）</strong></li>
+<li>観測誤差（再投影誤差）を最小化します：</li>
+</ul>
+</blockquote>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mtext>カメラ姿勢</mtext><mo separator="true">,</mo><mtext>3D点</mtext></mrow></munder><mo>∑</mo><msup><mrow><mo fence="true">∥</mo><mtext>観測された2D点</mtext><mo>−</mo><mtext>再投影された2D点</mtext><mo fence="true">∥</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\min_{\text{カメラ姿勢}, \text{3D点}} \sum \left\| \text{観測された2D点} - \text{再投影された2D点} \right\|^2
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.9304em;vertical-align:-0.8804em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6679em;"><span style="top:-2.3557em;margin-left:0em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord cjk_fallback mtight">カメラ姿勢</span></span><span class="mpunct mtight">,</span><span class="mord text mtight"><span class="mord mtight">3D</span><span class="mord cjk_fallback mtight">点</span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span><span class="mop">min</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-symbol large-op" style="position:relative;top:0em;">∑</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;">∥</span><span class="mord text"><span class="mord cjk_fallback">観測された</span><span class="mord">2D</span><span class="mord cjk_fallback">点</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord text"><span class="mord cjk_fallback">再投影された</span><span class="mord">2D</span><span class="mord cjk_fallback">点</span></span><span class="mclose delimcenter" style="top:0em;">∥</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.954em;"><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<blockquote>
+<ul>
+<li>ここで「再投影された2D点」は、現在のカメラ姿勢と3D点の推定値から計算した、画像平面上の位置です。
+<strong>特徴</strong></li>
+<li><strong>同時最適化</strong>：カメラと3D点の両方を一度に調整するため、誤差が全体に分散され、一貫性の高い解が得られます。</li>
+<li><strong>SLAM/SfMの最終段階</strong>：トラッキングで得た粗い推定を、バンドル調整で精密化します。</li>
+<li><strong>計算コストが高い</strong>：点とカメラが増えると計算量が大きくなるため、実用上は局所的なBAやインクリメンタルな手法が使われます。</li>
+</ul>
+</blockquote>
+<h3 id="2-主な特徴">2. 主な特徴</h3>
+<ol>
+<li>
+<p><strong>マルチモーダル対応</strong></p>
+<ul>
+<li>単眼カメラ、ステレオカメラ、RGB-Dカメラのいずれでも動作可能です。</li>
+<li>入力画像から<strong>深層特徴</strong>を抽出し、それを基にカメラ姿勢と3D構造を推定します。</li>
+</ul>
+</li>
+<li>
+<p><strong>強力なトラッキング</strong></p>
+<ul>
+<li>フレーム間の<strong>稠密（dense）な特徴マッチング</strong>と、<strong>グラフベースの最適化</strong>により、動きの激しいシーンやテクスチャの少ない環境でも安定したトラッキングを実現します。</li>
+<li>時間方向の情報を積極的に利用し、<strong>長期的な対応関係</strong>を維持できることが強みです。</li>
+</ul>
+</li>
+<li>
+<p><strong>バンドル調整（Bundle Adjustment）</strong></p>
+<ul>
+<li>抽出した特徴点とカメラ姿勢を、<strong>グラフ最適化の枠組みで連続的に更新</strong>します。</li>
+<li>これにより、局所的な誤差を抑えつつ、全体として一貫性の高い地図と軌跡を得ることができます。</li>
+</ul>
+</li>
+<li>
+<p><strong>スケール不変性・ロバスト性</strong></p>
+<ul>
+<li>単眼カメラの場合でも、<strong>スケールのドリフトを抑える工夫</strong>が組み込まれており、長時間のシーケンスでも安定した推定が可能です。</li>
+<li>オクルージョンや動的物体が混在するシーンに対しても、ある程度ロバストに動作するよう設計されています。</li>
+</ul>
+</li>
+</ol>
+<h3 id="3-アルゴリズムの流れ概要">3. アルゴリズムの流れ（概要）</h3>
+<ol>
+<li>
+<p><strong>特徴抽出</strong></p>
+<ul>
+<li>各フレームからCNN等を用いて<strong>高次元の視覚特徴</strong>を抽出します。</li>
+</ul>
+</li>
+<li>
+<p><strong>フレーム間マッチング</strong></p>
+<ul>
+<li>現在フレームと過去フレームの間で、特徴マッチングを行い、<strong>対応点ペア</strong>を生成します。</li>
+</ul>
+</li>
+<li>
+<p><strong>ポーズ推定（トラッキング）</strong></p>
+<ul>
+<li>対応点ペアを用いて、カメラの相対姿勢を推定します。</li>
+<li>複数フレームにまたがる対応関係を<strong>グラフ構造</strong>で管理し、最適化します。</li>
+</ul>
+</li>
+<li>
+<p><strong>マップ更新（バンドル調整）</strong></p>
+<ul>
+<li>カメラ姿勢と3D点群を同時に最適化し、<strong>一貫した地図と軌跡</strong>を更新します。</li>
+</ul>
+</li>
+<li>
+<p><strong>ループクローズ</strong></p>
+<ul>
+<li>過去に訪れた場所を再訪した際に検出し、<strong>軌跡と地図の誤差を補正</strong>するループクローズ機構も備えています。</li>
+</ul>
+</li>
+</ol>
+<h3 id="4-従来手法との違い">4. 従来手法との違い</h3>
+<ul>
+<li><strong>ORB-SLAM系</strong>：手作りの特徴点（ORBなど）＋幾何ベースの最適化が中心。</li>
+<li><strong>DroidSlam</strong>：<strong>深層特徴＋グラフ最適化</strong>を組み合わせることで、より複雑なシーンや低テクスチャ環境でも高い精度とロバスト性を実現しています。</li>
+</ul>
+<h3 id="5-用途">5. 用途</h3>
+<ul>
+<li>ロボットの自律ナビゲーション</li>
+<li>AR/VRにおける環境理解</li>
+<li>動画からの3Dシーン再構築</li>
+<li>自動運転・ドローンの環境認識</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>Google ColabでDroidSlamを実行するまでの実装コードを整理していきます。</p>
+<h3 id="1-環境構築とデータの準備">1. 環境構築とデータの準備</h3>
+<p>GPU環境であることを確認した上で、DROID-SLAMのクローン、依存ライブラリ（<code>torch-scatter</code> や <code>lietorch</code>）のビルド、およびサンプルデータ（TUM RGB-D）のダウンロードを一気に行います。</p>
+<pre><code class="language-python"><span class="hljs-comment"># ==========================================</span>
+<span class="hljs-comment"># 1-1. DROID-SLAMのクローンとPythonパッケージの導入</span>
+<span class="hljs-comment"># ==========================================</span>
+%cd /content
+!git clone --recursive https://github.com/princeton-vl/DROID-SLAM.git
+%cd DROID-SLAM
+
+- !pip install open3d trimesh plotly tqdm
+
+<span class="hljs-comment"># ==========================================</span>
+<span class="hljs-comment"># 1-2. torch-scatter のインストール（バージョン自動適合）</span>
+<span class="hljs-comment"># ==========================================</span>
+<span class="hljs-keyword">import</span> torch
+pyt_version = torch.__version__.split(<span class="hljs-string">&#x27;+&#x27;</span>)[<span class="hljs-number">0</span>]
+cuda_version = torch.version.cuda.replace(<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;&#x27;</span>)
+!pip install torch-scatter -f https://data.pyg.org/whl/torch-{pyt_version}+cu{cuda_version}.html
+
+<span class="hljs-comment"># ==========================================</span>
+<span class="hljs-comment"># 1-3. C++/CUDA拡張（lietorchおよび本体）のビルド</span>
+<span class="hljs-comment"># ==========================================</span>
+%cd thirdparty/lietorch
+!python setup.py install
+%cd /content/DROID-SLAM
+!python setup.py install
+
+<span class="hljs-comment"># ==========================================</span>
+<span class="hljs-comment"># 1-4. サンプルデータセット（TUM RGB-D）のDL</span>
+<span class="hljs-comment"># ==========================================</span>
+!mkdir -p /content/datasets/TUM_RGBD
+%cd /content/datasets/TUM_RGBD
+!wget https://vision.<span class="hljs-keyword">in</span>.tum.de/rgbd/dataset/freiburg1/rgbd_dataset_freiburg1_xyz.tgz
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;データセット解凍中...&quot;</span>)
+!tar -xf rgbd_dataset_freiburg1_xyz.tgz &amp;&amp; rm rgbd_dataset_freiburg1_xyz.tgz
+
+%cd /content/DROID-SLAM
+
+</code></pre>
+<h3 id="2-欠落ファイルの補完重みキャリブレーション">2. 欠落ファイルの補完（重み・キャリブレーション）</h3>
+<p>droid slamの事前学習済みのネットワークパラメータのダウンロードと、TUM fr1用のカメラキャリブレーション（校正）ファイルを強制作成します。
+今回はhugging faceに公開されているパラメータを用います。</p>
+<pre><code class="language-python"><span class="hljs-comment"># ==========================================</span>
+<span class="hljs-comment"># 2-1. 安定したミラーから重みファイル（droid.pth）を取得</span>
+<span class="hljs-comment"># ==========================================</span>
+!mkdir -p /content/DROID-SLAM/checkpoints
+%cd /content/DROID-SLAM/checkpoints
+!rm -f droid.pth
+!wget --no-check-certificate -O droid.pth <span class="hljs-string">&quot;https://huggingface.co/vslamlab/droidslam/resolve/main/droid.pth?download=true&quot;</span>
+
+<span class="hljs-comment"># 容量確認（正常なら数十MB以上あります）</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;重みファイルのサイズ確認:&quot;</span>)
+!ls -lh droid.pth
+
+<span class="hljs-comment"># ==========================================</span>
+<span class="hljs-comment"># 2-2. キャリブレーションファイルの作成 (fx fy cx cy)</span>
+<span class="hljs-comment"># ==========================================</span>
+%cd /content/DROID-SLAM
+<span class="hljs-keyword">import</span> os
+os.makedirs(<span class="hljs-string">&#x27;calib&#x27;</span>, exist_ok=<span class="hljs-literal">True</span>)
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;calib/tum1.txt&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>) <span class="hljs-keyword">as</span> f:
+    f.write(<span class="hljs-string">&quot;517.3 516.5 318.6 255.3&quot;</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;欠落ファイルの補完が完了しました。&quot;</span>)
+
+</code></pre>
+<h3 id="3-droid-slamによる3d生成の実行">3. DROID-SLAMによる3D生成の実行</h3>
+<p>ColabのCLI環境および最新の引数仕様に合わせたコマンドです。GUI表示を無効化（<code>--disable_vis</code>）し、点群ファイルを出力します。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 最新の引数仕様（--reconstruction_path）に準拠して実行</span>
+!python demo.py \
+  --imagedir=/content/datasets/TUM_RGBD/rgbd_dataset_freiburg1_xyz/rgb \
+  --calib=calib/tum1.txt \
+  --weights=checkpoints/droid.pth \
+  --reconstruction_path=scene.ply \
+  --disable_vis
+
+</code></pre>
+<h3 id="4-reconstructionpth-の内容確認">4. reconstruction.pth の内容確認</h3>
+<p>生成された <code>reconstruction.pth</code> の中身を確認します。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+
+scene = torch.load(
+    <span class="hljs-string">&quot;/content/DROID-SLAM/reconstruction.pth&quot;</span>,
+    map_location=<span class="hljs-string">&quot;cpu&quot;</span>
+)
+
+<span class="hljs-built_in">print</span>(scene.keys())
+</code></pre>
+<p>表示例：</p>
+<pre><code class="language-text">dict_keys([
+&#x27;tstamps&#x27;,
+&#x27;images&#x27;,
+&#x27;disps&#x27;,
+&#x27;poses&#x27;,
+&#x27;intrinsics&#x27;
+])
+</code></pre>
+<ul>
+<li><code>tstamps</code>：タイムスタンプ</li>
+<li><code>images</code>：画像パス</li>
+<li><code>disps</code>：逆深度マップ（低解像度）</li>
+<li><code>poses</code>：カメラ姿勢</li>
+<li><code>intrinsics</code>：カメラ内部パラメータ</li>
+</ul>
+<h3 id="5-reconstructpy-の準備">5. <a href="http://reconstruct.py">reconstruct.py</a> の準備</h3>
+<p><code>reconstruct.py</code> を <code>/content/DROID-SLAM/</code> に保存します。</p>
+<ul>
+<li>このスクリプトは <code>reconstruction.pth</code> から <code>scene.ply</code>（カラー点群）を生成します。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> open3d <span class="hljs-keyword">as</span> o3d
+<span class="hljs-keyword">import</span> cv2
+<span class="hljs-keyword">from</span> scipy.spatial.transform <span class="hljs-keyword">import</span> Rotation
+
+
+<span class="hljs-comment"># --------------------------</span>
+<span class="hljs-comment"># load</span>
+<span class="hljs-comment"># --------------------------</span>
+
+scene = torch.load(<span class="hljs-string">&quot;reconstruction.pth&quot;</span>, map_location=<span class="hljs-string">&quot;cpu&quot;</span>)
+
+images = scene[<span class="hljs-string">&quot;images&quot;</span>].numpy()
+disps = scene[<span class="hljs-string">&quot;disps&quot;</span>].numpy()
+poses = scene[<span class="hljs-string">&quot;poses&quot;</span>].numpy()
+intrinsics = scene[<span class="hljs-string">&quot;intrinsics&quot;</span>].numpy()
+
+N = images.shape[<span class="hljs-number">0</span>]
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Frames:&quot;</span>, N)
+
+
+<span class="hljs-comment"># --------------------------</span>
+<span class="hljs-comment"># point cloud</span>
+<span class="hljs-comment"># --------------------------</span>
+
+pcd = o3d.geometry.PointCloud()
+
+all_xyz = []
+all_rgb = []
+
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(N):
+
+    img = images[i].transpose(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">0</span>)
+
+    disp = disps[i]
+
+    fx,fy,cx,cy = intrinsics[i]
+
+    h,w = disp.shape
+
+    <span class="hljs-comment"># disparity -&gt; depth</span>
+    depth = np.zeros_like(disp)
+
+    mask = disp &gt; <span class="hljs-number">1e-6</span>
+
+    depth[mask] = <span class="hljs-number">1.0</span> / disp[mask]
+
+    <span class="hljs-comment"># RGBをDepth解像度へ縮小</span>
+    img_small = cv2.resize(
+        img,
+        (w,h),
+        interpolation=cv2.INTER_LINEAR
+    )
+
+    u,v = np.meshgrid(np.arange(w),np.arange(h))
+
+    X = (u-cx)*depth/fx
+    Y = (v-cy)*depth/fy
+    Z = depth
+
+    xyz = np.stack([X,Y,Z],axis=-<span class="hljs-number">1</span>).reshape(-<span class="hljs-number">1</span>,<span class="hljs-number">3</span>)
+
+    rgb = img_small.reshape(-<span class="hljs-number">1</span>,<span class="hljs-number">3</span>)/<span class="hljs-number">255.</span>
+
+    valid = np.isfinite(xyz).<span class="hljs-built_in">all</span>(axis=<span class="hljs-number">1</span>)
+    valid &amp;= (xyz[:,<span class="hljs-number">2</span>]&gt;<span class="hljs-number">0</span>)
+    valid &amp;= (xyz[:,<span class="hljs-number">2</span>]&lt;<span class="hljs-number">20</span>)
+
+    xyz = xyz[valid]
+    rgb = rgb[valid]
+
+    <span class="hljs-comment"># pose</span>
+    t = poses[i,:<span class="hljs-number">3</span>]
+
+    q = poses[i,<span class="hljs-number">3</span>:]
+
+    R = Rotation.from_quat(q).as_matrix()
+
+    xyz = xyz @ R.T + t
+
+    all_xyz.append(xyz)
+    all_rgb.append(rgb)
+
+
+
+points = np.concatenate(all_xyz,axis=<span class="hljs-number">0</span>)
+colors = np.concatenate(all_rgb,axis=<span class="hljs-number">0</span>)
+
+<span class="hljs-built_in">print</span>(points.shape)
+
+
+pcd.points = o3d.utility.Vector3dVector(points)
+pcd.colors = o3d.utility.Vector3dVector(colors)
+
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Voxel Downsample...&quot;</span>)
+
+pcd = pcd.voxel_down_sample(<span class="hljs-number">0.02</span>)
+
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Remove Outlier...&quot;</span>)
+
+pcd,_ = pcd.remove_statistical_outlier(
+    nb_neighbors=<span class="hljs-number">20</span>,
+    std_ratio=<span class="hljs-number">2.0</span>
+)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Estimate Normal...&quot;</span>)
+
+pcd.estimate_normals()
+
+
+o3d.io.write_point_cloud(<span class="hljs-string">&quot;scene.ply&quot;</span>,pcd)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;saved scene.ply&quot;</span>)
+</code></pre>
+<h3 id="6-colab上での3d可視化">6. Colab上での3D可視化</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> open3d <span class="hljs-keyword">as</span> o3d
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> plotly.graph_objects <span class="hljs-keyword">as</span> go
+
+pcd = o3d.io.read_point_cloud(<span class="hljs-string">&quot;/content/DROID-SLAM/scene.ply&quot;</span>)
+
+pts = np.asarray(pcd.points)
+cols = np.asarray(pcd.colors)
+
+<span class="hljs-comment"># 50000点だけ表示（Colabでは十分）</span>
+idx = np.random.choice(<span class="hljs-built_in">len</span>(pts), <span class="hljs-number">50000</span>, replace=<span class="hljs-literal">False</span>)
+
+pts = pts[idx]
+cols = cols[idx]
+
+rgb = [
+    <span class="hljs-string">f&quot;rgb(<span class="hljs-subst">{<span class="hljs-built_in">int</span>(r*<span class="hljs-number">255</span>)}</span>,<span class="hljs-subst">{<span class="hljs-built_in">int</span>(g*<span class="hljs-number">255</span>)}</span>,<span class="hljs-subst">{<span class="hljs-built_in">int</span>(b*<span class="hljs-number">255</span>)}</span>)&quot;</span>
+    <span class="hljs-keyword">for</span> r,g,b <span class="hljs-keyword">in</span> cols
+]
+
+fig = go.Figure(
+    go.Scatter3d(
+        x=pts[:,<span class="hljs-number">0</span>],
+        y=pts[:,<span class="hljs-number">1</span>],
+        z=pts[:,<span class="hljs-number">2</span>],
+        mode=<span class="hljs-string">&quot;markers&quot;</span>,
+        marker=<span class="hljs-built_in">dict</span>(
+            size=<span class="hljs-number">2</span>,
+            color=rgb,
+            opacity=<span class="hljs-number">0.8</span>
+        )
+    )
+)
+
+fig.update_layout(
+    width=<span class="hljs-number">900</span>,
+    height=<span class="hljs-number">700</span>,
+    scene=<span class="hljs-built_in">dict</span>(aspectmode=<span class="hljs-string">&quot;data&quot;</span>)
+)
+
+fig.show()
+</code></pre>
+<h3 id="5-結果">5. 結果</h3>
+<p>出力される3D点群データは以下のようなものです。
+精度はよくありませんが、一旦処理はできることが確認出来ました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\droid_slam\image\readme\1783242351462.png" alt="1783242351462"></p>
+<h2 id="総括">総括</h2>
+<p>Droid Slamを用いて画像から3D点群を生成できることは確認出来ました。
+環境構築には結構な時間がかかりますが、処理は非常に高速でリアルタイムの名に恥じません。</p>
+<p>他方、点群精度は未だよくないので、今後使えるレベルとなるように改修を行っていきたいと思います。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/MEmvk3ZSs0M?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
