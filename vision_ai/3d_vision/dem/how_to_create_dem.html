@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>DEM&#x306e;&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>3次元点群を扱っていると3次元的に地形を理解したいという要望を頂くことがあります。
+3次元的に地形を理解するという上では3D点群データを用いることで実現できますが、3D点群データは使ってみると、情報がありすぎるからか、どこにフォーカスするか分かりづらいという面があります。</p>
+<p>そんな時、位置と高さを俯瞰してみたい場合に用いるデータがDEMと呼ばれるものです。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="demの概要">DEMの概要</h2>
+<p>DEM（Digital Elevation Model）は、<strong>地表の高さ（標高）をデジタル表現したデータ</strong>です。<br>
+簡単に言うと、「地面の高さを格子状に並べた標高マップ」です。</p>
+<h3 id="demの基本イメージ">DEMの基本イメージ</h3>
+<ul>
+<li>地図上の各点（ピクセル）に<strong>標高値（Z値）</strong> が入っている。</li>
+<li>山や谷、平地など、地形の起伏を数値として持つ。</li>
+<li>通常は<strong>2Dグリッド（格子）</strong> または<strong>不規則な点群</strong>として表現されます。</li>
+</ul>
+<p><strong>主な種類</strong></p>
+<ol>
+<li>
+<p><strong>DSM（Digital Surface Model）</strong></p>
+<ul>
+<li>地表＋建物・樹木など<strong>すべての表面の高さ</strong>を含む。</li>
+<li>オルソ画像生成や都市解析でよく使われます。</li>
+</ul>
+</li>
+<li>
+<p><strong>DTM（Digital Terrain Model）</strong></p>
+<ul>
+<li>建物・樹木を除去した<strong>地面そのものの高さ</strong>だけを表す。</li>
+<li>水の流れ解析（水文解析）や地形形状の把握に使われます。</li>
+</ul>
+</li>
+</ol>
+<p>一般に「DEM」というと、DSM/DTMの総称として使われることが多いです。</p>
+<p><strong>主な用途</strong></p>
+<ul>
+<li><strong>地形の可視化（陰影図・標高段彩図）</strong></li>
+<li><strong>傾斜・斜面方向の計算</strong></li>
+<li><strong>水の流れ・浸水範囲のシミュレーション</strong></li>
+<li><strong>道路・鉄道のルート検討、土量計算</strong></li>
+<li><strong>オルソ画像生成時の歪み補正</strong>（地形の高さを考慮して写真を正射投影）</li>
+</ul>
+<p><strong>作成方法の例</strong></p>
+<ul>
+<li><strong>航空写真＋ステレオマッチング</strong></li>
+<li><strong>レーザー測量（LiDAR）</strong></li>
+<li><strong>SAR（合成開口レーダー）</strong></li>
+<li><strong>既存の地形図からの等高線読み取り</strong></li>
+</ul>
+<h2 id="demの特徴用途">DEMの特徴・用途</h2>
+<p>DEMは「地面の高さを数値で表現したデータ」で、ずばり高さ付きの地図という形容が出来ると思います。
+DEMには、主に以下の特徴と用途があります。</p>
+<h3 id="主な特徴">主な特徴</h3>
+<ul>
+<li>
+<p><strong>標高を数値で持つ</strong><br>
+地図上の各点（ピクセル）に標高値（Z値）が入っており、山・谷・平地の起伏を表現します。</p>
+</li>
+<li>
+<p><strong>2Dグリッドまたは点群で表現</strong><br>
+規則的な格子（ラスター）や不規則な点群として扱われます。</p>
+</li>
+<li>
+<p><strong>DSMとDTMの区別</strong></p>
+<ul>
+<li><strong>DSM</strong>：地表＋建物・樹木など「最表面」の高さ</li>
+<li><strong>DTM</strong>：建物・樹木を除いた「地面だけ」の高さ<br>
+一般に「DEM」は両者の総称として使われます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="主な用途">主な用途</h3>
+<ul>
+<li>
+<p><strong>地形の可視化</strong><br>
+陰影図・標高段彩図などで地形の起伏を分かりやすく表示します。</p>
+</li>
+<li>
+<p><strong>傾斜・斜面方向の計算</strong><br>
+道路設計や地すべりリスク評価などに利用します。</p>
+</li>
+<li>
+<p><strong>水の流れ・浸水シミュレーション</strong><br>
+河川氾濫や浸水範囲の予測に使われます。</p>
+</li>
+<li>
+<p><strong>都市計画・インフラ計画</strong><br>
+道路・鉄道のルート検討、土量計算、建物配置の検討など。</p>
+</li>
+<li>
+<p><strong>オルソ画像生成の補正</strong><br>
+地形の高さを考慮して航空写真を正射投影し、歪みを除去します。</p>
+</li>
+<li>
+<p><strong>農業・林業・環境モニタリング</strong><br>
+農地の区画管理、森林の樹高・成長状況の把握など。</p>
+</li>
+</ul>
+<h2 id="dem生成の内部処理">DEM生成の内部処理</h2>
+<p>LAS/LAZファイルからDEM（地表面標高モデル）を作成する内部処理は、「3次元の散乱した点から、地表の高さだけを抜き出して綺麗な2D方眼紙（メッシュ）に当てはめる作業」です。</p>
+<p>全体の処理は、大きく<strong>4つのステップ</strong>で進みます。</p>
+<h3 id="内部処理の4ステップ">内部処理の4ステップ</h3>
+<pre><code>[ 1. フィルタリング ]   地表以外の点（建物・木など）を取り除く
+         ↓
+[ 2. グリッド分割 ]     2Dの方眼紙（メッシュ）を準備する
+         ↓
+[ 3. 標高の決定 ]       各マス目の代表となる標高値を決める
+         ↓
+[ 4. 穴埋め・補間 ]     点が足りないマス目を周囲から埋める
+
+</code></pre>
+<p><strong>ステップ1: フィルタリング（地表点の抽出）</strong></p>
+<p>LASデータにはレーザーが当たったすべての点（屋根、木の葉、電線、地表）が含まれています。DEMに必要なのは<strong>地表（Ground）の点だけ</strong>です。</p>
+<ul>
+<li><strong>タグがある場合:</strong> データ内に <code>Class = 2</code>（Ground）のタグがあれば、その点だけを抽出します。</li>
+<li><strong>タグがない場合（内部アルゴリズム）:</strong>
+<strong>CSF (Cloth Simulation Filter)</strong> などのアルゴリズムを裏で動かします。これは「点群全体を上下逆さまにし、上から柔らかい布を被せたときに、布が触れる場所を地表とみなす」というシミュレーションを行う処理です。</li>
+</ul>
+<p><strong>ステップ2: 2Dグリッド分割（方眼紙の作成）</strong></p>
+<p>点群の最小・最大座標（X, Y）からデータ全体の範囲を求め、作成したい解像度（例: 1m×1m）で2次元のマス目（配列）を作成します。</p>
+<p>各点群の (X, Y) 座標を計算し、「この点は方眼紙の何行・何列目のマスに入るか」を割り当てていきます。</p>
+<p><strong>ステップ3: ピクセル内の標高決定（ラスタライズ）</strong></p>
+<p>1つのマス目（1m×1m）の中に、複数の点が入ることがあります。そのマス目の代表となる標高（Z値）を1つに決定します。</p>
+<p>代表値を決める主なルール：</p>
+<ul>
+<li><strong>最小値（Minimum）:</strong> マス目の中で一番低いZ値を採用（地表の高さとして最も標準的）。</li>
+<li><strong>平均値（Mean）:</strong> マス目内の点の平均値を採用。</li>
+<li><strong>逆距離加重法（IDW）:</strong> マス目の中心に近い点ほど影響度（重み）を大きくして標高を計算。</li>
+</ul>
+<p><strong>ステップ4: 穴埋め・補間（Interpolation）</strong></p>
+<p>樹木が鬱蒼と茂っている場所や建物の真下など、レーザーが届かず点が1つも入らなかった空白のマス目（NaN）が生じます。</p>
+<p>この「穴」を埋めるために、周囲のマス目の標高を使って補間計算を行います。</p>
+<ul>
+<li><strong>最近傍補間（Nearest Neighbor）:</strong> 一番近いマス目の標高をそのままコピー（処理が高速）。</li>
+<li><strong>TIN（三角網）補間:</strong> 周囲の点同士を結んで三角形の面をつくり、その傾きから標高を計算（最も自然で滑らか）。</li>
+</ul>
+<p><strong>最終出力</strong></p>
+<p>補間が終わった2D配列に、位置情報（座標系や1ピクセルの大きさ）をヘッダー情報として付加し、<strong>GeoTIFF形式</strong>などの画像・GISデータとして書き出します。これがDEMデータの正体です。</p>
+<h2 id="lazからdem生成">LAZからDEM生成</h2>
+<p>LAZファイルからのDEM（Digital Elevation Model：デジタル標高モデル）生成は、GIS処理や点群解析において最も標準的なユースケースの一つです。</p>
+<p>LAZ点群データには、建物・樹木・地表などすべての点が含まれています。ここから地表面（Ground）の点だけを抽出（フィルタリング）してラスタライズ（格子化）することでDEMを作成できます。</p>
+<h3 id="lazデータの必要条件">LAZデータの必要条件</h3>
+<p>LAS/LAZファイルからDEMを作成するには以下の条件が必要です。</p>
+<ul>
+<li><strong>Ground（地表）タグの有無:</strong>
+データに <code>Class 2</code>（地表点）が付与されているか。付与されていない場合は、自前で建物や樹木を除去するフィルタリング処理（CSF等）が必要です。</li>
+<li><strong>平面直角座標系（メートル単位）:</strong>
+データに位置情報（CRS）が含まれ、緯度経度ではなく<strong>メートル単位の座標系</strong>になっていること（1mメッシュなどの格子化を正確に行うため）。</li>
+<li><strong>十分な点群密度:</strong>
+作成したいDEMの解像度（例: 1mメッシュ）に対して、1㎡あたり1点以上の点群密度があること。密度が低い場所は補間処理で埋める必要があります。</li>
+</ul>
+<h3 id="2つの作成アプローチ">2つの作成アプローチ</h3>
+<p>点群の分類情報（Classification）の有無によって、処理方法が分かれます。</p>
+<ol>
+<li><strong>データ内に「Ground（地表面）」分類がすでに含まれている場合:</strong>
+<code>las.classification == 2</code>（ASPRS規格で 2 = Ground）の点のみを抽出し、そのZ値（標高）をグリッド化します。オープンデータのLAZ/LASファイルの多くは、すでにこの分類が付与されています。</li>
+<li><strong>未分類のデータの場合:</strong>
+<code>CSF (Cloth Simulation Filter)</code> などのアルゴリズムを使って、プログラム上で地表面とそれ以外（建物・樹木）を分離してからグリッド化します。</li>
+</ol>
+<h3 id="実験設定">実験設定</h3>
+<p>以下の公開された富士山の点群データ(las形式)を用いてLAS点群データからDEMを生成してみようと思います。</p>
+<p>公開元データの配布場所：<a href="https://gsj-seamless.jp/pointCloud/sample/crater/">https://gsj-seamless.jp/pointCloud/sample/crater/</a></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\dem\image\laz_to_ortho\1785062336446.png" alt="1785062336446"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\dem\image\laz_to_ortho\1785063568309.png" alt="1785063568309"></p>
+<p>ダウンロードした3D点群を立体的に可視化したい場合以下コードを使ってください。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> laspy
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> plotly.graph_objects <span class="hljs-keyword">as</span> go
+
+las = laspy.read(<span class="hljs-string">&quot;08ME3562.las&quot;</span>)
+
+<span class="hljs-comment"># 描画負荷を軽くするため100点に1点抽出（ダウンサンプリング）</span>
+skip = <span class="hljs-number">100</span>
+x = las.x[::skip]
+y = las.y[::skip]
+z = las.z[::skip]
+
+<span class="hljs-comment"># RGBカラーの生成 (0-255表記に変換)</span>
+r = (las.red[::skip] / <span class="hljs-number">256</span>).astype(<span class="hljs-built_in">int</span>)
+g = (las.green[::skip] / <span class="hljs-number">256</span>).astype(<span class="hljs-built_in">int</span>)
+b = (las.blue[::skip] / <span class="hljs-number">256</span>).astype(<span class="hljs-built_in">int</span>)
+color_strings = [<span class="hljs-string">f&#x27;rgb(<span class="hljs-subst">{r_i}</span>,<span class="hljs-subst">{g_i}</span>,<span class="hljs-subst">{b_i}</span>)&#x27;</span> <span class="hljs-keyword">for</span> r_i, g_i, b_i <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(r, g, b)]
+
+<span class="hljs-comment"># Plotlyで3D散布図を描画</span>
+fig = go.Figure(data=[go.Scatter3d(
+    x=x, y=y, z=z,
+    mode=<span class="hljs-string">&#x27;markers&#x27;</span>,
+    marker=<span class="hljs-built_in">dict</span>(
+        size=<span class="hljs-number">1.5</span>,
+        color=color_strings,
+        opacity=<span class="hljs-number">0.8</span>
+    )
+)])
+
+fig.update_layout(
+    scene=<span class="hljs-built_in">dict</span>(aspectmode=<span class="hljs-string">&#x27;data&#x27;</span>),
+    title=<span class="hljs-string">&quot;富士山火口 3D点群プレビュー (Plotly)&quot;</span>
+)
+
+fig.show()
+</code></pre>
+<h3 id="pythonによる実装コード例google-colab対応">Pythonによる実装コード例（Google Colab対応）</h3>
+<p>以下は、LASファイルから<strong>地表面（Ground）の点を抽出し、1mメッシュのGeoTIFF形式DEM（標高画像）を出力する</strong>コードです。</p>
+<p>事前に必要なライブラリをインストールしてください：</p>
+<pre><code class="language-bash">pip install laspy[lazrs] numpy rasterio
+
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> laspy
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> rasterio
+<span class="hljs-keyword">from</span> rasterio.transform <span class="hljs-keyword">import</span> from_origin
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+<span class="hljs-comment"># 1. LAS/LAZファイルの読み込み</span>
+las_file = <span class="hljs-string">&quot;08ME3562.las&quot;</span>  <span class="hljs-comment"># または sample.laz</span>
+las = laspy.read(las_file)
+
+<span class="hljs-comment"># 2. 地表面（Ground: Classification 2）の点を抽出</span>
+<span class="hljs-comment"># ※もし地表分類が付与されていないデータの場合は、全点 (las.z) を使用します</span>
+ground_mask = (las.classification == <span class="hljs-number">2</span>)
+
+<span class="hljs-keyword">if</span> np.<span class="hljs-built_in">sum</span>(ground_mask) &gt; <span class="hljs-number">0</span>:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;地表点（Ground）を抽出しました: <span class="hljs-subst">{np.<span class="hljs-built_in">sum</span>(ground_mask):,}</span> 点&quot;</span>)
+    x = las.x[ground_mask]
+    y = las.y[ground_mask]
+    z = las.z[ground_mask]
+<span class="hljs-keyword">else</span>:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;地表分類タグが見つかりませんでした。全点群を使用してDEMを生成します。&quot;</span>)
+    x, y, z = las.x, las.y, las.z
+
+<span class="hljs-comment"># 3. 2Dグリッド（DEM）の設定</span>
+pixel_size = <span class="hljs-number">1.0</span>  <span class="hljs-comment"># DEMの解像度（1ピクセル = 1m）</span>
+
+x_min, x_max = np.<span class="hljs-built_in">min</span>(x), np.<span class="hljs-built_in">max</span>(x)
+y_min, y_max = np.<span class="hljs-built_in">min</span>(y), np.<span class="hljs-built_in">max</span>(y)
+
+width = <span class="hljs-built_in">int</span>(np.ceil((x_max - x_min) / pixel_size))
+height = <span class="hljs-built_in">int</span>(np.ceil((y_max - y_min) / pixel_size))
+
+<span class="hljs-comment"># ピクセル座標の計算</span>
+col_idx = np.floor((x - x_min) / pixel_size).astype(<span class="hljs-built_in">int</span>)
+row_idx = np.floor((y_max - y) / pixel_size).astype(<span class="hljs-built_in">int</span>)
+
+col_idx = np.clip(col_idx, <span class="hljs-number">0</span>, width - <span class="hljs-number">1</span>)
+row_idx = np.clip(row_idx, <span class="hljs-number">0</span>, height - <span class="hljs-number">1</span>)
+
+<span class="hljs-comment"># 4. グリッドへの標高値（Z値）の割り当て</span>
+<span class="hljs-comment"># 初期値はNaN（データなし）に設定</span>
+dem = np.full((height, width), np.nan, dtype=np.float32)
+
+<span class="hljs-comment"># 各ピクセル内で「最も標高が低い点（Minimum Z）」を採用して地表高とする</span>
+<span class="hljs-comment"># ※単純な上書きではなく、同じセルに複数点ある場合の統計値をとります</span>
+<span class="hljs-keyword">for</span> r, c, z_val <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(row_idx, col_idx, z):
+    <span class="hljs-keyword">if</span> np.isnan(dem[r, c]) <span class="hljs-keyword">or</span> z_val &lt; dem[r, c]:
+        dem[r, c] = z_val
+
+<span class="hljs-comment"># 5. 空白セル（データのない穴）の単純補間（Nearest Neighbor）</span>
+<span class="hljs-comment"># 点群の隙間がある場合は近傍の値で埋める処理</span>
+nan_mask = np.isnan(dem)
+<span class="hljs-keyword">if</span> np.<span class="hljs-built_in">any</span>(nan_mask):
+    <span class="hljs-keyword">from</span> scipy.ndimage <span class="hljs-keyword">import</span> distance_transform_edt
+    indices = distance_transform_edt(nan_mask, return_distances=<span class="hljs-literal">False</span>, return_indices=<span class="hljs-literal">True</span>)
+    dem = dem[<span class="hljs-built_in">tuple</span>(indices)]
+
+<span class="hljs-comment"># 6. GeoTIFF形式でDEMを保存</span>
+transform = from_origin(x_min, y_max, pixel_size, pixel_size)
+output_dem_tif = <span class="hljs-string">&quot;output_dem.tif&quot;</span>
+
+<span class="hljs-keyword">with</span> rasterio.<span class="hljs-built_in">open</span>(
+    output_dem_tif,
+    <span class="hljs-string">&#x27;w&#x27;</span>,
+    driver=<span class="hljs-string">&#x27;GTiff&#x27;</span>,
+    height=height,
+    width=width,
+    count=<span class="hljs-number">1</span>,
+    dtype=dem.dtype,
+    crs=las.header.parse_crs() <span class="hljs-keyword">if</span> las.header.parse_crs() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;EPSG:6676&quot;</span>,
+    transform=transform,
+    nodata=-<span class="hljs-number">9999.0</span>
+) <span class="hljs-keyword">as</span> dst:
+    dst.write(dem, <span class="hljs-number">1</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;DEM（GeoTIFF）の保存が完了しました: <span class="hljs-subst">{output_dem_tif}</span>&quot;</span>)
+
+<span class="hljs-comment"># 7. DEMのプレビュー表示（カラーマップによる起伏可視化）</span>
+plt.figure(figsize=(<span class="hljs-number">10</span>, <span class="hljs-number">8</span>))
+plt.imshow(dem, cmap=<span class="hljs-string">&#x27;terrain&#x27;</span>)
+plt.colorbar(label=<span class="hljs-string">&#x27;Elevation (m)&#x27;</span>)
+plt.title(<span class="hljs-string">&quot;Generated DEM (Digital Elevation Model)&quot;</span>)
+plt.axis(<span class="hljs-string">&#x27;off&#x27;</span>)
+plt.show()
+
+</code></pre>
+<p>上記を実行した結果は以下通りとなります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\3d_vision\dem\image\how_to_create_dem\1785065167085.png" alt="1785065167085"></p>
+<h3 id="dem作成時の重要なポイント">DEM作成時の重要なポイント</h3>
+<ul>
+<li>
+<p><strong>DSMとDEMの違い:</strong></p>
+</li>
+<li>
+<p><strong>DSM (Digital Surface Model):</strong> 建物や樹木の頂部を含めた最表面の標高モデル。<code>las.z</code> の最高値（Maximum Z）を格子化して作成します。</p>
+</li>
+<li>
+<p><strong>DEM/DTM (Digital Elevation/Terrain Model):</strong> 建物や樹木を取り除いた純粋な地表の標高モデル。Ground点を抽出し、最低値（Minimum Z）や平均値を格子化して作成します。</p>
+</li>
+<li>
+<p><strong>補間（Interpolation）の選択:</strong>
+実務レベルで高品質なDEMを作る場合は、<code>scipy.interpolate.griddata</code>（TIN補間）や <code>PDAL</code> の <code>writers.gdal</code> モジュールを使用すると、地形の凹凸を滑らかに補間できます。</p>
+</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>LAZ/LASからDEMを作るキーポイントは、<strong>「地表点だけを選び、格子に落として穴を埋める」</strong> ことです。</p>
+<ul>
+<li><strong>地表点だけ使う</strong>：Groundタグ（Class=2）かCSFで地表を抽出。</li>
+<li><strong>格子化</strong>：1mメッシュなどでピクセルを作り、各マス目の最低標高を採用。</li>
+<li><strong>穴埋め</strong>：点が届かない箇所は周囲から補間（最近傍・TINなど）。</li>
+<li><strong>DSM/DTMの区別</strong>：DSMは最表面（建物・樹木含む）、DEMは地面だけ。</li>
+</ul>
+<p>これで「地面の高さだけの地図（DEM）」ができます。</p>
+<p>LAS/LAZの点群データを取得の上、Pythonパッケージの<code>rasterio</code>を使うことで生成自体は上記の通り行うことが出来ます。
+というお話でした。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/_u42eRv3Yxg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
