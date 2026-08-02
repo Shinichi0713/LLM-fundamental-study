@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>最近一つの画像に複数の対象が移った個々の画像のセマンティック検索をしたいという要望を感じることが多々あります。
+そんな要望に合いそうな論文を探していてCVPRからノミネートしてきました。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>&quot;RegionCLIP: Region-based Language–Image Pretraining&quot;について調べてみる</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="概要">概要</h2>
+<p><strong>RegionCLIP</strong>（Zhong et al., CVPR 2022）の論文概要を整理します。</p>
+<h3 id="論文情報">論文情報</h3>
+<ul>
+<li><strong>タイトル</strong>：RegionCLIP: Region-based Language–Image Pretraining</li>
+<li><strong>著者</strong>：Yiwu Zhong, Jianwei Yang, Pengchuan Zhang, Chunyuan Li, Jianfeng Gao, etc.</li>
+<li><strong>学会</strong>：CVPR 2022</li>
+<li><strong>キーワード</strong>：CLIP, region-based pretraining, open-vocabulary detection, semantic image retrieval</li>
+</ul>
+<h3 id="背景と問題意識">背景と問題意識</h3>
+<ul>
+<li><strong>CLIP</strong> は画像全体とテキスト全体を対照学習するため、
+<ul>
+<li>画像内の<strong>特定の領域（オブジェクト）</strong> とテキストの対応を直接学習していない。</li>
+<li>そのため、<strong>オブジェクトレベルのセマンティック検索</strong>や<br>
+<strong>オープンボキャブラリ物体検出</strong>（未知のカテゴリも検出）には限界があった。</li>
+</ul>
+</li>
+<li>RegionCLIP は、
+<ul>
+<li><strong>画像の領域（region）レベル</strong>で画像–テキスト対照学習を行うことで、</li>
+<li>オブジェクト単位の意味理解を強化することを目指す。</li>
+</ul>
+</li>
+</ul>
+<h3 id="手法の概要">手法の概要</h3>
+<p><strong>1. 基本的なアイデア</strong></p>
+<ul>
+<li><strong>物体検出器</strong>（例：Faster R-CNN）で画像から<strong>候補領域（region proposals）</strong> を抽出。</li>
+<li>各候補領域を<strong>CLIP の画像エンコーダ</strong>に入力し、<strong>領域ごとのベクトル</strong>を得る。</li>
+<li>テキスト側も CLIP のテキストエンコーダでベクトル化。</li>
+<li><strong>領域ベクトルとテキストベクトル</strong>を対照学習し、<br>
+「この領域はこのテキストに対応する」という対応関係を学習。</li>
+</ul>
+<p><strong>2. 学習のポイント</strong></p>
+<ul>
+<li><strong>Region–Text 対照学習</strong>：
+<ul>
+<li>画像全体ではなく、<strong>各領域とテキスト</strong>の類似度を最大化。</li>
+<li>これにより、オブジェクトレベルの意味表現が強化される。</li>
+</ul>
+</li>
+<li><strong>擬似ラベルの活用</strong>：
+<ul>
+<li>物体検出器の出力（クラスラベル）をそのまま使うのではなく、<br>
+CLIP のテキストエンコーダで得た<strong>テキスト埋め込み</strong>と照合し、<br>
+最も類似するテキストをその領域の「擬似ラベル」として利用。</li>
+</ul>
+</li>
+<li><strong>オープンボキャブラリ対応</strong>：
+<ul>
+<li>テキスト側を自由に変えられるため、<br>
+学習時に見ていないカテゴリ名（例：「ユニコーン」「マスク」）でも、<br>
+テキストとして与えれば対応する領域を検出可能。</li>
+</ul>
+</li>
+</ul>
+<h3 id="実験と結果">実験と結果</h3>
+<p><strong>1. オープンボキャブラリ物体検出</strong></p>
+<ul>
+<li>LVIS などのデータセットで、
+<ul>
+<li><strong>学習時に見ていないカテゴリ</strong>も含めて物体検出できるか評価。</li>
+</ul>
+</li>
+<li>RegionCLIP は、
+<ul>
+<li>既存の CLIP ベース手法より<strong>高い精度</strong>でオープンボキャブラリ検出を実現。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. セマンティック画像検索</strong></p>
+<ul>
+<li>画像内の<strong>特定のオブジェクト</strong>に着目した検索タスクで評価。</li>
+<li>RegionCLIP は、
+<ul>
+<li>画像全体を扱う CLIP よりも、 <strong>オブジェクトレベルの検索精度が向上</strong>することを示した。</li>
+</ul>
+</li>
+</ul>
+<h3 id="まとめ">まとめ</h3>
+<ul>
+<li><strong>RegionCLIP</strong> は、
+<ul>
+<li>CLIP を<strong>領域レベル</strong>に拡張した手法で、</li>
+<li>画像内の各オブジェクトとテキストの対応を直接学習する。</li>
+</ul>
+</li>
+<li>これにより、
+<ul>
+<li><strong>オープンボキャブラリ物体検出</strong></li>
+<li><strong>オブジェクトレベルのセマンティック検索</strong><br>
+の性能が向上することが示された。</li>
+</ul>
+</li>
+</ul>
+<h2 id="課題">課題</h2>
+<p><strong>RegionCLIP</strong> が解決しようとした主な課題は、以下の2点です。</p>
+<h3 id="課題1clip-は画像全体の意味しか捉えられない">課題1：CLIP は「画像全体」の意味しか捉えられない</h3>
+<ul>
+<li><strong>CLIP</strong> は、
+<ul>
+<li>画像全体を1つのベクトルにまとめ、</li>
+<li>テキスト全体と対照学習するため、<br>
+<strong>画像内の個々のオブジェクト（領域）とテキストの対応</strong>を直接学習していません。</li>
+</ul>
+</li>
+<li>その結果、
+<ul>
+<li>「犬とボールが写っている画像」全体は検索できても、</li>
+<li>「犬だけが写っている領域」をピンポイントで検索するのは難しい、<br>
+という<strong>オブジェクトレベルのセマンティック検索の弱さ</strong>が課題でした。</li>
+</ul>
+</li>
+</ul>
+<h3 id="課題2オープンボキャブラリ物体検出の性能不足">課題2：オープンボキャブラリ物体検出の性能不足</h3>
+<ul>
+<li>従来の物体検出器は、
+<ul>
+<li>学習時に見たカテゴリ（例：犬、猫、車）しか検出できず、</li>
+<li>「ユニコーン」「マスク」など<strong>未知のカテゴリ</strong>は検出できない、という限界がありました。</li>
+</ul>
+</li>
+<li>CLIP を応用した手法でも、
+<ul>
+<li>画像全体の意味は捉えられるものの、</li>
+<li><strong>オブジェクト単位で未知カテゴリを検出する性能</strong>は十分ではありませんでした。</li>
+</ul>
+</li>
+</ul>
+<h3 id="regionclip-が目指した解決">RegionCLIP が目指した解決</h3>
+<ul>
+<li><strong>領域レベルでの画像–テキスト対照学習</strong>を行うことで、
+<ul>
+<li>画像内の<strong>各オブジェクト（領域）</strong> とテキストの対応を直接学習。</li>
+<li>これにより、
+<ul>
+<li>オブジェクトレベルのセマンティック検索</li>
+<li>オープンボキャブラリ物体検出<br>
+の性能を向上させることを目指しました。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\1_region_clip\1785636212050.png" alt="1785636212050"></p>
+<h2 id="regionclipの原理">RegionCLIPの原理</h2>
+<p><strong>RegionCLIP</strong> の原理を、手順ベースで整理します。</p>
+<h3 id="全体の考え方">全体の考え方</h3>
+<ul>
+<li>CLIP は「画像全体 ↔ テキスト全体」の対応を学習しますが、<br>
+RegionCLIP はこれを <strong>「画像内の各領域（オブジェクト） ↔ テキスト」</strong> の対応に拡張します。</li>
+<li>そのために、
+<ul>
+<li><strong>物体検出器</strong>で領域を抽出し、</li>
+<li>各領域を CLIP の画像エンコーダで埋め込み、</li>
+<li>テキスト埋め込みと<strong>領域単位で対照学習</strong>します。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\1_region_clip\1785636236327.png" alt="1785636236327"></p>
+<h3 id="手順1領域の抽出">手順1：領域の抽出</h3>
+<ol>
+<li>入力画像を<strong>物体検出器</strong>（例：Faster R-CNN）に入力。</li>
+<li>検出器が<strong>候補領域（region proposals）</strong> を出力。
+<ul>
+<li>例：犬の頭、ボール、空など、複数のバウンディングボックス。</li>
+</ul>
+</li>
+</ol>
+<h3 id="手順2領域ごとの画像埋め込み">手順2：領域ごとの画像埋め込み</h3>
+<ol start="3">
+<li>各候補領域を<strong>CLIP の画像エンコーダ</strong>に入力し、<br>
+<strong>領域ごとのベクトル</strong>（region embedding）を得る。
+<ul>
+<li>これが「この領域が何を表しているか」の意味表現になります。</li>
+</ul>
+</li>
+</ol>
+<h3 id="手順3テキスト埋め込み">手順3：テキスト埋め込み</h3>
+<ol start="4">
+<li>テキスト側（例：「犬」「ボール」「空」など）を<br>
+<strong>CLIP のテキストエンコーダ</strong>に入力し、<br>
+<strong>テキストごとのベクトル</strong>を得る。</li>
+</ol>
+<h3 id="手順4regiontext-対照学習核心">手順4：Region–Text 対照学習（核心）</h3>
+<ol start="5">
+<li><strong>各領域ベクトルとテキストベクトル</strong>の類似度を計算。</li>
+<li>正しい対応（例：犬の領域 ↔ 「犬」というテキスト）の類似度を高く、<br>
+それ以外の組み合わせの類似度を低くするように<strong>対照学習</strong>を行います。</li>
+</ol>
+<ul>
+<li>これにより、
+<ul>
+<li>「犬の領域」は「犬」というテキストに近く、</li>
+<li>「ボールの領域」は「ボール」というテキストに近い、<br>
+という<strong>オブジェクト単位の意味対応</strong>が学習されます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="手順5擬似ラベルの活用オープンボキャブラリ対応">手順5：擬似ラベルの活用（オープンボキャブラリ対応）</h3>
+<ol start="7">
+<li>学習時には、物体検出器のクラスラベルをそのまま使うのではなく、
+<ul>
+<li>各領域ベクトルと<strong>多数のテキストベクトル</strong>を比較し、</li>
+<li>最も類似度の高いテキストをその領域の<strong>擬似ラベル</strong>として採用。</li>
+</ul>
+</li>
+<li>これにより、
+<ul>
+<li>学習時に見ていないカテゴリ名（例：「ユニコーン」「マスク」）でも、<br>
+テキストとして与えれば対応する領域を検出できる<strong>オープンボキャブラリ検出</strong>が可能になります。</li>
+</ul>
+</li>
+</ol>
+<p>つまり<strong>RegionCLIP は「物体検知＋CLIP」を組み合わせて学習したモデル</strong>です。</p>
+<p>より正確に言うと：</p>
+<ul>
+<li><strong>物体検知器</strong>（例：Faster R-CNN）で画像から<strong>領域（オブジェクト）を抽出</strong></li>
+<li>各領域を<strong>CLIP の画像エンコーダ</strong>で埋め込み</li>
+<li>テキスト側も CLIP のテキストエンコーダで埋め込み</li>
+<li><strong>領域ベクトルとテキストベクトルを対照学習</strong></li>
+</ul>
+<p>という「<strong>物体検知＋CLIP を統合した学習</strong>」を行っています。</p>
+<p>この組み合わせにより、</p>
+<ul>
+<li>画像全体ではなく<strong>オブジェクト単位</strong>で意味を捉えられる</li>
+<li>オープンボキャブラリ物体検出やオブジェクトレベルのセマンティック検索が可能になる<br>
+というのが RegionCLIP のポイントです。</li>
+</ul>
+<p>もし、「どの部分が既存の CLIP と違うのか」「どの部分が物体検知器の役割なのか」など、<br>
+もう一段階細かく整理したい場合は、その点に絞って補足することも可能です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\1_region_clip\1785636357384.png" alt="1785636357384"></p>
+<h2 id="実験">実験</h2>
+<p><strong>RegionCLIP</strong> の論文で報告されている<strong>実験内容と結果</strong>を、<br>
+「何をしたか（実験内容）」と「どうなったか（結果）」に分けて整理します。</p>
+<h3 id="実験1オープンボキャブラリ物体検出open-vocabulary-detection">実験1：オープンボキャブラリ物体検出（Open-Vocabulary Detection）</h3>
+<p><strong>何をしたか（実験内容）</strong></p>
+<ul>
+<li><strong>データセット</strong>：
+<ul>
+<li>LVIS など、多数のカテゴリを含む物体検出データセットを使用。</li>
+</ul>
+</li>
+<li><strong>評価設定</strong>：
+<ul>
+<li>学習時に<strong>見たことのないカテゴリ（unseen categories）</strong> も含めて、<br>
+物体検出ができるかどうかを評価。</li>
+</ul>
+</li>
+<li><strong>比較手法</strong>：
+<ul>
+<li>従来の CLIP ベースの手法</li>
+<li>その他のオープンボキャブラリ検出手法</li>
+</ul>
+</li>
+</ul>
+<p><strong>どうなったか（結果）</strong></p>
+<ul>
+<li>RegionCLIP は、
+<ul>
+<li><strong>既存手法より高い精度</strong>でオープンボキャブラリ物体検出を実現。</li>
+</ul>
+</li>
+<li>特に、
+<ul>
+<li>学習時に見ていないカテゴリ名をテキストとして与えたとき、<br>
+対応する物体を<strong>より正確に検出</strong>できることが示されました。</li>
+</ul>
+</li>
+</ul>
+<h3 id="実験2セマンティック画像検索semantic-image-retrieval">実験2：セマンティック画像検索（Semantic Image Retrieval）</h3>
+<p><strong>何をしたか（実験内容）</strong></p>
+<ul>
+<li><strong>タスク</strong>：
+<ul>
+<li>画像内の<strong>特定のオブジェクト</strong>に着目した検索タスク。</li>
+<li>例：「犬が写っている画像」「赤い車が写っている画像」など。</li>
+</ul>
+</li>
+<li><strong>評価方法</strong>：
+<ul>
+<li>クエリテキストに対して、<br>
+画像コーパスから関連する画像をランキングし、<br>
+正解率（Recall@k など）を測定。</li>
+</ul>
+</li>
+<li><strong>比較手法</strong>：
+<ul>
+<li>画像全体を扱う CLIP</li>
+<li>その他のベースライン</li>
+</ul>
+</li>
+</ul>
+<p><strong>どうなったか（結果）</strong></p>
+<ul>
+<li>RegionCLIP は、
+<ul>
+<li><strong>画像全体を扱う CLIP よりも、オブジェクトレベルの検索精度が向上</strong>。</li>
+</ul>
+</li>
+<li>特に、
+<ul>
+<li>画像内に複数の物体が写っている場合でも、<br>
+クエリに対応する<strong>特定のオブジェクト</strong>をより正確に捉えられることが確認されました。</li>
+</ul>
+</li>
+</ul>
+<h3 id="実験3アブレーションスタディ手法の各要素の効果">実験3：アブレーションスタディ（手法の各要素の効果）</h3>
+<p><strong>何をしたか（実験内容）</strong></p>
+<ul>
+<li>RegionCLIP の構成要素を1つずつ外したり変えたりして、<br>
+どの要素が性能に寄与しているかを検証。</li>
+<li>例：
+<ul>
+<li><strong>領域レベルの対照学習</strong>を外す（画像全体のみ）</li>
+<li><strong>擬似ラベルの生成方法</strong>を変える</li>
+<li><strong>物体検出器の種類</strong>を変える</li>
+</ul>
+</li>
+</ul>
+<p><strong>どうなったか（結果）</strong></p>
+<ul>
+<li><strong>領域レベルの対照学習</strong>が最も重要であることが確認されました。
+<ul>
+<li>これを外すと、オープンボキャブラリ検出やオブジェクト検索の性能が大きく低下。</li>
+</ul>
+</li>
+<li><strong>擬似ラベルの活用</strong>も性能向上に寄与。
+<ul>
+<li>単純なクラスラベルを使うよりも、<br>
+CLIP のテキスト埋め込みに基づく擬似ラベルの方が、<br>
+オープンボキャブラリ性能が高くなる。</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\1_region_clip\1785636543811.png" alt="1785636543811"></p>
+<h2 id="総括">総括</h2>
+<p>本論文の要点についてまとめます。</p>
+<ul>
+<li>
+<p><strong>領域レベルで CLIP を学習</strong><br>
+画像全体ではなく、<strong>各オブジェクト（領域）とテキスト</strong>を直接対応づけて学習。</p>
+</li>
+<li>
+<p><strong>物体検知＋CLIP の統合</strong><br>
+物体検出器で領域を抽出し、CLIP で領域ごとに埋め込み、<br>
+テキスト埋め込みと<strong>領域単位でマッチング</strong>。</p>
+</li>
+<li>
+<p><strong>オープンボキャブラリ検出が可能</strong><br>
+学習時に見ていないカテゴリ名（例：「ユニコーン」）でも、<br>
+テキストとして与えれば対応する物体を検出できる。</p>
+</li>
+<li>
+<p><strong>オブジェクトレベルの検索性能向上</strong><br>
+画像全体を扱う CLIP より、<br>
+「犬だけが写っている領域」のような<strong>オブジェクト単位の検索</strong>が得意。</p>
+</li>
+</ul>
+<p>以上が、RegionCLIP の核心的なポイントです。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+            
+        </body>
+        </html>
