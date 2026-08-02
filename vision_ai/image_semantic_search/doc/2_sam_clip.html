@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日報告した<a href="">region clip</a>と同じベクトルで複数対象を有する画像から画像に相当する埋め込み表現を取得して、テキストを探す方法について調査しています。
+今日の内容はそんな一貫です。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="概要">概要</h2>
+<p>今回の著者が調査している手法は<strong>Image-to-Text Retrieval（I2T）</strong> の一種であり、かつ<strong>領域レベル（region-level）</strong> の検索に相当します。</p>
+<p>MaTIR（Mask-aware Text-to-Image Retrieval）という手法があります。
+MaTIRは<strong>テキスト→画像＋マスク</strong>のタスクですが、その仕組みを逆方向に使うことで、<strong>画像領域→テキスト</strong>の検索も実現できます。また、同系統の研究として<strong>TextRegion</strong>なども参考になります。</p>
+<p>以下、整理して説明します。</p>
+<h3 id="1-matir-の枠組みと逆方向への応用">1. MaTIR の枠組みと「逆方向」への応用</h3>
+<p><strong>MaTIR の基本構造（テキスト→画像＋マスク）</strong></p>
+<p>MaTIR は、</p>
+<ul>
+<li>SAM 2 で画像中の多数のマスクを生成</li>
+<li>Alpha-CLIP で各マスク領域の埋め込みを抽出</li>
+<li>テキストクエリの埋め込みと類似度を計算して画像・マスクをランキング</li>
+<li>MLLM（Qwen2.5-VL）で再ランクとバウンディングボックス特定<br>
+という二段階フレームワークです<a href="https://arxiv.org/pdf/2506.22864">arXiv</a>。</li>
+</ul>
+<p><strong>テキスト→画像検索</strong>の流れは以下の通りです。</p>
+<ol>
+<li>テキストクエリを CLIP 系モデルで埋め込み</li>
+<li>各画像について、SAM 2 マスクごとの Alpha-CLIP 埋め込みと類似度を計算</li>
+<li>最も類似度の高いマスクのスコアで画像をランキング</li>
+<li>MLLM で再ランクと領域特定</li>
+</ol>
+<p><strong>逆方向：画像領域→テキスト検索</strong></p>
+<p>同じ枠組みを<strong>逆方向</strong>に使うと、<br>
+「SAM 2 で検出した特定の領域」をクエリとして、<strong>テキストコーパスの中から意味的に近いテキストを探す</strong>ことができます。</p>
+<p>具体的には：</p>
+<ol>
+<li>
+<p><strong>オフライン準備</strong></p>
+<ul>
+<li>テキストコーパス（例：キャプション集、文書群）を CLIP のテキストエンコーダで埋め込みしておく</li>
+<li>各テキストについて、その埋め込みベクトルを保存</li>
+</ul>
+</li>
+<li>
+<p><strong>クエリ領域の特徴抽出</strong></p>
+<ul>
+<li>SAM 2 で対象領域のマスクを取得</li>
+<li>そのマスク領域を Alpha-CLIP の画像エンコーダに入力し、<strong>領域レベルの埋め込み</strong>を計算</li>
+</ul>
+</li>
+<li>
+<p><strong>テキスト検索</strong></p>
+<ul>
+<li>クエリ領域の埋め込みと、各テキストの埋め込みのコサイン類似度を計算</li>
+<li>類似度が高い順にテキストをランキング</li>
+</ul>
+</li>
+</ol>
+<p>これにより、</p>
+<ul>
+<li>「この画像のこの物体に一番近い説明文はどれか」</li>
+<li>「この領域に最もマッチするキャプションはどれか」<br>
+といった<strong>画像領域→テキスト検索</strong>が実現できます。</li>
+</ul>
+<p>MaTIR の論文では主に TIR（テキスト→画像）側を評価していますが、<br>
+<strong>Alpha-CLIP の領域埋め込みと CLIP のテキスト埋め込みは共通空間にある</strong>ため、<br>
+I2T（画像→テキスト）にもそのまま適用可能です。</p>
+<h3 id="2-textregionsam2凍結clipで領域トークンを作る">2. TextRegion：SAM2＋凍結CLIPで「領域トークン」を作る</h3>
+<p>もう一つ、ご質問に近い研究として <strong>TextRegion</strong> があります<a href="https://arxiv.org/html/2505.23769v1">arXiv</a>。</p>
+<p><strong>TextRegion のポイント</strong></p>
+<ul>
+<li>SAM 2 で得たマスクを使って、CLIP 等の画像テキストモデルの最終アテンション層を<strong>領域内パッチだけに制限</strong></li>
+<li>これにより、<strong>テキストと整合した「領域トークン」</strong> を生成</li>
+<li>この領域トークンとテキスト埋め込みの類似度で、
+<ul>
+<li>オープンワールド・セマンティックセグメンテーション</li>
+<li>参照表現理解（RefCOCO/+/g）</li>
+<li><strong>細粒度の検索（fine-grained retrieval）</strong><br>
+などが可能</li>
+</ul>
+</li>
+</ul>
+<p>TextRegion は「学習不要（training-free）」で、<br>
+SAM 2 の高精度な境界情報と、CLIP 等のテキスト理解能力を統合する点が特徴です。</p>
+<p><strong>画像領域→テキスト検索への応用</strong></p>
+<p>TextRegion を使うと、</p>
+<ul>
+<li>SAM 2 で得た任意の領域について「領域トークン」を生成</li>
+<li>そのトークンとテキスト埋め込みの類似度でテキストをランキング</li>
+</ul>
+<p>という<strong>領域レベルの Image-to-Text Retrieval</strong>が実現できます。</p>
+<p>MaTIR と TextRegion はどちらも</p>
+<ul>
+<li>SAM 2 で領域を特定</li>
+<li>CLIP 系モデルで領域とテキストを共通空間に埋め込む<br>
+という思想を共有しており、<strong>画像領域→テキスト検索</strong>の実装基盤として非常に適しています。</li>
+</ul>
+<h3 id="3-実装イメージsam2clip系で領域テキスト検索">3. 実装イメージ（SAM2＋CLIP系で領域→テキスト検索）</h3>
+<p>ご質問の「SAM2などで検知した画像内部の対象に対して、意味が近いテキストを探す」という目的に最も近い実装イメージは、以下のようになります。</p>
+<ol>
+<li>
+<p><strong>テキスト側の事前準備</strong></p>
+<ul>
+<li>検索対象のテキスト集合（キャプション、説明文など）を用意</li>
+<li>CLIP のテキストエンコーダで各テキストを埋め込み、ベクトルとして保存</li>
+</ul>
+</li>
+<li>
+<p><strong>画像側の処理</strong></p>
+<ul>
+<li>SAM 2 で画像中の対象オブジェクトのマスクを取得</li>
+<li>そのマスク領域を Alpha-CLIP や TextRegion のような手法で<strong>領域レベルの埋め込み</strong>に変換</li>
+</ul>
+</li>
+<li>
+<p><strong>検索</strong></p>
+<ul>
+<li>クエリ領域の埋め込みと、各テキスト埋め込みのコサイン類似度を計算</li>
+<li>類似度が高い順にテキストを返す</li>
+</ul>
+</li>
+</ol>
+<p>これにより、</p>
+<ul>
+<li>「この画像のこの部分に一番合う説明文はどれか」</li>
+<li>「この物体に最も近い概念を表す単語・フレーズは何か」<br>
+といった<strong>画像内部の対象領域に特化したテキスト検索</strong>が可能になります。</li>
+</ul>
+<h3 id="4-まとめ">4. まとめ</h3>
+<ul>
+<li>MaTIR は「テキスト→画像＋マスク」のタスクですが、その基盤（SAM 2＋Alpha-CLIP＋MLLM）を<strong>逆方向</strong>に使うことで、<strong>画像領域→テキスト検索</strong>も実現可能です<a href="https://arxiv.org/pdf/2506.22864">arXiv</a>。</li>
+<li>TextRegion は、SAM 2 と凍結CLIPを組み合わせて<strong>テキストと整合した領域トークン</strong>を生成する学習不要フレームワークであり、領域レベルの検索・分類に直接使えます<a href="https://arxiv.org/html/2505.23769v1">arXiv</a>。</li>
+<li>実装としては、
+<ul>
+<li>SAM 2 で対象領域をマスク</li>
+<li>Alpha-CLIP や TextRegion で領域埋め込みを計算</li>
+<li>CLIP のテキスト埋め込みとの類似度でテキストをランキング<br>
+というパイプラインが、ご質問のニーズに最も近いアプローチになります。</li>
+</ul>
+</li>
+</ul>
+<h2 id="マルチモーダルモデル">マルチモーダルモデル</h2>
+<p>今回の要件を行う場合</p>
+<ul>
+<li>テキスト→埋め込み</li>
+<li>画像→テキスト相当の埋め込み</li>
+</ul>
+<p>の両方を生成でき、かつ精度が高い）を満たすモデルが必要となります。
+相当するモデルについて一覧を挙げていきます。</p>
+<h3 id="1-clip系openai-clip--openclip--eva-clip--siglip">1. CLIP系（OpenAI CLIP / OpenCLIP / EVA-CLIP / SigLIP）</h3>
+<p><strong>理由</strong></p>
+<ul>
+<li><strong>共通埋め込み空間</strong>：画像エンコーダとテキストエンコーダが<strong>同じ埋め込み空間</strong>を共有しており、
+<ul>
+<li>テキスト → 埋め込み</li>
+<li>画像（またはSAM2でcropした領域） → 埋め込み<br>
+の両方が可能です。</li>
+</ul>
+</li>
+<li><strong>ゼロショット性能</strong>：COCOやFlickr30kなどの画像テキスト検索ベンチマークで、
+<ul>
+<li>CLIP / OpenCLIP：R@1 などで高いゼロショット性能を報告<a href="https://arxiv.org/abs/2103.00020">OpenAI CLIP</a></li>
+<li>EVA-CLIP：ImageNet-1Kゼロショットで90%超など、CLIPより高い精度を報告<a href="https://arxiv.org/abs/2211.07636">EVA-CLIP</a></li>
+<li>SigLIP：Sigmoid損失により、CLIPと同等以上のゼロショット性能を報告<a href="https://arxiv.org/abs/2303.15343">SigLIP</a></li>
+</ul>
+</li>
+<li><strong>実装のしやすさ</strong>：Hugging Face Transformersや公式実装で簡単に利用可能。</li>
+</ul>
+<p><strong>用途への適合</strong></p>
+<ul>
+<li>SAM2で検出した領域をcropしてCLIPの画像エンコーダに入力すれば、<strong>領域レベルの埋め込み</strong>として利用できます。</li>
+<li>テキスト側も同じCLIPのテキストエンコーダで埋め込めるため、<strong>領域→テキスト検索</strong>に直接使えます。</li>
+</ul>
+<h3 id="2-alpha-clipmatirで使用">2. Alpha-CLIP（MaTIRで使用）</h3>
+<p><strong>理由</strong></p>
+<ul>
+<li><strong>領域特化のCLIP拡張</strong>：CLIPをベースに、<strong>マスク領域をそのまま入力してテキストと整合した領域埋め込み</strong>を生成するモデルです<a href="https://arxiv.org/pdf/2506.22864">MaTIR</a>。</li>
+<li><strong>MaTIRでの実績</strong>：
+<ul>
+<li>COCOで画像レベル検索 mAP@50 <strong>92.97</strong>、オブジェクトレベル検索＋セグメンテーション mAP@50@50 <strong>71.64</strong></li>
+<li>D3（複雑な参照表現）でも mAP@50 <strong>61.00</strong>、mAP@50@50 <strong>49.16</strong> と、CLIPや既存RESモデルを大きく上回る性能を報告<a href="https://arxiv.org/pdf/2506.22864">MaTIR</a>。</li>
+</ul>
+</li>
+<li><strong>テキスト埋め込み</strong>：CLIP系のテキストエンコーダをそのまま利用できるため、テキスト→埋め込みも可能です。</li>
+</ul>
+<p><strong>用途への適合</strong></p>
+<ul>
+<li>SAM2で得たマスク領域をAlpha-CLIPに入力して<strong>領域埋め込み</strong>を取得し、<br>
+テキスト側の埋め込みとの類似度で検索する、という流れが<strong>最も精度が高い選択肢の一つ</strong>です。</li>
+</ul>
+<h3 id="3-textregionsam2凍結clip">3. TextRegion（SAM2＋凍結CLIP）</h3>
+<p><strong>理由</strong></p>
+<ul>
+<li><strong>学習不要の領域トークン生成</strong>：SAM2で得たマスクを使って、CLIP等の画像テキストモデルの最終アテンション層を<strong>領域内パッチだけに制限</strong>し、<strong>テキストと整合した領域トークン</strong>を生成するフレームワークです<a href="https://arxiv.org/html/2505.23769v1">TextRegion</a>。</li>
+<li><strong>性能</strong>：
+<ul>
+<li>オープンワールド・セマンティックセグメンテーション（ADE20KでmIoU 49.5など）</li>
+<li>参照表現理解（RefCOCO/+/g）</li>
+<li>複数オブジェクトのグラウンディング<br>
+などで、学習ベースの手法に匹敵または凌駕する性能を報告<a href="https://arxiv.org/html/2505.23769v1">TextRegion</a>。</li>
+</ul>
+</li>
+<li><strong>テキスト埋め込み</strong>：ベースのCLIP等のテキストエンコーダをそのまま使えるため、テキスト→埋め込みも可能です。</li>
+</ul>
+<p><strong>用途への適合</strong></p>
+<ul>
+<li>SAM2で得た領域について「領域トークン」を生成し、テキスト埋め込みとの類似度で<strong>領域→テキスト検索</strong>が可能です。</li>
+<li>Alpha-CLIPと同様、<strong>領域レベルの精度を重視する場合の有力候補</strong>です。</li>
+</ul>
+<h3 id="4-blip-2q-formerllm">4. BLIP-2（Q-Former＋LLM）</h3>
+<p><strong>理由</strong></p>
+<ul>
+<li><strong>共通表現＋LLMの柔軟性</strong>：
+<ul>
+<li>ViTで画像をエンコードし、Q-Formerで画像・テキストの共通表現に変換</li>
+<li>LLM（OPT, Flan-T5など）と組み合わせることで、キャプション生成・VQA・検索などが可能</li>
+</ul>
+</li>
+<li><strong>ITC損失による共通埋め込み</strong>：
+<ul>
+<li>Image-Text Contrastive（ITC）損失で、画像とテキストを共通空間に埋め込むため、<br>
+テキスト→埋め込み、画像→埋め込みの両方が可能です。</li>
+</ul>
+</li>
+<li><strong>性能</strong>：
+<ul>
+<li>COCOキャプション生成やVQAなどで高い性能を報告<a href="https://arxiv.org/abs/2301.12597">BLIP-2</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>用途への適合</strong></p>
+<ul>
+<li>SAM2でcropした領域をBLIP-2の画像エンコーダに入力し、Q-Formerで共通表現に変換して<strong>領域埋め込み</strong>として利用できます。</li>
+<li>テキスト側も同じQ-Former/LLMで埋め込めるため、<strong>領域→テキスト検索</strong>に使えます。</li>
+<li>CLIP系に比べてモデルが大きく、計算コストは高いですが、<strong>キャプション生成なども組み合わせたい場合</strong>には有力です。</li>
+</ul>
+<h3 id="5-qwen-vl--qwen25-vlmllm">5. Qwen-VL / Qwen2.5-VL（MLLM）</h3>
+<p><strong>理由</strong></p>
+<ul>
+<li><strong>マルチモーダルLLMとしての高機能性</strong>：
+<ul>
+<li>画像理解・キャプション生成・VQA・参照表現理解などが可能</li>
+<li>MaTIRでは、再ランクと領域特定にQwen2.5-VLが使われている<a href="https://arxiv.org/pdf/2506.22864">MaTIR</a>。</li>
+</ul>
+</li>
+<li><strong>共通埋め込み</strong>：
+<ul>
+<li>画像とテキストを共通の表現空間に写すことができ、テキスト→埋め込み、画像→埋め込みの両方が可能です。</li>
+</ul>
+</li>
+</ul>
+<p><strong>用途への適合</strong></p>
+<ul>
+<li>SAM2で得た領域を画像として入力し、テキストクエリと組み合わせて<strong>領域の意味表現</strong>を得られます。</li>
+<li>テキスト側も同じモデルで埋め込めるため、<strong>領域→テキスト検索</strong>に利用可能です。</li>
+<li>モデルサイズが大きく計算コストは高いですが、<strong>高度な意味理解を求めるとき</strong>には有力です。</li>
+</ul>
+<h3 id="まとめ精度重視ならこの順">まとめ：精度重視ならこの順</h3>
+<p>ご質問の条件（テキスト・画像の両方から埋め込みを生成でき、かつ精度が高い）を満たすモデルを<strong>精度重視で</strong>絞ると、以下の順になります。</p>
+<ol>
+<li>
+<p><strong>Alpha-CLIP（MaTIRで使用）</strong></p>
+<ul>
+<li>領域レベルの埋め込みに特化したCLIP拡張</li>
+<li>MaTIRでCLIPやRESモデルを大きく上回る性能を報告<a href="https://arxiv.org/pdf/2506.22864">MaTIR</a></li>
+<li>SAM2＋Alpha-CLIPで<strong>領域→テキスト検索</strong>に最も適した組み合わせ</li>
+</ul>
+</li>
+<li>
+<p><strong>TextRegion（SAM2＋凍結CLIP）</strong></p>
+<ul>
+<li>学習不要でテキストと整合した領域トークンを生成</li>
+<li>オープンワールド・セマンティックセグメンテーションや参照表現理解で高い性能<a href="https://arxiv.org/html/2505.23769v1">TextRegion</a></li>
+<li>Alpha-CLIPと並ぶ、領域レベル精度の高い選択肢</li>
+</ul>
+</li>
+<li>
+<p><strong>CLIP系（EVA-CLIP / SigLIP / OpenCLIP）</strong></p>
+<ul>
+<li>ゼロショットベンチマークで高い精度</li>
+<li>実装が簡単で汎用的</li>
+<li>SAM2でcropした領域を入力すれば、領域埋め込みとして利用可能</li>
+</ul>
+</li>
+<li>
+<p><strong>BLIP-2 / Qwen-VL系</strong></p>
+<ul>
+<li>モデルが大きく高機能</li>
+<li>キャプション生成やVQAも組み合わせたい場合に有力</li>
+</ul>
+</li>
+</ol>
+<p><strong>結論として</strong>、<br>
+「SAM2で検出した領域をクエリとして、テキストコーパスから意味的に近いテキストを検索する」という用途では、<br>
+<strong>Alpha-CLIP</strong> または <strong>TextRegion</strong> をベースにした実装が、現状で最も精度の高い選択肢と考えられます。</p>
+<h2 id="マルチモーダルの実験">マルチモーダルの実験</h2>
+<p>SAMとの結合は次回やろうと思いますが、一旦マルチモーダルモデルがどの程度のものか検証する実験を行います。
+今回は折角なのでMaTIRが使っていて、かつ、精度が折り紙付きの Alpha-CLIP で実験を行ってみます。</p>
+<h3 id="実験内容">実験内容</h3>
+<p>この実験コードは、<strong>「Alpha-CLIPが画像内の『指定された特定領域（アルファマスクの場所）』の特徴を正しく抽出し、テキストの意味と一致させられるか」</strong> を検証する最小構成のデモです。</p>
+<p>処理の具体的な流れは以下の通りです：</p>
+<ul>
+<li><strong>モデルのセットアップ</strong>: ベースとなるCLIPモデル（<code>ViT-L/14@336px</code>）をロードし、画像エンコーダ部分にAlpha-CLIPの学習済み重みを適用します。</li>
+<li><strong>検証用データの自動生成</strong>: グレー背景に「赤い円」を描いた画像と、その赤い円部分のみを注目領域（ROI）として指定するモノクロのアルファマスクをプログラム上で作成します。</li>
+<li><strong>領域限定の特徴抽出</strong>: 画像とアルファマスクを同時にモデルに入力し、背景を無視して「赤い円」だけに注目した画像特徴ベクトルを取得します。</li>
+<li><strong>テキストとの類似度計算</strong>: 4つのテキスト候補（「赤い円」「青い正方形」「緑の三角形」「猫」）をテキストエンコーダでベクトル化し、抽出した画像特徴とのコサイン類似度および分類確率（Softmax）を算出します。</li>
+<li><strong>可視化と出力</strong>: 入力画像とマスク画像を表示し、モデルが「a photo of a red circle」を最も高い確率で識別できているかを確認します。</li>
+</ul>
+<p><strong>一言で言うと：</strong> 「アルファマスクで囲んだ領域の内容を、テキスト検索の仕組みを使って正しく判別できているか」を確認する実験です。</p>
+<h3 id="実験">実験</h3>
+<p>上記に示した実験を進めていきます。</p>
+<p><strong>準備</strong></p>
+<pre><code class="language-bash"><span class="hljs-comment"># Alpha-CLIPのリポジトリをクローン</span>
+!git <span class="hljs-built_in">clone</span> https://github.com/SunzeY/AlphaCLIP.git
+%<span class="hljs-built_in">cd</span> AlphaCLIP
+!pip install -e . --no-build-isolation
+
+!pip install loralib
+</code></pre>
+<p><strong>重みダウンロード</strong></p>
+<p>重みはこのサイトからダウンロード下さい。</p>
+<p><a href="https://github.com/SunzeY/AlphaCLIP">https://github.com/SunzeY/AlphaCLIP</a></p>
+<p>ここからDL出来ます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\cnn\region_clip\image\2_sam_clip\1785671170307.png" alt="1785671170307"></p>
+<p><strong>重みロード</strong></p>
+<p>DLした重みを定義してモデルロードしてください。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> alpha_clip
+
+device = <span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>
+checkpoint_path = <span class="hljs-string">&quot;/content/clip_l14@336_grit1m_fultune_8xe.pth&quot;</span>
+
+<span class="hljs-comment"># 1. ベースモデル (ViT-L/14@336px) のロード</span>
+model, preprocess = alpha_clip.load(<span class="hljs-string">&quot;ViT-L/14@336px&quot;</span>, device=device)
+
+<span class="hljs-comment"># 2. チェックポイントファイルの読み込み</span>
+checkpoint = torch.load(checkpoint_path, map_location=<span class="hljs-string">&quot;cpu&quot;</span>)
+state_dict = checkpoint[<span class="hljs-string">&quot;state_dict&quot;</span>] <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(checkpoint, <span class="hljs-built_in">dict</span>) <span class="hljs-keyword">and</span> <span class="hljs-string">&quot;state_dict&quot;</span> <span class="hljs-keyword">in</span> checkpoint <span class="hljs-keyword">else</span> checkpoint
+
+<span class="hljs-comment"># 3. model 全体ではなく「model.visual」に対して重みを適用</span>
+missing_keys, unexpected_keys = model.visual.load_state_dict(state_dict, strict=<span class="hljs-literal">False</span>)
+
+model.<span class="hljs-built_in">eval</span>()
+model.to(device)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;model.visual への Alpha-CLIP 重み適用に成功しました！&quot;</span>)
+</code></pre>
+<p><strong>埋め込み表現取得・類似度計算</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> alpha_clip
+<span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image, ImageDraw
+<span class="hljs-keyword">import</span> torchvision.transforms <span class="hljs-keyword">as</span> transforms
+<span class="hljs-keyword">from</span> torchvision.transforms <span class="hljs-keyword">import</span> InterpolationMode
+
+device = <span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>
+checkpoint_path = <span class="hljs-string">&quot;/content/clip_l14@336_grit1m_fultune_8xe.pth&quot;</span>  <span class="hljs-comment"># パスを確認してください</span>
+
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+<span class="hljs-comment"># 1. モデルの構築 &amp; Alpha-CLIP の重み（model.visual）適用</span>
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+model, preprocess = alpha_clip.load(<span class="hljs-string">&quot;ViT-L/14@336px&quot;</span>, device=device)
+
+checkpoint = torch.load(checkpoint_path, map_location=<span class="hljs-string">&quot;cpu&quot;</span>)
+state_dict = checkpoint[<span class="hljs-string">&quot;state_dict&quot;</span>] <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(checkpoint, <span class="hljs-built_in">dict</span>) <span class="hljs-keyword">and</span> <span class="hljs-string">&quot;state_dict&quot;</span> <span class="hljs-keyword">in</span> checkpoint <span class="hljs-keyword">else</span> checkpoint
+model.visual.load_state_dict(state_dict, strict=<span class="hljs-literal">False</span>)
+
+model.<span class="hljs-built_in">eval</span>()
+model.to(device)
+
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+<span class="hljs-comment"># 2. テスト用画像とアルファマスク（領域）の作成</span>
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+img_size = (<span class="hljs-number">500</span>, <span class="hljs-number">500</span>)
+
+<span class="hljs-comment"># (A) テスト画像: グレー背景の中央に「赤い円」を描画</span>
+image = Image.new(<span class="hljs-string">&quot;RGB&quot;</span>, img_size, color=(<span class="hljs-number">220</span>, <span class="hljs-number">220</span>, <span class="hljs-number">220</span>))
+draw = ImageDraw.Draw(image)
+draw.ellipse([<span class="hljs-number">150</span>, <span class="hljs-number">150</span>, <span class="hljs-number">350</span>, <span class="hljs-number">350</span>], fill=(<span class="hljs-number">230</span>, <span class="hljs-number">40</span>, <span class="hljs-number">40</span>))  <span class="hljs-comment"># 赤い円</span>
+
+<span class="hljs-comment"># (B) アルファマスク: 赤い円がある場所だけを 255 (注目)、他を 0 (背景) に指定</span>
+alpha_mask = Image.new(<span class="hljs-string">&quot;L&quot;</span>, img_size, <span class="hljs-number">0</span>)
+mask_draw = ImageDraw.Draw(alpha_mask)
+mask_draw.ellipse([<span class="hljs-number">150</span>, <span class="hljs-number">150</span>, <span class="hljs-number">350</span>, <span class="hljs-number">350</span>], fill=<span class="hljs-number">255</span>)
+
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+<span class="hljs-comment"># 3. 入力画像とアルファマスクの表示 (matplotlib)</span>
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+fig, axes = plt.subplots(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, figsize=(<span class="hljs-number">8</span>, <span class="hljs-number">4</span>))
+
+axes[<span class="hljs-number">0</span>].imshow(image)
+axes[<span class="hljs-number">0</span>].set_title(<span class="hljs-string">&quot;Input Image&quot;</span>)
+axes[<span class="hljs-number">0</span>].axis(<span class="hljs-string">&quot;off&quot;</span>)
+
+axes[<span class="hljs-number">1</span>].imshow(alpha_mask, cmap=<span class="hljs-string">&quot;gray&quot;</span>)
+axes[<span class="hljs-number">1</span>].set_title(<span class="hljs-string">&quot;Alpha Mask (ROI)&quot;</span>)
+axes[<span class="hljs-number">1</span>].axis(<span class="hljs-string">&quot;off&quot;</span>)
+
+plt.tight_layout()
+plt.show()
+
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+<span class="hljs-comment"># 4. 前処理 (画像 &amp; アルファマスク)</span>
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+image_tensor = preprocess(image).unsqueeze(<span class="hljs-number">0</span>).to(device)
+
+mask_transform = transforms.Compose([
+    transforms.Resize((<span class="hljs-number">336</span>, <span class="hljs-number">336</span>), interpolation=InterpolationMode.BICUBIC),
+    transforms.ToTensor(),
+    transforms.Normalize((<span class="hljs-number">0.5</span>,), (<span class="hljs-number">0.5</span>,))
+])
+alpha_tensor = mask_transform(alpha_mask).unsqueeze(<span class="hljs-number">0</span>).to(device)
+
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+<span class="hljs-comment"># 5. テキストプロンプトの準備 &amp; 特徴量抽出・類似度計算</span>
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+text_prompts = [
+    <span class="hljs-string">&quot;a photo of a red circle&quot;</span>,
+    <span class="hljs-string">&quot;a photo of a blue square&quot;</span>,
+    <span class="hljs-string">&quot;a photo of a green triangle&quot;</span>,
+    <span class="hljs-string">&quot;a photo of a cat&quot;</span>,
+]
+text_tokens = alpha_clip.tokenize(text_prompts).to(device)
+
+<span class="hljs-keyword">with</span> torch.no_grad():
+    image_features = model.visual(image_tensor, alpha_tensor)
+    text_features = model.encode_text(text_tokens)
+
+    image_features = F.normalize(image_features, dim=-<span class="hljs-number">1</span>)
+    text_features = F.normalize(text_features, dim=-<span class="hljs-number">1</span>)
+
+    similarity = (image_features @ text_features.T).squeeze(<span class="hljs-number">0</span>)
+
+    logit_scale = model.logit_scale.exp()
+    logits = logit_scale * similarity
+    probs = logits.softmax(dim=-<span class="hljs-number">1</span>)
+
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+<span class="hljs-comment"># 6. 結果の出力</span>
+<span class="hljs-comment"># ----------------------------------------------------------------------</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n=== Alpha-CLIP 領域・テキスト類似度結果 ===&quot;</span>)
+<span class="hljs-keyword">for</span> prompt, sim, prob <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(text_prompts, similarity, probs):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Prompt: &#x27;<span class="hljs-subst">{prompt:30s}</span>&#x27; | Cosine Sim: <span class="hljs-subst">{sim.item():<span class="hljs-number">.4</span>f}</span> | Prob: <span class="hljs-subst">{prob.item() * <span class="hljs-number">100</span>:<span class="hljs-number">.2</span>f}</span>%&quot;</span>)
+</code></pre>
+<p>上記を実行すると以下が表示されるはずです。
+形をきちんと認識していることが確認出来ます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\cnn\region_clip\image\2_sam_clip\1785671306924.png" alt="1785671306924"></p>
+<p>おまけで美味しそうな食事の写真も推定してみました。
+先程と同じようにマスクをかけてフォーカスしたい部分で類似度計算しています。</p>
+<p>おまけです。アルファマスクを食事にかけてみました。
+食事の類似度が高くなりました(笑)</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\other\cnn\region_clip\image\2_sam_clip\1785671590750.png" alt="1785671590750"></p>
+<h2 id="総括">総括</h2>
+<p>本日の要点をまとめます。</p>
+<ul>
+<li>
+<p><strong>目的</strong>：<br>
+SAM2で検出した「画像内の特定領域」をクエリとして、テキストコーパスから意味的に近いテキストを探す（<strong>領域レベルのImage-to-Text Retrieval</strong>）。</p>
+</li>
+<li>
+<p><strong>使えるモデル（テキスト・画像の両方を同じ空間に埋め込めるもの）</strong>：</p>
+<ul>
+<li><strong>Alpha-CLIP</strong>：マスク領域をそのまま入力して「テキストと整合した領域埋め込み」を生成。MaTIRで高精度を報告<a href="https://arxiv.org/pdf/2506.22864">MaTIR</a>。</li>
+<li><strong>TextRegion</strong>：SAM2＋凍結CLIPで「領域トークン」を生成する学習不要フレームワーク<a href="https://arxiv.org/html/2505.23769v1">TextRegion</a>。</li>
+<li><strong>CLIP系（EVA-CLIP / SigLIP / OpenCLIP）</strong>：汎用で実装しやすいが、領域特化はAlpha-CLIPやTextRegionほどではない。</li>
+</ul>
+</li>
+<li>
+<p><strong>実装の流れ</strong>：</p>
+<ol>
+<li>SAM2で対象領域のマスクを取得</li>
+<li>Alpha-CLIPやTextRegionで「領域埋め込み」を計算</li>
+<li>CLIP系のテキスト埋め込みとの類似度でテキストをランキング</li>
+</ol>
+</li>
+<li>
+<p><strong>実験で確認したこと</strong>：<br>
+Alpha-CLIPに「画像＋アルファマスク（注目領域）」を入力すると、</p>
+<ul>
+<li>赤い円の画像＋円マスク → 「a photo of a red circle」の類似度が最も高い</li>
+<li>食事の画像＋食事マスク → 「a photo of a delicious meal」の類似度が最も高い<br>
+となり、<strong>マスクで指定した領域の特徴を正しく捉えてテキストと一致させられる</strong>ことが確認できた。</li>
+</ul>
+</li>
+</ul>
+<p><strong>結論</strong>：<br>
+SAM2で検出した領域をクエリとしてテキストを検索するには、<br>
+<strong>Alpha-CLIP</strong>または<strong>TextRegion</strong>を使うのが最も精度が高く、<br>
+実験でも「アルファマスクで指定した領域の意味を正しくテキストにマッチさせられる」ことが確認できました。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
