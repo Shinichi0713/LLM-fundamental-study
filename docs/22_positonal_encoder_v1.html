@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x4f4d;&#x7f6e;&#x30a8;&#x30f3;&#x30b3;&#x30fc;&#x30c0;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>LLMには<a href="https://yoshishinnze.hatenablog.com/entry/2025/11/13/000000">位置エンコーダ</a>なるものが埋め込まれています。
+位置エンコーダはLLMが文章のどこに、何があったかを知る上で重要な位置を提供するという役割を持ちます。
+本日はそんな位置エンコーダの手法について詳細を説明しようと思います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="位置エンコーダ">位置エンコーダ</h2>
+<p>詳細は以下の記事をご参考下さい。</p>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/11/13/000000">https://yoshishinnze.hatenablog.com/entry/2025/11/13/000000</a></p>
+<p>Transformerにおけるアテンション機構（Self-Attention）は、本質的には単語（トークン）を並べた「集合」として処理します。そのため、位置エンコーディングを入れないと「犬が人を噛んだ」と「人が犬を噛んだ」を完全に同じ文章として認識してしまうという欠点があります。</p>
+<p>位置エンコーダが「文章の位置」をモデルに伝えられる仕組みを、大きく3つのアプローチ（加算型・バイアス型・回転型）に分けて分かりやすく解説します。</p>
+<h3 id="1-加算型絶対位置-位置のスタンプを足し合わせる">1. 加算型（絶対位置）: 「位置のスタンプ」を足し合わせる</h3>
+<p>初期のTransformer（Sinusoidal）やGPT-2などで使われた最もシンプルな仕組みです。</p>
+<p><strong>仕組み</strong></p>
+<ol>
+<li>単語の意味を表す「単語ベクトル」を用意します。</li>
+<li>位置（1番目、2番目…）ごとにユニークな数値パターンを持つ「位置ベクトル」（スタンプのようなもの）を作ります。</li>
+<li>これらを要素ごとに単純に加算（足し算）します。</li>
+</ol>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>入力ベクトル</mtext><mo>=</mo><mtext>Word Embedding</mtext><mo>+</mo><mtext>Positional Embedding</mtext></mrow><annotation encoding="application/x-tex">\text{入力ベクトル} = \text{Word Embedding} + \text{Positional Embedding}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">入力ベクトル</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Word Embedding</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Positional Embedding</span></span></span></span></span></span></p>
+<p><strong>なぜこれで位置が分かるのか？</strong></p>
+<p>ベクトル空間において、意味のベクトルに「位置固有の方向・長さを持つベクトル」が足されることで、元のベクトルの位置情報が少しだけシフト（移動）します。</p>
+<p>モデル内の多層パーセプトロン（FFN）やアテンション機構は、この「シフトした座標」を読み取ることで、「この『犬』という単語は文頭の『犬』だな」と判断できるようになります。</p>
+<blockquote>
+<p><strong>比喩</strong>:
+「リンゴ」という言葉に、1番目の席なら「赤色のシール」、2番目の席なら「青色のシール」を貼って渡すようなイメージです。</p>
+</blockquote>
+<h3 id="2-バイアス型相対位置-トークン同士の間隔を計算に直接挟む">2. バイアス型（相対位置）: 「トークン同士の間隔」を計算に直接挟む</h3>
+<p>ALiBiやT5などで使われている仕組みで、絶対的な場所（何文字目か）ではなく「自分から見て相手が何文字離れているか」に着目します。</p>
+<p><strong>仕組み</strong></p>
+<p>アテンション機構では、単語間の関連度を計算するために Query（検索側）と Key（インデックス側）の内積をとって「関連度スコア」を算出します。</p>
+<p>この計算結果に対し、「距離が離れれば離れるほどスコアを差し引くペナルティ（バイアス）」を強制的に加算します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Attention Score</mtext><mo>=</mo><mo stretchy="false">(</mo><mi>Q</mi><mo>×</mo><msup><mi>K</mi><mi>T</mi></msup><mo stretchy="false">)</mo><mo>−</mo><mtext>距離に応じたペナルティ</mtext></mrow><annotation encoding="application/x-tex">\text{Attention Score} = (Q \times K^T) - \text{距離に応じたペナルティ}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Attention Score</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1413em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">距離に応じたペナルティ</span></span></span></span></span></span></p>
+<p><strong>なぜこれで位置が分かるのか？</strong></p>
+<p>例えばALiBiでは、1文字離れた単語には <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">1</span></span></span></span>、2文字離れた単語には <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">-2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">2</span></span></span></span> というように、距離に比例したマイナス値をかけます。</p>
+<p>これにより、モデルは絶対的な番号を覚える必要がなく、「直前の単語（距離1）には強く注目し、遥か昔の単語（距離100）には注目を弱める」という相対的な距離感を直接学習・処理できます。</p>
+<h3 id="3-回転型rope-ベクトルを角度で回転させる">3. 回転型（RoPE）: ベクトルを「角度」で回転させる</h3>
+<p>現在最も主流（LLaMAやQwenなど）のRoPE（Rotary Position Embedding）は、巧みな数学的仕組みを持っています。</p>
+<p><strong>仕組み</strong></p>
+<p>トークンのベクトル（QueryとKey）を2次元ごとにペアにして複素平面（グラフ）の上に置き、<strong>「そのトークンの位置番号 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> に応じた角度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>」だけ回転</strong>させます。</p>
+<ul>
+<li>1番目のトークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex">1 \times \theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> だけ回転</li>
+<li>2番目のトークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex">2 \times \theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> だけ回転</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 番目のトークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>×</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex">m \times \theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> だけ回転</li>
+</ul>
+<p><strong>なぜこれで位置が分かるのか？</strong></p>
+<p>回転させた Query（位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span>）と Key（位置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>）の内積（関連度）を計算すると、数学的性質（三角関数の加法定理）により、計算結果に「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">m - n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>」（2つのトークンの相対的な距離）だけが残る仕組みになっています。</p>
+<ol>
+<li><strong>絶対位置の表現</strong>: 各ベクトルは自身の位置に応じた角度で回転している。</li>
+<li><strong>相対位置の抽出</strong>: 内積をとった瞬間に、お互いの「角度の差（距離）」だけが浮き出る。</li>
+</ol>
+<p>この「絶対位置を付与しつつ、アテンション計算時に自動的に相対位置に変換される」という数学的トリックによって、正確な位置関係を把握しています。</p>
+<p>いずれの手法も<strong>アテンション機構が、各トークンに埋め込まれた『位置のシフト（ズレ）』を読み取る（計算する）ことで、単語同士の相対的な距離感や前後関係を把握</strong>しているといことが言えます。</p>
+<h2 id="アテンションがシフトを読み取れる理由">アテンションがシフトを読み取れる理由</h2>
+<p>前節の主張に対して、<strong>アテンション機構はなぜ「単語の意味情報（語彙）」と「位置情報」が同じ1つのベクトル（例: 4096次元の数値の列）の中に混ざっているのに、なぜ混同せずに識別できる</strong>のかということが疑問となってくると思います。</p>
+<p>その理由は、大きく分けて「高次元空間の性質」「直交性（直交部分空間）」「アテンションの線形変換」という3つの数学的・構造的メカニズムに基づいています。</p>
+<h3 id="1-高次元空間の余白高次元幾何学の性質">1. 高次元空間の余白（高次元幾何学の性質）</h3>
+<p>LLMが扱うベクトル空間は、4096次元や8192次元といった<strong>非常に巨大な高次元空間</strong>です。</p>
+<p>3次元空間（私たちの住む世界）では、ベクトル（矢印）を加算すると元の矢印が大きく傾いてしまい、意味が変わってしまいそうに思えます。しかし、高次元空間には以下のような特質があります。</p>
+<ul>
+<li>
+<p><strong>ほぼ直交する方向（軸）が無限に存在する</strong></p>
+</li>
+<li>
+<p>次元数が高くなると、ランダムに選んだ2つのベクトル同士が「互いに直交（角度が90度＝干渉しない）」する確率が飛躍的に高まります。</p>
+</li>
+<li>
+<p><strong>意味の空間と位置の空間の分離</strong></p>
+</li>
+<li>
+<p>4096次元のうち、「単語の意味（概念）」を表現するのに使われる実質的な空間（多様体）と、「位置」を表現するのに使われる空間が、高次元空間の中で干渉しない別々の方向（部分空間）に割り当てられます。</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>イメージ</strong>:
+3D空間（X, Y, Z軸）において、X軸とY軸で「単語の意味（平面上の位置）」を表現し、Z軸で「文章の中の位置（高さ）」を表現するようなものです。Z軸（高さ）がどれだけ変わっても、X, Y軸（意味の平面座標）の値には影響しません。</p>
+</blockquote>
+<h3 id="2-アテンションによる情報の抽出射影">2. アテンションによる「情報の抽出（射影）」</h3>
+<p>単語ベクトルと位置ベクトルが加算されて「1つのベクトル」になっても、モデル内のLinear層（重み行列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>Q</mi></msub><mo separator="true">,</mo><msub><mi>W</mi><mi>K</mi></msub><mo separator="true">,</mo><msub><mi>W</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">W_Q, W_K, W_V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">Q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>）がそれらをきれいに分離して読み取ります。</p>
+<p>アテンション機構では、入力ベクトル <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> に対して重み行列を掛け算して Query（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>）、Key（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span>）、Value（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>）を作ります。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>Q</mi><mo>=</mo><msub><mi>W</mi><mi>Q</mi></msub><mo>⋅</mo><mi>x</mi><mo separator="true">,</mo><mspace width="1em"/><mi>K</mi><mo>=</mo><msub><mi>W</mi><mi>K</mi></msub><mo>⋅</mo><mi>x</mi><mo separator="true">,</mo><mspace width="1em"/><mi>V</mi><mo>=</mo><msub><mi>W</mi><mi>V</mi></msub><mo>⋅</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">Q = W_Q \cdot x, \quad K = W_K \cdot x, \quad V = W_V \cdot x
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">Q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span></span></p>
+<p>学習が進むと、重み行列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> は次のように役割分担（基底の変換）を獲得します。</p>
+<ul>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>Q</mi></msub></mrow><annotation encoding="application/x-tex">W_Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">Q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> や <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>K</mi></msub></mrow><annotation encoding="application/x-tex">W_K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>（スコア計算用）</strong>: 入力ベクトルのうち、<strong>「位置成分（角度やシフト）」に強く反応する計算ルート</strong>を形成する。</li>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">W_V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>（意味の伝達用）</strong>: 入力ベクトルのうち、<strong>「純粋な単語の意味成分」だけを抽出する計算ルート</strong>を形成する。</li>
+</ul>
+<p>つまり、重み行列という「言語の光学フィルター」を通すことで、1つのベクトルの中に混ざった情報から「位置だけを取り出すルート」と「意味だけを取り出すルート」に分光・分解しているのです。</p>
+<h3 id="3-回転ropeの場合振幅と位相角度の完全分離">3. 回転（RoPE）の場合：振幅と位相（角度）の完全分離</h3>
+<p>RoPE（Rotary Position Embedding）のような現代の手法では、数学的により明確に独立性が保たれています。</p>
+<p>RoPEは、ベクトルの「ノルム（長さ＝単語の意味の強さ）」を変更せず、「位相（角度＝位置）」だけを回転させます。</p>
+<ul>
+<li><strong>単語の意味</strong>: ベクトルの各成分の相対的な大きさ（長さや方向）に保持される。</li>
+<li><strong>位置情報</strong>: ベクトルがどれだけ「回転しているか（角度）」に保持される。</li>
+</ul>
+<p>アテンションの内積計算（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mo>⋅</mo><msup><mi>K</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">Q \cdot K^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span>）を行うと、三角関数の性質によって「角度の差（相対位置）」だけがスカラー値として計算結果に現れます。単語の意味（ベクトルの大きさ）と位置（回転角）が数学的な変数として独立しているため、相互に打ち消し合ったり破壊し合ったりすることがありません。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\docs\image\22_positonal_encoder_v1\1786245770341.png" alt="1786245770341"></p>
+<h2 id="位置エンコーダ従来手法">位置エンコーダ従来手法</h2>
+<p>位置エンコーダはLLMの従来手法について説明します。</p>
+<p>手法の進化に合わせて、主に<strong>絶対位置</strong>、<strong>相対位置</strong>、<strong>回転・ハイブリッド型</strong>、および位置埋め込みなし（NoPE）の4つの分類で整理できます。</p>
+<h3 id="1-絶対位置エンコーディング-absolute-positional-encoding-ape">1. 絶対位置エンコーディング (Absolute Positional Encoding: APE)</h3>
+<p>トークンの絶対的な位置（1番目、2番目…）に応じて固定のベクトルを生成し、入力のトークン埋め込みに<strong>加算</strong>する手法です。</p>
+<ul>
+<li>
+<p><strong>Sinusoidal Positional Encoding</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 周期の異なる三角関数（sine / cosine）を用いて位置ベクトルを決定的に計算する方式（初代Transformer論文『Attention Is All You Need』で採用）。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 学習パラメータが不要で直感的ですが、コンテキスト長の拡張（外挿）性能には限界があります。</p>
+</li>
+<li>
+<p><strong>Learned Absolute Positional Embedding</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 位置ごとの埋め込みベクトルを学習可能なパラメータとして扱う方式（BERT, GPT-2, GPT-3等で採用）。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 表現力は高いものの、事前学習で設定した最大の系列長（例: 2048トークン）を超える未知の長さを扱うことができません。</p>
+</li>
+</ul>
+<h3 id="2-相対位置エンコーディング-relative-positional-encoding-rpe">2. 相対位置エンコーディング (Relative Positional Encoding: RPE)</h3>
+<p>絶対位置ではなく、トークン同士の「相対的な距離」（例: 2つ前の単語、3つ後の単語）に着目してアテンション計算に組み込む手法です。</p>
+<ul>
+<li>
+<p><strong>Relative Positional Bias (T5型)</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 相対距離（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>−</mo><mi>j</mi></mrow><annotation encoding="application/x-tex">i - j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7429em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05724em;">j</span></span></span></span>）に応じたスカラー値のバイアスをアテンションスコア（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">QK^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0358em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span>）に加算します。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 対数スケールなどでビン化（Bucket）して長距離の距離表現を効率化しています。</p>
+</li>
+<li>
+<p><strong>ALiBi (Attention with Linear Biases)</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 位置埋め込みベクトル自体を廃止し、アテンション行列に対して「遠く離れたトークンほど直線的（リニア）にペナルティを与える」固定バイアスを加算します。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 非常に強力な外挿（Extrapolation）性能を持ち、学習時より長い文脈を推論時にそのまま処理できます（MPTやBloom等で利用）。</p>
+</li>
+</ul>
+<h3 id="3-回転位置エンコーディング-rotary-position-embedding-rope-とその拡張">3. 回転位置エンコーディング (Rotary Position Embedding: RoPE) とその拡張</h3>
+<p>現在（LLaMAシリーズ、Qwen、Mistralなど）の主流モデルで圧倒的に採用されている方式です。</p>
+<ul>
+<li>
+<p><strong>RoPE (Rotary Position Embedding)</strong></p>
+</li>
+<li>
+<p><strong>原理</strong>: トークン埋め込みにベクトルを加算するのではなく、Query（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>）およびKey（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span>）のベクトルを複素平面上の角度として<strong>回転移動</strong>させます。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 内積をとることで自動的に「相対位置」が導出される優れた数学的性質を持ちます。絶対位置の表現力を維持しつつ、相対位置の情報も扱えます。</p>
+</li>
+<li>
+<p><strong>RoPEのコンテキスト拡張技術（YaRN / NTK-aware / SuPE）</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: RoPEの回転角度の基底周波数を調整・補間することで、学習時の文脈長（例: 4kトークン）を推論時に128k〜1Mトークン以上にスケールアップさせる技術群です。</p>
+</li>
+<li>
+<p><strong>Linear Interpolation / Position Interpolation (PI)</strong>: 角度を線形に縮小。</p>
+</li>
+<li>
+<p><strong>NTK-aware Scaled RoPE</strong>: 高周波（近距離情報）を保ちつつ低周波（長距離情報）のみを補間。</p>
+</li>
+<li>
+<p><strong>YaRN (Yet Another RoPE Extension)</strong>: アテンションの分布崩れを防ぐ温度調整を加えた高度な補間手法。</p>
+</li>
+</ul>
+<h3 id="手法の比較まとめ">手法の比較まとめ</h3>
+<p>説明した位置エンコーダの手法の特徴をまとめると以下になります。</p>
+<table>
+<thead>
+<tr>
+<th>手法</th>
+<th>適用部分</th>
+<th>外挿性（長文対応）</th>
+<th>主な採用モデル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Learned APE</strong></td>
+<td>入力 Embedding</td>
+<td>✕（不可能）</td>
+<td>GPT-2, GPT-3, BERT</td>
+</tr>
+<tr>
+<td><strong>T5 Relative Bias</strong></td>
+<td>Attention スコア</td>
+<td>△（一定可能）</td>
+<td>T5, FLAN-T5</td>
+</tr>
+<tr>
+<td><strong>ALiBi</strong></td>
+<td>Attention スコア</td>
+<td>◎（非常に高い）</td>
+<td>MPT, BLOOM</td>
+</tr>
+<tr>
+<td><strong>RoPE</strong></td>
+<td>Q / K ベクトル</td>
+<td>◯（拡張手法で◎）</td>
+<td>LLaMA, Qwen, Mistral, Gemma</td>
+</tr>
+</tbody>
+</table>
+<h2 id="従来手法の後継となる位置エンコーダ">従来手法の後継となる位置エンコーダ</h2>
+<p>位置エンコーディングの研究は近年非常に活発であり、前述のメジャーな手法以外にも、特定の課題（2D/マルチモーダル拡張、計算効率、厳密な外挿性など）を克服するために多くの特化・派生手法が提案されています。</p>
+<p>主要なカテゴリごとに、さらに存在する代表的な位置エンコーディング手法を紹介します。</p>
+<h3 id="1-複素数回転系の進化的手法ropeの派生代替">1. 複素数・回転系の進化的手法（RoPEの派生・代替）</h3>
+<p>RoPEの「2次元平面での回転」をさらに多次元や非線形空間へ拡張した手法です。</p>
+<ul>
+<li>
+<p><strong>xPos (Extrapolatable Position Embedding)</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: RoPEに指数の減衰因子（Exponential Decay）を掛け合わせた手法。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 相対距離が離れるにつれて注目度（Attention Weight）が自然に減衰するプロパティを組み込んでおり、RoPEよりも安定した長文外挿性能を実現します（MicrosoftのSunNet等で提案）。</p>
+</li>
+<li>
+<p><strong>RoPE-3D / Multi-dimensional RoPE</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 1次元のテキスト系列向けだったRoPEを、2次元（画像）や3D（動画・点群データ、空間座標）に拡張した手法。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: チャンネル次元を複数のブロックに分割し、それぞれに <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo separator="true">,</mo><mi>z</mi></mrow><annotation encoding="application/x-tex">x, y, z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> 軸の回転角度を適用することで、マルチモーダルLLMにおける時空間位置を自然にエンコードします。</p>
+</li>
+</ul>
+<h3 id="2-連続関数暗黙的表現implicit--dynamic-approaches">2. 連続関数・暗黙的表現（Implicit / Dynamic Approaches）</h3>
+<p>明示的な式や固定テーブルを使わず、ニューラルネットワークや微分方程式などで位置表現を「関数」として動的に生成する手法です。</p>
+<ul>
+<li>
+<p><strong>KERPLE (Kernelized Relative Positional Embedding)</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: ガウスカーネルや対数カーネルなどの数学的カーネル関数を用いて、相対距離に応じたアテンションバイアスを学習する手法。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: ALiBiのような直線的ペナルティを一般化・滑らかにし、数式的な保証を持たせた外挿を可能にします。</p>
+</li>
+<li>
+<p><strong>CoPE (Contextual Position Encoding)</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 単なる「トークンの何番目か（位置カウント）」ではなく、<strong>「テキストの意味的な区切りや文脈」に基づいた動的な位置</strong>を付与する手法（Metaが提案）。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 例えば「前にある3つ目の“名詞”」といった概念的な距離をアテンションスコアに基づいて算出し、トークン数ベースの位置エンコーディングが抱える限界を打破しようとしています。</p>
+</li>
+</ul>
+<h3 id="3-再帰状態空間モデル由来の手法">3. 再帰・状態空間モデル由来の手法</h3>
+<p>Transformer以外のアーキテクチャ（RNNやState Space Model）の長所をアテンションに取り入れた手法です。</p>
+<ul>
+<li>
+<p><strong>RPE via Recurrent State / Dynamic Bias</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 因果的アテンションの計算過程に小規模なRNNや1Dコンボリューションを挟むことで、位置情報を隠し状態の推移として間接的に保持させる手法。</p>
+</li>
+<li>
+<p><strong>Sandwich / Chunk-based Positional Encoding</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: 長文テキストをいくつかの「チャunk（固まり）」に分割し、ローカル位置（Chunk内の相対位置）<strong>と</strong>グローバル位置（Chunk同士の絶対位置）の2層構造で位置を表現する手法。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 超長文を処理する際の計算コストと外挿の曖昧さを削減します。</p>
+</li>
+</ul>
+<h3 id="4-2d--vision-language向け特殊手法">4. 2D / Vision-Language向け特殊手法</h3>
+<p>LLMがテキストだけでなく画像や文書レイアウト（PDFなど）を扱うマルチモーダル（VLM）へ拡張される中で開発された手法です。</p>
+<ul>
+<li>
+<p><strong>2D Spatial Embedding（LayoutLM型）</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: バウンディングボックスの座標情報 ((x_0, y_0, x_1, y_1)) をそれぞれ埋め込みベクトルに変換して加算する手法。</p>
+</li>
+<li>
+<p><strong>特徴</strong>: 構造化文書やWEBページの視覚的レイアウトを保持したままLLMに入力するために利用されます。</p>
+</li>
+<li>
+<p><strong>2D RoPE（2D Rotary Position Embedding）</strong></p>
+</li>
+<li>
+<p><strong>概要</strong>: RoPE（Rotary Position Embedding）を2次元画像向けに拡張した位置エンコーダです。画像の**X方向（横）<strong>と</strong>Y方向（縦）**の位置に応じて、特徴ベクトルをそれぞれ回転させることで位置情報を付与します。</p>
+</li>
+<li>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li>パッチ間の<strong>2次元の相対位置関係</strong>を自然に表現できる。</li>
+<li>回転によって位置を表現するため、<strong>ベクトルの大きさ（意味情報）を保ったまま位置情報を付与</strong>できる。</li>
+<li>解像度が変化しても比較的安定して動作し、高解像度画像への外挿性能（Length/Resolution Extrapolation）に優れる。</li>
+<li>近年の<strong>Vision Transformer（ViT）<strong>や</strong>Vision-Language Model（VLM）</strong>（InternVL、Qwen2.5-VL、LLaVA系など）の位置エンコーダとして広く採用されています。</li>
+</ul>
+</li>
+</ul>
+<h2 id="例題">例題</h2>
+<p>Vision Transformer（ViT）における <strong>「絶対位置エンコーディング（2D Learned/Sinusoidal APE）」</strong> と <strong>「2D RoPE」</strong> の仕組み・位置精度の違いを体感・理解するための例題を作成しました。</p>
+<p>この例題では、「画像内のオブジェクトの相対的な位置関係（距離・方向）」を正しく判定できるかどうかに焦点を当てています。</p>
+<h3 id="問題グリッド上のターゲット探索タスク">問題：グリッド上のターゲット探索タスク</h3>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><mo>×</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">8 \times 8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">8</span></span></span></span> の画像パッチ（グリッド）上に、2つのオブジェクト（<strong>「りんご 🍎」<strong>と</strong>「ナイフ 🔪」</strong>）が配置されています。</p>
+<p>ViTのアテンション機構が「🍎」のパッチから「🔪」のパッチへアテンションを向ける際、<strong>2つの手法でどのような位置認識の違いが生じるか</strong>を考えます。</p>
+<pre><code>[ グリッド配置図 ]
+    0    1    2    3    4    5    6    7 (X軸)
+0 [  ] [  ] [  ] [  ] [  ] [  ] [  ] [  ]
+1 [  ] [🍎] [  ] [  ] [  ] [  ] [  ] [  ]  &lt;-- 🍎 位置: (X=1, Y=1)
+2 [  ] [  ] [🔪1] [  ] [  ] [  ] [  ] [  ]  &lt;-- 🔪1位置: (X=2, Y=2)  [右下に1マス離れる]
+3 [  ] [  ] [  ] [  ] [  ] [  ] [  ] [  ]
+4 [  ] [  ] [  ] [  ] [  ] [  ] [  ] [  ]
+5 [  ] [  ] [  ] [  ] [🔪2] [  ] [  ] [  ]  &lt;-- 🔪2位置: (X=4, Y=5)  [右下に大きめの離れ]
+
+</code></pre>
+<p><strong>問い</strong></p>
+<p>モデルに以下の質問を解析させます。</p>
+<blockquote>
+<p><strong>質問</strong>: 「🍎（位置: 1, 1）に対して、相対位置関係が全く同じ <strong>『右下に1マス離れた場所』</strong> にあるオブジェクトを探しなさい。」</p>
+</blockquote>
+<h3 id="2つの位置エンコーディングによる内部処理と精度の違い">2つの位置エンコーディングによる内部処理と精度の違い</h3>
+<p><strong>1. 絶対位置エンコーディング（2D APE）の場合</strong></p>
+<p>APEでは、各マス目に<strong>一意の絶対座標ID</strong>（または個別の位置ベクトル）を付与し、パッチ特徴量に加算します。</p>
+<ul>
+<li><strong>🍎の位置ベクトル</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">P_{(1,1)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li><strong>🔪1の位置ベクトル</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">P_{(2,2)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li><strong>🔪2の位置ベクトル</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>4</mn><mo separator="true">,</mo><mn>5</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">P_{(4,5)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">4</span><span class="mpunct mtight">,</span><span class="mord mtight">5</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span></li>
+</ul>
+<p><strong>アテンション計算の内部挙動</strong></p>
+<p>🍎と🔪1の関連度（アテンションスコア）を計算する際、計算式は以下のようになります。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Score</mtext><mo>=</mo><mo stretchy="false">(</mo><msub><mi>E</mi><mtext>🍎</mtext></msub><mo>+</mo><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub><mo stretchy="false">)</mo><mo>⋅</mo><mo stretchy="false">(</mo><msub><mi>E</mi><mtext>🔪</mtext></msub><mo>+</mo><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msub><msup><mo stretchy="false">)</mo><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\text{Score} = (E_{\text{🍎}} + P_{(1,1)}) \cdot (E_{\text{🔪}} + P_{(2,2)})^T
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Score</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.15em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">🍎</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.15em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">🔪</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.2465em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>これを展開すると、単語・オブジェクトの意味同士の内積に加えて、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub><mo>⋅</mo><msubsup><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><mi>T</mi></msubsup></mrow><annotation encoding="application/x-tex">P_{(1,1)} \cdot P_{(2,2)}^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.3383em;vertical-align:-0.497em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.378em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.497em;"><span></span></span></span></span></span></span></span></span></span> という「絶対位置ベクトル同士の内積」が含まれます。</p>
+<p><strong>精度面での問題点・限界</strong></p>
+<ul>
+<li><strong>相対距離の直接的な表現ができない</strong>:
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">P_{(1,1)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span> と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex">P_{(2,2)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span> の内積結果が、「右下に1マス離れている」という関係性を自然に表すとは限りません。モデルは大量のデータを使って「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(1,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span> と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(2,2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mclose">)</span></span></span></span> の組み合わせは近い」という事実を個別暗記（学習）する必要があります。</li>
+<li><strong>未知の座標・高解像度（外挿）に弱い</strong>:
+もし推論時に画像を拡大し、🍎が <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(2, 2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mclose">)</span></span></span></span>、🔪1が <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>4</mn><mo separator="true">,</mo><mn>4</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(4, 4)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">4</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">4</span><span class="mclose">)</span></span></span></span> に移動した場合、学習時に経験していない絶対座標の組み合わせになると、相対距離が同じ「右下に2マス（倍率考慮で同等）」であっても位置関係を認識できず、<strong>位置精度が著しく低下</strong>します。</li>
+</ul>
+<p><strong>2. 2D RoPE（2D Rotary Position Embedding）の場合</strong></p>
+<p>2D RoPEでは、ベクトルを<strong>X軸方向の座標に応じた角度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>x</mi></msub></mrow><annotation encoding="application/x-tex">\theta_x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></strong> と、<strong>Y軸方向の座標に応じた角度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mi>y</mi></msub></mrow><annotation encoding="application/x-tex">\theta_y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></strong> でそれぞれ回転させます。</p>
+<ul>
+<li><strong>🍎の回転</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">X=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> の角度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mrow><mi>x</mi><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\theta_{x1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Y=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> の角度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mrow><mi>y</mi><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\theta_{y1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> で回転</li>
+<li><strong>🔪1の回転</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">X=2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> の角度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mrow><mi>x</mi><mn>2</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\theta_{x2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> と <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">Y=2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> の角度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mrow><mi>y</mi><mn>2</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\theta_{y2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> で回転</li>
+</ul>
+<p><strong>アテンション計算の内部挙動</strong></p>
+<p>回転させた Query（🍎）と Key（🔪1）の内積を計算すると、複素数・回転行列の数学的性質により、<strong>絶対座標 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(1,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span> や <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(2,2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mclose">)</span></span></span></span> 自体は消去され、座標の「差分」だけが残ります</strong>。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Score</mtext><mo>∝</mo><mi>cos</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi mathvariant="normal">Δ</mi><mi>X</mi><mo>⋅</mo><msub><mi>θ</mi><mi>x</mi></msub><mo stretchy="false">)</mo><mo>+</mo><mi>cos</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi mathvariant="normal">Δ</mi><mi>Y</mi><mo>⋅</mo><msub><mi>θ</mi><mi>y</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Score} \propto \cos(\Delta X \cdot \theta_x) + \cos(\Delta Y \cdot \theta_y)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Score</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">cos</span><span class="mopen">(</span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">cos</span><span class="mopen">(</span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>（※ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>X</mi><mo>=</mo><mn>2</mn><mo>−</mo><mn>1</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\Delta X = 2 - 1 = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>Y</mi><mo>=</mo><mn>2</mn><mo>−</mo><mn>1</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\Delta Y = 2 - 1 = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>）</p>
+<p><strong>精度面での優位性</strong></p>
+<ul>
+<li><strong>相対位置関係の厳密な把握</strong>:
+アテンションスコアに直接「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>X</mi><mo>=</mo><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><mi>Y</mi><mo>=</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\Delta X = +1, \Delta Y = +1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord">+</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">+</span><span class="mord">1</span></span></span></span>（右下に1マス）」という<strong>相対ベクトルそのものが純粋に抽出</strong>されます。そのため、🍎と🔪1の位置関係を極めて高精度に認識できます。</li>
+<li><strong>画像の解像度変化（外挿）に圧倒的に強い</strong>:
+画像の解像度が変わり、グリッドが <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>16</mn><mo>×</mo><mn>16</mn></mrow><annotation encoding="application/x-tex">16 \times 16</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">16</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">16</span></span></span></span> に拡大されても、あるいはオブジェクトが画像内のどこ（例: 左上 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo><mo>→</mo><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(1,1) \to (2,2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mclose">)</span></span></span></span>、中央 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>8</mn><mo separator="true">,</mo><mn>8</mn><mo stretchy="false">)</mo><mo>→</mo><mo stretchy="false">(</mo><mn>9</mn><mo separator="true">,</mo><mn>9</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(8,8) \to (9,9)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">8</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">8</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">9</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">9</span><span class="mclose">)</span></span></span></span>）に配置されても、「相対距離が同じであれば、アテンションの計算結果（回転角の差）が完全に同一」になります。</li>
+</ul>
+<h3 id="違いのまとめ">違いのまとめ</h3>
+<table>
+<thead>
+<tr>
+<th>評価軸</th>
+<th>絶対位置エンコーディング (APE)</th>
+<th>2D RoPE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>位置情報の表現方法</strong></td>
+<td>座標ごとの固定/学習ベクトルを<strong>加算</strong></td>
+<td>座標（X, Y）に応じた角度でベクトルを<strong>回転</strong></td>
+</tr>
+<tr>
+<td><strong>相対位置の認識メカニズム</strong></td>
+<td>絶対座標の組み合わせを学習で暗記する</td>
+<td>アテンション計算時に<strong>数学的に差分（相対距離）が自動抽出</strong>される</td>
+</tr>
+<tr>
+<td><strong>2D空間（縦横）の精度</strong></td>
+<td>X方向とY方向の干渉が生じやすい</td>
+<td><strong>X軸・Y軸が独立して回転</strong>するため、2Dグリッドの縦横関係を正確に分離・保持できる</td>
+</tr>
+<tr>
+<td><strong>高解像度への適合性（外挿性）</strong></td>
+<td>弱（学習時の解像度を超えると精度が崩壊）</td>
+<td><strong>強</strong>（回転角の補間・スケーリングにより高解像度でも位置精度を維持）</td>
+</tr>
+<tr>
+<td><strong>意味情報への影響</strong></td>
+<td>ベクトルの大きさが変化し、意味情報に干渉するリスク</td>
+<td>ベクトルのノルム（大きさ）を保つため、<strong>意味情報を破壊しない</strong></td>
+</tr>
+</tbody>
+</table>
+<p>この「2D空間での相対的な距離や方向を数学的に一発で抽出できる」という性質こそが、現在のVLM（Qwen2.5-VLやInternVLなど）で2D RoPEが標準採用されている最大の位置精度上の理由です。</p>
+<h2 id="総括">総括</h2>
+<p>位置エンコーディングの主要な機能と、代表的な手法の使い分け観点を簡潔にまとめると、以下のようになります。</p>
+<h3 id="1-位置エンコーディングの主な機能">1. 位置エンコーディングの主な機能</h3>
+<p>位置エンコーディングは、Transformerが「集合」として扱うトークン列に<strong>順序・距離・方向</strong>といった位置情報を付与し、モデルが次のような情報を扱えるようにする仕組みです。</p>
+<ol>
+<li><strong>順序（前後関係）の保持</strong>
+<ul>
+<li>「犬が人を噛んだ」と「人が犬を噛んだ」を区別する。</li>
+</ul>
+</li>
+<li><strong>相対距離の把握</strong>
+<ul>
+<li>「直前の単語」「3つ前の単語」など、トークン間の距離に応じた注目度を調整する。</li>
+</ul>
+</li>
+<li><strong>2D・3D空間での位置関係の表現（VLM / ViT向け）</strong>
+<ul>
+<li>画像パッチの「上下左右」「斜め方向」といった相対位置を正確に扱う。</li>
+</ul>
+</li>
+</ol>
+<p>これらを実現するために、<strong>ベクトルに位置情報を「重ねる」</strong>（加算型・バイアス型）か、<strong>ベクトルを「回転」させる</strong>（RoPE系）などの方法が用いられます。</p>
+<h3 id="2-代表的な手法の使い分け観点">2. 代表的な手法の使い分け観点</h3>
+<p><strong>(1) 加算型（絶対位置：Learned / Sinusoidal APE）</strong></p>
+<ul>
+<li><strong>特徴</strong>
+<ul>
+<li>各位置に固有のベクトルを加算するだけのシンプルな仕組み。</li>
+<li>Learned APEは表現力が高いが、<strong>学習時の最大長を超える外挿ができない</strong>。</li>
+</ul>
+</li>
+<li><strong>適した用途</strong>
+<ul>
+<li>コンテキスト長が固定で、外挿をあまり必要としないタスク（BERT, GPT-2/3 など）。</li>
+<li>実装が簡単で、<strong>小規模モデルやプロトタイプ</strong>でまず試すのに向く。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) バイアス型（相対位置：ALiBi, T5 Relative Bias）</strong></p>
+<ul>
+<li><strong>特徴</strong>
+<ul>
+<li>アテンションスコアに「距離に応じたペナルティ（バイアス）」を加える。</li>
+<li>ALiBiは<strong>外挿性が非常に高く</strong>、学習時より長い文脈をそのまま扱える。</li>
+</ul>
+</li>
+<li><strong>適した用途</strong>
+<ul>
+<li><strong>長文生成・長文理解</strong>が重要なモデル（MPT, BLOOM など）。</li>
+<li>学習時より長いコンテキストを推論時に扱いたい場合に有利。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) 回転型（RoPE およびその拡張）</strong></p>
+<ul>
+<li><strong>特徴</strong>
+<ul>
+<li>Query/Keyベクトルを位置に応じて回転させ、<strong>相対距離が自動的に抽出される</strong>。</li>
+<li>意味ベクトルの大きさを保ちつつ位置情報を付与できる。</li>
+<li>YaRN / NTK-aware / SuPE などの拡張により、<strong>長文外挿性能も高い</strong>。</li>
+</ul>
+</li>
+<li><strong>適した用途</strong>
+<ul>
+<li>現在の**主流LLM（LLaMA, Qwen, Mistral, Gemma など）**で標準的に採用。</li>
+<li>長文・高解像度への外挿性と位置精度の両立が求められる場合に最適。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(4) 2D RoPE / 2D Spatial Embedding（VLM / ViT向け）</strong></p>
+<ul>
+<li><strong>特徴</strong>
+<ul>
+<li>X軸・Y軸それぞれで回転（または座標ベクトル）を適用し、<strong>2D空間の相対位置を正確に表現</strong>。</li>
+<li>画像の解像度が変わっても、相対距離は同じ角度差として扱えるため、<strong>外挿性が高い</strong>。</li>
+</ul>
+</li>
+<li><strong>適した用途</strong>
+<ul>
+<li><strong>Vision-Language Model（VLM）</strong> や<strong>Vision Transformer（ViT）</strong>。</li>
+<li>画像内のオブジェクト間の「上下左右」「斜め方向」といった位置関係を正確に扱いたい場合。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-簡潔なまとめ">3. 簡潔なまとめ</h3>
+<ul>
+<li>
+<p><strong>位置エンコーディングの本質</strong></p>
+<ul>
+<li>Transformerが「集合」として扱うトークン列に<strong>順序・距離・方向</strong>を付与し、
+<ul>
+<li>順序の区別（前後関係）</li>
+<li>相対距離の把握</li>
+<li>2D/3D空間での位置関係<br>
+を可能にする。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>手法の選び方（用途別）</strong></p>
+<ul>
+<li><strong>小規模・固定長でシンプルにしたい</strong> → Learned / Sinusoidal APE（加算型）</li>
+<li><strong>長文外挿を重視</strong> → ALiBi（バイアス型）</li>
+<li><strong>汎用LLMでバランスよく</strong> → RoPE（回転型）</li>
+<li><strong>画像・2D空間を扱うVLM/ViT</strong> → 2D RoPE / 2D Spatial Embedding</li>
+</ul>
+</li>
+<li>
+<p><strong>共通の目標</strong></p>
+<ul>
+<li>いずれの手法も、「意味情報」と「位置情報」を<strong>高次元空間の中でうまく分離・共存させ</strong>、<br>
+アテンション機構が<strong>位置のシフト（ズレ）や角度差を読み取れるようにする</strong>ことです。</li>
+</ul>
+</li>
+</ul>
+<p>以上が、位置エンコーディングの主要な機能と、各手法を用途に応じて使い分ける際の簡潔な観点となります。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/20S3gDn6rYI?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
