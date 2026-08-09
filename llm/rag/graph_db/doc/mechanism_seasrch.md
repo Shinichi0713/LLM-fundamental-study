@@ -251,3 +251,101 @@ print(f"推定された因果効果 (IceSales -> Accidents): {estimate.value:.3f
 メリット: グラフ構造を **構造方程式モデル（SCM）** として定義することで、特定の個人や事象における「潜在的な結果」を推定できます。
 
 応用: 「この患者に薬を投与しなかったら、今頃どうなっていたか？」といった個別化医療や、政策の事後評価に威力を発揮します。
+
+
+
+## 抽出器（Extractor）
+
+`SchemaLLMPathExtractor` と `SimpleLLMPathExtractor`（※`SimpleLLMExtractor`）は、どちらもテキストからトリプル（主語–述語–目的語）を抽出してプロパティグラフを構築するコンポーネントですが、**「抽出時の制約（スキーマ）の有無」** と **「抽出されるパス（関係性）の深さ・構造」** において明確な違いがあります。
+
+それぞれの主な相違点と特徴の比較は以下の通りです。
+
+---
+
+## 2つの抽出器（Extractor）の主な違い
+
+| 項目 | `SchemaLLMPathExtractor` | `SimpleLLMPathExtractor` |
+| --- | --- | --- |
+| **スキーマ制約** | **あり**（規定のエンティティ種別・リレーションに絞り込み可能） | **なし**（LLMがテキストから自由かつ柔軟に抽出） |
+| **抽出の安定性** | **高い**（表記揺れや無関係なノードの生成を抑制） | **やや低い**（同義語で別ノードが生成されるなど自由度が高い反面分散しやすい） |
+| **パス（経路）構造** | 指定スキーマに沿ったノード間パスを整理して抽出 | 自由形式の（Subject, Relation, Object）の組み合わせ |
+| **用途・適したユースケース** | 領域が明確なドメインデータ（医療、財務、社内規定など） | 事前定義が難しい一般的なテキスト、初期構築・プロトタイプ作成 |
+
+---
+
+## それぞれの特徴
+
+### 1. `SimpleLLMPathExtractor` の特徴
+
+* **スキーマレス（完全自由形式）**
+* 事前に「どんなエンティティやリレーションが存在するか」を定義する必要がありません。
+* LLM の判断に基づき、テキスト内に現れるエンティティや関係性を自然言語のままそのまま抽出します。
+
+
+* **メリット**: 設定が非常に簡単で、多様な話題が含まれる一般的なドキュメントや構造化しづらいコンテンツに適しています。
+* **デメリット**: LLM の出力次第で「人工知能」「AI」「Deep Learning」などの同一・類似概念が別のノードとして多発しやすく、グラフが肥大化・複雑化しやすい傾向があります。
+
+---
+
+### 2. `SchemaLLMPathExtractor` の特徴
+
+* **スキーマ（構造定義）に基づく抽出**
+* 事前に定義した **`possible_entities`（抽出すべきエンティティ型）** や **`possible_relations`（許可するリレーション型）**、あるいは **`strict=True`（定義以外は抽出しない）** の制約に従って抽出を行います。
+
+
+* **メリット**: グラフ構造が整然とし、ノードやリレーションの表記揺れを劇的に減らすことができます。結果として GraphRAG の検索精度や推論精度が向上します。
+* **デメリット**: 事前にドメイン知識に基づいた適切なスキーマ設計を行う必要があり、初期コストがややかかります。
+
+---
+
+## コード比較例
+
+### SchemaLLMPathExtractor を使う場合（スキーマ指定あり）
+
+```python
+from typing import Literal
+from llama_index.core.indices.property_graph import SchemaLLMPathExtractor
+from pydantic import BaseModel, Field
+
+# 1. 抽出したいリレーションやエンティティの定義（例）
+possible_entities = ["PERSON", "ORGANIZATION", "AWARD", "CONCEPT"]
+possible_relations = ["FOUNDED", "WON", "CONTRIBUTED_TO", "LOCATED_IN"]
+
+# 2. スキーマを指定して抽出器を初期化
+kg_extractor = SchemaLLMPathExtractor(
+    llm=llm,
+    possible_entities=possible_entities,  # エンティティの定義
+    possible_relations=possible_relations,  # リレーションの定義
+    strict=True,  # 定義外の抽出を厳格に制限するかどうか
+    max_triplets_per_chunk=10,
+)
+
+```
+
+---
+
+### SimpleLLMPathExtractor を使う場合（自由抽出）
+
+```python
+from llama_index.core.indices.property_graph import SimpleLLMPathExtractor
+
+# 制約を設けず、LLMに自由にトリプルを抽出させる
+kg_extractor = SimpleLLMPathExtractor(
+    llm=llm,
+    max_triplets_per_chunk=10,
+)
+
+```
+
+---
+
+## どちらを選ぶべきか？
+
+* **`SimpleLLMPathExtractor` を選ぶべきケース**:
+* ドキュメントの種類が多岐にわたり、事前にどんな要素が登場するか予測できない場合
+* まずは素早く GraphRAG のプロトタイプを構築・評価してみたい場合
+
+
+* **`SchemaLLMPathExtractor` を選ぶべきケース**:
+* 対象ドメイン（社内ナレッジ、技術仕様書、医療・法律データなど）のエンティティ種別が明確な場合
+* グラフ構造の品質を高く保ち、検索ノイズ（無関係なリレーション）を最小限に抑えたい場合
