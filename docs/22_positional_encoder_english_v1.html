@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Positional Encoders</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>LLMs have something called <strong>positional encoders</strong> embedded inside them.<br>
+Positional encoders play a crucial role in letting the LLM know <strong>where</strong> in the sequence each token is located, and <strong>what</strong> appears at that position.</p>
+<p>Today, I will explain in detail the main approaches to positional encoding, dividing them into three broad families: <strong>additive</strong>, <strong>bias-based</strong>, and <strong>rotary</strong>.</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="positional-encoders">Positional Encoders</h2>
+<p>For more details, please refer to the following article:</p>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2025/11/13/000000">https://yoshishinnze.hatenablog.com/entry/2025/11/13/000000</a></p>
+<p>The self-attention mechanism in Transformers essentially treats the input as a <strong>set</strong> of tokens.<br>
+Without positional encoding, the model would treat “The dog bit the person” and “The person bit the dog” as <strong>exactly the same sequence</strong>.</p>
+<p>Positional encoders allow the model to understand <strong>where</strong> tokens are in the sequence.<br>
+We can broadly categorize them into three approaches: <strong>additive</strong>, <strong>bias-based</strong>, and <strong>rotary</strong>.</p>
+<h3 id="1-additive-absolute-position-stamping-a-position-onto-the-word-vector">1. Additive (Absolute Position): “Stamping” a position onto the word vector</h3>
+<p>This is the simplest approach, used in early Transformers (Sinusoidal) and GPT‑2.</p>
+<p><strong>Mechanism</strong></p>
+<ol>
+<li>We have a <strong>word vector</strong> representing the meaning of the token.</li>
+<li>For each position (1st, 2nd, …), we create a <strong>position vector</strong>—a unique numerical pattern like a “stamp.”</li>
+<li>We simply add them element-wise:</li>
+</ol>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Input vector</mtext><mo>=</mo><mtext>Word Embedding</mtext><mo>+</mo><mtext>Positional Embedding</mtext></mrow><annotation encoding="application/x-tex">\text{Input vector} = \text{Word Embedding} + \text{Positional Embedding}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Input vector</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Word Embedding</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Positional Embedding</span></span></span></span></span></span></p>
+<p><strong>Why does this encode position?</strong></p>
+<p>In vector space, adding a <strong>position-specific vector</strong> slightly shifts the original word vector.<br>
+The feed-forward networks (FFN) and attention layers can learn to read this <strong>shift</strong> and infer, for example, “this ‘dog’ token is the one at the beginning of the sentence.”</p>
+<blockquote>
+<p><strong>Analogy</strong>:<br>
+Imagine attaching a colored sticker to the word “apple”: a red sticker for the 1st seat, a blue sticker for the 2nd seat, and so on.</p>
+</blockquote>
+<h3 id="2-bias-based-relative-position-injecting-distance-directly-into-attention-scores">2. Bias-based (Relative Position): Injecting “distance” directly into attention scores</h3>
+<p>Used in ALiBi, T5, etc., this approach focuses not on absolute position but on <strong>how far apart</strong> tokens are.</p>
+<p><strong>Mechanism</strong></p>
+<p>In attention, we compute a relevance score between Query (Q) and Key (K) via their dot product.<br>
+In bias-based methods, we <strong>add a penalty</strong> to this score that depends on the distance between tokens:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Attention Score</mtext><mo>=</mo><mi>Q</mi><mo>⋅</mo><msup><mi>K</mi><mi>T</mi></msup><mo>−</mo><mtext>(distance-based penalty)</mtext></mrow><annotation encoding="application/x-tex">\text{Attention Score} = Q \cdot K^T - \text{(distance-based penalty)}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Attention Score</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9747em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">(distance-based penalty)</span></span></span></span></span></span></p>
+<p><strong>Why does this encode position?</strong></p>
+<p>For example, ALiBi adds a linear penalty:</p>
+<ul>
+<li>Distance 1 → subtract 1</li>
+<li>Distance 2 → subtract 2</li>
+<li>etc.</li>
+</ul>
+<p>This means the model doesn’t need to memorize absolute indices.<br>
+Instead, it directly learns to <strong>pay more attention to nearby tokens</strong> and <strong>less attention to far-away tokens</strong>.</p>
+<h3 id="3-rotary-rope-rotating-vectors-by-angle">3. Rotary (RoPE): Rotating vectors by “angle”</h3>
+<p>RoPE (Rotary Position Embedding) is the most widely used method today (LLaMA, Qwen, Mistral, etc.).<br>
+It uses a clever mathematical trick with rotations.</p>
+<p><strong>Mechanism</strong></p>
+<p>We treat pairs of vector dimensions as coordinates in the complex plane.<br>
+Then we <strong>rotate</strong> the Query and Key vectors by an angle proportional to their position index <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex"> m </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span>:</p>
+<ul>
+<li>1st token → rotate by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>⋅</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex"> 1 \cdot \theta </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span></li>
+<li>2nd token → rotate by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>⋅</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex"> 2 \cdot \theta </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex"> m </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span>-th token → rotate by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>⋅</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex"> m \cdot \theta </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4445em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span></li>
+</ul>
+<p><strong>Why does this encode position?</strong></p>
+<p>When we compute the dot product between a rotated Query (position <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex"> m </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span>) and a rotated Key (position <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex"> n </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>), trigonometric identities ensure that the result depends <strong>only on the relative distance</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex"> m - n </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>.</p>
+<ol>
+<li><strong>Absolute position representation</strong>: Each vector is rotated by an angle tied to its own position.</li>
+<li><strong>Relative position extraction</strong>: The dot product automatically yields a value that depends solely on the <strong>difference in angles</strong> (i.e., the distance).</li>
+</ol>
+<p>This “absolute encoding that becomes relative in attention” is the key mathematical trick behind RoPE.</p>
+<p>In all these methods, <strong>attention reads the positional “shift” (or rotation) encoded in each token’s vector</strong> to understand relative distances and ordering.</p>
+<h2 id="why-attention-can-read-the-shift-without-confusion">Why Attention Can Read the Shift Without Confusion</h2>
+<p>You might wonder: if both <strong>semantic information</strong> (word meaning) and <strong>positional information</strong> are mixed into a single vector (e.g., 4096 numbers), how does attention tell them apart?</p>
+<p>The answer lies in three mechanisms:</p>
+<ul>
+<li>the geometry of <strong>high-dimensional spaces</strong>,</li>
+<li><strong>orthogonality</strong> (separate subspaces), and</li>
+<li>the <strong>linear transformations</strong> in attention.</li>
+</ul>
+<h3 id="1-the-room-in-high-dimensional-space">1. The “room” in high-dimensional space</h3>
+<p>LLMs work in very high-dimensional spaces (4096D, 8192D, etc.).<br>
+In such spaces:</p>
+<ul>
+<li>There are <strong>many nearly orthogonal directions</strong>.</li>
+<li>As dimensionality increases, randomly chosen vectors are almost always nearly orthogonal (angle ≈ 90°), meaning they barely interfere.</li>
+</ul>
+<p>Thus, the model can effectively allocate:</p>
+<ul>
+<li>one subspace for <strong>semantic meaning</strong>, and</li>
+<li>another subspace for <strong>positional information</strong>,</li>
+</ul>
+<p>with minimal interference between them.</p>
+<blockquote>
+<p><strong>Analogy</strong>:<br>
+In 3D space, you could use the X–Y plane for “meaning” and the Z-axis for “position.”<br>
+Changing Z (height) doesn’t change the X–Y coordinates (meaning).</p>
+</blockquote>
+<h3 id="2-attention-as-an-information-filter">2. Attention as an “information filter”</h3>
+<p>Even when word and position vectors are added into one vector, the linear layers <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>Q</mi></msub><mo separator="true">,</mo><msub><mi>W</mi><mi>K</mi></msub><mo separator="true">,</mo><msub><mi>W</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex"> W_Q, W_K, W_V </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">Q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> can learn to separate them.</p>
+<p>During training, the weight matrices learn to:</p>
+<ul>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>Q</mi></msub><mo separator="true">,</mo><msub><mi>W</mi><mi>K</mi></msub></mrow><annotation encoding="application/x-tex"> W_Q, W_K </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">Q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> (for scoring)</strong>: respond strongly to the <strong>positional component</strong> (shift/angle).</li>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex"> W_V </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> (for value)</strong>: extract mainly the <strong>semantic component</strong>.</li>
+</ul>
+<p>In effect, these matrices act like <strong>optical filters</strong>, splitting the mixed vector into separate “channels” for meaning and position.</p>
+<h3 id="3-rope-clean-separation-of-magnitude-and-phase">3. RoPE: clean separation of magnitude and phase</h3>
+<p>In RoPE, the separation is mathematically cleaner:</p>
+<ul>
+<li><strong>Semantic meaning</strong> is encoded in the <strong>magnitude</strong> (norm) and relative direction of the vector.</li>
+<li><strong>Position</strong> is encoded purely in the <strong>phase (angle)</strong> of rotation.</li>
+</ul>
+<p>Because the dot product in attention depends only on the <strong>difference in angles</strong>, the semantic magnitude and positional phase remain independent and do not interfere.</p>
+<h2 id="traditional-positional-encoding-methods">Traditional Positional Encoding Methods</h2>
+<p>As research has evolved, positional encoders can be grouped into four broad categories:</p>
+<ol>
+<li><strong>Absolute Positional Encoding (APE)</strong></li>
+<li><strong>Relative Positional Encoding (RPE)</strong></li>
+<li><strong>Rotary / Hybrid Approaches</strong></li>
+<li><strong>No Positional Encoding (NoPE)</strong></li>
+</ol>
+<h3 id="1-absolute-positional-encoding-ape">1. Absolute Positional Encoding (APE)</h3>
+<p>Assigns a fixed vector to each absolute position (1st, 2nd, …) and <strong>adds</strong> it to the token embedding.</p>
+<p><strong>Sinusoidal Positional Encoding</strong></p>
+<ul>
+<li><strong>Overview</strong>: Uses sine and cosine functions with different frequencies to deterministically compute position vectors (used in the original “Attention Is All You Need” Transformer).</li>
+<li><strong>Characteristics</strong>: No learned parameters, intuitive, but limited extrapolation to longer contexts.</li>
+</ul>
+<p><strong>Learned Absolute Positional Embedding</strong></p>
+<ul>
+<li><strong>Overview</strong>: Treats position vectors as learnable parameters (used in BERT, GPT‑2, GPT‑3, etc.).</li>
+<li><strong>Characteristics</strong>: High expressivity, but cannot handle sequences longer than the pre-trained maximum length (e.g., 2048 tokens).</li>
+</ul>
+<h3 id="2-relative-positional-encoding-rpe">2. Relative Positional Encoding (RPE)</h3>
+<p>Focuses on <strong>relative distance</strong> between tokens rather than absolute indices, injecting it into attention.</p>
+<p><strong>Relative Positional Bias (T5-style)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Adds a scalar bias to the attention score <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex"> QK^T </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0358em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span> based on relative distance <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>−</mo><mi>j</mi></mrow><annotation encoding="application/x-tex"> i - j </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7429em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05724em;">j</span></span></span></span>.</li>
+<li><strong>Characteristics</strong>: Often uses bucketing (e.g., log-scale bins) to handle long distances efficiently.</li>
+</ul>
+<p><strong>ALiBi (Attention with Linear Biases)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Abolishes explicit position vectors. Instead, adds a <strong>fixed linear penalty</strong> to attention scores: farther tokens get larger negative biases.</li>
+<li><strong>Characteristics</strong>: Very strong extrapolation; can handle much longer contexts at inference than seen during training (used in MPT, BLOOM, etc.).</li>
+</ul>
+<h3 id="3-rotary-positional-encoding-rope-and-its-extensions">3. Rotary Positional Encoding (RoPE) and Its Extensions</h3>
+<p>RoPE is currently the dominant method in major LLMs (LLaMA, Qwen, Mistral, Gemma, etc.).</p>
+<p><strong>RoPE (Rotary Position Embedding)</strong></p>
+<ul>
+<li><strong>Principle</strong>: Instead of adding vectors, it <strong>rotates</strong> Query and Key vectors in the complex plane by angles proportional to their positions.</li>
+<li><strong>Characteristics</strong>: Dot products automatically yield <strong>relative distances</strong>, combining the benefits of absolute and relative encoding.</li>
+</ul>
+<p><strong>RoPE Context-Extension Techniques (YaRN, NTK-aware, SuPE, etc.)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Adjust or interpolate the base frequencies of RoPE to scale context length from, say, 4k tokens at training to 128k–1M+ tokens at inference.</li>
+<li><strong>Examples</strong>:
+<ul>
+<li>Linear Interpolation / Position Interpolation (PI): shrink angles linearly.</li>
+<li>NTK-aware Scaled RoPE: preserve high frequencies (local info) while interpolating low frequencies (long-range info).</li>
+<li>YaRN (Yet Another RoPE Extension): more sophisticated interpolation with temperature-like adjustments to preserve attention distributions.</li>
+</ul>
+</li>
+</ul>
+<h3 id="summary-of-traditional-methods">Summary of Traditional Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Where applied</th>
+<th>Extrapolation (long context)</th>
+<th>Example models</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Learned APE</strong></td>
+<td>Input embedding</td>
+<td>✕ (none)</td>
+<td>GPT‑2, GPT‑3, BERT</td>
+</tr>
+<tr>
+<td><strong>T5 Relative Bias</strong></td>
+<td>Attention score</td>
+<td>△ (limited)</td>
+<td>T5, FLAN‑T5</td>
+</tr>
+<tr>
+<td><strong>ALiBi</strong></td>
+<td>Attention score</td>
+<td>◎ (very strong)</td>
+<td>MPT, BLOOM</td>
+</tr>
+<tr>
+<td><strong>RoPE</strong></td>
+<td>Q / K vectors</td>
+<td>◯ (◎ with extensions)</td>
+<td>LLaMA, Qwen, Mistral, Gemma</td>
+</tr>
+</tbody>
+</table>
+<h2 id="successors-to-traditional-positional-encoders">Successors to Traditional Positional Encoders</h2>
+<p>Research on positional encoding is very active. Beyond the mainstream methods, many specialized variants address issues like 2D/multimodal extension, computational efficiency, and strict extrapolation guarantees.</p>
+<p>Here are some representative advanced methods by category.</p>
+<h3 id="1-complex--rotary-evolutions-rope-variants-and-alternatives">1. Complex / Rotary Evolutions (RoPE variants and alternatives)</h3>
+<p>Extensions of RoPE’s “2D rotation” to higher dimensions or nonlinear spaces.</p>
+<p><strong>xPos (Extrapolatable Position Embedding)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Combines RoPE with an exponential decay factor.</li>
+<li><strong>Characteristics</strong>: Naturally decays attention weight with distance, leading to more stable long-context extrapolation than vanilla RoPE (proposed in Microsoft’s SunNet, etc.).</li>
+</ul>
+<p><strong>RoPE‑3D / Multi-dimensional RoPE</strong></p>
+<ul>
+<li><strong>Overview</strong>: Extends 1D RoPE to 2D (images) or 3D (video, point clouds, spatial coordinates).</li>
+<li><strong>Characteristics</strong>: Splits channels into blocks and applies rotations along <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo separator="true">,</mo><mi>z</mi></mrow><annotation encoding="application/x-tex"> x, y, z </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> axes, enabling natural encoding of spatiotemporal positions in multimodal LLMs.</li>
+</ul>
+<h3 id="2-continuous--implicit-representations">2. Continuous / Implicit Representations</h3>
+<p>Instead of explicit formulas or fixed tables, these methods treat position as a <strong>function</strong> generated dynamically by neural networks or differential equations.</p>
+<p><strong>KERPLE (Kernelized Relative Positional Embedding)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Uses kernel functions (e.g., Gaussian, log kernels) to learn attention biases as a smooth function of relative distance.</li>
+<li><strong>Characteristics</strong>: Generalizes linear penalties like ALiBi and provides stronger mathematical guarantees for extrapolation.</li>
+</ul>
+<p><strong>CoPE (Contextual Position Encoding)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Assigns position not by token count, but by <strong>semantic or contextual boundaries</strong> (proposed by Meta).</li>
+<li><strong>Characteristics</strong>: For example, it can encode “the third noun before this token,” overcoming limitations of purely token-count-based position encoding.</li>
+</ul>
+<h3 id="3-recurrent--state-space-inspired-methods">3. Recurrent / State-Space-Inspired Methods</h3>
+<p>These borrow ideas from RNNs and state-space models to inject positional information indirectly.</p>
+<p><strong>RPE via Recurrent State / Dynamic Bias</strong></p>
+<ul>
+<li><strong>Overview</strong>: Inserts small RNNs or 1D convolutions into the causal attention computation, letting position be implicitly tracked in hidden states.</li>
+</ul>
+<p><strong>Sandwich / Chunk-based Positional Encoding</strong></p>
+<ul>
+<li><strong>Overview</strong>: Splits long sequences into chunks and encodes <strong>local position</strong> (within chunk) and <strong>global position</strong> (between chunks) separately.</li>
+<li><strong>Characteristics</strong>: Reduces computational cost and ambiguity when processing very long texts.</li>
+</ul>
+<h3 id="4-2d--vision-language-specialized-methods">4. 2D / Vision-Language Specialized Methods</h3>
+<p>Developed for multimodal LLMs that handle images and document layouts (PDFs, web pages, etc.).</p>
+<p><strong>2D Spatial Embedding (LayoutLM-style)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Converts bounding-box coordinates <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo separator="true">,</mo><msub><mi>y</mi><mn>0</mn></msub><mo separator="true">,</mo><msub><mi>x</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>y</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex"> (x_0, y_0, x_1, y_1) </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> into embedding vectors and adds them to token embeddings.</li>
+<li><strong>Characteristics</strong>: Preserves visual layout in structured documents or web pages when feeding them into LLMs.</li>
+</ul>
+<p><strong>2D RoPE (2D Rotary Position Embedding)</strong></p>
+<ul>
+<li><strong>Overview</strong>: Extends RoPE to 2D images. Rotates feature vectors according to <strong>X (horizontal)</strong> and <strong>Y (vertical)</strong> positions.</li>
+<li><strong>Characteristics</strong>:
+<ul>
+<li>Naturally encodes <strong>2D relative positions</strong> between patches.</li>
+<li>Preserves vector magnitude (semantic info) while adding position via rotation.</li>
+<li>Relatively stable under resolution changes; strong length/resolution extrapolation.</li>
+<li>Widely adopted in modern <strong>Vision Transformers (ViT)</strong> and <strong>Vision-Language Models (VLMs)</strong> such as InternVL, Qwen2.5‑VL, LLaVA-family models, etc.</li>
+</ul>
+</li>
+</ul>
+<h2 id="example-2d-ape-vs-2d-rope-in-vision-transformers">Example: 2D APE vs. 2D RoPE in Vision Transformers</h2>
+<p>To understand the difference between <strong>2D Absolute Positional Encoding</strong> and <strong>2D RoPE</strong>, consider a simple “target search” task on an image grid.</p>
+<h3 id="problem-target-search-on-an-88-grid">Problem: Target Search on an 8×8 Grid</h3>
+<p>On an 8×8 grid of image patches, we place two objects: <strong>🍎 (apple)</strong> and <strong>🔪 (knife)</strong>.</p>
+<p>We want the ViT’s attention to find, for a given 🍎 patch, the object that is <strong>“one step down and to the right”</strong> relative to it.</p>
+<pre><code>Grid layout:
+    0    1    2    3    4    5    6    7 (X-axis)
+0 [  ] [  ] [  ] [  ] [  ] [  ] [  ] [  ]
+1 [  ] [🍎] [  ] [  ] [  ] [  ] [  ] [  ]  &lt;-- 🍎 at (X=1, Y=1)
+2 [  ] [  ] [🔪1] [  ] [  ] [  ] [  ] [  ]  &lt;-- 🔪1 at (2,2) [1 step down-right]
+3 [  ] [  ] [  ] [  ] [  ] [  ] [  ] [  ]
+4 [  ] [  ] [  ] [  ] [  ] [  ] [  ] [  ]
+5 [  ] [  ] [  ] [  ] [🔪2] [  ] [  ] [  ]  &lt;-- 🔪2 at (4,5) [further down-right]
+</code></pre>
+<p><strong>Question to the model</strong>:</p>
+<blockquote>
+<p>Find the object whose <strong>relative position</strong> to 🍎 (1,1) is exactly <strong>“one step down and to the right.”</strong></p>
+</blockquote>
+<h3 id="how-the-two-encodings-behave-internally">How the Two Encodings Behave Internally</h3>
+<h4 id="1-2d-absolute-positional-encoding-ape">1. 2D Absolute Positional Encoding (APE)</h4>
+<p>APE assigns a unique absolute coordinate ID (or vector) to each grid cell and adds it to the patch feature.</p>
+<ul>
+<li>🍎’s position vector: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex"> P_{(1,1)} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li>🔪1’s position vector: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex"> P_{(2,2)} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li>🔪2’s position vector: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>4</mn><mo separator="true">,</mo><mn>5</mn><mo stretchy="false">)</mo></mrow></msub></mrow><annotation encoding="application/x-tex"> P_{(4,5)} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">4</span><span class="mpunct mtight">,</span><span class="mord mtight">5</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span></li>
+</ul>
+<p><strong>Internal attention computation</strong></p>
+<p>The attention score between 🍎 and 🔪1 involves:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Score</mtext><mo>=</mo><mo stretchy="false">(</mo><msub><mi>E</mi><mtext>🍎</mtext></msub><mo>+</mo><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub><mo stretchy="false">)</mo><mo>⋅</mo><mo stretchy="false">(</mo><msub><mi>E</mi><mtext>🔪</mtext></msub><mo>+</mo><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msub><msup><mo stretchy="false">)</mo><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\text{Score} = (E_{\text{🍎}} + P_{(1,1)}) \cdot (E_{\text{🔪}} + P_{(2,2)})^T
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Score</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.15em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">🍎</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.15em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">🔪</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.2465em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>Expanding, we get terms like <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub><mo>⋅</mo><msubsup><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><mi>T</mi></msubsup></mrow><annotation encoding="application/x-tex"> P_{(1,1)} \cdot P_{(2,2)}^T </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.3383em;vertical-align:-0.497em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.378em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.497em;"><span></span></span></span></span></span></span></span></span></span>—an inner product of <strong>absolute position vectors</strong>.</p>
+<p><strong>Limitations</strong></p>
+<ul>
+<li><strong>No direct representation of relative distance</strong>:<br>
+The inner product <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msub><mo>⋅</mo><msubsup><mi>P</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><mi>T</mi></msubsup></mrow><annotation encoding="application/x-tex"> P_{(1,1)} \cdot P_{(2,2)}^T </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0385em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mpunct mtight">,</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.3383em;vertical-align:-0.497em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.378em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">2</span><span class="mpunct mtight">,</span><span class="mord mtight">2</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.497em;"><span></span></span></span></span></span></span></span></span></span> does not inherently encode “down-right by 1.” The model must <strong>memorize</strong> that (1,1) and (2,2) are close.</li>
+<li><strong>Poor extrapolation to unseen coordinates / higher resolution</strong>:<br>
+If we enlarge the image and 🍎 moves to (2,2) and 🔪1 to (4,4), the absolute coordinate pairs change. Even if the relative step is the same, the model may fail to recognize the relationship if it hasn’t seen those exact coordinates during training.</li>
+</ul>
+<h4 id="2-2d-rope">2. 2D RoPE</h4>
+<p>2D RoPE rotates vectors by angles tied to X and Y coordinates.</p>
+<ul>
+<li>🍎 is rotated by angles <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mrow><mi>x</mi><mn>1</mn></mrow></msub><mo separator="true">,</mo><msub><mi>θ</mi><mrow><mi>y</mi><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex"> \theta_{x1}, \theta_{y1} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> for (X=1, Y=1).</li>
+<li>🔪1 is rotated by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mrow><mi>x</mi><mn>2</mn></mrow></msub><mo separator="true">,</mo><msub><mi>θ</mi><mrow><mi>y</mi><mn>2</mn></mrow></msub></mrow><annotation encoding="application/x-tex"> \theta_{x2}, \theta_{y2} </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span> for (X=2, Y=2).</li>
+</ul>
+<p><strong>Internal attention computation</strong></p>
+<p>The dot product between rotated Query (🍎) and Key (🔪1) yields, via trigonometric identities, a result that depends only on the <strong>differences</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>X</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><mi>Y</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex"> \Delta X = 1, \Delta Y = 1 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Score</mtext><mo>∝</mo><mi>cos</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi mathvariant="normal">Δ</mi><mi>X</mi><mo>⋅</mo><msub><mi>θ</mi><mi>x</mi></msub><mo stretchy="false">)</mo><mo>+</mo><mi>cos</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi mathvariant="normal">Δ</mi><mi>Y</mi><mo>⋅</mo><msub><mi>θ</mi><mi>y</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Score} \propto \cos(\Delta X \cdot \theta_x) + \cos(\Delta Y \cdot \theta_y)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Score</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">cos</span><span class="mopen">(</span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">x</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">cos</span><span class="mopen">(</span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li><strong>Exact relative position capture</strong>:<br>
+The attention score directly encodes “<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>X</mi><mo>=</mo><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mi mathvariant="normal">Δ</mi><mi>Y</mi><mo>=</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex"> \Delta X = +1, \Delta Y = +1 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord">+</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">+</span><span class="mord">1</span></span></span></span>” (one step down-right).<br>
+The model can recognize this relationship with high precision.</li>
+<li><strong>Strong resolution extrapolation</strong>:<br>
+Even if the grid becomes 16×16 or 🍎 and 🔪1 move elsewhere, <strong>as long as the relative step is the same</strong>, the angle differences—and thus the attention scores—remain identical.</li>
+</ul>
+<h3 id="comparison-summary">Comparison Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Absolute PE (APE)</th>
+<th>2D RoPE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>How position is encoded</strong></td>
+<td>Fixed/learned vectors per coordinate, <strong>added</strong></td>
+<td>Vectors <strong>rotated</strong> by X/Y angles</td>
+</tr>
+<tr>
+<td><strong>Relative position mechanism</strong></td>
+<td>Model must learn coordinate combinations</td>
+<td>Dot product <strong>automatically extracts differences</strong></td>
+</tr>
+<tr>
+<td><strong>2D spatial accuracy</strong></td>
+<td>X and Y can interfere</td>
+<td><strong>X and Y rotations are independent</strong>, clean 2D separation</td>
+</tr>
+<tr>
+<td><strong>Extrapolation to higher res</strong></td>
+<td>Weak (breaks beyond trained resolution)</td>
+<td><strong>Strong</strong> (angles scale naturally)</td>
+</tr>
+<tr>
+<td><strong>Effect on semantic info</strong></td>
+<td>Can distort vector magnitude</td>
+<td><strong>Preserves magnitude</strong>, leaves semantics intact</td>
+</tr>
+</tbody>
+</table>
+<p>This ability to <strong>mathematically extract 2D relative distances and directions in one shot</strong> is why 2D RoPE has become standard in modern VLMs (Qwen2.5‑VL, InternVL, etc.).</p>
+<h2 id="overall-summary">Overall Summary</h2>
+<h3 id="1-main-functions-of-positional-encoding">1. Main Functions of Positional Encoding</h3>
+<p>Positional encoding lets Transformers—which treat tokens as a <strong>set</strong>—handle:</p>
+<ol>
+<li><strong>Order (sequence)</strong>:<br>
+Distinguish “The dog bit the person” from “The person bit the dog.”</li>
+<li><strong>Relative distance</strong>:<br>
+Adjust attention based on how far apart tokens are.</li>
+<li><strong>2D/3D spatial relationships (for VLMs/ViTs)</strong>:<br>
+Accurately represent “above/below,” “left/right,” and diagonal directions in images.</li>
+</ol>
+<p>To achieve this, we either <strong>superimpose</strong> position onto vectors (additive/bias methods) or <strong>rotate</strong> them (RoPE).</p>
+<h3 id="2-how-to-choose-among-major-methods">2. How to Choose Among Major Methods</h3>
+<p><strong>(1) Additive (Absolute: Learned / Sinusoidal APE)</strong></p>
+<ul>
+<li><strong>Characteristics</strong>: Simple, just add a per-position vector.<br>
+Learned APE is expressive but <strong>cannot extrapolate beyond the trained length</strong>.</li>
+<li><strong>Best for</strong>: Fixed-length tasks where extrapolation is not critical (BERT, GPT‑2/3), or small prototypes.</li>
+</ul>
+<p><strong>(2) Bias-based (Relative: ALiBi, T5 Relative Bias)</strong></p>
+<ul>
+<li><strong>Characteristics</strong>: Add distance-based penalties to attention scores.<br>
+ALiBi offers <strong>very strong extrapolation</strong> to longer contexts.</li>
+<li><strong>Best for</strong>: Models where <strong>long-context generation/understanding</strong> is key (MPT, BLOOM).</li>
+</ul>
+<p><strong>(3) Rotary (RoPE and its extensions)</strong></p>
+<ul>
+<li><strong>Characteristics</strong>: Rotate Q/K vectors; dot products yield relative distances.<br>
+Preserves semantic magnitude while encoding position.<br>
+With YaRN/NTK-aware/SuPE, <strong>long-context extrapolation is excellent</strong>.</li>
+<li><strong>Best for</strong>: <strong>Mainstream LLMs</strong> (LLaMA, Qwen, Mistral, Gemma) where both long-context and positional accuracy matter.</li>
+</ul>
+<p><strong>(4) 2D RoPE / 2D Spatial Embedding (for VLMs/ViTs)</strong></p>
+<ul>
+<li><strong>Characteristics</strong>: Apply rotations (or coordinate embeddings) along X and Y axes.<br>
+Accurately captures <strong>2D relative positions</strong>.<br>
+Strong extrapolation under resolution changes.</li>
+<li><strong>Best for</strong>: <strong>Vision-Language Models (VLMs)</strong> and <strong>Vision Transformers (ViTs)</strong> that need precise spatial relationships (“above,” “to the left,” “diagonally down-right”).</li>
+</ul>
+<h3 id="3-concise-takeaway">3. Concise Takeaway</h3>
+<ul>
+<li>
+<p><strong>Core role of positional encoding</strong>:<br>
+Give Transformers <strong>order, distance, and direction</strong> so they can distinguish sequences, handle relative distances, and reason in 2D/3D space.</p>
+</li>
+<li>
+<p><strong>How to choose</strong>:</p>
+<ul>
+<li><strong>Small, fixed-length, simple</strong>: Learned / Sinusoidal APE (additive).</li>
+<li><strong>Strong long-context extrapolation</strong>: ALiBi (bias-based).</li>
+<li><strong>General-purpose LLM</strong>: RoPE (rotary).</li>
+<li><strong>Image / 2D spatial reasoning</strong>: 2D RoPE or 2D Spatial Embedding.</li>
+</ul>
+</li>
+<li>
+<p><strong>Common goal</strong>:<br>
+All methods aim to let <strong>semantic information</strong> and <strong>positional information</strong> coexist in high-dimensional space, so that attention can read the <strong>positional shift or rotation</strong> encoded in each token’s vector.</p>
+</li>
+</ul>
+<p>This concludes the overview of positional encoders and how to choose among them based on your use case.
+Thank you for reading!</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/20S3gDn6rYI?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+<script>
+(function() {
+  // 記事ページのパスと、それに対応する英語版URLのマッピング
+  var langMap = {
+    "/entry/my-article-ja": "https://yoshishinnze.hatenablog.com/entry/2026/08/27/043000",
+    "/entry/rust-tips-ja": "https://yoshishinnze.hatenablog.com/entry/2026/08/28/043000"
+  };
+
+  var currentPath = window.location.pathname;
+
+  if (langMap[currentPath]) {
+    var jaUrl = window.location.origin + currentPath;
+    var enUrl = langMap[currentPath];
+
+    // 日本語版の link タグ生成
+    var linkJa = document.createElement('link');
+    linkJa.rel = 'alternate';
+    linkJa.hreflang = 'ja';
+    linkJa.href = jaUrl;
+    document.head.appendChild(linkJa);
+
+    // 英語版の link タグ生成
+    var linkEn = document.createElement('link');
+    linkEn.rel = 'alternate';
+    linkEn.hreflang = 'en';
+    linkEn.href = enUrl;
+    document.head.appendChild(linkEn);
+  }
+})();
+</script>
+
+        </body>
+        </html>

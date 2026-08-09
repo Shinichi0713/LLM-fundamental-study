@@ -276,5 +276,72 @@ def run_point_correspondence_experiment():
     print(f"  - 点 (2, 2) [近距離] へのスコア: {map_rope[p_near[0], p_near[1]]:.4f}")
     print(f"  - 点 (5, 4) [遠距離] へのスコア: {map_rope[p_far[0], p_far[1]]:.4f}")
 
+import torch
+import torch.nn as nn
+
+class RelativePositionBias2D(nn.Module):
+    def __init__(self, height: int, width: int, num_heads: int):
+        """
+        2D Relative Position Bias (SwiNH / Swin Transformer型)
+
+        Args:
+            height (int): パッチグリッドの高さ
+            width (int): パッチグリッドの幅
+            num_heads (int): アテンションのヘッド数
+        """
+        super().__init__()
+        self.height = height
+        self.width = width
+        self.num_heads = num_heads
+
+        # 相対距離の範囲: 
+        # Y方向: -(H - 1) ～ (H - 1)  -> 合計 2*H - 1 種類
+        # X方向: -(W - 1) ～ (W - 1)  -> 合計 2*W - 1 種類
+        self.bias_table = nn.Parameter(
+            torch.zeros((2 * height - 1) * (2 * width - 1), num_heads)
+        )
+        nn.init.trunc_normal_(self.bias_table, std=0.02)
+
+        # 事前にすべてのパッチペア間の相対位置インデックステーブルを計算して固定
+        self.register_buffer("relative_position_index", self._calc_relative_position_index())
+
+    def _calc_relative_position_index(self) -> torch.Tensor:
+        """すべてのパッチペア間の相対位置インデックスを算出"""
+        # グリッド座標を作成 [2, Height, Width]
+        coords_h = torch.arange(self.height)
+        coords_w = torch.arange(self.width)
+        coords = torch.stack(torch.meshgrid([coords_h, coords_w], indexing="ij")) # [2, H, W]
+        coords_flatten = torch.flatten(coords, 1) # [2, H*W]
+
+        # 相対距離の差分行列を計算 [2, H*W, H*W]
+        # (y_i - y_j, x_i - x_j)
+        relative_coords = coords_flatten[:, :, None] - coords_flatten[:, None, :] # [2, H*W, H*W]
+        relative_coords = relative_coords.permute(1, 2, 0).contiguous() # [H*W, H*W, 2]
+
+        # 0始まりの正のインデックスにシフト変換
+        relative_coords[:, :, 0] += self.height - 1 # Y座標のオフセット
+        relative_coords[:, :, 1] += self.width - 1  # X座標のオフセット
+
+        # Y座標にスケール（2W - 1）を掛けて1Dのユニークインデックスに変換
+        relative_coords[:, :, 0] *= 2 * self.width - 1
+        relative_position_index = relative_coords.sum(-1) # [H*W, H*W]
+
+        return relative_position_index
+
+    def forward(self) -> torch.Tensor:
+        """
+        Returns:
+            2D相対位置バイアス行列 
+            形状: [1, Num_Heads, Height * Width, Height * Width]
+        """
+        # ルックアップテーブルからバイアスを取得
+        # relative_position_index: [H*W, H*W] -> [H*W * H*W] -> テーブル検索 -> [H*W, H*W, Num_Heads]
+        relative_position_bias = self.bias_table[self.relative_position_index.view(-1)].view(
+            self.height * self.width, self.height * self.width, -1
+        )
+        # アテンション行列の形状 [1, Num_Heads, H*W, H*W] に整形
+        relative_position_bias = relative_position_bias.permute(2, 0, 1).contiguous()
+        return relative_position_bias.unsqueeze(0)
+
 if __name__ == "__main__":
     run_point_correspondence_experiment()
