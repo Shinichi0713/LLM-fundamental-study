@@ -15,3 +15,7 @@
 
 !wget -q https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
 !mv sam_vit_b_01ec64.pth ckpt/checkpoint_best.pth
+
+
+!pip install asttokens executing icecream monai nptyping pynrrd SimpleITK slicerio torchio
+!pip install tensorboardX
