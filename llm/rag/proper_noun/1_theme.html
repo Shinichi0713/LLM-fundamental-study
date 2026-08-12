@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5f93;&#x6765;&#x6280;&#x8853;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>企業の中でLLM活用で一番普及したのは、情報検索を行う<a href="https://yoshishinnze.hatenablog.com/entry/2026/06/16/043000">エージェンティックRAG</a>をはじめとする<a href="https://yoshishinnze.hatenablog.com/entry/2026/06/03/043000">RAG</a>でしょう。
+そんなRAGの典型的なユースケースである「社内ナレッジベースの活用」や「組織固有の情報をLLMに反映させる」という目的は、まさに「組織特有の固有名詞」をうまく扱うことに依存しています。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>固有名詞のような学習データにない情報をRAGで使えるようにするにはどうすべきか</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="従来技術">従来技術</h2>
+<p>まず公開されている従来技術について説明していきます。</p>
+<h3 id="1-ragと固有表現nerの関係">1. RAGと固有表現（NER）の関係</h3>
+<p><strong>NERで組織名・固有名詞を抽出し、メタデータとして利用する</strong></p>
+<p>RAGの検索部分では、文書をベクトル化して類似度検索するだけでなく、<strong>Named Entity Recognition（NER）</strong> で抽出した組織名・人物名・プロジェクト名などを<strong>メタデータ</strong>として付与し、検索時にフィルタリングやブーストに使うのが一般的です。</p>
+<ul>
+<li>
+<p>Progress社の記事では、RAGパイプラインの取り込み時にNERを自動実行し、<strong>組織（organizations）</strong> を含む16種類のエンティティを抽出してインデックスにメタデータとして格納することで、</p>
+<ul>
+<li>組織名・プロジェクト名などで<strong>正確なフィルタリング</strong></li>
+<li>組織名がクエリに含まれる場合の<strong>ブースト</strong><br>
+を可能にしていると説明されています<a href="https://www.progress.com/blogs/what-is-named-entity-recognition-(ner)-in-rag">Progress</a>。</li>
+</ul>
+</li>
+<li>
+<p>GraphRAGのドキュメントでは、</p>
+<ul>
+<li>SpaCyなどの従来モデルに加え、<strong>GliNER</strong>やLLMを使った<strong>任意のエンティティタイプの抽出</strong></li>
+<li>エンティティリンキング（Entity Linking）や曖昧性解消（Entity Disambiguation）で、組織名などの固有名詞を<strong>一意のIDに紐づける</strong><br>
+ことで、組織固有の固有名詞を正確に扱う方法が紹介されています<a href="https://graphrag.com/reference/preparation/ner">GraphRAG</a>。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>つまり、<strong>「組織特有の固有名詞」をNERで抽出 → インデックスにメタデータとして格納 → 検索時にフィルタ・ブースト</strong>という流れで、RAGの検索精度を高めることができます。</p>
+</blockquote>
+<h3 id="2-固有表現を検索の橋渡しとして使う研究">2. 固有表現を「検索の橋渡し」として使う研究</h3>
+<p><strong>Bridge Evidence論文：固有表現が複数ステップ検索を支える</strong></p>
+<p>Zennの記事では、論文『Bridge Evidence: Static Retrieval Utility Does Not Predict Causal Utility in Multi-Step Agentic Search』を紹介し、<strong>RAGエージェントが複数ステップで検索する際に、固有表現（組織名・人物名・作品名など）が「橋渡し」として重要</strong>であることを示しています<a href="https://zenn.dev/sonder01/articles/rag-bridge-evidence-causal-utility">Zenn</a>。</p>
+<ul>
+<li>ポイント：
+<ul>
+<li>元の質問に似ていないし、答えも直接含んでいない文書でも、<strong>「次の検索に必要な固有表現」</strong>（例：組織名、プロジェクト名）が含まれていれば、それを経由して最終的な回答に到達できる。</li>
+<li>こうした「橋渡し文書」は、従来の類似度指標（Recall@kなど）では評価されにくいが、<strong>複数ステップの検索エージェントでは約3割程度がこのタイプ</strong>であると報告されています。</li>
+<li>特に「識別力の高い固有表現」が含まれる文書は、そうでない文書に比べて<strong>次の検索クエリにその表現が採用される確率が約4倍高い</strong>という結果も示されています。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>この研究は、<strong>「組織特有の固有名詞」をうまく扱うことで、複雑な質問（例：『A社のBプロジェクトで、C部長が決めた方針は？』）を、複数ステップの検索で解く能力が向上する</strong>ことを示唆しています。</p>
+</blockquote>
+<blockquote>
+<p><strong>橋渡しとは</strong><br>
+「橋渡し」とは、<strong>RAGエージェントが複数ステップで検索する際に、「直接の答えではないが、次の検索ステップに必要な固有表現（組織名・人物名・作品名など）を提供する文書」</strong> を指します。
+もう少し噛み砕いて説明します。
+<strong>1. 従来のRAGの考え方</strong><br>
+通常のRAGでは、</p>
+<ul>
+<li>「質問に似ている文書」</li>
+<li>「その文書だけで答えを出せる文書」
+を「良い文書」とみなして検索します。
+たとえば、
+「A社のBプロジェクトで、C部長が決めた方針は？」
+という質問に対して、</li>
+<li>「A社のBプロジェクトの設計方針」という文書を引いてきて、その中にC部長の方針が書いてあれば、それで完結。
+というイメージです。
+<strong>2. 「橋渡し文書」とは何か</strong><br>
+一方、「橋渡し文書（bridge evidence）」は、</li>
+<li><strong>質問にあまり似ていない</strong></li>
+<li><strong>答えそのものも書いていない</strong>
+にもかかわらず、</li>
+<li><strong>次の検索ステップに必要な「組織名」「人物名」「プロジェクト名」などの固有表現</strong>が含まれている文書
+を指します。
+例：</li>
+<li>質問：「A社のBプロジェクトで、C部長が決めた方針は？」</li>
+<li>1回目の検索で見つかる文書：</li>
+<li>「A社のBプロジェクトの概要」<br>
+→ C部長の方針は書いていないが、<br>
+「BプロジェクトはD部とE部の共同プロジェクトで、C部長が統括している」という情報が含まれている。</li>
+<li>この文書から、</li>
+<li>「C部長」「D部」「E部」といった<strong>固有表現</strong>が得られる。</li>
+<li>2回目の検索では、</li>
+<li>「C部長」「D部」「E部」などを含むクエリで検索し、ようやく「C部長の方針が書かれた文書」に到達する。
+このとき、1回目の文書は<strong>答えそのものは含んでいない</strong>が、<br>
+<strong>次の検索に必要な固有表現を提供して「橋渡し」をしている</strong>ので、「橋渡し文書」と呼ばれます。
+<strong>3. なぜ「橋渡し」が重要か</strong>
+Bridge Evidence論文の検証によると<a href="https://zenn.dev/sonder01/articles/rag-bridge-evidence-causal-utility">Zenn</a>：</li>
+<li>因果的に有用な文書のうち、<strong>約3割程度がこの「橋渡し文書」</strong> に該当する。</li>
+<li>しかし、従来の「質問との類似度」や「その文書だけで答えを出せるか」という評価指標では、こうした文書は<strong>低スコアになりがちで、見落とされやすい</strong>。
+つまり、</li>
+<li><strong>固有表現（組織名・人物名・プロジェクト名など）を「検索の橋渡し」として積極的に評価・活用する</strong>ことで、複雑な質問（Multi-hop QA）に対するRAGエージェントの性能を大きく改善できる、というのが「橋渡し」の考え方です。</li>
+</ul>
+</blockquote>
+<h3 id="3-組織固有の固有名詞をragで扱うための実装設計のポイント">3. 組織固有の固有名詞をRAGで扱うための実装・設計のポイント</h3>
+<p><strong>(1) 取り込み時にNERを実行し、メタデータを付与</strong></p>
+<ul>
+<li>文書取り込み時に、組織名・プロジェクト名・部署名・製品名などの<strong>組織固有の固有名詞</strong>をNERで抽出し、
+<ul>
+<li>ベクトル埋め込みとは別に、<strong>メタデータフィールド</strong>として保存</li>
+<li>必要に応じて<strong>カスタムエンティティタイプ</strong>（例：<code>内部プロジェクト名</code>、<code>社内システム名</code>）を定義<br>
+することで、検索時に「この組織名を含む文書だけを対象にする」といった<strong>正確なフィルタリング</strong>が可能になります<a href="https://www.progress.com/blogs/what-is-named-entity-recognition-(ner)-in-rag">Progress</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2) クエリ側でもNERを使い、検索を最適化</strong></p>
+<ul>
+<li>ユーザーの質問からもNERで組織名などを抽出し、
+<ul>
+<li>ベクトル検索クエリに加えて、<strong>メタデータフィルタ</strong>（例：<code>organization: &quot;A社&quot; AND project: &quot;Bプロジェクト&quot;</code>）を適用</li>
+<li>必要に応じて、<strong>クエリ拡張</strong>（例：組織名の略称・正式名称の両方を検索対象に含める）<br>
+を行うことで、組織特有の固有名詞に特化した検索が可能になります。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(3) エンティティリンキング・曖昧性解消</strong></p>
+<ul>
+<li>GraphRAGのドキュメントが示すように、<strong>エンティティリンキング</strong>（同じ組織名を一意のIDに紐づける）や<strong>曖昧性解消</strong>（同じ名称でも文脈で別組織を指す場合の区別）を組み合わせることで、
+<ul>
+<li>「うちの会社の『Aプロジェクト』」と「他社の『Aプロジェクト』」を混同しない</li>
+<li>略称・旧称・正式名称を同一エンティティとして扱う<br>
+といった、組織特有の固有名詞の扱いを精密化できます<a href="https://graphrag.com/reference/preparation/ner">GraphRAG</a>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(4) 複数ステップRAGエージェントでの「橋渡し」戦略</strong></p>
+<ul>
+<li>Bridge Evidence論文の知見を踏まえると、
+<ul>
+<li>1回の検索で完結させず、<strong>複数ステップの検索エージェント</strong>を設計</li>
+<li>各ステップで「新しい固有表現（組織名・プロジェクト名など）を獲得したか」を評価し、<strong>次の検索クエリに反映</strong><br>
+することで、組織特有の固有名詞を「検索の橋渡し」として活用できます<a href="https://zenn.dev/sonder01/articles/rag-bridge-evidence-causal-utility">Zenn</a>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-参考になりそうな記事研究まとめ">4. 参考になりそうな記事・研究まとめ</h3>
+<ul>
+<li>
+<p><strong>RAGにおけるNERの役割</strong></p>
+<ul>
+<li>Progress: <a href="https://www.progress.com/blogs/what-is-named-entity-recognition-(ner)-in-rag">What Is Named Entity Recognition (NER) in RAG?</a><br>
+→ RAGパイプラインでNERを自動実行し、組織名などをメタデータとして検索に活用する方法を解説。</li>
+<li>GraphRAG: <a href="https://graphrag.com/reference/preparation/ner">Named Entity Recognition</a><br>
+→ GliNERやLLMを使った柔軟なエンティティ抽出、エンティティリンキング・曖昧性解消の説明。</li>
+</ul>
+</li>
+<li>
+<p><strong>固有表現を「橋渡し」として使うRAGエージェントの研究</strong></p>
+<ul>
+<li>Zenn記事: <a href="https://zenn.dev/sonder01/articles/rag-bridge-evidence-causal-utility">RAGの「関連度が高い文書」は本当に役立つ？検索エージェントで因果検証</a><br>
+→ Bridge Evidence論文の解説。固有表現（組織名など）が複数ステップ検索で重要な役割を果たすことを示す。</li>
+</ul>
+</li>
+<li>
+<p><strong>RAG全般と組織固有ナレッジの活用</strong></p>
+<ul>
+<li>IBM: <a href="https://www.ibm.com/jp-ja/think/topics/retrieval-augmented-generation">RAG（検索拡張生成）とは</a><br>
+→ RAGが「組織固有のデータ」や「最新の社内情報」をLLMに反映させる仕組みであることを説明。</li>
+<li>JAPAN AI Lab: <a href="https://japan-ai.co.jp/media/7296">RAGで社内ナレッジを活用する方法とは？</a><br>
+→ 社内文書・FAQ・マニュアルをRAGで検索し、組織固有の知識をLLMに反映する具体例。</li>
+</ul>
+</li>
+</ul>
+<h2 id="固有名詞を認識させる方法">固有名詞を認識させる方法</h2>
+<h3 id="固有名詞を認識させるには">固有名詞を認識させるには？</h3>
+<p>前節の項2の事実から、固有名詞の概念が理解できるような文章が与えられればLLMは固有名詞を理解した解答を行うことが出来ます。
+もう少し整理すると以下のように言えます。</p>
+<p>LLMは、「定義や説明の文章」をプロンプトとして与えられれば、その概念を一時的に“理解”して扱うことができる、という性質があります。
+近年のRAGやプロンプトエンジニアリングの応用例でも、「定義文書をRAGで検索 → LLMに渡す → LLMがその定義に基づいて回答する」というパターンは非常に一般的です。</p>
+<p>ただし、いくつか注意点もあります。</p>
+<p><strong>1. 「認識できる」の意味</strong></p>
+<p>LLMは、定義文書をその場で読んで理解し、その内容に基づいて回答を生成することはできます。
+しかし、その定義がモデルの内部パラメータとして“学習”されるわけではないので、次回の会話で同じ定義を自動的に覚えているとは限りません（RAGを使わない限り）。</p>
+<p>つまり、「定義文書を与えれば、その場では認識して扱える」が、「永続的に知識として定着する」とは限らない、という理解が正確です。</p>
+<p><strong>2. 定義の質・量・与え方による精度の違い</strong></p>
+<p>定義が曖昧・不十分な場合、LLMは誤解やハルシネーションを起こしやすくなります。
+定義が長すぎる場合、LLMのコンテキストウィンドウを圧迫し、重要な部分が切り捨てられることがあります。
+定義の与え方（プロンプト設計） が悪いと、LLMが定義をうまく活用できません。</p>
+<p>そのため、RAGでは、</p>
+<ul>
+<li>定義文書を適切な長さのチャンクに分割</li>
+<li>検索で必要な部分だけをLLMに渡す</li>
+<li>プロンプトで「この定義を根拠にして説明してください」と明示する
+といった工夫が重要になります。</li>
+</ul>
+<h3 id="固有名詞を自動で抽出できないか">固有名詞を自動で抽出できないか</h3>
+<p>RAGシステムを実際に構築する場合、文章量が非常に多いため、使える知識にマニュアルで対応するには負荷が大きいです。
+このためどこまで自動でできるかが重要になります。</p>
+<p>自然言語処理（NLP）の分野において、テキストから人名・地名・組織名・製品名などの固有名詞を自動抽出し、データベース（ナレッジグラフやベクトルDB）へ反映させる取り組みは非常に活発に研究・実用化されています。</p>
+<p>RAG（Retrieval-Augmented Generation）システムにこれを組み込むアプローチ、関連する標準手法、そして最新の研究動向について整理して解説します。</p>
+<h3 id="方法一覧">方法一覧</h3>
+<p><strong>1. 主要な要素技術と抽出手法</strong></p>
+<p>文章から固有名詞を特定して抽出する処理は、NLPでは主に<strong>NER（固有表現抽出）</strong> や <strong>NERD（固有表現抽出・曖昧さ回避・リンク）</strong> という枠組みで扱われます。</p>
+<p><strong>① NER（Named Entity Recognition: 固有表現抽出）</strong></p>
+<p>テキスト中の単語に「人名（PER）」「地名（LOC）」「組織名（ORG）」などのタグを付与する基盤技術です。</p>
+<ul>
+<li><strong>ルールベース / 辞書ベース:</strong> 正規表現や既知の単語リストと照合。精度は高いものの、未知語に弱い。</li>
+<li><strong>機械学習 / Deep Learningベース:</strong> SpaCy、Transformers（BERTやRoBERTaなど）を用いた系列ラベル付け（Sequence Labeling）。文脈から未知の固有名詞も高精度に識別可能。</li>
+</ul>
+<p><strong>② LLMを用いたZero-shot / Few-shot NER</strong></p>
+<p>近年最も汎用性が高いアプローチです。LLMに対して構造化出力（JSON等）を指示することで、固有のモデル学習なしで柔軟に固有名詞やそのタイプを抽出できます。</p>
+<ul>
+<li><strong>メリット:</strong> ドメイン固有の固有名詞（専門用語、社内用語等）も、プロンプトの定義次第で臨機応変に切り出せる。</li>
+<li><strong>構造化フレームワーク:</strong> Instructor, LangChain, LlamaIndex などを利用して、LLMの入出力をPydanticスキーマで厳密に型定義する手法が主流です。</li>
+</ul>
+<p><strong>2. RAGと連携させるための応用パターン</strong></p>
+<p>単に「固有名詞を抜き出す」だけでなく、「DBに登録してRAGで検索可能にする」ためのシステム構成には、大きく分けて以下のパターンがあります。</p>
+<p><strong>パターンA: GraphRAG（ナレッジグラフ＋RAG）</strong></p>
+<p>Microsoftが提案した<strong>GraphRAG</strong>に代表されるように、LLMを用いてテキストから「エンティティ（固有名詞）」と「エンティティ間の関係（リレーション）」を同時に抽出し、ナレッジグラフ（Neo4jなど）を自動構築する手法です。</p>
+<pre><code>[入力文章] &quot;山田太郎はABC株式会社のCEOに就任した。&quot;
+    ↓ (LLMによる抽出)
+[Entities]  山田太郎 (Person), ABC株式会社 (Organization)
+[Relation]  (山田太郎) -[ROLE: CEO]-&gt; (ABC株式会社)
+    ↓
+[DB登録]   Neo4j などのグラフDBへ自動ノード・エッジ登録
+
+</code></pre>
+<ul>
+<li><strong>効果:</strong> ベクトル検索だけでは拾いきれない「固有名詞同士の複雑な関係性」や「マルチホップな質問（Aの関連会社のB製品は何か？など）」に強いRAGを構築できます。</li>
+</ul>
+<p><strong>パターンB: Entity Linking（固有表現リンク）と自動エンティティ登録</strong></p>
+<p>抽出した固有名詞が「すでにDBに存在する既存の固有名詞と同じものを指しているか（表記揺れや略称）」を判定・統合（Entity Resolution / Disambiguation）しながらDB登録する手法です。</p>
+<ul>
+<li>例: 「Google」「グーグル」「Alphabet傘下の検索大手」が同一の概念であることを判定し、同一のID/ノードに割り当てる。</li>
+<li><strong>ベクトル検索との組み合わせ:</strong> 抽出した固有名詞をメタデータとして文書チャンクに付与（Metadata Filtering）し、ハイブリッド検索を強化する。</li>
+</ul>
+<p><strong>3. 関連する研究動向・フレームワーク</strong></p>
+<table>
+<thead>
+<tr>
+<th>分野・アプローチ</th>
+<th>概要・代表的な研究・ツール</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GraphRAG (Microsoft)</strong></td>
+<td>LLMを用いてテキストからエンティティとコミュニティ構造を抽出し、グラフ構造化した上で検索を行う手法。</td>
+</tr>
+<tr>
+<td><strong>OpenIE (Open Information Extraction)</strong></td>
+<td>事前定義なしで「(主体, 関係, 客体)」の三つ組（トリプル）を抽出する手法。</td>
+</tr>
+<tr>
+<td><strong>InstructUIE / GoLLIE</strong></td>
+<td>LLMに対し、指示（Instruction）を与えることで複雑な情報抽出（IE/NER）タスクを高精度に行わせるアラインメント研究。</td>
+</tr>
+<tr>
+<td><strong>DSPy</strong></td>
+<td>LLMパイプラインをプログラムとして最適化するライブラリ。抽出プロンプトの精度自動チューニング等に利用される。</td>
+</tr>
+</tbody>
+</table>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\proper_noun\image\1_theme\1786528842611.png" alt="1786528842611"></p>
+<p>3つ目が一番精度が良いかもしれません。
+普及例が一番多いようですし、GraphRAGやDSPyはあくまで統計の範囲から出れない手法でしょう。
+固有名詞は文脈や、一般的に知っている言葉かを判定できることが重要だと思います。
+この意味では知識ベースとして機能するLLMを用いるということが一番現実解かつ最適解かもしれません。</p>
+<p>過去のGPT3.5や4であれば精度に難がありましたが、最近ならば問題なくなっているでしょう。</p>
+<p>InstructUIE / GoLLIEというのはLLMを用いて文脈を理解しながら固有名詞を抽出する研究です。</p>
+<p>はい、<strong>InstructUIE</strong>と<strong>GoLLIE</strong>はいずれも<strong>研究論文として公開されている手法</strong>です。</p>
+<p>以下、それぞれの論文情報と概要を整理します。</p>
+<blockquote>
+<p><strong>InstructUIE</strong>
+<strong>論文情報</strong></p>
+<ul>
+<li><strong>タイトル</strong>:<br>
+<strong>InstructUIE: Multi-task Instruction Tuning for Unified Information Extraction</strong></li>
+<li><strong>著者</strong>:<br>
+Xiao Wang, Weikang Zhou, Can Zu, Han Xia, Tianze Chen, Yuansen Zhang, Rui Zheng, Junjie Ye, Qi Zhang, Tao Gui, et al.</li>
+<li><strong>公開年</strong>: 2023年</li>
+<li><strong>プレプリント</strong>: arXiv:2304.08085<br>
+→ <a href="https://arxiv.org/abs/2304.08085">arXiv:2304.08085</a></li>
+<li><strong>GitHub</strong>:<br>
+→ <a href="https://github.com/BeyonderXX/InstructUIE">BeyonderXX/InstructUIE</a>
+<strong>概要</strong></li>
+<li><strong>目的</strong>:<br>
+情報抽出（Named Entity Recognition, Relation Extraction, Event Extraction など）を<strong>統一的なテキスト→テキスト形式</strong>で扱い、<strong>マルチタスクのInstruction Tuning</strong>によって高性能化するフレームワーク。</li>
+<li><strong>特徴</strong>:</li>
+<li><strong>IE INSTRUCTIONS</strong>という、32の多様なIEデータセットを統一フォーマットに変換したベンチマークを構築。</li>
+<li>Flan-T5などのモデルをInstruction Tuningし、<strong>教師あり設定ではBERTと同等、ゼロショット設定では既存モデルを大きく上回る性能</strong>を達成。</li>
+<li><strong>位置づけ</strong>:<br>
+「LLMにInstruction Tuningを施して、情報抽出タスクを統一して扱う」という、<strong>Universal Information Extraction（UIE）系の代表的な研究</strong>の一つです。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>GoLLIE</strong><br>
+<strong>論文情報</strong></p>
+<ul>
+<li><strong>タイトル</strong>:<br>
+<strong>GoLLIE: Annotation Guidelines improve Zero-Shot Information-Extraction</strong></li>
+<li><strong>著者</strong>:<br>
+Oscar Sainz, Iker García-Ferrero, Rodrigo Agerri, Oier Lopez de Lacalle, German Rigau, Eneko Agirre</li>
+<li><strong>公開年</strong>: 2023年（プレプリント）、2024年 ICLR 採択</li>
+<li><strong>プレプリント</strong>: arXiv:2310.03668<br>
+→ <a href="https://arxiv.org/abs/2310.03668">arXiv:2310.03668</a></li>
+<li><strong>ICLR 2024 論文ページ</strong>:<br>
+→ <a href="https://openreview.net/forum?id=Y3wpuxd7u9">OpenReview: GoLLIE</a></li>
+<li><strong>GitHub（LLM4IE関連リポジトリ内）</strong>:<br>
+→ <a href="https://github.com/quqxui/Awesome-LLM4IE-Papers">Awesome-LLM4IE-Papers</a> 内で紹介
+<strong>概要</strong></li>
+<li><strong>目的</strong>:<br>
+アノテーションガイドライン（ラベル定義やタスク仕様）を<strong>コード形式（Pythonクラス）で表現</strong>し、LLM（特にCode-LLaMA）を<strong>ガイドラインに従うように学習</strong>させることで、<strong>ゼロショット情報抽出性能を向上</strong>させる。</li>
+<li><strong>特徴</strong>:</li>
+<li>IEタスクのスキーマやガイドラインを<strong>Pythonクラス＋docstring</strong>として表現。</li>
+<li>Code-LLMの構造化生成能力を活かし、<strong>見たことのないスキーマに対してもガイドラインに従って抽出</strong>できる。</li>
+<li>ゼロショット設定で、既存のUIE系モデル（InstructUIEなど）と比較して高い性能を示す。</li>
+<li><strong>位置づけ</strong>:<br>
+「<strong>ガイドラインに忠実なLLMによる情報抽出</strong>」という、<strong>Generative Information Extraction（生成型IE）</strong> の代表的研究の一つです。</li>
+</ul>
+</blockquote>
+<h2 id="総括">総括</h2>
+<p>本日は組織固有の固有名詞を理解した上でナレッジを基にしたタスクを行うようにする上で必要となる固有名詞を与える方法と、固有名詞を抽出する方法について調査しました。</p>
+<p>結局実現するためには、LLMに与えられる形の知識情報を作ることが重要ということになります。
+但し、組織にある文章は莫大なので、自動化が欠かせません。
+そんな中複数の手法が考えられますが、固有名詞を認識するという面ではLLMを用いることがベストだと思います。</p>
+<p>というようなことをまとめた本日でした。</p>
+
+            
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/QyzK21nx70o?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
