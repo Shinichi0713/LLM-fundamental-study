@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<h2 id="概要">概要</h2>
+<p><strong>破滅的忘却（catastrophic forgetting）</strong> とは、ニューラルネットワークが<strong>新しいタスクやデータを学習する際に、以前に学習した知識を急激に失ってしまう現象</strong>のことです。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="経緯">経緯</h2>
+<p>破滅的忘却はLLMが出てくる以前に既に問題と考えられてきました。
+破滅的忘却が問題視されてきた経緯を、年代順に整理すると以下のようになります。</p>
+<h3 id="1980年代末1990年代初頭現象の指摘と命名">1980年代末〜1990年代初頭：現象の指摘と命名</h3>
+<ul>
+<li>
+<p><strong>1989年：McCloskey &amp; Cohen</strong></p>
+<ul>
+<li>連想記憶モデル（connectionist models）において、<br>
+<strong>新しいタスクを順番に学習すると、以前のタスクの知識が急激に失われる</strong>ことを示す<a href="https://www.mhtechin.com/support/catastrophic-forgetting-in-continual-learning">MHTECHIN Technologies</a>。</li>
+<li>この現象を <strong>catastrophic interference</strong>（破滅的干渉）と呼び、<br>
+ニューラルネットワークが人間と異なり「連続学習」に弱いことを明確にしました。</li>
+</ul>
+</li>
+<li>
+<p><strong>1990年：Ratcliff</strong></p>
+<ul>
+<li>同様の現象を別の観点から確認し、<br>
+<strong>小さな逐次更新でも既存知識が大きく破壊される</strong>ことを示す<a href="https://www.mhtechin.com/support/catastrophic-forgetting-in-continual-learning">MHTECHIN Technologies</a>。</li>
+<li>ここで「ニューラルネットは逐次学習に弱い」という認識が広まり、<br>
+破滅的忘却が<strong>理論的・実験的に確立された問題</strong>として扱われるようになります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="1990年代2000年代理論的限定的な関心">1990年代〜2000年代：理論的・限定的な関心</h3>
+<ul>
+<li>この時期は、ニューラルネットワーク自体がまだ「深いモデル」ではなく、<br>
+実用規模のモデルも少なかったため、破滅的忘却は<strong>理論的な興味</strong>として扱われることが多かったとされています<a href="https://en.wikipedia.org/wiki/Neural_network_(machine_learning)">Wikipedia</a>。</li>
+<li>連続学習（continual learning）や lifelong learning の文脈で研究は続きますが、<br>
+実用上の大きなボトルネックとして強く意識されるのは、もう少し後になります。</li>
+</ul>
+<h3 id="2010年代ディープラーニングの台頭と再注目">2010年代：ディープラーニングの台頭と再注目</h3>
+<ul>
+<li>
+<p><strong>2013年：Goodfellowら</strong></p>
+<ul>
+<li><strong>An empirical investigation of catastrophic forgetting in gradient-based neural networks</strong>（arXiv:1312.6211）で、<br>
+勾配ベースのニューラルネットワークにおける破滅的忘却を<strong>体系的に測定・分析</strong><a href="https://faculty.sites.iastate.edu/tesfatsi/archive/tesfatsi/DeepLearningInNeuralNetworksOverview.JSchmidhuber2015.pdf">Schmidhuber (2015)</a>。</li>
+<li>ディープラーニングが広く使われるようになり、<br>
+「大規模モデルでも同じ問題が起きる」ことが明確になります。</li>
+</ul>
+</li>
+<li>
+<p><strong>2017年：Kirkpatrickら（DeepMind）</strong></p>
+<ul>
+<li><strong>Overcoming catastrophic forgetting in neural networks</strong>（PNAS）で、<br>
+<strong>EWC（Elastic Weight Consolidation）</strong> を提案<a href="https://www.pnas.org/doi/10.1073/pnas.1611835114">PNAS</a>。</li>
+<li>重要パラメータを「固める」ことで、新しいタスク学習時に既存タスクの性能を保つ手法を示し、破滅的忘却が<strong>実用上の大きな課題</strong>として再び注目されます。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2010年代末2020年代llm大規模基盤モデル時代の現実の問題へ">2010年代末〜2020年代：LLM・大規模基盤モデル時代の「現実の問題」へ</h3>
+<ul>
+<li>
+<p><strong>LLM・大規模基盤モデルの普及</strong></p>
+<ul>
+<li>GPT系・BERT系など、<strong>何百万ドル規模の計算コスト</strong>で学習されたモデルが登場<a href="https://rewire.it/blog/the-stability-plasticity-dilemma-how-memory-architectures-are-solving-continual-learning">rewire.it</a>。</li>
+<li>モデルを「毎回ゼロから学習し直す」ことが現実的でなくなり、<strong>追加学習（ファインチューニング）での破滅的忘却</strong>が、サービス運用上の深刻な問題として浮上します。</li>
+</ul>
+</li>
+<li>
+<p><strong>LoRAなどのパラメータ効率手法でも忘却が残る</strong></p>
+<ul>
+<li>2020年代の研究では、
+<ul>
+<li>フルファインチューニングで<strong>以前のタスクのF1スコアが89%低下</strong></li>
+<li>LoRAのような軽量手法でも<strong>71%の忘却率</strong>が観測されるケースがある<br>
+などが報告されています<a href="https://rewire.it/blog/the-stability-plasticity-dilemma-how-memory-architectures-are-solving-continual-learning">rewire.it</a>。</li>
+</ul>
+</li>
+<li>「モデル規模が大きいほど忘却が深刻になる」という逆説的な結果も示され、破滅的忘却が<strong>LLM時代の中心的な課題</strong>として再認識されています。</li>
+</ul>
+</li>
+</ul>
+<h2 id="llmにおける破滅的忘却の特徴">LLMにおける破滅的忘却の特徴</h2>
+<p>LLM（大規模言語モデル）でも、以下のような形で破滅的忘却が問題になります。</p>
+<ul>
+<li><strong>追加学習（ファインチューニング）の影響</strong>
+<ul>
+<li>あるドメイン（例：法律文書）に特化してファインチューニングすると、<br>
+一般常識や他のドメインの知識が弱くなることがあります。</li>
+</ul>
+</li>
+<li><strong>指示追従（instruction tuning）の影響</strong>
+<ul>
+<li>「ユーザーの指示に従う」ように学習すると、<br>
+元の言語モデルが持っていた<strong>知識の一部が曖昧になる</strong>ことがあります。</li>
+</ul>
+</li>
+<li><strong>モデル更新時の挙動</strong>
+<ul>
+<li>新しいバージョンで追加学習を行うと、以前のバージョンでできていたタスクができなくなる、<br>
+あるいは出力のスタイルが大きく変わることがあります。</li>
+</ul>
+</li>
+</ul>
+<h2 id="なぜ起こるのか">なぜ起こるのか</h2>
+<p>破滅的忘却が起きる仕組みは、<strong>ニューラルネットワークの学習が「パラメータの上書き」で行われる</strong>ことにあります。<br>
+順を追って説明します。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\evaluate_method\catastrophic_forget\doc\image\waht_about\1786408942548.png" alt="1786408942548"></p>
+<h3 id="1-ニューラルネットワークの学習は地形の形を変えること">1. ニューラルネットワークの学習は「地形の形を変える」こと</h3>
+<p>ニューラルネットワークは、たくさんの「重み（パラメータ）」を持っています。<br>
+学習とは、<strong>「誤差が小さくなる方向に、少しずつ重みを動かす」</strong> ことです。</p>
+<ul>
+<li>入力 → ネットワーク（重み） → 出力</li>
+<li>出力と正解の差（誤差）を小さくするように、重みを調整</li>
+</ul>
+<p>これを<strong>勾配降下法</strong>と呼びますが、イメージとしては：</p>
+<blockquote>
+<p>広い地形（誤差の地形）の上で、「今立っている場所の傾き」を見て、<br>
+少しずつ「下り坂」方向に歩いていく</p>
+</blockquote>
+<p>という感じです。</p>
+<h3 id="2-タスクaを学ぶ地形のaの谷に落ちる">2. タスクAを学ぶ＝地形の「Aの谷」に落ちる</h3>
+<p>タスクA（例：数字「0」の認識）を学習すると、<br>
+ネットワークの重みは「Aの谷」と呼ばれる<strong>誤差が小さい場所</strong>に落ち着きます。</p>
+<ul>
+<li>入力が「0」のとき → 出力が「0」と正しく出る</li>
+<li>そのときの重みの組み合わせが「Aの谷」の底</li>
+</ul>
+<p>この状態では、<strong>タスクAに対してはほぼ完璧</strong>です。</p>
+<h3 id="3-タスクbを学ぶ地形全体がbの谷に合わせて変形する">3. タスクBを学ぶ＝地形全体が「Bの谷」に合わせて変形する</h3>
+<p>次に、タスクB（例：数字「1」の認識）を学習すると、<br>
+ネットワークは<strong>同じ重みを使って</strong>、今度は「Bの谷」を目指して動き出します。</p>
+<ul>
+<li>入力が「1」のとき → 出力が「1」と正しく出るように重みを動かす</li>
+<li>その過程で、<strong>地形全体（誤差の形）がBに合わせて変形</strong>する</li>
+</ul>
+<p>ここで重要なのは：</p>
+<blockquote>
+<p>ネットワークは「Aの谷を保ったままBの谷を作る」のではなく、<br>
+<strong>同じ地形をB用に作り替える</strong>だけ</p>
+</blockquote>
+<p>ということです。</p>
+<h3 id="4-破滅的忘却の核心aの谷が消えるか別の場所に移る">4. 破滅的忘却の核心：Aの谷が「消える」か「別の場所に移る」</h3>
+<p>タスクBを学習するとき、勾配降下法は <strong>「Bの誤差を減らす方向」</strong> にしか重みを動かしません。<br>
+Aの誤差は考慮されません。</p>
+<p>その結果：</p>
+<ul>
+<li>Aの谷があった場所は、Bの学習によって<strong>別の形（高い丘や別の谷）に変形</strong>される</li>
+<li>あるいは、Aの谷そのものが<strong>地形上から消えてしまう</strong></li>
+</ul>
+<p>ということが起きます。</p>
+<p>これが<strong>破滅的忘却</strong>です。</p>
+<blockquote>
+<p>新しいタスクBを学ぶために地形を変えたら、<br>
+以前のタスクAに最適だった場所（Aの谷）が壊れてしまった</p>
+</blockquote>
+<h3 id="5-なぜ少しずつ学習しても壊れるのか">5. なぜ「少しずつ」学習しても壊れるのか</h3>
+<p>「少しずつ動かしているのに、なぜ急に忘れるの？」と感じるかもしれませんが、<br>
+ニューラルネットワークの重みは<strong>互いに強く結びついている</strong>ためです。</p>
+<ul>
+<li>1つの重みを少し動かすと、<strong>別の入力パターンに対する挙動も連動して変わる</strong></li>
+<li>特に深いネットワークでは、<strong>多数の重みが協調して1つのパターンを表現</strong>している</li>
+</ul>
+<p>そのため：</p>
+<ul>
+<li>タスクBの学習で重みを少し動かす</li>
+<li>それが<strong>タスクAに重要な重みの組み合わせを壊す</strong></li>
+<li>結果として、Aの性能が<strong>急激に落ちる</strong></li>
+</ul>
+<p>という「連鎖的な破壊」が起きます。</p>
+<h3 id="6-llm大規模言語モデルでの具体例">6. LLM（大規模言語モデル）での具体例</h3>
+<p>LLMでも同じ仕組みで破滅的忘却が起きます。</p>
+<ul>
+<li>まず、大量の一般テキストで学習 → 「一般常識の谷」に落ち着く</li>
+<li>次に、法律文書だけを追加学習（ファインチューニング）
+<ul>
+<li>法律文書の誤差を減らす方向に重みを動かす</li>
+<li>その過程で、<strong>一般テキストに最適だった重みの組み合わせが壊れる</strong></li>
+</ul>
+</li>
+<li>結果：法律文書には強くなるが、<strong>一般常識や他ドメインの知識が弱くなる</strong></li>
+</ul>
+<h2 id="対策">対策</h2>
+<p>破滅的忘却の仕組みは、</p>
+<blockquote>
+<p>新しいタスクBを学ぶために勾配降下法で地形（誤差の地形）を変えると、<br>
+古いタスクAに最適だった「Aの谷」が壊れてしまう</p>
+</blockquote>
+<p>というものでした。<br>
+対策は、<strong>この「Aの谷を壊さないように地形を変える」</strong> ための工夫です。</p>
+<h3 id="1-再学習rehearsalリハーサルデータ">1. 再学習（Rehearsal）／リハーサルデータ</h3>
+<p><strong>仕組みとの関係</strong></p>
+<ul>
+<li>破滅的忘却：Bだけを学習 → 地形がB用にだけ変形 → Aの谷が壊れる</li>
+<li>再学習：<strong>AとBを同時に学習</strong> → 地形が「AとBの両方に良い場所」を探す</li>
+</ul>
+<p><strong>具体的な方法</strong></p>
+<ul>
+<li>過去のタスクAのデータの一部を保存しておき、<br>
+新しいタスクBを学ぶときに<strong>Aのデータも混ぜて一緒に学習</strong>する</li>
+<li>あるいは、Aのデータを生成する**生成モデル（GANなど）**で擬似的に再現する</li>
+</ul>
+<p><strong>なぜ効くか</strong></p>
+<ul>
+<li>勾配降下法が「Bの誤差だけ」を見て動くのではなく、<br>
+<strong>Aの誤差も同時に見て動く</strong>ため、<br>
+Aの谷を完全に壊す方向には進みにくくなります。</li>
+<li>地形が「AとBの両方に良い谷」を探すように変形されるイメージです。</li>
+</ul>
+<h3 id="2-正則化regularizationewc-など">2. 正則化（Regularization）／EWC など</h3>
+<p><strong>仕組みとの関係</strong></p>
+<ul>
+<li>破滅的忘却：B学習で重みを自由に動かす → Aに重要な重みも動いて壊れる</li>
+<li>正則化：<strong>Aに重要な重みを「固める」</strong> → B学習でも動かしにくくする</li>
+</ul>
+<p><strong>代表例：EWC（Elastic Weight Consolidation）</strong></p>
+<ul>
+<li>タスクAを学習した後、
+<ul>
+<li>どの重みがAにとって重要かを推定（Fisher情報など）</li>
+<li>重要な重みほど「動かしたら大きなペナルティ」をかける</li>
+</ul>
+</li>
+<li>タスクBを学習するとき、
+<ul>
+<li>勾配降下法で重みを動かすが、<strong>重要重みを大きく動かすと損失が増える</strong></li>
+<li>結果として、Aの谷を壊さない範囲でBの谷を探す</li>
+</ul>
+</li>
+</ul>
+<p><strong>なぜ効くか</strong></p>
+<ul>
+<li>地形のうち「Aの谷の形を決めている部分」を<strong>バネで固定</strong>するイメージ</li>
+<li>B学習で地形を変形させても、<strong>Aの谷の底の形はあまり変わらない</strong></li>
+<li>つまり、<strong>Aの谷を壊さずにBの谷を作る</strong>ことができる</li>
+</ul>
+<h3 id="3-アダプタlora-など一部パラメータだけ更新">3. アダプタ／LoRA など（一部パラメータだけ更新）</h3>
+<p><strong>仕組みとの関係</strong></p>
+<ul>
+<li>破滅的忘却：全パラメータをB用に動かす → Aの谷全体が変形</li>
+<li>アダプタ：<strong>一部のパラメータだけをB用に追加</strong> → Aの地形はほぼそのまま</li>
+</ul>
+<p><strong>代表例：LoRA（Low-Rank Adaptation）</strong></p>
+<ul>
+<li>既存の重み行列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> に、小さな行列 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo separator="true">,</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A, B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> を追加して<br>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>W</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>=</mo><mi>W</mi><mo>+</mo><mi>A</mi><mi>B</mi></mrow><annotation encoding="application/x-tex">W&#x27; = W + AB</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7519em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> のようにする</li>
+<li>学習時は、<strong>元の <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> は固定</strong>し、<strong>追加の <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo separator="true">,</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A, B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> だけを更新</strong>する</li>
+</ul>
+<p><strong>なぜ効くか</strong></p>
+<ul>
+<li>Aの谷を作っているのは主に元の <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span></li>
+<li>B学習では <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo separator="true">,</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">A, B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> だけを動かすので、<strong>Aの地形はほとんど変わらない</strong></li>
+<li>Bの谷は「Aの地形の上にちょっとした凹凸を追加する」イメージ</li>
+<li>結果として、Aの性能を保ったままBに適応できる</li>
+</ul>
+<h3 id="4-マルチタスク学習同時学習">4. マルチタスク学習（同時学習）</h3>
+<p><strong>仕組みとの関係</strong></p>
+<ul>
+<li>破滅的忘却：A→Bと順番に学ぶと、B学習でAの谷が壊れる</li>
+<li>マルチタスク：<strong>AとBを最初から同時に学ぶ</strong> → 地形が「AとBの両方に良い谷」に落ちる</li>
+</ul>
+<p><strong>具体的な方法</strong></p>
+<ul>
+<li>学習データにAとBの両方を混ぜて、<strong>最初からマルチタスクで学習</strong>する</li>
+<li>あるいは、追加タスクBを学ぶときも、Aのデータを混ぜ続ける</li>
+</ul>
+<p><strong>なぜ効くか</strong></p>
+<ul>
+<li>勾配降下法が常に<strong>AとBの両方の誤差</strong>を見て地形を変形する</li>
+<li>そのため、地形は「Aだけ」「Bだけ」に特化せず、<br>
+<strong>両方にバランスよく良い谷</strong>を探す</li>
+<li>順番学習で起きる「Aの谷を壊してBの谷を作る」という動きがそもそも起きない</li>
+</ul>
+<h3 id="5-タスクごとの専用ヘッドマスク">5. タスクごとの専用ヘッド／マスク</h3>
+<p><strong>仕組みとの関係</strong></p>
+<ul>
+<li>破滅的忘却：同じネットワークをAとBで共用 → 重みが干渉</li>
+<li>専用ヘッド：<strong>タスクごとに出力層（ヘッド）を分ける</strong> → 干渉を減らす</li>
+</ul>
+<p><strong>具体的な方法</strong></p>
+<ul>
+<li>共通の「特徴抽出部分」は共有し、
+<ul>
+<li>タスクA用の出力層</li>
+<li>タスクB用の出力層<br>
+を別々に持つ</li>
+</ul>
+</li>
+<li>Bを学ぶときは、B用のヘッドだけを更新し、A用のヘッドは固定する</li>
+</ul>
+<p><strong>なぜ効くか</strong></p>
+<ul>
+<li>Aの谷は「共通部分＋Aヘッド」で決まり、<br>
+Bの谷は「共通部分＋Bヘッド」で決まる</li>
+<li>B学習でBヘッドだけを動かせば、<strong>共通部分の地形はあまり変わらない</strong></li>
+<li>結果として、Aの性能を保ちやすい</li>
+</ul>
+<h2 id="総括">総括</h2>
+<h3 id="破滅的忘却の根本的な原因">破滅的忘却の根本的な原因</h3>
+<ul>
+<li>ニューラルネットワークは<strong>同じ重み（パラメータ）を複数のタスクで共有</strong>している</li>
+<li>新しいタスクBを学ぶとき、<strong>勾配降下法で重みをB用に動かす</strong>と、<br>
+古いタスクAに最適だった重みの組み合わせが<strong>上書きされて壊れる</strong></li>
+<li>その結果、<strong>Aの性能が急激に落ちる</strong>＝破滅的忘却</li>
+</ul>
+<h3 id="気をつけるべきこと">気をつけるべきこと</h3>
+<ul>
+<li><strong>順番学習（A→B）は危険</strong>：Bだけを学ぶとAの知識が壊れやすい</li>
+<li><strong>Aのデータも混ぜて再学習</strong>する（Rehearsal）</li>
+<li><strong>Aに重要な重みを動かしにくくする</strong>（EWCなどの正則化）</li>
+<li><strong>一部パラメータだけを更新</strong>する（LoRAなどのアダプタ）</li>
+<li>可能なら<strong>最初からAとBを同時に学ぶ</strong>（マルチタスク学習）</li>
+<li>LLM時代は「毎回ゼロから学習し直せない」ので、<br>
+<strong>追加学習時の破滅的忘却が運用上の深刻な問題</strong>になる</li>
+</ul>
+<p>要するに、</p>
+<blockquote>
+<p><strong>「Aの谷を壊さずにBの谷を作る」</strong> という意識で学習設計をしないと、新しいことを学ぶたびに古いことを忘れてしまう</p>
+</blockquote>
+<p>というのが破滅的忘却の本質です。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/20S3gDn6rYI?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
