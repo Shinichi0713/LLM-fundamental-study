@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30e2;&#x30c1;&#x30d9;&#x30fc;&#x30b7;&#x30e7;&#x30f3;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/08/11/043000">先日SAMの検知力改善のアイデア</a>で説明したCLIPを適用してSAMの優れた境界検知能力による不要な検知カ所の抑制を行いたいと思います。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>SAM×CLIPにより主張するような効果が確認できるか確認</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="モチベーション">モチベーション</h2>
+<p>前回記事では現状やりたいことを</p>
+<ol>
+<li><strong>誤検知の多さを抑制する</strong>（背景や無関係な輪郭まで細かく拾ってしまう問題の回避）</li>
+<li><strong>グラデーションで背景と見分けがつきづらい対象を検知する</strong>（低コントラスト・輪郭が不鮮明な領域の切り出し）</li>
+</ol>
+<p>と定義して誤検知の多さはプロンプトで指定する方法を押しました。
+しかし実際の用途は <strong>不特定多数の対象を検知する</strong> ということでプロンプトで指定しなかったものも検知したいということにありました。</p>
+<p>とした場合とりえる対応法はプロンプトなしでもSAMの結果を、同じく汎用性に優れるCLIPで検証することが妥当かと考えました。</p>
+<h2 id="簡単に本手法の仕組み">簡単に本手法の仕組み</h2>
+<p><strong>SAM-CLIP</strong> は、Metaが開発した高精度な画像領域分割モデル <strong>「SAM (Segment Anything Model)」</strong> と、OpenAIが開発した言語-画像相互理解モデル <strong>「CLIP」</strong> の強みを統合したフレームワーク（および統合モデル）です。</p>
+<p>一言で言えば、<strong>「物体の境界線を正確にくり抜く能力（SAM）」</strong> と <strong>「それが何であるかを言葉で理解する能力（CLIP）」</strong> を1つのモデルに合体させた仕組みです。</p>
+<h3 id="なぜ統合が必要なのか">なぜ統合が必要なのか？</h3>
+<ul>
+<li><strong>SAMの課題</strong>：「画像のどこに物体があるか（境界・マスク）」を抽出するのは極めて得意ですが、「その物体が何という名前か（セマンティッククラス）」を識別する概念理解が弱い。</li>
+<li><strong>CLIPの課題</strong>：「テキスト（言葉）と画像（概念）」を結びつける理解力は非常に高いですが、「物体の具体的な形状や細かな輪郭」を特定する空間認識は苦手。</li>
+</ul>
+<p>SAM-CLIPは、これら2つの基盤モデルの相補的な能力を組み合わせることで、<strong>「任意のテキスト指定で、画像内の該当オブジェクトを正確な輪郭とともに切り出す（オープンボキャブラリー領域分割）」</strong> を実現しています。</p>
+<h3 id="手法の主な仕組み">手法の主な仕組み</h3>
+<p><strong>1. 特徴量エンコーダの統合・蒸留</strong></p>
+<p>推論時に「SAMの巨大エンコーダ」と「CLIPのエンコーダ」を2つ同時に動かすと、計算コストやメモリ負荷が非常に大きくなります。SAM-CLIPでは、<strong>単一のバックボーン（ビジョンエンコーダ）</strong> に両者の能力を蒸留・融合させるアプローチをとっています。</p>
+<ul>
+<li>SAMが持つ<strong>幾何学的・局所的な構造特徴</strong></li>
+<li>CLIPが持つ<strong>言語とアラインメントされた大域的な意味特徴</strong></li>
+</ul>
+<p>これらを1つのエンコーダで同時に出力できるように統一学習（または特徴統合）を行います。</p>
+<p><strong>2. オープンボキャブラリーなマスク生成</strong></p>
+<ul>
+<li>画像を入力すると、統合エンコーダが「領域情報」と「意味情報」を含んだマルチスケールな特徴マップを抽出します。</li>
+<li>ユーザーが「a cat sitting on a red sofa（赤いソファに座る猫）」といった自由なテキストを入力すると、テキストの特徴量（CLIPテキストエンコーダ経由）と画像特徴マップの類似度を計算し、<strong>「何がどこにあるか」を一致させます</strong>。</li>
+<li>最終的にSAMのマスクデコーダ（Mask Decoder）を利用して、該当するテキストが指す物体の<strong>正確なピクセル単位の領域（マスク）</strong> を生成します。</li>
+</ul>
+<p><strong>主なメリット・特徴</strong></p>
+<ul>
+<li><strong>推論の効率化</strong>: 2つのモデルを別々に実行して結果を組み合わせる後処理方式に比べ、単一の統合型ネットワークで処理できるため、高速かつ省メモリで動作します。</li>
+<li><strong>ゼロショット対応</strong>: 事前に学習していない未知のカテゴリや複雑な説明文に対しても、追加学習なしで即座に精度高く領域を抽出可能です。</li>
+</ul>
+<p>本モデルの構成は以下のようにSAMとCLIP双方の結果をcatしたものをベースにMLP→マスクのデコーダを行ったというものです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\5_sam_clip\1786587680165.png" alt="1786587680165"></p>
+<h2 id="実験方法">実験方法</h2>
+<p>SAMの高い領域分割能力（過剰検知傾向）に対し、CLIPのテキスト-画像のアライメント能力を組み合わせて意味的なフィルタリングを行う「SAM-CLIP」のPoCに向け実験手順を検討しました。</p>
+<h3 id="1-背景とpocの目的">1. 背景とPoCの目的</h3>
+<ul>
+<li><strong>背景・課題</strong>: SAM（Segment Anything Model）はあらゆるオブジェクトの境界を精密に検出できますが、意味的コンテキストの判定を持たないため、目的外の領域まで過剰に検知してしまう課題があります。</li>
+<li><strong>解決のアプローチ</strong>: CLIPの汎用的な視覚-言語アライメント能力を検証メカニズムとして組み合わせ、指定したテキストプロンプトに合致する領域のみを正確に抽出・フィルタリングします。</li>
+<li><strong>PoCの狙い</strong>: 本格的な大規模学習に入る前に、小規模データ（200枚程度のミニデータセット）を用いた高速なバッチテストを実施し、学習・検証パイプラインが正常に回ることを確認します。</li>
+</ul>
+<h3 id="2-準備">2. 準備</h3>
+<ol>
+<li><strong>環境の整理と不足パッケージの追加:</strong></li>
+</ol>
+<p>今回PoCに必要なリソース一式をDLの上、環境にインストールするbashです。</p>
+<pre><code class="language-bash"><span class="hljs-comment"># 1. リポジトリのクローン</span>
+!git <span class="hljs-built_in">clone</span> https://github.com/YiyuanLinXX/SAM-CLIP.git
+%<span class="hljs-built_in">cd</span> SAM-CLIP
+
+<span class="hljs-comment"># 2. 必要なライブラリのインストール</span>
+!pip install -q git+https://github.com/facebookresearch/segment-anything.git
+!pip install -q ftfy regex tqdm
+!pip install -q git+https://github.com/openai/CLIP.git
+
+<span class="hljs-comment"># 入力用・出力用フォルダの作成</span>
+!<span class="hljs-built_in">mkdir</span> -p input_images output_masks
+
+!wget -q -O input_images/test_image.jpg <span class="hljs-string">&quot;https://raw.githubusercontent.com/facebookresearch/segment-anything/main/notebooks/images/dog.jpg&quot;</span>
+!<span class="hljs-built_in">mkdir</span> -p ckpt
+
+!wget -q https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+
+!pip install asttokens executing icecream monai nptyping pynrrd SimpleITK slicerio torchio
+!pip install tensorboardX
+</code></pre>
+<ol start="2">
+<li><strong>PoC用ミニデータセットの自動生成:</strong></li>
+</ol>
+<p>CLIPやSAMは学習済みなので、アダプター(CLIPとSAMの接続パラメータ)さえ学習できれば動作させることが出来ると思います。
+COCO val2017を活用したプロトタイプデータ作成を行いました。</p>
+<ul>
+<li>テストを迅速に行うため、COCO val2017データセットから20枚（Train: 160枚 / Val: 40枚）を抽出。</li>
+<li>アノテーションデータ（JSON）からSAM-CLIP学習用のマスク画像（PNG）を自動生成するスクリプトを作成しました。</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> json
+<span class="hljs-keyword">import</span> urllib.request
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+<span class="hljs-keyword">from</span> pycocotools.coco <span class="hljs-keyword">import</span> COCO
+
+base_dir = <span class="hljs-string">&quot;mini_dataset_v2&quot;</span>
+img_dir = os.path.join(base_dir, <span class="hljs-string">&quot;images&quot;</span>)
+mask_dir = os.path.join(base_dir, <span class="hljs-string">&quot;masks&quot;</span>)
+os.makedirs(img_dir, exist_ok=<span class="hljs-literal">True</span>)
+os.makedirs(mask_dir, exist_ok=<span class="hljs-literal">True</span>)
+
+<span class="hljs-comment"># 1. COCO val2017 アノテーションの取得</span>
+ann_file = <span class="hljs-string">&quot;annotations/instances_val2017.json&quot;</span>
+<span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.exists(ann_file):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;アノテーションファイルをダウンロード中...&quot;</span>)
+    ann_url = <span class="hljs-string">&quot;http://images.cocodataset.org/annotations/annotations_trainval2017.zip&quot;</span>
+    urllib.request.urlretrieve(ann_url, <span class="hljs-string">&quot;annotations.zip&quot;</span>)
+    os.system(<span class="hljs-string">&quot;unzip -q annotations.zip -d .&quot;</span>)
+    os.remove(<span class="hljs-string">&quot;annotations.zip&quot;</span>)
+
+coco = COCO(ann_file)
+img_ids = coco.getImgIds()[:<span class="hljs-number">200</span>]
+images = coco.loadImgs(img_ids)
+
+train_lines = []
+val_lines = []
+
+base_img_url = <span class="hljs-string">&quot;http://images.cocodataset.org/val2017/&quot;</span>
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;画像とマスクを生成中...&quot;</span>)
+<span class="hljs-keyword">for</span> idx, img_info <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(images):
+    file_name = img_info[<span class="hljs-string">&quot;file_name&quot;</span>]
+    name_without_ext = os.path.splitext(file_name)[<span class="hljs-number">0</span>]
+    mask_file_name = <span class="hljs-string">f&quot;<span class="hljs-subst">{name_without_ext}</span>.png&quot;</span>
+    
+    <span class="hljs-comment"># 画像ダウンロード</span>
+    img_save_path = os.path.join(img_dir, file_name)
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.exists(img_save_path):
+        urllib.request.urlretrieve(base_img_url + file_name, img_save_path)
+        
+    <span class="hljs-comment"># マスク画像の生成 (PNG)</span>
+    ann_ids = coco.getAnnIds(imgIds=img_info[<span class="hljs-string">&quot;id&quot;</span>])
+    anns = coco.loadAnns(ann_ids)
+    
+    mask = np.zeros((img_info[<span class="hljs-string">&quot;height&quot;</span>], img_info[<span class="hljs-string">&quot;width&quot;</span>]), dtype=np.uint8)
+    <span class="hljs-keyword">for</span> ann <span class="hljs-keyword">in</span> anns:
+        mask = np.maximum(mask, coco.annToMask(ann))
+        
+    mask_save_path = os.path.join(mask_dir, mask_file_name)
+    Image.fromarray((mask * <span class="hljs-number">255</span>).astype(np.uint8)).save(mask_save_path)
+    
+    <span class="hljs-comment"># リスト形式: ファイル名のみ (画像ファイル名,マスクファイル名)</span>
+    line_entry = <span class="hljs-string">f&quot;<span class="hljs-subst">{file_name}</span>,<span class="hljs-subst">{mask_file_name}</span>&quot;</span>
+    
+    <span class="hljs-keyword">if</span> idx &lt; <span class="hljs-number">40</span>:
+        train_lines.append(line_entry)
+    <span class="hljs-keyword">else</span>:
+        val_lines.append(line_entry)
+
+<span class="hljs-comment"># テキストファイルの保存</span>
+train_list_path = os.path.join(base_dir, <span class="hljs-string">&quot;train.txt&quot;</span>)
+val_list_path = os.path.join(base_dir, <span class="hljs-string">&quot;val.txt&quot;</span>)
+
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(train_list_path, <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">as</span> f:
+    f.write(<span class="hljs-string">&quot;\n&quot;</span>.join(train_lines))
+
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(val_list_path, <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">as</span> f:
+    f.write(<span class="hljs-string">&quot;\n&quot;</span>.join(val_lines))
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\nリストファイルをファイル名のみの形式に更新しました！&quot;</span>)
+</code></pre>
+<h3 id="3-完成した検証用パイプラインの全貌">3. 完成した検証用パイプラインの全貌</h3>
+<p>準備が整ったら早速ファインチューニングの開始です。</p>
+<p><strong>データ構造</strong></p>
+<p>前項にて実施した学習用データの構成です。
+cocoからデータを200枚抽出して以下のように分けています。</p>
+<ul>
+<li><strong>画像ディレクトリ (<code>mini_dataset_v2/images/</code>)</strong>: COCOから抽出した画像ファイル</li>
+<li><strong>マスクディレクトリ (<code>mini_dataset_v2/masks/</code>)</strong>: 対応するセグメンテーションマスク (PNG)</li>
+<li><strong>アノテーションリスト (<code>mini_dataset_v2/train.txt</code>, <code>val.txt</code>)</strong>:</li>
+</ul>
+<pre><code class="language-text">000000397133.jpg,000000397133.png
+000000039761.jpg,000000039761.png
+...
+
+</code></pre>
+<p><strong>実行コマンド仕様</strong></p>
+<p>準備出来たらファインチューニングです。
+コマンドは一旦以下通りで大丈夫です。
+もし気になったら学習率やエポックは変更ください。</p>
+<pre><code class="language-bash">!python train.py \
+    -sam_ckpt sam_vit_b_01ec64.pth \
+    -dir_checkpoint ckpt \
+    -img_folder mini_dataset_v2/images \
+    -mask_folder mini_dataset_v2/masks \
+    -train_img_list mini_dataset_v2/train.txt \
+    -val_img_list mini_dataset_v2/val.txt \
+    -text_prompt <span class="hljs-string">&quot;dog&quot;</span> \
+    -epochs 5 \
+    -lr 0.0001 \
+    -num_cls 3 \
+    -gpu True \
+    -gpu_device 0
+
+</code></pre>
+<h3 id="4-次のステップpocの検証フェーズ">4. 次のステップ（PoCの検証フェーズ）</h3>
+<p>パイプラインの動作が確認でき次第、以下の観点から検証を進めます。</p>
+<ul>
+<li><strong>動作検証</strong>: ミニデータセットで Loss が正常に収束するか確認。</li>
+<li><strong>過剰検知抑制の評価</strong>: ファインチューニングした後のパラメータを用いて推論してみます。背景や無関係な領域のオーバーセグメンテーションがCLIPのガイドによって抑制されているか視覚的に評価。</li>
+<li><strong>スケールアップ</strong>: 小さなトライアルで良好な結果が得られた場合、より大規模なデータセットや独自の目的データセットへの適用を検討。</li>
+</ul>
+<h2 id="学習と検証">学習と検証</h2>
+<h3 id="学習の推移">学習の推移</h3>
+<p>学習時のエポックとLOSSの値の推移です。
+初めの大きなロスは抑えられていることが確認出来ます。
+データ数が少ないのでまだ収束はしていませんが、PoCを行う程度であれば十分でしょう。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\sam_clip\1786578995293.png" alt="1786578995293"></p>
+<h3 id="学習後の検証">学習後の検証</h3>
+<p>学習が終わった状態のモデルで評価を行いました。
+結果は以下のようになります。(上段：SAMのみで検知したマスク、下段：SAM+CLIPで検知したマスク)</p>
+<p>いずれもSAMで検知したときは不要と思われる対象まで検知していますが、SAM+CLIPとすることで過剰な検知が抑制されていることが確認出来ます。
+プロンプトの&quot;dog&quot;である必要もありません。</p>
+<p><strong>結果の見方</strong></p>
+<ul>
+<li>SAMは入力画像→SAMの検知結果</li>
+<li>SAM+CLIPは入力画像→今回手法での検知結果をマスク化した画像→実際の画像にマスクをオーバーレイした画像</li>
+</ul>
+<p>SAM VS SAM+CLIPの結果を比較していきます。</p>
+<p>一見良いように見えて、自然背景や空にまでマスクをかけています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\sam_clip\1786577925842.png" alt="1786577925842"></p>
+<p>CLIPは当然知らないわけで得られるマスクは自然背景、空はマスクなしです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\sam_clip\1786577486094.png" alt="1786577486094"></p>
+<p>机の上の対象、窓まで検知します。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\sam_clip\1786577993841.png" alt="1786577993841"></p>
+<p>こちらもCLIPは窓を分からないのでマスクなしです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\sam_clip\1786577461596.png" alt="1786577461596"></p>
+<p>SAMは公園の中でも検知を沢山してきます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\sam_clip\1786578051643.png" alt="1786578051643"></p>
+<p>がCLIPは公園の建造物に対しては認識できません。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\sam_clip\1786577506293.png" alt="1786577506293"></p>
+<p>今回のファインチューニングはcocoデータセットの200件のみで、上記の結果でした。
+恐らくアダプターと、アダプター付近のネットワークパラメータがパラメータ分布が変わることになったと考えています。</p>
+<p>結果に対してはPoCとしては上出来では？
+というのはSAMの見境のない検知を意味を捉えて認識しなおし、結果、過剰な検知を抑制する効果を確認できたからです。</p>
+<h2 id="総括">総括</h2>
+<p>SAMは「クラス不可知」なため、<strong>何でも検出しようとして過検出・未検出が起きやすい</strong>という課題があります。<br>
+これを制御する本質的な方法は、以下の3つに集約できます。</p>
+<p><strong>1. 前段で「何を検出したいか」を限定する（Grounded SAM）</strong></p>
+<ul>
+<li>SAM単体では「何がターゲットか」が分からないため、<strong>テキストで指定できる検出器（Grounding DINOなど）を前段に置く</strong>。</li>
+<li>「person」「damaged part」などテキストで指定 → バウンディングボックスを取得 → その領域だけSAMに渡す。</li>
+<li><strong>誤検知（背景まで細かく切る）を原理的に防げる</strong>。</li>
+</ul>
+<p><strong>2. プロンプトと後処理で「出力を絞り込む」</strong></p>
+<ul>
+<li><strong>ポジティブ／ネガティブポイント</strong>：<br>
+検出したい場所をクリック（ポジティブ）、不要な場所をクリック（ネガティブ）してSAMに指示。</li>
+<li><strong>後処理フィルタ</strong>：<br>
+SAMが出したマスク候補から、面積・形状・IoU（重複）・CLIP分類などで<strong>不要なマスクを除外</strong>。</li>
+<li><strong>曖昧さ出力の制御</strong>：<br>
+1つのプロンプトで複数のマスク候補が出る場合、目的に合う粒度のマスクだけを選ぶ。</li>
+</ul>
+<p><strong>3. ドメインに合わせて「モデルを少しだけ学習させる」（LoRA / Adapter）</strong></p>
+<ul>
+<li>SAMは自然画像に強いが、<strong>グラデーションや低コントラスト、特殊な形状</strong>には弱い。</li>
+<li><strong>LoRAやSAM-Adapter</strong>で、
+<ul>
+<li>画像エンコーダやマスクデコーダの一部だけを</li>
+<li>少量のデータ（数十〜数百枚）で微調整する。</li>
+</ul>
+</li>
+<li>これにより、<strong>境界が曖昧な対象でも安定して検出できるように「モデルの注目の仕方」を調整</strong>できる。</li>
+</ul>
+<p><strong>まとめ</strong></p>
+<ul>
+<li>SAMの検知を制御する本質は、<br>
+<strong>「何を検出したいか」を前段で限定し（Grounded SAM）、プロンプトと後処理で出力を絞り込み、必要なら少量学習でモデルをドメインに合わせる」</strong>  ことです。</li>
+<li>これにより、<strong>過検出・未検出を抑えつつ、グラデーションや特殊形状にも対応</strong>できます。</li>
+</ul>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/QyzK21nx70o?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
