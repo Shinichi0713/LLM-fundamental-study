@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5f93;&#x6765;&#x6280;&#x8853;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日話をした<a href="https://yoshishinnze.hatenablog.com/entry/2026/09/04/043000">RAGで固有名詞の対応を出来るようにするという話</a>について、続編を本日扱っていこうと思います。</p>
+<p>前回扱ったことは文章を入力してから自動で固有名詞を抽出する方法についてでした。
+今回は抽出した文章から固有名詞の意味を橋渡しするより良い表現にするにはどうべきかということについて調査・検討していきます。</p>
+
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="従来技術">従来技術</h2>
+<p>組織固有の固有名詞（社内用語・略語・プロジェクト名など）をLLMに理解させて、精度の高いRAGを実現する工夫について調べてみました。
+いくつかの研究・解説文献が存在します。</p>
+<p>見ていると <strong>5つのアプローチ</strong> に整理できます。以下、代表的な文献とともに解説します。</p>
+<h3 id="1-用語辞書ジャーゴン辞書でクエリを拡張するquery-augmentation">1. 用語辞書・ジャーゴン辞書でクエリを拡張する（Query Augmentation）</h3>
+<p>最も直接的なアプローチは、<strong>組織固有の用語を辞書化し、検索前にクエリを「意味を補って」拡張する</strong>方法です。</p>
+<p><strong>代表的研究：Golden-Retriever</strong></p>
+<ul>
+<li><strong>論文</strong>: Golden-Retriever: High-Fidelity Agentic Retrieval Augmented Generation for Industrial Knowledge Base（arXiv:2408.00798、Western Digital）</li>
+<li><strong>内容</strong>:<br>
+検索の前に「リフレクションベースの質問拡張」ステップを導入し、ジャーゴン（専門用語）を特定し、文脈に基づいてその意味を明確化し、質問を拡張する手法です。<source-chip title="arXiv" url="https://arxiv.org/html/2408.00798" /></li>
+<li>具体的には、入力質問中のすべてのジャーゴンや略語を抽出・列挙し、事前定義したリストと照合して文脈を判定し、ジャーゴン辞書に問い合わせて拡張された定義や説明を取得することで、曖昧さを解消して検索精度を大きく向上させています。<source-chip title="arXiv" url="https://arxiv.org/html/2408.00798" /></li>
+</ul>
+<p><strong>関連研究：現場用語のアライメント</strong></p>
+<ul>
+<li><strong>論文</strong>: Shopfloor Terminology for Retrieval-Augmented Generation (RAG)（AHFE）</li>
+<li><strong>内容</strong>:<br>
+作業者が使う口語的・現場固有の用語が、技術文書の標準用語と異なることで検索失敗が起きる問題に対処し、キュレーション(※1)した同義語で拡張したクエリと通常のクエリを比較した研究です。<source-chip title="AHFE" url="https://openaccess.cms-conferences.org/publications/book/978-1-964867-75-5/article/978-1-964867-75-5_186" /></li>
+<li>結果として、用語で拡張したクエリは平均67%の正答率を達成したのに対し、拡張しないクエリはわずか11%だったと報告しており、用語アライメントの重要性を定量的に示しています。<source-chip title="AHFE" url="https://openaccess.cms-conferences.org/publications/book/978-1-964867-75-5/article/978-1-964867-75-5_186" /></li>
+</ul>
+<p>※1 キュレーション：
+情報を集めて、選別し、整理し、使いやすい形に整えることです。
+RAGや社内ナレッジの文脈では、単にデータを大量に集めるだけではなく、「どの情報を使うべきか」「どう整理すべきか」「どれを正しい情報として扱うか」を人間や仕組みで整備することを指します。</p>
+<p>効果あることは分かってるのですが、自動でより良い文章にするという主眼なので。
+但し、効果を数値で示してくれたことはありがたいです。</p>
+<p><strong>関連研究：略語（頭字語）ギャップの解消</strong></p>
+<ul>
+<li><strong>リポジトリ/論文</strong>: Ontology-Guided RAG Augmentation（&quot;Closing the acronym gap&quot;）</li>
+<li><strong>内容</strong>:<br>
+コーパス規模の略語オントロジーを多段階の抽出・曖昧性解消で構築し、クエリ時（QTA）と取り込み時（ITE）の2箇所で検索を拡張する手法です。<source-chip title="GitHub" url="https://github.com/granludo/onthology-guided-RAG-augmentation" /></li>
+<li>略語クエリでRecall@10が最大102%改善するという大きな効果が報告されています。<source-chip title="GitHub" url="https://github.com/granludo/onthology-guided-RAG-augmentation" /></li>
+</ul>
+<h3 id="2-埋め込みモデルを組織固有の言語でファインチューニングする">2. 埋め込みモデルを組織固有の言語でファインチューニングする</h3>
+<p>汎用の埋め込みモデルは、組織固有の用語を理解できないため、<strong>自社データで埋め込みモデルをファインチューニングする</strong>アプローチです。</p>
+<p><strong>実務解説：Glean のケース</strong></p>
+<ul>
+<li><strong>記事</strong>: Fine-Tuning Embedding Models for Enterprise RAG: Lessons from Glean</li>
+<li><strong>内容</strong>:<br>
+どの組織も独自の用語、略語、プロジェクト名、言語パターンを発展させており、汎用の埋め込みモデルは特別な学習なしにはそれらを理解できないという課題を指摘しています。<source-chip title="Jason Liu" url="https://jxnl.co/writing/2025/03/06/fine-tuning-embedding-models-for-enterprise-rag-lessons-from-glean/" /></li>
+</ul>
+<p><strong>研究：金融ドメインの埋め込み（BAM embeddings）</strong></p>
+<ul>
+<li><strong>論文</strong>: Greenback Bears and Fiscal Hawks: Finance is a Jungle and Text Embeddings Must Adapt（EMNLP 2024 Industry）</li>
+<li><strong>内容</strong>:<br>
+1,430万件のクエリ-パッセージのペアでファインチューニングした金融特化の埋め込みBAMは、テスト集合でRecall@1が62.8%を達成し、OpenAIの最良の汎用埋め込みの39.2%を上回ったと報告しています。<source-chip title="ACL Anthology" url="https://aclanthology.org/2024.emnlp-industry.26.pdf" /></li>
+</ul>
+<p>検索精度を向上させていい文章と引き合わせるという方法です。
+LLMだけの底上げではないということでノミネートですが、検索がボトムネックの場合に取りえる方法です。</p>
+<h3 id="3-オントロジーナレッジグラフに固有名詞を意味として構造化するgraphrag系">3. オントロジー・ナレッジグラフに固有名詞を「意味」として構造化する（<a href="https://yoshishinnze.hatenablog.com/entry/2026/06/12/043000">GraphRAG系</a>）</h3>
+<p>固有名詞を単なる文字列ではなく、<strong>エンティティ＋関係性としてナレッジグラフやオントロジー(※2)に構造化</strong>することで、意味を理解させるアプローチです。</p>
+<p><strong>研究：OG-RAG（オントロジーグラウンディング）</strong></p>
+<ul>
+<li><strong>論文</strong>: OG-RAG: Ontology-Grounded Retrieval-Augmented Generation（EMNLP 2025 / Microsoft Research）</li>
+<li><strong>内容</strong>:<br>
+ドメイン固有のオントロジーに検索プロセスをアンカーすることでLLMの応答を強化する手法で、ドキュメントをハイパーグラフとして表現し、クエリに対して最小限のハイパーエッジ集合を取得するものです。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674/" /></li>
+<li>評価では、正確な事実のrecallを55%、応答の正確性を40%向上させたと報告されています。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674/" /></li>
+</ul>
+<p><strong>研究：GraphRAGのスキーマ設計の影響</strong></p>
+<ul>
+<li><strong>論文</strong>: GraphRAG on Technical Documents – Impact of Knowledge Graph Schema</li>
+<li><strong>内容</strong>:<br>
+ドメインに関連したナレッジグラフのスキーマが、専門用語が豊富な技術レポートに対するMicrosoft GraphRAGの結果に与える影響を検証した研究です。<source-chip title="Dagstuhl" url="https://drops.dagstuhl.de/storage/08tgdk/tgdk-vol003/tgdk-vol003-issue002/html/TGDK.3.2.3/TGDK.3.2.3.html" /></li>
+<li>ドメイン特化のシンプルなスキーマが他の選択肢より約10%多くエンティティを抽出し、最も事実的に正確でハルシネーションの少ない回答を生成したと示しています。<source-chip title="Dagstuhl" url="https://drops.dagstuhl.de/storage/08tgdk/tgdk-vol003/tgdk-vol003-issue002/html/TGDK.3.2.3/TGDK.3.2.3.html" /></li>
+</ul>
+<blockquote>
+<p>※2 オントロジー：
+<strong>オントロジー</strong>とは、簡単に言うと、<strong>ある分野で使う「概念・用語・関係性のルール」を整理した設計図</strong>です。
+RAGやナレッジグラフの文脈では、「この固有名詞は何の種類なのか」「何と何がどう関係するのか」を、LLMや検索システムが扱いやすい形で定義するものです。
+<strong>1. 直感的に言うと「社内用語の分類表＋関係ルール」</strong>
+たとえば、社内RAGで次のような言葉を扱いたいとします。</p>
+<ul>
+<li>ネコプロジェクト</li>
+<li>営業企画部</li>
+<li>山田部長</li>
+<li>顧客対応AI</li>
+<li>2024年度ロードマップ
+人間ならなんとなく、</li>
+<li>「ネコプロジェクト」はプロジェクト名</li>
+<li>「営業企画部」は部署名</li>
+<li>「山田部長」は人物</li>
+<li>「顧客対応AI」は製品・システム</li>
+<li>「2024年度ロードマップ」は文書
+と分かります。
+しかし、システムにはそれを明示してあげる必要があります。そこで、オントロジーでは例えばこう定義します。</li>
+</ul>
+</blockquote>
+<pre><code class="language-text">エンティティの種類:
+- Project
+- Department
+- Person
+- System
+- Document
+
+関係の種類:
+- Project は Department によって推進される
+- Person は Department に所属する
+- Person は Project の責任者である
+- Document は Project について記述する
+- System は Project によって開発される
+</code></pre>
+<blockquote>
+<p>これがオントロジーです。
+<strong>2. ナレッジグラフとの違い</strong>
+よく混同されるのが、<strong>オントロジー</strong>と<strong>ナレッジグラフ</strong>です。
+ざっくり言うと、</p>
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>オントロジー</td>
+<td>どんな種類のものがあり、どう関係できるかを決める「設計図」</td>
+</tr>
+<tr>
+<td>ナレッジグラフ</td>
+<td>実際のデータを、点と線で表したもの</td>
+</tr>
+<tr>
+<td>例えるなら、</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>オントロジー</strong>：データベースの設計書、ER図、分類ルール</li>
+<li><strong>ナレッジグラフ</strong>：その設計に従って入れた実データ
+です。</li>
+</ul>
+</blockquote>
+<h3 id="4-エンティティの名寄せ曖昧性解消entity-resolution">4. エンティティの名寄せ・曖昧性解消（Entity Resolution）</h3>
+<p>同じ組織・固有名詞が表記ゆれで複数に分裂すると検索が壊れるため、<strong>それらを一つのエンティティに統合する</strong>アプローチです。</p>
+<p><strong>解説：Entity Resolution in RAG Pipelines</strong></p>
+<ul>
+<li><strong>記事</strong>: Entity Resolution in RAG Pipelines（TypeGraph）</li>
+<li><strong>内容</strong>:<br>
+「JPMorgan Chase」「J.P. Morgan」「JPMC」「Chase」など、明らかに同じ組織を指す複数の異なるノードがグラフ内に存在してしまうという「エンティティ断片化」の問題を扱っています。<source-chip title="TypeGraph" url="https://typegraph.ai/blog/entity-resolution-rag-knowledge-graph" /></li>
+<li>対策として、表層形の類似度だけでなく、埋め込みベースの意味的類似度、文脈的共起、グラフの構造的特徴を組み合わせる必要があると述べています。<source-chip title="TypeGraph" url="https://typegraph.ai/blog/entity-resolution-rag-knowledge-graph" /></li>
+</ul>
+<p>この事実は結構重要と感じます。
+というのは呼び名の揺れがある場合に検索精度が低下することになる。
+このため、事前に固有名詞を理解して統一する必要があるし、実際の検索時にも同一用語を検索時に統一された代表する用語に変換する必要があるということになります。</p>
+<h3 id="5-ドメイン特化のハイブリッド検索ルーティング">5. ドメイン特化のハイブリッド検索・ルーティング</h3>
+<p>組織固有の用語を含む質問に対し、<strong>用語で補強したクエリとハイブリッド検索（ベクトル＋キーワード）を組み合わせる</strong>アプローチです。</p>
+<p><strong>研究：Telco-oRAG（通信ドメイン）</strong></p>
+<ul>
+<li><strong>論文</strong>: Telco-oRAG: Optimizing Retrieval-augmented Generation for Telecom Queries（arXiv:2505.11856、Huawei）</li>
+<li><strong>内容</strong>:<br>
+3GPPドメイン特化の検索とWeb検索を組み合わせたハイブリッド検索戦略に、用語集で補強したクエリ精緻化とニューラルルーターを組み込んだフレームワークです。<source-chip title="arXiv" url="https://arxiv.org/pdf/2505.11856" /></li>
+<li>3GPP関連の質問の正答率を最大17.6%向上させ、語彙クエリで10.6%の改善を達成したと報告しています。<source-chip title="arXiv" url="https://arxiv.org/pdf/2505.11856" /></li>
+</ul>
+<h3 id="まとめアプローチ別の整理">まとめ：アプローチ別の整理</h3>
+<p>ここまで出てきた手段について整理します。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\proper_noun\image\2_more_well_information\1786612666532.png" alt="1786612666532"></p>
+<table>
+<thead>
+<tr>
+<th>アプローチ</th>
+<th>代表文献</th>
+<th>特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 用語辞書でクエリ拡張</td>
+<td>Golden-Retriever, Shopfloor Terminology</td>
+<td>検索前にジャーゴンの定義を注入。実装が比較的容易</td>
+</tr>
+<tr>
+<td>② 埋め込みのファインチューニング</td>
+<td>Glean, BAM embeddings</td>
+<td>自社言語を埋め込みモデルに学習。効果大だがデータ・コスト要</td>
+</tr>
+<tr>
+<td>③ オントロジー/グラフ構造化</td>
+<td>OG-RAG, GraphRAG schema</td>
+<td>固有名詞を意味・関係として構造化。事実性・多段推論に強い</td>
+</tr>
+<tr>
+<td>④ エンティティ名寄せ</td>
+<td>Entity Resolution (TypeGraph)</td>
+<td>表記ゆれを統合し検索の断片化を防ぐ</td>
+</tr>
+<tr>
+<td>⑤ ハイブリッド検索・ルーティング</td>
+<td>Telco-oRAG</td>
+<td>用語補強＋ベクトル/キーワード検索の併用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="選定のポイント">選定のポイント</h3>
+<ul>
+<li><strong>手軽に始めたい</strong> → ①の用語辞書によるクエリ拡張（Golden-Retriever方式）。再インデックス不要で効果も高い。</li>
+<li><strong>検索精度を根本から上げたい</strong> → ②埋め込みのファインチューニング。</li>
+<li><strong>固有名詞の「意味・関係」まで扱い、複雑な質問に答えたい</strong> → ③オントロジー/GraphRAG。</li>
+<li><strong>表記ゆれが多い組織名を扱う</strong> → ④エンティティ名寄せ。</li>
+</ul>
+<p>実務では、<strong>①（用語辞書）＋④（名寄せ）を土台に、必要に応じて②や③を追加する</strong>のが現実的な組み合わせです。</p>
+<h2 id="ベストペアの考察">ベストペアの考察</h2>
+<p>手段は色々あるということは分かりました。
+RAGはシステムでしょう。
+ですから、先述の手法から相性の良い手法を組み合わせて精度を追求するとどうなるかについても考察してみます。
+結論から言うと、最も実装がお手軽で汎用的に効果が出やすく、かつ他の手法とも独立して掛け合わせやすいペアは、</p>
+<blockquote>
+<p><strong>① 用語辞書・ジャーゴン辞書によるクエリ拡張</strong><br>
+×<br>
+<strong>④ エンティティの名寄せ・曖昧性解消</strong></p>
+</blockquote>
+<p>だと思います。</p>
+<p>実装をしっかり頑張って、<strong>「複雑な関係性をたどる質問」まで含めて最高精度を狙う場合</strong>は、</p>
+<blockquote>
+<p><strong>③ オントロジー・ナレッジグラフ</strong><br>
+×<br>
+<strong>④ エンティティの名寄せ・曖昧性解消</strong></p>
+</blockquote>
+<p>が最有力です。</p>
+<p>整理するとこんな感じでしょうか。</p>
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>最も有力なペア</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>まずRAG全体の検索精度を安定して上げたい</td>
+<td><strong>① クエリ拡張 × ④ 名寄せ</strong></td>
+</tr>
+<tr>
+<td>組織内の複雑な関係性までたどりたい</td>
+<td><strong>③ GraphRAG × ④ 名寄せ</strong></td>
+</tr>
+<tr>
+<td>大量データ・高頻度検索で検索基盤を根本強化したい</td>
+<td><strong>② 埋め込みFT × ④ 名寄せ</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1--クエリ拡張---名寄せ">1. ① クエリ拡張 × ④ 名寄せ</h3>
+<p><strong>なぜこのペアが強いか</strong></p>
+<p>この2つは、RAGにおける<strong>別々の失敗原因</strong>を潰します。</p>
+<p><strong>① クエリ拡張が解決する問題</strong></p>
+<p>ユーザーがこう聞くとします。</p>
+<blockquote>
+<p>「NPJの最新方針を教えて」</p>
+</blockquote>
+<p>でも、社内文書にはこう書かれているかもしれません。</p>
+<blockquote>
+<p>「ネコプロジェクトにおける2025年度の運用方針」</p>
+</blockquote>
+<p>この場合、<code>NPJ</code> と <code>ネコプロジェクト</code> が同じだと分からないと、検索に失敗します。</p>
+<p>そこで①では、クエリをこう補強します。</p>
+<pre><code class="language-text">元の質問:
+NPJの最新方針を教えて
+
+拡張後:
+NPJ、正式名称: ネコプロジェクト。
+ネコプロジェクトは顧客対応AI導入に関する社内プロジェクト。
+このプロジェクトの最新方針を検索する。
+</code></pre>
+<p>つまり①は、<strong>ユーザーの質問側を賢くする方法</strong>です。</p>
+<p><strong>④ 名寄せが解決する問題</strong></p>
+<p>一方で、社内文書側には表記ゆれがあります。</p>
+<pre><code class="language-text">NPJ
+Neko PJ
+ネコPJ
+ネコプロジェクト
+顧客対応AI導入PJ
+</code></pre>
+<p>これらが全部バラバラに扱われると、検索結果が分散します。</p>
+<p>そこで④では、これらを同じエンティティとして統一します。</p>
+<pre><code class="language-text">代表名: ネコプロジェクト
+別名:
+- NPJ
+- Neko PJ
+- ネコPJ
+- 顧客対応AI導入PJ
+</code></pre>
+<p>つまり④は、<strong>データ側・エンティティ側をきれいにする方法</strong>です。</p>
+<p><strong>この2つを組み合わせると何が起きるか</strong></p>
+<p>①だけだと、クエリは改善されますが、文書側の表記ゆれが残ります。</p>
+<p>④だけだと、文書側は整理されますが、ユーザーが略称や口語で聞いたときに取りこぼす可能性があります。</p>
+<p>しかし、①と④を組み合わせると、</p>
+<pre><code class="language-text">ユーザー質問:
+NPJの最新方針を教えて
+
+① クエリ拡張:
+NPJ = ネコプロジェクト と補足
+
+④ 名寄せ:
+NPJ / ネコPJ / Neko PJ / ネコプロジェクト を同一エンティティとして扱う
+
+検索:
+ネコプロジェクトに関する文書群を広く正確に取得
+
+生成:
+取得文書を根拠に回答
+</code></pre>
+<p>という流れになります。</p>
+<p>このため、<strong>ユーザー側の言い方の揺れ</strong>と<strong>文書側の表記ゆれ</strong>の両方に対応できます。</p>
+<p><strong>2. このペアが「独立して効く」と考えられる理由</strong></p>
+<p>①と④は、似ているようで効いている場所が違います。</p>
+<table>
+<thead>
+<tr>
+<th>手法</th>
+<th>効く場所</th>
+<th>解決する問題</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① クエリ拡張</td>
+<td>検索前の質問処理</td>
+<td>ユーザーの質問が短い・略語・曖昧</td>
+</tr>
+<tr>
+<td>④ 名寄せ</td>
+<td>インデックス・エンティティ管理</td>
+<td>文書内の表記ゆれ・別名・略称の分裂</td>
+</tr>
+</tbody>
+</table>
+<p>つまり、</p>
+<ul>
+<li>①は「<strong>質問を正規化・補強する</strong>」</li>
+<li>④は「<strong>知識ベース内の固有名詞を統一する</strong>」</li>
+</ul>
+<p>という役割です。</p>
+<p>この2つは重複が少なく、<strong>掛け合わせたときに効果が足し算以上になりやすい</strong>です。</p>
+<p><strong>3. 具体例</strong></p>
+<p><strong>何もしない場合</strong></p>
+<p>質問：</p>
+<pre><code class="language-text">LHの障害対応方針は？
+</code></pre>
+<p>文書には以下のように書かれている。</p>
+<pre><code class="language-text">Lighthouse CRM刷新プロジェクトにおける障害対応方針
+</code></pre>
+<p>汎用RAGは、<code>LH</code> と <code>Lighthouse CRM刷新プロジェクト</code> が同じだと分からない可能性があります。</p>
+<p><strong>① クエリ拡張を入れる</strong></p>
+<pre><code class="language-text">LHとは、Lighthouse CRM刷新プロジェクトの略称。
+営業部門のCRM基盤刷新を目的とした社内プロジェクト。
+このプロジェクトの障害対応方針を検索する。
+</code></pre>
+<p>これで検索語が豊かになります。</p>
+<p><strong>④ 名寄せを入れる</strong></p>
+<pre><code class="language-text">代表エンティティ:
+Lighthouse CRM刷新プロジェクト
+
+別名:
+- LH
+- Lighthouse
+- CRM Lighthouse
+- ライトハウスPJ
+</code></pre>
+<p>これで、文書側の表記ゆれも吸収できます。</p>
+<p><strong>結果</strong></p>
+<pre><code class="language-text">LH
+↓
+Lighthouse CRM刷新プロジェクト
+↓
+関連文書を取得
+↓
+障害対応方針を回答
+</code></pre>
+<p>このように、<strong>検索前の理解</strong>と<strong>検索対象側の整理</strong>が両方効きます。</p>
+<h3 id="2---オントロジー構築---名寄せ">2.  ③ オントロジー構築 × ④ 名寄せ</h3>
+<p>もし質問が単純な用語検索ではなく、次のようなものなら、①×④だけでは足りない場合があります。</p>
+<blockquote>
+<p>「ネコプロジェクトの意思決定に関わった部署と、その決定が影響したシステムを教えて」</p>
+</blockquote>
+<p>この場合、必要なのは単なる検索ではなく、</p>
+<pre><code class="language-text">ネコプロジェクト
+  ├─ 関係部署: 営業企画部
+  ├─ 責任者: 山田部長
+  ├─ 関連会議: 第5回推進会議
+  ├─ 決定事項: 顧客対応AIを先行導入
+  └─ 影響システム: CRM基盤
+</code></pre>
+<p>のような<strong>関係性の探索</strong>です。
+ここで効くのが③のオントロジー・ナレッジグラフです。
+GraphRAGでは④の名寄せが非常に重要です。
+なぜなら、もしグラフ内で次のように分裂していたら、</p>
+<pre><code class="language-text">ネコプロジェクト
+ネコPJ
+NPJ
+Neko Project
+</code></pre>
+<p>グラフの関係も分裂してしまいます。</p>
+<pre><code class="language-text">ネコプロジェクト --責任者--&gt; 山田部長
+NPJ --関連部署--&gt; 営業企画部
+Neko Project --関連システム--&gt; CRM基盤
+</code></pre>
+<p>この状態では、関係を正しくたどれません。</p>
+<p>そのため、③ GraphRAGを使うなら、④ 名寄せはほぼ必須です。</p>
+<h2 id="総括">総括</h2>
+<p>組織固有の固有名詞を含むRAGでは、主な課題は <strong>「LLMや検索器が、その言葉の意味・別名・関係性を知らないこと」</strong> です。</p>
+<h3 id="主な課題">主な課題</h3>
+<p>固有名詞に関わるRAGの課題を整理します。</p>
+<table>
+<thead>
+<tr>
+<th>課題</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 用語の意味不明</td>
+<td><code>NPJ</code> や <code>LH</code> などの略語・社内用語をLLMが理解できない</td>
+</tr>
+<tr>
+<td>2. 表記ゆれ</td>
+<td><code>ネコプロジェクト</code>、<code>NPJ</code>、<code>Neko PJ</code> などが別物として扱われる</td>
+</tr>
+<tr>
+<td>3. 検索漏れ</td>
+<td>ユーザーの呼び方と文書中の呼び方が違うと、関連文書を取れない</td>
+</tr>
+<tr>
+<td>4. 関係性を追えない</td>
+<td>人物・部署・プロジェクト・文書・意思決定のつながりを扱いにくい</td>
+</tr>
+<tr>
+<td>5. 汎用埋め込みの限界</td>
+<td>一般的なEmbeddingモデルは社内固有語の意味を十分に表現できない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="おすすめ対応策">おすすめ対応策</h3>
+<p><strong>最初にやるべき対応</strong></p>
+<blockquote>
+<p><strong>① 用語辞書によるクエリ拡張 × ④ エンティティ名寄せ</strong></p>
+</blockquote>
+<p>これが最も現実的で効果が出やすいです。</p>
+<ul>
+<li>用語辞書で、略語や社内用語の意味を補う</li>
+<li>名寄せで、同じ固有名詞の表記ゆれを統一する</li>
+<li>検索時には代表名・別名・定義を使って検索する</li>
+</ul>
+<p>例：</p>
+<pre><code class="language-text">NPJ → ネコプロジェクト
+別名: NPJ, ネコPJ, Neko PJ
+意味: 顧客対応AI導入に関する社内プロジェクト
+</code></pre>
+<p><strong>高度化する場合</strong></p>
+<p>複雑な質問まで扱うなら、</p>
+<blockquote>
+<p><strong>③ オントロジー・GraphRAG × ④ エンティティ名寄せ</strong></p>
+</blockquote>
+<p>が有効です。</p>
+<ul>
+<li>固有名詞を「単語」ではなく「エンティティ」として扱う</li>
+<li>部署・人物・プロジェクト・文書・意思決定の関係をグラフ化する</li>
+<li>ただし、名寄せが不十分だとグラフが分裂して精度が落ちる</li>
+</ul>
+<p><strong>結論</strong></p>
+<p>固有名詞対応RAGでまず重要なのは、</p>
+<ol>
+<li><strong>固有名詞を抽出する</strong></li>
+<li><strong>同じ意味の表記を名寄せする</strong></li>
+<li><strong>代表名・別名・定義を用語辞書化する</strong></li>
+<li><strong>検索時にその定義でクエリを拡張する</strong></li>
+</ol>
+<p>ことです。</p>
+<p>最短で効果を出すなら、</p>
+<blockquote>
+<p><strong>用語辞書によるクエリ拡張 × エンティティ名寄せ</strong></p>
+</blockquote>
+<p>が第一候補です。<br>
+その上で、関係性まで扱いたい場合に <strong>GraphRAG</strong> を追加するのがよいと考えます。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/QyzK21nx70o?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
