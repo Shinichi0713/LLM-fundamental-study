@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>名寄せは英語でEitity Resolutionと呼ばれ、NLP界隈では根強い人気を持つテーマです。
+そんな名寄せは知財特許のシステムなどで実装されている手法はあるのですが、精度的には今一つということが現状でした。(但し、LLMがここまで発達した現時点では解決可能な問題になってる可能性があります)</p>
+<p>そんな名寄せに関する論文について紹介します。
+論文は査読もなく、香港の大学生が出したプレプリントなので割引になりそうですが、現場のシステムを作る上ではアイデアとして使えるかもと感じました。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="論文概要">論文概要</h2>
+<h3 id="論文プロフィール">論文プロフィール</h3>
+<p><strong>タイトル</strong>: Adaptive Graph Refinement and Label Propagation with LLMs for Cost-Effective Entity Resolution</p>
+<p><strong>著者</strong>:</p>
+<ul>
+<li>Hongtao Wang（Hong Kong Baptist University）</li>
+<li>Renchi Yang（Hong Kong Baptist University）</li>
+<li>Haoran Zheng</li>
+<li>Xiangyu Ke</li>
+</ul>
+<p><strong>公開形態</strong>: arXiv Preprint（Technical Report）</p>
+<p><strong>公開日</strong>: 2026年5月25日</p>
+<p><strong>報告した国際学会</strong>: プレプリントのみ</p>
+<h3 id="どんな論文か">どんな論文か</h3>
+<p><strong>解決しようとしている問題</strong></p>
+<p>従来のEntity Resolution（名寄せ）は、以下の3段階パイプライン（BMC: Blocking → Matching → Clustering）が主流でした。</p>
+<ol>
+<li><strong>Blocking</strong>: 似たレコードだけを候補に絞る</li>
+<li><strong>Matching</strong>: ペアが同一エンティティか判定</li>
+<li><strong>Clustering</strong>: 同一エンティティをグループ化</li>
+</ol>
+<p>しかし、この分離型パイプラインには重大な問題があります。</p>
+<ul>
+<li><strong>Blockingの失敗で本当のマッチが永久に失われる</strong>（recall ceiling）</li>
+<li><strong>Matchingがグラフ全体の構造を無視して「盲目的」に判定</strong></li>
+<li><strong>Clusteringが、上流のエラー（欠落エッジ・ノイズリンク）を引き継ぐ</strong></li>
+<li><strong>LLMを使う場合も、すべてのペアに問い合わせるとコストが膨大</strong></li>
+</ul>
+<p><strong>提案手法：Alper</strong></p>
+<p>この論文では <strong>Alper（Adaptive Label Propagation for Entity Resolution）</strong> というフレームワークを提案しています。</p>
+<p><strong>核心的なアイデア</strong>は：</p>
+<pre><code class="language-text">「名寄せは、進化するグラフ上の動的最適化問題として扱う」
+</code></pre>
+<p>つまり、blocking → matching → clustering を分離せず、<strong>グラフ構造とラベルを反復的に同時に精緻化</strong>します。</p>
+<p>具体的には：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>弱いが無料の信号</strong></td>
+<td>グラフの構造的推移性（transitivity）によるラベル伝播</td>
+</tr>
+<tr>
+<td><strong>強いが高価な信号</strong></td>
+<td>LLMによるペアワイズクエリ</td>
+</tr>
+<tr>
+<td><strong>統合方法</strong></td>
+<td>確率的ラベル伝播 + オンラインナップサック問題として予算配分を最適化</td>
+</tr>
+<tr>
+<td><strong>LLMの役割</strong></td>
+<td>単なる判定器ではなく、トップ候補から最適マッチを選ぶ「推論器」として機能</td>
+</tr>
+</tbody>
+</table>
+<p><strong>重要な技術的貢献</strong></p>
+<ol>
+<li>
+<p><strong>動的グラフ精緻化</strong>: 静的なblockingではなく、グラフを反復的に更新して欠落リンクを回復</p>
+</li>
+<li>
+<p><strong>適応的信号選択</strong>:</p>
+<ul>
+<li>ラベルのperplexityから <strong>marginal value gain (MVG)</strong> を計算</li>
+<li>情報利得が最大になるクエリを貪欲に選択</li>
+<li>理論的保証（provable theoretical guarantees）付きの貪欲アルゴリズム</li>
+</ul>
+</li>
+<li>
+<p><strong>コスト効率</strong>:</p>
+<ul>
+<li>「簡単なケース」は推移性で解決</li>
+<li>「難しいケース」だけLLMに問い合わせ</li>
+<li>予算制約の下で累積限界利得を最大化</li>
+</ul>
+</li>
+</ol>
+<p><strong>実験結果</strong></p>
+<p>8つの実世界ベンチマークデータセットで検証し、</p>
+<ul>
+<li><strong>BatchER</strong></li>
+<li><strong>LLM-CER</strong></li>
+</ul>
+<p>などの最先端手法を上回る性能を示しました。特に、エンティティ分散が高い複雑なデータセットで優位性が顕著です。</p>
+<h3 id="社内ragとの関連性">社内RAGとの関連性</h3>
+<p>この論文は、私たちの議論している「社内固有名詞の自動名寄せ」に直接活かせる知見を持っています。</p>
+<table>
+<thead>
+<tr>
+<th>論文の知見</th>
+<th>社内RAGへの応用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>静的blockingのrecall ceiling問題</td>
+<td>社内略称・別名を辞書だけでマッチさせる限界</td>
+</tr>
+<tr>
+<td>推移性を使った「簡単ケース」の自動解決</td>
+<td>「NPJ→ネコプロジェクト→ネコPJ」のような連鎖的統合</td>
+</tr>
+<tr>
+<td>LLMクエリの予算最適化</td>
+<td>APIコストを抑えつつ名寄せ精度を最大化</td>
+</tr>
+<tr>
+<td>グラフ構造の動的精緻化</td>
+<td>新文書が追加されてもKGを更新しながら名寄せ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="提案手法">提案手法</h2>
+<p>Alperの仕組みを、<strong>名寄せを&quot;動的グラフの最適化ゲーム&quot;として捉え直したフレームワーク</strong>として解説します。</p>
+<h3 id="1-従来の名寄せが抱えていた問題">1. 従来の名寄せが抱えていた問題</h3>
+<p>今までの名寄せは、だいたいこんな3段階で行われていました。</p>
+<pre><code>① Blocking（候補絞り込み）
+    「似てそうなレコードだけを候補にする」
+           ↓
+② Matching（ペア判定）
+    「この2つは同じエンティティか？」を判定
+           ↓
+③ Clustering（グループ化）
+    「同じエンティティだったものをまとめる」
+</code></pre>
+<p><strong>この方法の欠陥</strong></p>
+<p><strong>欠陥①：Blockingで「本当のマッチ」が永久に失われる</strong></p>
+<p>Blockingは「似たものだけを残す」フィルタですが、<strong>一度除外されたレコードは二度と後続ステージに現れません</strong>。</p>
+<pre><code>例：
+「ネコプロジェクト」と「ネコ PJ」は文字列が少し違うので
+Blockingで別ブロックに分かれてしまう
+→ その後どんなに高性能なLLMを使っても、
+   この2つが同じものだと気づけない！
+</code></pre>
+<p>これが <strong>「recall ceiling（再現率の天井）」</strong> です。</p>
+<p><strong>欠陥②：Matchingが「グラフ全体」を見ていない</strong></p>
+<p>Matchingは1ペアずつ独立に判定します。つまり、</p>
+<pre><code>「AとBは同じ？」
+「BとCは同じ？」
+</code></pre>
+<p>は判定できるが、</p>
+<pre><code>「A-B-Cが全部同じグループか？」
+</code></pre>
+<p>という<strong>全体の整合性</strong>を無視します。</p>
+<p><strong>欠陥③：Clusteringが「上流のエラー」を引き継ぐ</strong></p>
+<p>Matchingで間違ったリンクや欠落したリンクがあると、Clusteringはそのまま誤ったグループを作ります。<strong>エラーが連鎖的に伝播</strong>します。</p>
+<p><strong>欠陥④：LLMを使うとコストが爆発</strong></p>
+<p>すべてのペアにLLMで「同じ？」と聞くと、ペア数がレコード数の二乗に増えるため、コストが膨大になります。</p>
+<h3 id="2-alperの核心的アイデア">2. Alperの核心的アイデア</h3>
+<p>Alperはこの3段階を<strong>分離せず、1つの「進化するグラフ」として統合</strong>します。</p>
+<pre><code>従来：Blocking → Matching → Clustering（分離型）
+Alper：グラフを作り → ラベルを伝播させ → 怪しいところだけLLMに聞く
+        → グラフを更新 → またラベル伝播 → …（反復型）
+</code></pre>
+<p><strong>重要な洞察</strong></p>
+<blockquote>
+<p><strong>「Matching（マッチ判定）とClustering（グループ化）は、本質的に同じ目的のための協力関係である」</strong></p>
+</blockquote>
+<p>理想のエンティティグラフを作るために、両方が同時に最適化されるべきだ、という考え方です。</p>
+<h3 id="3-alperの動作フロー直感的に">3. Alperの動作フロー（直感的に）</h3>
+<p><strong>ステップ①：初期グラフを作る</strong></p>
+<p>すべてのレコードをノードとして配置します。</p>
+<pre><code>[ネコPJ] ---?--- [ネコプロジェクト] ---?--- [Neko Project]
+    |                |                      |
+    ?                ?                      ?
+[山田部長]        [山田部長]             [山田部長]
+</code></pre>
+<p><code>?</code> は「まだ不明なリンク」です。</p>
+<p><strong>ステップ②：「弱いが無料の信号」でラベル伝播</strong></p>
+<p><strong>ラベル伝播（Label Propagation）</strong> を使います。</p>
+<blockquote>
+<p>「隣人と同じラベルになろう」というルールで、グラフ上をラベルが広がっていく</p>
+</blockquote>
+<p>例えば：</p>
+<ul>
+<li>「ネコPJ」と「ネコプロジェクト」が少し似ていて弱いリンクがある</li>
+<li>「ネコプロジェクト」と「Neko Project」も弱いリンクがある</li>
+<li>ラベル伝播で「ネコPJ → ネコプロジェクト → Neko Project」に同じラベルが伝わる</li>
+</ul>
+<p>これは<strong>推移性（transitivity）</strong> を使った「タダでできる推論」です。</p>
+<pre><code>AとBが同じ、BとCが同じ → AとCも同じ（タダでわかる）
+</code></pre>
+<p><strong>ステップ③：「怪しい境界」を検出</strong></p>
+<p>ラベル伝播後、<strong>「このノードのラベル、本当に合ってる？」</strong> という怪しい場所を見つけます。</p>
+<p>判定基準は <strong>「ラベルのperplexity（混乱度）」</strong>：</p>
+<ul>
+<li>周囲のノードとラベルが一致していれば「自信あり」</li>
+<li>周囲とラベルがバラバラなら「自信なし（境界）」</li>
+</ul>
+<p><strong>ステップ④：「強いが高価な信号」（LLM）を使う</strong></p>
+<p>予算（クエリ回数の上限）がある中で、<strong>情報利得が最大になるペアだけ</strong>を選んでLLMに問い合わせます。</p>
+<pre><code>LLMへの問い合わせ例：
+「ネコPJ（文脈：CRM基盤に影響）と
+ Neko Project（文脈：CRM基盤に影響）は
+ 同じエンティティですか？」
+</code></pre>
+<p><strong>ステップ⑤：グラフを更新して再開</strong></p>
+<p>LLMの回答でグラフのリンクを更新（追加・削除・強化）し、<strong>ステップ②に戻る</strong>。
+これを繰り返すことで、グラフが徐々に「正しい形」に近づいていきます。</p>
+<h3 id="4-弱い信号と強い信号の使い分け">4. 「弱い信号」と「強い信号」の使い分け</h3>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>特徴</th>
+<th>使い道</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>弱い信号</strong>（ラベル伝播）</td>
+<td>無料・高速・構造的</td>
+<td>「簡単なケース」を自動解決</td>
+</tr>
+<tr>
+<td><strong>強い信号</strong>（LLMクエリ）</td>
+<td>高価・正確・意味的</td>
+<td>「難しい境界ケース」だけ判定</td>
+</tr>
+</tbody>
+</table>
+<p><strong>なぜこの組み合わせが強いか</strong></p>
+<pre><code>例：1000件のレコードがあるとする
+
+従来のLLM方式：
+  すべてのペアに問い合わせ → 約50万ペア → LLMコスト爆発
+
+Alper：
+  ① ラベル伝播で「明らかに同じグループ」を自動統合
+     → 残りは境界付近の少数ペアのみ
+  ② LLMは「本当に怪しいペア」だけに集中
+     → クエリ数を大幅削減
+</code></pre>
+<h3 id="5-予算配分の仕組みオンラインナップサック問題">5. 予算配分の仕組み：オンラインナップサック問題</h3>
+<p>AlperはLLMクエリの予算を <strong>「どのペアに使うと最も効果的か」</strong> を数学的に最適化します。</p>
+<p><strong>指標：Marginal Value Gain (MVG)</strong></p>
+<p>各ノードの <strong>ラベルのperplexity（混乱度）</strong> から計算します。</p>
+<pre><code>perplexityが高い = 「このノードのラベル、よくわからない」
+→ 周囲と整合性が取れていない
+→ ここにLLMクエリを使うと情報利得が大きい
+</code></pre>
+<p><strong>最適化問題</strong></p>
+<blockquote>
+<p><strong>「予算制約の下で、累積限界利得を最大化せよ」</strong></p>
+</blockquote>
+<p>これを <strong>オンラインナップサック問題（Online Knapsack Problem）</strong> として定式化し、<strong>理論的保証付きの貪欲アルゴリズム</strong>で解きます。</p>
+<p>つまり：</p>
+<ul>
+<li>「このクエリを投下すると、グラフ全体がどれだけ改善するか」を見積もる</li>
+<li>予算内で最も「効く」クエリから順に実行</li>
+</ul>
+<h3 id="6-直感的な例で見るalperの動き">6. 直感的な例で見るAlperの動き</h3>
+<p><strong>社内プロジェクト名の名寄せを想像してください</strong></p>
+<pre><code>文書A：「NPJはCRM基盤に影響する」
+文書B：「ネコプロジェクトはCRM基盤に影響する」
+文書C：「ネコPJの責任者は山田部長」
+文書D：「Neko Projectは営業企画部の管轄」
+文書E：「LHは別プロジェクト」
+</code></pre>
+<p><strong>従来のBMCパイプライン</strong></p>
+<pre><code>Blocking：「NPJ」と「ネコPJ」は文字列が違うので別ブロック
+→ 永久にマッチしない！
+</code></pre>
+<p><strong>Alperの場合</strong></p>
+<pre><code>初期グラフ：
+[NPJ] [ネコプロジェクト] [ネコPJ] [Neko Project] [LH]
+
+① 文脈埋め込みで弱いリンクを作成
+   [NPJ]--弱--[ネコプロジェクト]--弱--[ネコPJ]--弱--[Neko Project]
+
+② ラベル伝播
+   → NPJ, ネコプロジェクト, ネコPJ, Neko Project に同じラベルが広がる
+
+③ 怪しい境界を検出
+   → [LH]は周囲と文脈が違う（CRM基盤に関係ない）
+   → [LH]のperplexityが高い
+
+④ LLMクエリ（予算内で効果的なものを選択）
+   「LHとネコプロジェクトは同じ？」
+   → LLM：「いいえ、LHはLighthouse CRM刷新の略で別物」
+
+⑤ グラフ更新
+   → [LH]は別グループとして確定
+   → [NPJ, ネコプロジェクト, ネコPJ, Neko Project]は統合
+</code></pre>
+<h3 id="7-なぜalperが有効かまとめ">7. なぜAlperが有効か（まとめ）</h3>
+<table>
+<thead>
+<tr>
+<th>従来の問題</th>
+<th>Alperの解決策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Blockingでマッチが永久消失</td>
+<td><strong>動的グラフ更新</strong>でリンクを回復</td>
+</tr>
+<tr>
+<td>MatchingとClusteringが分離</td>
+<td><strong>統合的最適化</strong>で相互に改善</td>
+</tr>
+<tr>
+<td>LLMコストが膨大</td>
+<td><strong>予算制約付き最適化</strong>で効率的に使用</td>
+</tr>
+<tr>
+<td>エラーが連鎖伝播</td>
+<td><strong>反復的精緻化</strong>で段階的に修正</td>
+</tr>
+<tr>
+<td>グラフ全体を無視</td>
+<td><strong>ラベル伝播</strong>で構造情報を活用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="一言でまとめると">一言でまとめると</h3>
+<blockquote>
+<p><strong>Alperは「タダでできる推論（ラベル伝播）で大部分を解決し、高価なLLMは「本当に必要な怪しいケース」だけに集中させる。しかも、どこにLLMを使うかを数学的に最適化する」</strong></p>
+</blockquote>
+<p>これが、コストを抑えつつ名寄せ精度を最大化するAlperの本質です。</p>
+<h2 id="総括">総括</h2>
+<p>論文読んだ所感をまとめます。</p>
+<h3 id="長所">長所</h3>
+<p><strong>1. Blockingの「recall ceiling」を打破できる</strong></p>
+<p>従来の静的Blockingでは、別ブロックに分かれたレコードは永久にマッチしませんでした。Alperは動的にグラフを更新するため、<strong>推移性を通じて間接的にリンクを回復</strong>できます。</p>
+<pre><code>例：
+NPJ → ネコプロジェクト（直接リンクなし）
+ネコプロジェクト → ネコPJ（弱いリンクあり）
+→ ラベル伝播で NPJ と ネコPJ が同じグループに！
+</code></pre>
+<p><strong>2. LLMコストを大幅に削減できる</strong></p>
+<p>すべてのペアにLLMを使うのではなく、<strong>「情報利得が最大になる怪しいケース」だけ</strong>に集中します。予算制約付き最適化（Online Knapsack Problem）により、限られたクエリ数で最大の効果を得られます。</p>
+<p><strong>3. MatchingとClusteringを統合的に最適化</strong></p>
+<p>分離型パイプラインでは、MatchingのエラーがClusteringに連鎍伝播します。Alperは<strong>両者を協調的に最適化</strong>するため、エラーの連鎖を抑制できます。</p>
+<p><strong>4. 理論的保証がある</strong></p>
+<p>貪欲アルゴリズムによる信号選択には<strong>provable theoretical guarantees（証明可能な理論的保証）</strong> があります。つまり、「この方法で選んだクエリは、予算内で最適に近い」という数学的な根拠があります。</p>
+<p><strong>5. dirty ER（重複データ内の名寄せ）に特に強い</strong></p>
+<p>単一の汚いデータセット内での名寄せ（deduplication）は、従来手法より難易度が高い問題設定ですが、Alperは主張上はこの <strong>「最も難しい設定」で優位性を示しています</strong>。</p>
+<h3 id="欠点限界">欠点・限界</h3>
+<p><strong>1. 初期グラフの品質に依存する</strong></p>
+<p>Alperは「弱いリンク」からスタートしますが、<strong>初期の埋め込みや類似度計算が悪いと、ラベル伝播も誤った方向に進みます</strong>。初期グラフ構築の品質が結果に大きく影響します。</p>
+<p><strong>2. 反復処理の計算コスト</strong></p>
+<p>ラベル伝播とグラフ更新を繰り返すため、<strong>大規模データセットでは計算量が増加</strong>します。論文では8つのベンチマークで検証されていますが、数百万件規模のデータでのスケーラビリティは未明確です。</p>
+<p><strong>3. LLMの「強い信号」が依然として必要</strong></p>
+<p>予算を最適化しても、<strong>「難しい境界ケース」にはLLMが不可欠</strong>です。LLMの品質（モデルの性能）がそのまま名寄せ精度に影響します。</p>
+<p><strong>長所・欠点のまとめ表</strong></p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>長所</th>
+<th>欠点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>精度</strong></td>
+<td>Blockingのrecall ceilingを打破</td>
+<td>初期グラフ品質に依存</td>
+</tr>
+<tr>
+<td><strong>コスト</strong></td>
+<td>LLMクエリを予算内で最適化</td>
+<td>LLM自体は依然高価</td>
+</tr>
+<tr>
+<td><strong>理論</strong></td>
+<td>数学的保証あり</td>
+<td>実装の複雑さが増す</td>
+</tr>
+<tr>
+<td><strong>適用範囲</strong></td>
+<td>dirty ERに特に強い</td>
+<td>マルチソース統合は未対応</td>
+</tr>
+<tr>
+<td><strong>スケーラビリティ</strong></td>
+<td>タダの推論で大部分を処理</td>
+<td>反復処理の計算コスト</td>
+</tr>
+<tr>
+<td><strong>信頼性</strong></td>
+<td>8データセットで検証済み</td>
+<td>arXiv Preprint（未査読）</td>
+</tr>
+</tbody>
+</table>
+<p>文字通りのフレームワークの一つとして面白いアイデアだったと思いました。
+但し、記載の通り用いるモデルの精度に引っ張られ、反復計算×LLMの計算が必要になるのでコストは莫大です。
+反復計算も差分を調整する段階になった場合、どこでストップするかも課題になりそうと感じました。</p>
+
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/FhSBK8VaLss?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
