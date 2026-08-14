@@ -123,5 +123,284 @@ def run_poc_demo():
         print(f"  関連概念: {[engine.concepts[c].name for c in edge.concepts]}")
         print(f"  テキスト: {edge.doc_chunk}\n")
 
-if __name__ == "__main__":
-    run_poc_demo()
+from typing import Literal
+
+from llama_index.core import Document, PropertyGraphIndex
+from llama_index.core.indices.property_graph import SchemaLLMPathExtractor
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+documents = [
+    Document(text="山田部長はネコプロジェクトの責任者である。"),
+    Document(text="ネコプロジェクトはCRM基盤に影響する。"),
+    Document(text="山田部長は営業企画部に所属している。"),
+    Document(text="CRM基盤は顧客情報を管理する社内システムである。"),
+]
+
+# エンティティ種別
+entities = Literal[
+    "PERSON",
+    "PROJECT",
+    "SYSTEM",
+    "DEPARTMENT"
+]
+
+# 関係種別
+relations = Literal[
+    "RESPONSIBLE_FOR",
+    "AFFECTS",
+    "BELONGS_TO"
+]
+
+# 簡易オントロジー / スキーマ
+# 「どの種類のエンティティが、どの関係を持てるか」を定義
+kg_validation_schema = {
+    "PERSON": ["RESPONSIBLE_FOR", "BELONGS_TO"],
+    "PROJECT": ["AFFECTS"],
+    "SYSTEM": [],
+    "DEPARTMENT": [],
+}
+
+kg_extractor = SchemaLLMPathExtractor(
+    llm=OpenAI(model="gpt-4o-mini", temperature=0),
+    possible_entities=entities,
+    possible_relations=relations,
+    kg_validation_schema=kg_validation_schema,
+    strict=True,
+)
+
+index = PropertyGraphIndex.from_documents(
+    documents,
+    kg_extractors=[kg_extractor],
+    llm=OpenAI(model="gpt-4o-mini", temperature=0),
+    embed_model=OpenAIEmbedding(model_name="text-embedding-3-small"),
+    show_progress=True,
+)
+
+query_engine = index.as_query_engine(
+    include_text=True,
+)
+
+response = query_engine.query(
+    "山田部長が責任を持つプロジェクトは、どのシステムに影響しますか？"
+)
+
+print(response)
+
+"""
+はい、**PythonのLlamaIndexでオントロジーを使ったナレッジグラフ構築は可能**です。
+
+ただし、正確には、
+
+> **LlamaIndexで「オントロジーを自動で完成させる」というより、  
+> こちらで定義したオントロジー／スキーマに従って、文書からエンティティと関係を抽出し、Property Graphを作る**
+
+という使い方になります。
+
+---
+
+## LlamaIndexでできること
+
+LlamaIndexには **PropertyGraphIndex** という仕組みがあります。これは、文書からエンティティや関係を抽出して、ノードとリレーションを持つプロパティグラフを構築・検索するための機能です。<source-chip title="LlamaIndex Python Documentation" url="https://llamaindex.openml.io/python/framework/module_guides/indexing/lpg_index_guide/" />
+
+特に、**SchemaLLMPathExtractor** を使うと、
+
+- 許可するエンティティ種別
+- 許可する関係種別
+- どのエンティティからどの関係を張ってよいか
+
+を指定できます。つまり、簡易的なオントロジーを定義して、その制約に沿ってグラフを作れます。<source-chip title="LlamaIndex Python Documentation" url="https://llamaindex.openml.io/python/framework/module_guides/indexing/lpg_index_guide/" />
+
+---
+
+## イメージ
+
+例えば、以下のようなオントロジーを定義できます。
+
+```text
+エンティティ:
+- PERSON
+- PROJECT
+- SYSTEM
+- DEPARTMENT
+
+関係:
+- RESPONSIBLE_FOR
+- AFFECTS
+- BELONGS_TO
+
+制約:
+- PERSON は PROJECT に RESPONSIBLE_FOR できる
+- PROJECT は SYSTEM に AFFECTS できる
+- PERSON は DEPARTMENT に BELONGS_TO できる
+```
+
+これにより、文書から、
+
+```text
+山田部長 --RESPONSIBLE_FOR--> ネコプロジェクト
+ネコプロジェクト --AFFECTS--> CRM基盤
+山田部長 --BELONGS_TO--> 営業企画部
+```
+
+のようなグラフを作ることができます。
+
+---
+
+## 最小コード例
+
+```python
+from typing import Literal
+
+from llama_index.core import Document, PropertyGraphIndex
+from llama_index.core.indices.property_graph import SchemaLLMPathExtractor
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+documents = [
+    Document(text="山田部長はネコプロジェクトの責任者である。"),
+    Document(text="ネコプロジェクトはCRM基盤に影響する。"),
+    Document(text="山田部長は営業企画部に所属している。"),
+    Document(text="CRM基盤は顧客情報を管理する社内システムである。"),
+]
+
+# エンティティ種別
+entities = Literal[
+    "PERSON",
+    "PROJECT",
+    "SYSTEM",
+    "DEPARTMENT"
+]
+
+# 関係種別
+relations = Literal[
+    "RESPONSIBLE_FOR",
+    "AFFECTS",
+    "BELONGS_TO"
+]
+
+# 簡易オントロジー / スキーマ
+# 「どの種類のエンティティが、どの関係を持てるか」を定義
+kg_validation_schema = {
+    "PERSON": ["RESPONSIBLE_FOR", "BELONGS_TO"],
+    "PROJECT": ["AFFECTS"],
+    "SYSTEM": [],
+    "DEPARTMENT": [],
+}
+
+kg_extractor = SchemaLLMPathExtractor(
+    llm=OpenAI(model="gpt-4o-mini", temperature=0),
+    possible_entities=entities,
+    possible_relations=relations,
+    kg_validation_schema=kg_validation_schema,
+    strict=True,
+)
+
+index = PropertyGraphIndex.from_documents(
+    documents,
+    kg_extractors=[kg_extractor],
+    llm=OpenAI(model="gpt-4o-mini", temperature=0),
+    embed_model=OpenAIEmbedding(model_name="text-embedding-3-small"),
+    show_progress=True,
+)
+
+query_engine = index.as_query_engine(
+    include_text=True,
+)
+
+response = query_engine.query(
+    "山田部長が責任を持つプロジェクトは、どのシステムに影響しますか？"
+)
+
+print(response)
+```
+
+---
+
+## 何が嬉しいか
+
+この方法を使うと、LLMに自由に関係を抽出させるのではなく、
+
+```text
+PERSON
+PROJECT
+SYSTEM
+DEPARTMENT
+```
+
+のような決められた型に沿って抽出できます。
+
+つまり、
+
+```text
+山田部長 = PERSON
+ネコプロジェクト = PROJECT
+CRM基盤 = SYSTEM
+営業企画部 = DEPARTMENT
+```
+
+と整理したうえで、
+
+```text
+山田部長 --RESPONSIBLE_FOR--> ネコプロジェクト
+ネコプロジェクト --AFFECTS--> CRM基盤
+```
+
+という関係を作れます。
+
+これにより、通常RAGよりも、
+
+```text
+山田部長
+→ ネコプロジェクト
+→ CRM基盤
+```
+
+という推論経路を作りやすくなります。
+
+---
+
+## 注意点
+
+LlamaIndexで「完全自動で良いオントロジーを作る」ことは、まだ簡単ではありません。
+
+実務では、次の流れが現実的です。
+
+```text
+1. 人間がざっくりオントロジーを定義する
+   例: Person, Project, System, Department
+
+2. LlamaIndexで文書から関係を抽出する
+
+3. 抽出結果を確認する
+
+4. 不足しているエンティティ種別・関係種別を追加する
+
+5. 名寄せ・表記ゆれ統合を行う
+```
+
+つまり、LlamaIndexは **オントロジー構築そのものの自動化ツール**というより、  
+**定義したオントロジーに従ってナレッジグラフを作り、GraphRAGに使うための実装基盤**と考えると分かりやすいです。
+
+---
+
+## 結論
+
+はい、LlamaIndexで可能です。
+
+特に使うべき機能は、
+
+```text
+PropertyGraphIndex
+SchemaLLMPathExtractor
+```
+
+です。
+
+おすすめの使い方は、
+
+> **人間がオントロジーを定義し、LlamaIndexでその制約に従って文書からエンティティ・関係を抽出する**
+
+という形です。  
+社内用語や固有名詞を扱うGraphRAGの試作には、かなり相性が良いです。
+"""
