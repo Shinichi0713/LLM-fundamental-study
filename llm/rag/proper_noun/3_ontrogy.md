@@ -1,15 +1,20 @@
 
+先日固有名詞を適切にLLMに渡す話を行いました。
+その中で複数文章を読み比べるような組織であるような状況で、精度を追う場合、オントロジーの構築を提案しました。
+
+実際にオントロジーの恩恵を分かるように説明したいと思います。
 
 ## オントロジーとは
 
 ### ひとことで言うと
 
-**オントロジー + GraphRAG** は、  
-固有名詞を単なる文字列として検索するのではなく、
+**オントロジー + GraphRAG** は、固有名詞を単なる文字列として検索するのではなく、
 
 > **「これは何者か」＋「何とどう関係しているか」**
 
 をグラフ構造にして、その関係をたどりながらRAGする手法です。
+
+![1786662256525](image/3_ontrogy/1786662256525.png)
 
 ### 通常のRAGとの違い
 
@@ -84,7 +89,6 @@ CRM基盤 = System
 ```
 
 通常RAGだと、「ネコプロジェクト」に似た文章を探すだけです。
-
 オントロジー + GraphRAGでは、次のようにたどれます。
 
 ```text
@@ -410,9 +414,11 @@ LLMはそれを読んで、
 
 Google Colabで実際にオントロジーの効果を体感する例題を解いてみようと思います。
 
-### 問題：プロジェクト関係のドキュメントを
+### 問題：プロジェクト関係のドキュメントから推論
 
 __前提文書__
+
+問題のベースとなる文章は以下です。
 
 ```text
 文書1: 山田部長はネコプロジェクトの責任者である。
@@ -421,35 +427,13 @@ __前提文書__
 文書4: CRM基盤は顧客情報を管理する社内システムである。
 ```
 
----
+RAGの回答生成するLLM: "Qwen/Qwen2.5-0.5B-Instruct"
 
-## 通常RAGでの課題
+パラメータはGoogle Colabで動作することを踏まえて小さめを選択していますが、性能は折り紙付きの小型LLMです。
 
-### 質問
+__オントロジー定義__
 
-```text
-山田部長が責任を持つプロジェクトは、どのシステムに影響しますか？
-```
-
-### 通常RAGで取得されやすい文書
-
-```text
-山田部長はネコプロジェクトの責任者である。
-```
-
-### 問題点
-
-この文書だけでは、
-
-```text
-ネコプロジェクト → CRM基盤
-```
-
-まで分からない。
-
----
-
-## オントロジー定義
+上記の文章に対してまず以下のオントロジーを定義します。
 
 ```text
 Person: 人物
@@ -462,9 +446,8 @@ affects: プロジェクトがシステムに影響する
 belongs_to: 人物が部署に所属する
 ```
 
----
-
-## ナレッジグラフ
+本当であればこのオントロジーの定義に従ってナレッジグラフを生成するのはこちらで用意するRAGシステムのはずですが、システム構築に時間がかかる点と、今回のメインが回答生成への影響を確認することなので、ナレッジグラフは手動で作成します。
+上記のオントロジーに対して構築したナレッジグラフは以下のように得られるとします。
 
 ```text
 山田部長 --responsible_for--> ネコプロジェクト
@@ -472,58 +455,198 @@ belongs_to: 人物が部署に所属する
 山田部長 --belongs_to--> 営業企画部
 ```
 
----
-
-## 解くべき問題
-
-### 問題1
-
-```text
-山田部長が責任を持つプロジェクトは何ですか？
-```
-
-### 答え
-
-```text
-ネコプロジェクト
-```
-
----
-
-### 問題2
+問題1
 
 ```text
 ネコプロジェクトはどのシステムに影響しますか？
 ```
 
-### 答え
-
-```text
-CRM基盤
-```
-
----
-
-### 問題3
+問題2
 
 ```text
 山田部長が責任を持つプロジェクトは、どのシステムに影響しますか？
 ```
 
-### 導出
-
-```text
-山田部長
-→ responsible_for
-→ ネコプロジェクト
-→ affects
-→ CRM基盤
-```
-
-### 答え
+両問題とも期待する回答は以下です。
 
 ```text
 CRM基盤
 ```
 
+### 実装コード
+
+```python
+documents = [
+    {"id": "doc1", "text": "山田部長はネコプロジェクトの責任者である。"},
+    {"id": "doc2", "text": "ネコプロジェクトはCRM基盤に影響する。"},
+    {"id": "doc3", "text": "山田部長は営業企画部に所属している。"},
+    {"id": "doc4", "text": "CRM基盤は顧客情報を管理する社内システムである。"}
+]
+```
+
+単純RAGは以下の検索で情報取得した上でLLMに入力します。
+```python
+# 通常のRAG
+def simple_keyword_score(question, doc):
+    keywords = ["山田部長", "責任", "プロジェクト", "システム", "影響"]
+    return sum(1 for kw in keywords if kw in question and kw in doc)
+
+def simple_retrieve(question, documents, top_k=1):
+    scored = []
+    for d in documents:
+        score = simple_keyword_score(question, d["text"])
+        scored.append((score, d))
+    scored = sorted(scored, key=lambda x: x[0], reverse=True)
+    return [d for score, d in scored[:top_k] if score > 0]
+
+plain_docs = simple_retrieve(question, documents, top_k=2)
+plain_context = "\n".join([f"{d['id']}: {d['text']}" for d in plain_docs])
+```
+
+グラフRAGの方は以下のようにします。
+
+```python
+ontology = {
+    "entities": {
+        "Person": "人物",
+        "Project": "プロジェクト",
+        "Department": "部署",
+        "System": "システム"
+    },
+    "relations": {
+        "responsible_for": "人物がプロジェクトの責任者である",
+        "affects": "プロジェクトがシステムに影響する",
+        "belongs_to": "人物が部署に所属する"
+    }
+}
+
+triples = [
+    ("山田部長", "type", "Person"),
+    ("ネコプロジェクト", "type", "Project"),
+    ("CRM基盤", "type", "System"),
+    ("営業企画部", "type", "Department"),
+
+    ("山田部長", "responsible_for", "ネコプロジェクト"),
+    ("ネコプロジェクト", "affects", "CRM基盤"),
+    ("山田部長", "belongs_to", "営業企画部")
+]
+
+for s, r, o in triples:
+    print(f"{s} --{r}--> {o}")
+
+def find_objects(subject, relation, triples):
+    return [o for s, r, o in triples if s == subject and r == relation]
+
+def build_graph_context_for_question(person_name):
+    facts = []
+    paths = []
+
+    projects = find_objects(person_name, "responsible_for", triples)
+
+    for project in projects:
+        facts.append(f"{person_name} は {project} の責任者である。")
+
+        systems = find_objects(project, "affects", triples)
+
+        for system in systems:
+            facts.append(f"{project} は {system} に影響する。")
+            paths.append(f"{person_name} --responsible_for--> {project} --affects--> {system}")
+
+    context = f"""
+## オントロジー
+- Person は人物を表す。
+- Project はプロジェクトを表す。
+- System はシステムを表す。
+- responsible_for は「人物がプロジェクトの責任者である」関係を表す。
+- affects は「プロジェクトがシステムに影響する」関係を表す。
+
+## グラフから取得した事実
+{chr(10).join(f"- {fact}" for fact in facts)}
+
+## 導出パス
+{chr(10).join(f"- {path}" for path in paths)}
+"""
+    return context
+
+graph_context = build_graph_context_for_question("山田部長")
+```
+
+実装コード本体は以下レポジトリに保管しています。
+https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/llm/rag/src
+ファイル： graph_rag_v1.py
+
+### 実験結果
+
+結果得られた回答ですが以下のようになりました。
+
+__単純RAG__
+
+単純RAGでは文章単位で情報を引っ張ってきます。
+2個とれば情報に辿り着けることが分かっていたので従来RAGに簡単になるように2つとも関連文章を抽出するようにしました。
+情報としては足りているはずですが、うまく回答できませんでした。LLMの性能が物足りなかったでしょうか。
+
+```
+=== 通常RAG風コンテキスト ===
+doc2: ネコプロジェクトはCRM基盤に影響する。
+doc1: 山田部長はネコプロジェクトの責任者である。
+=== 問題1回答 ===
+doc1: 山田部長はネコプロジェクトの責任者であり、doc2: ネコプロジェクトはCRM基盤に影響するという情報から推測できます。しかし、この情報だけで具体的な影響を予測することは難しいため、より詳細な情報を提供していただくことをお勧めします。
+=== 問題2回答 ===
+doc1: 山田部長はネコプロジェクトの責任者であり、doc2: ネコプロジェクトはCRM基盤に影響するという情報から推測できます。しかし、この情報だけで具体的な影響を予測することは難しいため、より詳細な情報を提供していただくことをお勧めします。
+```
+
+__オントロジーRAG__
+
+LLMにはオントロジーの情報から、関連する情報、関係性を示すパスまでの情報を与えました。
+LLMは同じものを使いました。結果は変わっています。
+両方とも正解でした。
+
+```
+=== GraphRAG風コンテキスト ===
+## オントロジー
+- Person は人物を表す。
+- Project はプロジェクトを表す。
+- System はシステムを表す。
+- responsible_for は「人物がプロジェクトの責任者である」関係を表す。
+- affects は「プロジェクトがシステムに影響する」関係を表す。
+
+## グラフから取得した事実
+- 山田部長 は ネコプロジェクト の責任者である。
+- ネコプロジェクト は CRM基盤 に影響する。
+
+## 導出パス
+- 山田部長 --responsible_for--> ネコプロジェクト --affects--> CRM基盤
+=== 問題1回答 ===
+ネコプロジェクトはCRM基盤に影響します。
+=== 問題2回答 ===
+山田部長が責任を持つプロジェクトは、CRM基盤に影響します。
+```
+
+## 総括
+
+今回の実験で分かったことは、次の3点です。
+
+__1. 通常RAGは文書取得はできるが、関係の接続は苦手__
+
+関連文書を取得できていても、複数の事実をLLMが自動でつなげるのは難しい場合がある。
+
+__2. オントロジーは推論しやすい材料をLLMに渡せる__
+
+関係の型（例：`responsible_for`、`affects`）と導出パスを明示することで、LLMが事実を組み合わせやすくなる。
+
+__3. 小型LLMでも正答しやすくなる__
+
+今回使った `Qwen/Qwen2.5-0.5B-Instruct` のような小型モデルでも、**入力の構造を改善するだけで**回答精度が向上した。
+
+つまり、**モデルを大きくするだけでなく、情報の渡し方を工夫することが重要**です。
+
+__結論__
+
+オントロジー + GraphRAGの本質は、
+
+> **グラフが推論経路を整理し、LLMがその経路を文章として説明する**
+
+という役割分担にあります。
+
+社内用語・プロジェクト名・部署名・人物名が多いRAGでは、固有名詞をエンティティとして扱い、関係をたどることで、通常RAGでは答えにくい質問にも対応できるようになります。
 

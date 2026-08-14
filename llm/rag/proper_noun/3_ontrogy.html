@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30aa;&#x30f3;&#x30c8;&#x30ed;&#x30b8;&#x30fc;&#x3068;&#x306f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日固有名詞を適切にLLMに渡す話を行いました。
+その中で複数文章を読み比べるような組織であるような状況で、精度を追う場合、オントロジーの構築を提案しました。</p>
+<p>実際にオントロジーの恩恵を分かるように説明していこうと思います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="オントロジーとは">オントロジーとは</h2>
+<h3 id="ひとことで言うと">ひとことで言うと</h3>
+<p><strong>オントロジー + GraphRAG</strong> は、固有名詞を単なる文字列として検索するのではなく、</p>
+<blockquote>
+<p><strong>「これは何者か」＋「何とどう関係しているか」</strong></p>
+</blockquote>
+
+<p>をグラフ構造にして、その関係をたどりながらRAGする手法です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\proper_noun\image\3_ontrogy\1786662256525.png" alt="1786662256525"></p>
+<h3 id="通常のragとの違い">通常のRAGとの違い</h3>
+<p>通常のRAGは、主にこうです。</p>
+<pre><code class="language-text">質問
+↓
+似ている文章チャンクを検索
+↓
+LLMが回答
+</code></pre>
+<p>一方、オントロジー + GraphRAGはこうです。</p>
+<pre><code class="language-text">質問
+↓
+固有名詞を特定
+↓
+その固有名詞の種類・別名・関係先をグラフで探索
+↓
+関係する文書・根拠を取得
+↓
+LLMが回答
+</code></pre>
+<p>GraphRAGは、文書からエンティティや関係を抽出してナレッジグラフを作り、その構造を使ってRAGを行う考え方です。MicrosoftのGraphRAGも、入力文書から知識グラフを作り、コミュニティ要約などを使って検索・回答を強化する方式として説明されています。<source-chip title="Microsoft GraphRAG" url="https://microsoft.github.io/graphrag/" /></p>
+<h3 id="オントロジーの役割">オントロジーの役割</h3>
+<p>オントロジーは、グラフを作るための<strong>設計図</strong>です。</p>
+<p>例えば、社内RAGならこう定義します。</p>
+<pre><code class="language-text">エンティティ種別:
+- Project
+- Department
+- Person
+- System
+- Document
+- Meeting
+- Decision
+
+関係:
+- Person belongs_to Department
+- Person owns Project
+- Department participates_in Project
+- Meeting discusses Project
+- Decision made_in Meeting
+- Decision affects System
+</code></pre>
+<p>これにより、LLMや検索システムは、</p>
+<pre><code class="language-text">ネコプロジェクト = Project
+営業企画部 = Department
+山田部長 = Person
+CRM基盤 = System
+</code></pre>
+<p>のように、固有名詞を意味付きで扱えます。</p>
+<h3 id="具体例">具体例</h3>
+<p>質問：</p>
+<pre><code class="language-text">ネコプロジェクトの意思決定に関わった部署と、影響を受けたシステムを教えて
+</code></pre>
+<p>通常RAGだと、「ネコプロジェクト」に似た文章を探すだけです。
+オントロジー + GraphRAGでは、次のようにたどれます。</p>
+<pre><code class="language-text">ネコプロジェクト
+  ├─ discussed_in → 第5回推進会議
+  │      └─ made_decision → 顧客対応AIを先行導入
+  │              └─ affects → CRM基盤
+  ├─ participated_by → 営業企画部
+  └─ participated_by → 情報システム部
+</code></pre>
+<p>そのうえで、関連する議事録・設計書・決定資料をRAGで取得し、回答を生成します。</p>
+<h3 id="この手法の強み">この手法の強み</h3>
+<p>特に強いのは、次のような質問です。</p>
+<ul>
+<li>「このプロジェクトに関係する部署は？」</li>
+<li>「この意思決定はどのシステムに影響したか？」</li>
+<li>「この人が関わったプロジェクトは？」</li>
+<li>「この略称は何を指すか？」</li>
+<li>「複数文書にまたがる経緯を説明して」</li>
+</ul>
+<p>つまり、<strong>1つの文書だけでは答えにくく、複数の固有名詞の関係をたどる必要がある質問</strong>に強いです。</p>
+<p>OG-RAGという研究では、ドメイン固有のオントロジーに検索を結び付けることで、通常のRAGより正確な文脈を作ることを狙っています。論文では、オントロジーで整理されたドメイン知識を使い、事実のrecallや回答正確性の改善が報告されています。<source-chip title="OG-RAG" url="https://arxiv.org/abs/2412.15235" /></p>
+<p>引用されている論文で書かれていることではこうなります。
+&quot;従来RAGは、検索した文章チャンクにそのまま書かれている内容を答えるのは得意だが、複数の事実や関係を組み合わせて、新しい結論を導くのは苦手&quot;</p>
+<p>従来RAGでは文章の内容をそのまま使うことが限界となっている訳ですが、オントロジーのあるグラフRAGを行うことで</p>
+<p>&quot;検索された根拠・オントロジー・ナレッジグラフ上の関係から、根拠付きで結論を導くこと&quot;</p>
+<p>が出来る訳です。
+特に与えられた事実に基づく推論に関しては近年のLLMの進化のおかげで、もしかすると人間以上では？というレベルで実現できるようになっています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\proper_noun\image\3_ontrogy\1786657345549.png" alt="1786657345549"></p>
+<h2 id="オントロジーの情報の読取り方">オントロジーの情報の読取り方</h2>
+<p>LLMはオントロジー・ナレッジグラフをどのように読み解いているか、という点について気になります。
+ずばり、<strong>LLMがオントロジーやグラフを“そのまま脳内で読む”のではなく、RAGシステムがグラフ情報を「LLMが読める事実リスト・パス・要約」に変換</strong>して渡しています。</p>
+<h3 id="全体像">全体像</h3>
+<p>オントロジー + GraphRAGでは、だいたい次の流れで答えを導きます。</p>
+<pre><code class="language-text">1. オントロジーで概念・関係を定義する
+   ↓
+2. 文書からエンティティと関係を抽出する
+   ↓
+3. ナレッジグラフまたはハイパーグラフを作る
+   ↓
+4. 質問中の固有名詞をグラフ上のノードに対応づける
+   ↓
+5. 関連ノード・関係・パスを取得する
+   ↓
+6. 取得した事実をLLMに渡す
+   ↓
+7. LLMが複数の事実を組み合わせて回答する
+</code></pre>
+<p>つまり、<strong>推論の材料をグラフが整理し、最終的な文章化と一部の論理接続をLLMが行う</strong>という役割分担です。</p>
+<h3 id="1-オントロジーは読み取りルールとして使われる">1. オントロジーは「読み取りルール」として使われる</h3>
+<p>オントロジーは、LLMに対して次のような読み取りルールを与えます。</p>
+<pre><code class="language-text">Project
+Department
+Person
+System
+Decision
+
+Person は Department に所属する
+Person は Project の責任者になれる
+Decision は Meeting で決定される
+Decision は System に影響する
+Project は Department によって推進される
+</code></pre>
+<p>OG-RAG論文では、オントロジーを「ドメイン固有の概念と関係の形式的表現」として検索過程に組み込み、文書中の情報をオントロジーに沿った形式へ変換しています。具体的には、GPT-4oに文書チャンクとオントロジーを与え、オントロジーに合う値を埋めさせて、検索に適した構造化形式へ変換しています。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674.pdf" /></p>
+<h3 id="2-文書は事実ブロックに変換される">2. 文書は「事実ブロック」に変換される</h3>
+<p>通常のRAGでは、文書は文章チャンクのまま検索されます。</p>
+<p>一方、OG-RAGでは文書を次のような構造に変換します。</p>
+<pre><code class="language-text">Subject: ネコプロジェクト
+Attribute: 責任者
+Value: 山田部長
+
+Subject: ネコプロジェクト
+Attribute: 影響システム
+Value: CRM基盤
+
+Subject: 山田部長
+Attribute: 所属部署
+Value: 営業企画部
+</code></pre>
+<p>OG-RAGでは、このような情報を「factual block」として扱い、さらにそれをハイパーグラフに変換します。論文では、ハイパーノードをキー・バリュー形式の情報、ハイパーエッジを複数のハイパーノードを結ぶ「検証可能な事実」として定義しています。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674.pdf" /></p>
+<h3 id="3-質問をグラフ上のノードに対応づける">3. 質問をグラフ上のノードに対応づける</h3>
+<p>例えば質問がこうだとします。</p>
+<pre><code class="language-text">山田部長が責任を持つプロジェクトは、どのシステムに影響しますか？
+</code></pre>
+<p>RAGシステムは、質問中の重要語をグラフ上の要素に対応づけます。</p>
+<pre><code class="language-text">山田部長 → Person
+責任を持つ → Project の責任者関係
+影響する → affects / impact 関係
+システム → System
+</code></pre>
+<p>OG-RAGでは、質問とハイパーノードの類似度を計算し、質問に関連するノードを探します。具体的には、エンティティ＋属性のキー部分と質問の類似度、または値部分と質問の類似度を使って、関連ハイパーノードを選びます。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674.pdf" /></p>
+<h3 id="4-グラフから関連する事実を取得する">4. グラフから関連する事実を取得する</h3>
+<p>ここが通常RAGとの大きな違いです。</p>
+<p>通常RAGは、</p>
+<pre><code class="language-text">質問に似ている文章
+</code></pre>
+<p>を取ります。</p>
+<p>GraphRAG/OG-RAGは、</p>
+<pre><code class="language-text">質問に関係するノード
+そのノードに接続する関係
+その関係で結ばれた別ノード
+その周辺の事実
+</code></pre>
+<p>を取ります。</p>
+<p>OG-RAGでは、関連ノードをなるべく少ないハイパーエッジで覆うように、関連事実の集合を選びます。つまり、質問に必要な複数の事実を、冗長になりすぎない形でLLMに渡す設計です。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674.pdf" /></p>
+<h3 id="5-llmにはグラフそのものではなく事実リストとして渡される">5. LLMには「グラフそのもの」ではなく「事実リスト」として渡される</h3>
+<p>重要なのはここです。</p>
+<p>LLMは、グラフDBの内部構造を直接読むわけではありません。</p>
+<p>最終的には、次のような形でLLMに渡されます。</p>
+<pre><code class="language-text">Context:
+1. 山田部長はネコプロジェクトの責任者である。
+2. ネコプロジェクトはCRM基盤に影響する。
+3. 山田部長は営業企画部に所属する。
+
+Question:
+山田部長が責任を持つプロジェクトは、どのシステムに影響しますか？
+</code></pre>
+<p>OG-RAGの付録では、LLMへのプロンプトとして「以下の文脈を使って質問に答えよ」とし、その文脈は「辞書形式の有効な事実リスト」として提供される、と説明されています。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674.pdf" /></p>
+<h3 id="6-文書に直接書かれていない答えはどう導かれるか">6. 文書に直接書かれていない答えはどう導かれるか</h3>
+<p>例えば、文書に直接こうは書かれていないとします。</p>
+<pre><code class="language-text">山田部長が責任を持つプロジェクトはCRM基盤に影響する。
+</code></pre>
+<p>しかし、グラフには次の2つの事実があります。</p>
+<pre><code class="language-text">山田部長 --責任者--&gt; ネコプロジェクト
+ネコプロジェクト --影響する--&gt; CRM基盤
+</code></pre>
+<p>この2つをつなぐと、</p>
+<pre><code class="language-text">山田部長
+→ 責任者である
+→ ネコプロジェクト
+→ 影響する
+→ CRM基盤
+</code></pre>
+<p>となります。</p>
+<p>したがって答えは、</p>
+<pre><code class="language-text">山田部長が責任を持つネコプロジェクトは、CRM基盤に影響します。
+</code></pre>
+<p>となります。</p>
+<p>これが、論文でいう <strong>deduce</strong>、つまり「事実と関係を組み合わせて導出する」という意味です。</p>
+<h3 id="7-llmだけが推論しているわけではない">7. LLMだけが推論しているわけではない</h3>
+<p>ここは誤解しやすいです。</p>
+<p>オントロジー + GraphRAGにおける推論は、LLMだけの能力ではありません。</p>
+<p>実際には、次のような分担です。</p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>オントロジー</td>
+<td>どんな概念・関係があり得るかを定義する</td>
+</tr>
+<tr>
+<td>情報抽出LLM</td>
+<td>文書からエンティティ・関係を抽出する</td>
+</tr>
+<tr>
+<td>グラフ/ハイパーグラフ</td>
+<td>事実同士の接続を保持する</td>
+</tr>
+<tr>
+<td>Retriever</td>
+<td>質問に必要なノード・関係・事実を選ぶ</td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>取得された事実を読んで、論理的につなぎ、回答文にする</td>
+</tr>
+</tbody>
+</table>
+<p>つまり、</p>
+<blockquote>
+<p><strong>グラフが推論経路を狭め、LLMがその経路を文章として説明する</strong></p>
+</blockquote>
+<p>という構造です。</p>
+<p>OG-RAG論文でも、従来RAGは構造化されたドメイン知識を十分に扱えず文脈生成が不十分になる一方、OG-RAGはオントロジーで接地されたハイパーグラフ検索により、事実ベースの推論を支援すると説明されています。<source-chip title="ACL Anthology" url="https://aclanthology.org/2025.emnlp-main.1674/" /></p>
+<h3 id="8-microsoft-graphragの場合">8. Microsoft GraphRAGの場合</h3>
+<p>Microsoft GraphRAG系では、文書からエンティティ知識グラフを作り、そのグラフに対してコミュニティ検出を行い、コミュニティごとの要約を生成します。クエリ時には、グローバル検索ではコミュニティ要約を使い、ローカル検索では特定エンティティの近傍ノードや関連概念を展開してLLMのコンテキストに入れます。<source-chip title="Microsoft GraphRAG" url="https://microsoft.github.io/graphrag/" /></p>
+<p>つまり、Microsoft GraphRAGでは、</p>
+<pre><code class="language-text">エンティティ抽出
+↓
+関係抽出
+↓
+グラフ構築
+↓
+コミュニティ要約
+↓
+質問に応じて関連要約・近傍関係を取得
+↓
+LLMが回答
+</code></pre>
+<p>という流れです。</p>
+<p>GraphRAGの元論文でも、LLMを使って文書からエンティティ知識グラフを作り、密接に関連するエンティティ群ごとにコミュニティ要約を事前生成し、質問時にはそれらの要約を使って部分回答を作り、最後に統合回答を作ると説明されています。<source-chip title="GraphRAG" url="https://graphrag.com/appendices/research/2404.16130/" /></p>
+<h3 id="9-具体例で見る導出">9. 具体例で見る「導出」</h3>
+<p>文書A：</p>
+<pre><code class="language-text">ネコプロジェクトは営業企画部と情報システム部が推進している。
+</code></pre>
+<p>文書B：</p>
+<pre><code class="language-text">第5回推進会議で、顧客対応AIをCRM基盤に先行導入することが決定された。
+</code></pre>
+<p>文書C：</p>
+<pre><code class="language-text">第5回推進会議はネコプロジェクトの定例会議である。
+</code></pre>
+<p>これをオントロジーに従ってグラフ化すると、</p>
+<pre><code class="language-text">ネコプロジェクト --推進部署--&gt; 営業企画部
+ネコプロジェクト --推進部署--&gt; 情報システム部
+ネコプロジェクト --会議--&gt; 第5回推進会議
+第5回推進会議 --決定事項--&gt; 顧客対応AIの先行導入
+顧客対応AIの先行導入 --影響先--&gt; CRM基盤
+</code></pre>
+<p>質問：</p>
+<pre><code class="language-text">ネコプロジェクトの意思決定に関わった部署と、影響を受けるシステムは？
+</code></pre>
+<p>GraphRAGは、</p>
+<pre><code class="language-text">ネコプロジェクト
+→ 推進部署
+→ 営業企画部 / 情報システム部
+
+ネコプロジェクト
+→ 会議
+→ 第5回推進会議
+→ 決定事項
+→ 顧客対応AIの先行導入
+→ 影響先
+→ CRM基盤
+</code></pre>
+<p>という経路を含む事実を取得します。</p>
+<p>LLMはそれを読んで、</p>
+<pre><code class="language-text">ネコプロジェクトには営業企画部と情報システム部が関わっています。
+また、第5回推進会議で顧客対応AIのCRM基盤への先行導入が決定されているため、影響を受けるシステムはCRM基盤です。
+</code></pre>
+<p>と答えます。
+この答えは、1つの文書に直接書かれていなくても、複数文書の事実をグラフ経由でつないで導出されています。</p>
+<h2 id="例題">例題</h2>
+<p>Google Colabで実際にオントロジーの効果を体感する例題を解いてみようと思います。</p>
+<h3 id="問題プロジェクト関係のドキュメントから推論">問題：プロジェクト関係のドキュメントから推論</h3>
+<p><strong>前提文書</strong></p>
+<p>問題のベースとなる文章は以下です。</p>
+<pre><code class="language-text">文書1: 山田部長はネコプロジェクトの責任者である。
+文書2: ネコプロジェクトはCRM基盤に影響する。
+文書3: 山田部長は営業企画部に所属している。
+文書4: CRM基盤は顧客情報を管理する社内システムである。
+</code></pre>
+<p>RAGの回答生成するLLM: &quot;Qwen/Qwen2.5-0.5B-Instruct&quot;</p>
+<p>パラメータはGoogle Colabで動作することを踏まえて小さめを選択していますが、性能は折り紙付きの小型LLMです。</p>
+<p><strong>オントロジー定義</strong></p>
+<p>上記の文章に対してまず以下のオントロジーを定義します。</p>
+<pre><code class="language-text">Person: 人物
+Project: プロジェクト
+System: システム
+Department: 部署
+
+responsible_for: 人物がプロジェクトの責任者である
+affects: プロジェクトがシステムに影響する
+belongs_to: 人物が部署に所属する
+</code></pre>
+<p>本当であればこのオントロジーの定義に従ってナレッジグラフを生成するのはこちらで用意するRAGシステムのはずですが、システム構築に時間がかかる点と、今回のメインが回答生成への影響を確認することなので、ナレッジグラフは手動で作成します。
+上記のオントロジーに対して構築したナレッジグラフは以下のように得られるとします。</p>
+<pre><code class="language-text">山田部長 --responsible_for--&gt; ネコプロジェクト
+ネコプロジェクト --affects--&gt; CRM基盤
+山田部長 --belongs_to--&gt; 営業企画部
+</code></pre>
+<p>問題1</p>
+<pre><code class="language-text">ネコプロジェクトはどのシステムに影響しますか？
+</code></pre>
+<p>問題2</p>
+<pre><code class="language-text">山田部長が責任を持つプロジェクトは、どのシステムに影響しますか？
+</code></pre>
+<p>両問題とも期待する回答は以下です。</p>
+<pre><code class="language-text">CRM基盤
+</code></pre>
+<h3 id="実装コード">実装コード</h3>
+<pre><code class="language-python">documents = [
+    {<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;doc1&quot;</span>, <span class="hljs-string">&quot;text&quot;</span>: <span class="hljs-string">&quot;山田部長はネコプロジェクトの責任者である。&quot;</span>},
+    {<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;doc2&quot;</span>, <span class="hljs-string">&quot;text&quot;</span>: <span class="hljs-string">&quot;ネコプロジェクトはCRM基盤に影響する。&quot;</span>},
+    {<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;doc3&quot;</span>, <span class="hljs-string">&quot;text&quot;</span>: <span class="hljs-string">&quot;山田部長は営業企画部に所属している。&quot;</span>},
+    {<span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;doc4&quot;</span>, <span class="hljs-string">&quot;text&quot;</span>: <span class="hljs-string">&quot;CRM基盤は顧客情報を管理する社内システムである。&quot;</span>}
+]
+</code></pre>
+<p>単純RAGは以下の検索で情報取得した上でLLMに入力します。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 通常のRAG</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">simple_keyword_score</span>(<span class="hljs-params">question, doc</span>):
+    keywords = [<span class="hljs-string">&quot;山田部長&quot;</span>, <span class="hljs-string">&quot;責任&quot;</span>, <span class="hljs-string">&quot;プロジェクト&quot;</span>, <span class="hljs-string">&quot;システム&quot;</span>, <span class="hljs-string">&quot;影響&quot;</span>]
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">sum</span>(<span class="hljs-number">1</span> <span class="hljs-keyword">for</span> kw <span class="hljs-keyword">in</span> keywords <span class="hljs-keyword">if</span> kw <span class="hljs-keyword">in</span> question <span class="hljs-keyword">and</span> kw <span class="hljs-keyword">in</span> doc)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">simple_retrieve</span>(<span class="hljs-params">question, documents, top_k=<span class="hljs-number">1</span></span>):
+    scored = []
+    <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> documents:
+        score = simple_keyword_score(question, d[<span class="hljs-string">&quot;text&quot;</span>])
+        scored.append((score, d))
+    scored = <span class="hljs-built_in">sorted</span>(scored, key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">0</span>], reverse=<span class="hljs-literal">True</span>)
+    <span class="hljs-keyword">return</span> [d <span class="hljs-keyword">for</span> score, d <span class="hljs-keyword">in</span> scored[:top_k] <span class="hljs-keyword">if</span> score &gt; <span class="hljs-number">0</span>]
+
+plain_docs = simple_retrieve(question, documents, top_k=<span class="hljs-number">2</span>)
+plain_context = <span class="hljs-string">&quot;\n&quot;</span>.join([<span class="hljs-string">f&quot;<span class="hljs-subst">{d[<span class="hljs-string">&#x27;id&#x27;</span>]}</span>: <span class="hljs-subst">{d[<span class="hljs-string">&#x27;text&#x27;</span>]}</span>&quot;</span> <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> plain_docs])
+</code></pre>
+<p>グラフRAGの方は以下のようにします。</p>
+<pre><code class="language-python">ontology = {
+    <span class="hljs-string">&quot;entities&quot;</span>: {
+        <span class="hljs-string">&quot;Person&quot;</span>: <span class="hljs-string">&quot;人物&quot;</span>,
+        <span class="hljs-string">&quot;Project&quot;</span>: <span class="hljs-string">&quot;プロジェクト&quot;</span>,
+        <span class="hljs-string">&quot;Department&quot;</span>: <span class="hljs-string">&quot;部署&quot;</span>,
+        <span class="hljs-string">&quot;System&quot;</span>: <span class="hljs-string">&quot;システム&quot;</span>
+    },
+    <span class="hljs-string">&quot;relations&quot;</span>: {
+        <span class="hljs-string">&quot;responsible_for&quot;</span>: <span class="hljs-string">&quot;人物がプロジェクトの責任者である&quot;</span>,
+        <span class="hljs-string">&quot;affects&quot;</span>: <span class="hljs-string">&quot;プロジェクトがシステムに影響する&quot;</span>,
+        <span class="hljs-string">&quot;belongs_to&quot;</span>: <span class="hljs-string">&quot;人物が部署に所属する&quot;</span>
+    }
+}
+
+triples = [
+    (<span class="hljs-string">&quot;山田部長&quot;</span>, <span class="hljs-string">&quot;type&quot;</span>, <span class="hljs-string">&quot;Person&quot;</span>),
+    (<span class="hljs-string">&quot;ネコプロジェクト&quot;</span>, <span class="hljs-string">&quot;type&quot;</span>, <span class="hljs-string">&quot;Project&quot;</span>),
+    (<span class="hljs-string">&quot;CRM基盤&quot;</span>, <span class="hljs-string">&quot;type&quot;</span>, <span class="hljs-string">&quot;System&quot;</span>),
+    (<span class="hljs-string">&quot;営業企画部&quot;</span>, <span class="hljs-string">&quot;type&quot;</span>, <span class="hljs-string">&quot;Department&quot;</span>),
+
+    (<span class="hljs-string">&quot;山田部長&quot;</span>, <span class="hljs-string">&quot;responsible_for&quot;</span>, <span class="hljs-string">&quot;ネコプロジェクト&quot;</span>),
+    (<span class="hljs-string">&quot;ネコプロジェクト&quot;</span>, <span class="hljs-string">&quot;affects&quot;</span>, <span class="hljs-string">&quot;CRM基盤&quot;</span>),
+    (<span class="hljs-string">&quot;山田部長&quot;</span>, <span class="hljs-string">&quot;belongs_to&quot;</span>, <span class="hljs-string">&quot;営業企画部&quot;</span>)
+]
+
+<span class="hljs-keyword">for</span> s, r, o <span class="hljs-keyword">in</span> triples:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{s}</span> --<span class="hljs-subst">{r}</span>--&gt; <span class="hljs-subst">{o}</span>&quot;</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">find_objects</span>(<span class="hljs-params">subject, relation, triples</span>):
+    <span class="hljs-keyword">return</span> [o <span class="hljs-keyword">for</span> s, r, o <span class="hljs-keyword">in</span> triples <span class="hljs-keyword">if</span> s == subject <span class="hljs-keyword">and</span> r == relation]
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">build_graph_context_for_question</span>(<span class="hljs-params">person_name</span>):
+    facts = []
+    paths = []
+
+    projects = find_objects(person_name, <span class="hljs-string">&quot;responsible_for&quot;</span>, triples)
+
+    <span class="hljs-keyword">for</span> project <span class="hljs-keyword">in</span> projects:
+        facts.append(<span class="hljs-string">f&quot;<span class="hljs-subst">{person_name}</span> は <span class="hljs-subst">{project}</span> の責任者である。&quot;</span>)
+
+        systems = find_objects(project, <span class="hljs-string">&quot;affects&quot;</span>, triples)
+
+        <span class="hljs-keyword">for</span> system <span class="hljs-keyword">in</span> systems:
+            facts.append(<span class="hljs-string">f&quot;<span class="hljs-subst">{project}</span> は <span class="hljs-subst">{system}</span> に影響する。&quot;</span>)
+            paths.append(<span class="hljs-string">f&quot;<span class="hljs-subst">{person_name}</span> --responsible_for--&gt; <span class="hljs-subst">{project}</span> --affects--&gt; <span class="hljs-subst">{system}</span>&quot;</span>)
+
+    context = <span class="hljs-string">f&quot;&quot;&quot;
+## オントロジー
+- Person は人物を表す。
+- Project はプロジェクトを表す。
+- System はシステムを表す。
+- responsible_for は「人物がプロジェクトの責任者である」関係を表す。
+- affects は「プロジェクトがシステムに影響する」関係を表す。
+
+## グラフから取得した事実
+<span class="hljs-subst">{<span class="hljs-built_in">chr</span>(<span class="hljs-number">10</span>).join(<span class="hljs-string">f&quot;- <span class="hljs-subst">{fact}</span>&quot;</span> <span class="hljs-keyword">for</span> fact <span class="hljs-keyword">in</span> facts)}</span>
+
+## 導出パス
+<span class="hljs-subst">{<span class="hljs-built_in">chr</span>(<span class="hljs-number">10</span>).join(<span class="hljs-string">f&quot;- <span class="hljs-subst">{path}</span>&quot;</span> <span class="hljs-keyword">for</span> path <span class="hljs-keyword">in</span> paths)}</span>
+&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">return</span> context
+
+graph_context = build_graph_context_for_question(<span class="hljs-string">&quot;山田部長&quot;</span>)
+</code></pre>
+<p>実装コード本体は以下レポジトリに保管しています。
+<a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/llm/rag/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/llm/rag/src</a>
+ファイル： graph_rag_v1.py</p>
+<h3 id="実験結果">実験結果</h3>
+<p>結果得られた回答ですが以下のようになりました。</p>
+<p><strong>単純RAG</strong></p>
+<p>単純RAGでは文章単位で情報を引っ張ってきます。
+2個とれば情報に辿り着けることが分かっていたので従来RAGに簡単になるように2つとも関連文章を抽出するようにしました。
+情報としては足りているはずですが、うまく回答できませんでした。LLMの性能が物足りなかったでしょうか。</p>
+<pre><code>=== 通常RAG風コンテキスト ===
+doc2: ネコプロジェクトはCRM基盤に影響する。
+doc1: 山田部長はネコプロジェクトの責任者である。
+=== 問題1回答 ===
+doc1: 山田部長はネコプロジェクトの責任者であり、doc2: ネコプロジェクトはCRM基盤に影響するという情報から推測できます。しかし、この情報だけで具体的な影響を予測することは難しいため、より詳細な情報を提供していただくことをお勧めします。
+=== 問題2回答 ===
+doc1: 山田部長はネコプロジェクトの責任者であり、doc2: ネコプロジェクトはCRM基盤に影響するという情報から推測できます。しかし、この情報だけで具体的な影響を予測することは難しいため、より詳細な情報を提供していただくことをお勧めします。
+</code></pre>
+<p><strong>オントロジーRAG</strong></p>
+<p>LLMにはオントロジーの情報から、関連する情報、関係性を示すパスまでの情報を与えました。
+LLMは同じものを使いました。結果は変わっています。
+両方とも正解でした。</p>
+<pre><code>=== GraphRAG風コンテキスト ===
+## オントロジー
+- Person は人物を表す。
+- Project はプロジェクトを表す。
+- System はシステムを表す。
+- responsible_for は「人物がプロジェクトの責任者である」関係を表す。
+- affects は「プロジェクトがシステムに影響する」関係を表す。
+
+## グラフから取得した事実
+- 山田部長 は ネコプロジェクト の責任者である。
+- ネコプロジェクト は CRM基盤 に影響する。
+
+## 導出パス
+- 山田部長 --responsible_for--&gt; ネコプロジェクト --affects--&gt; CRM基盤
+=== 問題1回答 ===
+ネコプロジェクトはCRM基盤に影響します。
+=== 問題2回答 ===
+山田部長が責任を持つプロジェクトは、CRM基盤に影響します。
+</code></pre>
+<h2 id="総括">総括</h2>
+<p>今回の実験で分かったことは、次の3点です。</p>
+<p><strong>1. 通常RAGは文書取得はできるが、関係の接続は苦手</strong></p>
+<p>関連文書を取得できていても、複数の事実をLLMが自動でつなげるのは難しい場合がある。</p>
+<p><strong>2. オントロジーは推論しやすい材料をLLMに渡せる</strong></p>
+<p>関係の型（例：<code>responsible_for</code>、<code>affects</code>）と導出パスを明示することで、LLMが事実を組み合わせやすくなる。</p>
+<p><strong>3. 小型LLMでも正答しやすくなる</strong></p>
+<p>今回使った <code>Qwen/Qwen2.5-0.5B-Instruct</code> のような小型モデルでも、<strong>入力の構造を改善するだけで</strong>回答精度が向上した。</p>
+<p>つまり、<strong>モデルを大きくするだけでなく、情報の渡し方を工夫することが重要</strong>です。</p>
+<p><strong>結論</strong></p>
+<p>オントロジー + GraphRAGの本質は、</p>
+<blockquote>
+<p><strong>グラフが推論経路を整理し、LLMがその経路を文章として説明する</strong></p>
+</blockquote>
+<p>という役割分担にあります。</p>
+<p>社内用語・プロジェクト名・部署名・人物名が多いRAGでは、固有名詞をエンティティとして扱い、関係をたどることで、通常RAGでは答えにくい質問にも対応できるようになります。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/QyzK21nx70o?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+
+<script>
+(function() {
+  // 記事ページのパスと、それに対応する英語版URLのマッピング
+  var langMap = {
+    "/entry/my-article-ja": "https://en-example.hatenablog.com/entry/my-article-en",
+    "/entry/rust-tips-ja": "https://en-example.hatenablog.com/entry/rust-tips-en"
+  };
+
+  var currentPath = window.location.pathname;
+
+  if (langMap[currentPath]) {
+    var jaUrl = window.location.origin + currentPath;
+    var enUrl = langMap[currentPath];
+
+    // 日本語版の link タグ生成
+    var linkJa = document.createElement('link');
+    linkJa.rel = 'alternate';
+    linkJa.hreflang = 'ja';
+    linkJa.href = jaUrl;
+    document.head.appendChild(linkJa);
+
+    // 英語版の link タグ生成
+    var linkEn = document.createElement('link');
+    linkEn.rel = 'alternate';
+    linkEn.hreflang = 'en';
+    linkEn.href = enUrl;
+    document.head.appendChild(linkEn);
+  }
+})();
+</script>
+
+            
+        </body>
+        </html>
