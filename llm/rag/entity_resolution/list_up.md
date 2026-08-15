@@ -73,6 +73,8 @@
 - **著者**: Eric Peukert, Erhard Rahm ら
 - **内容**: **複数ソースからの知識グラフ構築時**に、増分的にEntity Resolutionを行う手法。異なるデータソースから来た同じエンティティを統合し、KGを補完するための古典的・実践的なアプローチです。<source-chip title="PMC" url="https://pmc.ncbi.nlm.nih.gov/articles/PMC7250616/" />
 
+△
+
 ---
 
 ## 9. 科学的知識グラフ構築のためのRAGフレームワーク
