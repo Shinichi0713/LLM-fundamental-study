@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>本日は<a href="https://yoshishinnze.hatenablog.com/entry/2026/09/19/043000">昨日のRAGの取り組み</a>に引き続きで、名寄せの問題解決に関するものです。</p>
+<p>RAGを扱っていると固有名詞の名称のブレが生じます。
+特に時間によるシフトが大きな問題となり、固有名詞のブレがRAGの精度を悪化させるということはよく知られた事実です。
+本日はそんな固有名詞の名称のブレに対する解決策を提示する論文について取り扱っていきます。</p>
+<p>本日テーマ：</p>
+<blockquote>
+<p>DynamicER: Resolving Emerging Mentions to Dynamic Entities for RAGについて理解、PoCしてみる</p>
+</blockquote>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="論文概要">論文概要</h2>
+<p>この論文は、<strong>時間とともに新しい呼び方が生まれ、エンティティ自身も変化していく中で、RAGが正しく文書を検索できるようにする</strong>という問題に取り組んだ研究です。</p>
+<h3 id="論文の基本情報">論文の基本情報</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>タイトル</strong></td>
+<td>DynamicER: Resolving Emerging Mentions to Dynamic Entities for RAG</td>
+</tr>
+<tr>
+<td><strong>著者</strong></td>
+<td>Jinyoung Kim, Dayoon Ko, Gunhee Kim</td>
+</tr>
+<tr>
+<td><strong>所属</strong></td>
+<td><strong>Seoul National University（ソウル大学校）</strong></td>
+</tr>
+<tr>
+<td><strong>会議</strong></td>
+<td><strong>EMNLP 2024</strong>（自然言語処理のトップ国際会議）</td>
+</tr>
+<tr>
+<td><strong>開催地</strong></td>
+<td>Miami, Florida, USA</td>
+</tr>
+<tr>
+<td><strong>ページ</strong></td>
+<td>13752–13770</td>
+</tr>
+<tr>
+<td><strong>コード</strong></td>
+<td><a href="https://github.com/jiny1623/DynamicER">https://github.com/jiny1623/DynamicER</a></td>
+</tr>
+<tr>
+<td>論文URL</td>
+<td><a href="https://arxiv.org/pdf/2410.11494">https://arxiv.org/pdf/2410.11494</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="解決しようとした問題">解決しようとした問題</h3>
+<p><strong>現実の言語は「動的」である</strong></p>
+<p>固有名詞の呼び方は、時間とともに変わります。</p>
+<pre><code>【Elon Muskの例】
+・初期：「PayPal co-founder」
+・中期：「Tesla CEO」「Hyperloop visionary」
+・近期：「Twitter owner」「tech billionaire」
+・スラング：「real-life Iron Man」「Mars man」
+</code></pre>
+<pre><code>【大谷翔平の例】
+・LA Angels時代：「Angels' two-way player」
+・LA Dodgers移籍後：「The Dodgers' number 17」
+</code></pre>
+<p>同じエンティティでも、<strong>時間が経つと新しい呼び方が生まれ、エンティティ自身の属性も変化</strong>します。</p>
+<p><strong>RAGにおける問題</strong></p>
+<p>こうした「新しい呼び方（emerging mentions）」があると：</p>
+<ol>
+<li><strong>Retrieverが正しい文書を見つけられない</strong>
+<ul>
+<li>「The Dodgers' number 17」で検索しても、大谷翔平に関する文書が引っかからない</li>
+</ul>
+</li>
+<li><strong>Generator（LLM）が幻覚（hallucination）を起こす</strong>
+<ul>
+<li>検索結果が貧弱だと、LLMが間違った情報を生成する</li>
+</ul>
+</li>
+</ol>
+<h3 id="この論文の核心的アイデア">この論文の核心的アイデア</h3>
+<blockquote>
+<p><strong>「新しい言及（emerging mentions）を、時間的に変化するエンティティ（dynamic entities）に解決する」</strong></p>
+</blockquote>
+<p><strong>2つの新しいタスクを定義</strong></p>
+<table>
+<thead>
+<tr>
+<th>タスク</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>① Dynamic Entity Mention Resolution</strong></td>
+<td>時間ステップごとに現れる新しい呼び方を、正しいエンティティにリンクする</td>
+</tr>
+<tr>
+<td><strong>② Entity-centric Knowledge-intensive QA</strong></td>
+<td>質問文中のエンティティ名を「時間に応じた新しい呼び方」に置き換えて、RAGの性能を評価する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="提案手法temporal-segmented-clustering-with-continual-adaptation">提案手法：Temporal Segmented Clustering with Continual Adaptation</h3>
+<p><strong>なぜ「時間を区切る」必要があるか</strong></p>
+<p>従来の手法では、<strong>すべての時間のメンションを一緒に処理</strong>していました。しかしこれには問題があります。</p>
+<pre><code>【問題例】
+時間T1: 「Twitter owner」→ Elon Musk
+時間T2: 「Twitter owner」→ 別の人物（買収後の新オーナー）
+
+→ 同じ表現でも、時間が違えば指すエンティティが変わる！
+</code></pre>
+<blockquote>
+<p><strong>メンション</strong><br>
+メンションとは、テキスト中に出現する「あるエンティティを指す具体的な呼び方」です。
+<strong>1文で言うと</strong><br>
+同じエンティティでも、テキスト中では<strong>さまざまな呼び方</strong>が使われる。それぞれの呼び方が1つのメンション。
+<strong>具体例</strong></p>
+<table>
+<thead>
+<tr>
+<th>エンティティ（実際の対象）</th>
+<th>メンション（テキスト中の呼び方）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Project Neko</strong></td>
+<td>「Project Neko」「猫PJ」「ネコプロ」「PNJ」「新規AI開発プロジェクト」</td>
+</tr>
+<tr>
+<td><strong>大谷翔平</strong></td>
+<td>「Shohei Ohtani」「The Dodgers' number 17」「あの二刀流」</td>
+</tr>
+<tr>
+<td><strong>論文での役割</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>DynamicERでは、<strong>過去に同じエンティティにリンクされたメンションのベクトルを平均して「動的エンティティ表現」</strong> を作ります。これにより、新しい呼び方（例：「PNJ」）も過去のメンションとの類似度で正しいエンティティに結びつけられます。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p><strong>手法の概要</strong></p>
+<pre><code>【時間をセグメントに区切る】
+T1（2020年）: [メンション集合①] → クラスタリング → エンティティ表現①
+T2（2021年）: [メンション集合②] → クラスタリング → エンティティ表現②
+T3（2022年）: [メンション集合③] → クラスタリング → エンティティ表現③
+           ↓
+    「継続的適応（Continual Adaptation）」で
+    エンティティクラスタ表現を時間とともに更新
+</code></pre>
+<p><strong>重要なポイント</strong></p>
+<ol>
+<li>
+<p><strong>時間ステップごとに独立してクラスタリング</strong></p>
+<ul>
+<li>各時間セグメント内のメンションとエンティティをクラスタ化</li>
+<li>その時間帯の文脈を反映</li>
+</ul>
+</li>
+<li>
+<p><strong>継続的適応でエンティティ表現を更新</strong></p>
+<ul>
+<li>新しい時間セグメントの情報を使って、エンティティのクラスタ表現を更新</li>
+<li>エンティティの「進化」を追跡</li>
+</ul>
+</li>
+<li>
+<p><strong>新しいメンションの検出</strong></p>
+<ul>
+<li>過去の時間ステップでは認識されていなかったメンションを特定</li>
+<li>これらを正しいエンティティにリンク</li>
+</ul>
+</li>
+</ol>
+<h3 id="dynamicerベンチマーク">DynamicERベンチマーク</h3>
+<p><strong>既存ベンチマークとの比較</strong></p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク</th>
+<th>ソース</th>
+<th>時間的変化</th>
+<th>メンションの多様性</th>
+<th>タスク</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MedMentions</td>
+<td>PubMed</td>
+<td>✗</td>
+<td>✓</td>
+<td>Entity Linking</td>
+</tr>
+<tr>
+<td>Zero-shot EL</td>
+<td>Wikias</td>
+<td>✗</td>
+<td>✓</td>
+<td>Entity Linking</td>
+</tr>
+<tr>
+<td>Reddit EL</td>
+<td>Social media</td>
+<td>✗</td>
+<td>✓</td>
+<td>Entity Linking</td>
+</tr>
+<tr>
+<td>TempEL</td>
+<td>Wikipedia</td>
+<td>✓</td>
+<td>✗</td>
+<td>Continuous EL</td>
+</tr>
+<tr>
+<td><strong>DynamicER</strong></td>
+<td><strong>Social media</strong></td>
+<td><strong>✓</strong></td>
+<td><strong>✓</strong></td>
+<td><strong>Dynamic ER + QA</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>DynamicERの特徴</strong></p>
+<ul>
+<li><strong>ドメイン</strong>: スポーツ（ソーシャルメディア文書）</li>
+<li><strong>サイズ</strong>: 70Kメンション（20K文書）</li>
+<li><strong>時間構造</strong>: 複数の時間セグメントに分割</li>
+<li><strong>アノテーション</strong>: 各メンションをKB上のエンティティにリンク</li>
+<li><strong>新しいメンション</strong>: 初期時間ステップでは未出現の呼び方を含む</li>
+</ul>
+<h3 id="実験結果の要点">実験結果の要点</h3>
+<p><strong>発見①：既存のEntity Linkingモデルは新しい表現に弱い</strong></p>
+<p>従来のELモデルは、<strong>訓練時に見たことのない新しい呼び方</strong>に対して性能が大幅に低下します。</p>
+<p><strong>発見②：提案手法が既存ベースラインを上回る</strong></p>
+<p>Temporal Segmented Clustering with Continual Adaptationは、既存のEL手法より高い性能を示しました。</p>
+<p><strong>発見③：名寄せがRAGのQA性能を向上させる</strong></p>
+<pre><code>【実験の流れ】
+1. 質問文のエンティティ名を「時間に応じた新しい呼び方」に置き換え
+   例: 「大谷翔平の現在のチームは？」
+   → 「The Dodgers' number 17の現在のチームは？」
+   
+2. 通常のRAGで回答 → 検索失敗 → 幻覚
+
+3. DynamicERでメンション解決後にRAG → 正しい文書検索 → 正答
+</code></pre>
+<p><strong>新しい呼び方を解決することで、Retrieverが正しい文書を見つけやすくなり、QA精度が向上</strong>しました。</p>
+<h3 id="この論文の意義社内ragとの関連">この論文の意義（社内RAGとの関連）</h3>
+<p>この論文は、私たちの議論している「社内固有名詞の名寄せ」に対して、<strong>「時間的変化」という重要な次元</strong>を加えてくれます。</p>
+<table>
+<thead>
+<tr>
+<th>社内RAGでの例</th>
+<th>DynamicERの教訓</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>新プロジェクトの略称が生まれる（NPJ → ネコPJ）</td>
+<td>新しいメンションは時間とともに出現する</td>
+</tr>
+<tr>
+<td>プロジェクト名が変更される（Lighthouse → LH）</td>
+<td>エンティティ属性も変化する</td>
+</tr>
+<tr>
+<td>古い文書と新しい文書で別名が混在</td>
+<td>時間セグメントごとに処理すべき</td>
+</tr>
+<tr>
+<td>新しい呼び方で検索が失敗する</td>
+<td>名寄せがRAGの検索精度に直結</td>
+</tr>
+</tbody>
+</table>
+<h2 id="提案手法">提案手法</h2>
+<p>この論文の提案手法 <strong>TempCCA</strong>（Temporal Segmented Clustering with Continual Adaptation）の核心は、<strong>「エンティティの表現を&quot;固定された辞書&quot;ではなく、&quot;時間とともに進化するクラスタ&quot;として扱う」</strong> ことです。</p>
+<p>以下、<strong>「新しいメンションが来たらどうやって正しいエンティティに結びつけるか」</strong> を中心に解説します。</p>
+<h3 id="手法の全体像tempcca">手法の全体像：TempCCA</h3>
+<pre><code>【時間軸に沿った処理の流れ】
+
+T1（古い期間）          T2（中間期間）           T3（最新期間）
+┌──────────┐           ┌──────────┐           ┌──────────┐
+│文書群 D1  │           │文書群 D2  │           │文書群 D3  │
+│・Mason   │           │・Declan  │           │・Declan  │
+│  Mount   │           │  Rice    │           │  Rice    │
+│・Declan  │           │  (Arsenal│           │  (Arsenal│
+│  Rice    │           │  移籍後) │           │  移籍後) │
+│  (West   │           │・&quot;Ricey&quot; │           │・&quot;Number │
+│  Ham)    │           │  (新ニック│           │  41&quot;     │
+│          │           │  ネーム) │           │  (新背番 │
+│          │           │          │           │  号表記) │
+└────┬─────┘           └────┬─────┘           └────┬─────┘
+     ↓                      ↓                      ↓
+┌──────────┐           ┌──────────┐           ┌──────────┐
+│Step 1:   │           │Step 1:   │           │Step 1:   │
+│クラスタリ │           │クラスタリ │           │クラスタリ │
+│ング       │           │ング       │           │ング       │
+└────┬─────┘           └────┬─────┘           └────┬─────┘
+     ↓                      ↓                      ↓
+┌──────────┐           ┌──────────┐           ┌──────────┐
+│Step 2:   │ ────────→ │Step 2:   │ ────────→ │Step 2:   │
+│エンティテ│           │エンティテ│           │エンティテ│
+│ィ表現の   │           │ィ表現の   │           │ィ表現の   │
+│更新       │           │更新       │           │更新       │
+└──────────┘           └──────────┘           └──────────┘
+</code></pre>
+<p>論文ではこんなイラストで表現されていました。
+イラストではちょっと伝わりづらいかもしれませんが、要は、固有名詞の移り変わりを、エンティティと紐づけられた呼び方（=メンション）のベクトルの平均で表現し、新しい呼び方とのベクトル類似度で結びつけていくということになります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\rag\entity_resolution\image\5_DynamicER\1786758952814.png" alt="1786758952814"></p>
+<h3 id="核心的メカニズム3つの構成要素">核心的メカニズム：3つの構成要素</h3>
+<p><strong>① デュアルエンコーダー（Dual-Encoder）</strong></p>
+<p>メンションとエンティティを<strong>別々にベクトル化</strong>します。</p>
+<pre><code>【エンコーダーの構成】
+
+┌─────────────────┐     ┌─────────────────┐
+│  Mention Encoder │     │  Entity Encoder  │
+│    (メンション)  │     │    (エンティティ) │
+│                 │     │                 │
+│  &quot;The Dodgers'  │     │  Q2747238:        │
+│   number 17&quot;   │  →  │  Shohei Ohtani    │
+│                 │     │  (Wikipedia埋め込 │
+│  ・文脈を含めて │     │   み)             │
+│    ベクトル化  │     │  ・名前+説明文を  │
+│                 │     │    ベクトル化    │
+└────────┬────────┘     └────────┬────────┘
+         ↓                       ↓
+      u(m) ∈ R^d            Enc_E(e) ∈ R^d
+</code></pre>
+<p><strong>② 2種類のAffinity（親和性）関数</strong></p>
+<p>「このメンションはこのエンティティか？」を判定するために、<strong>2つの類似度</strong>を使います。</p>
+<table>
+<thead>
+<tr>
+<th>Affinity</th>
+<th>計算対象</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>φ(e, mᵢ)</strong></td>
+<td>エンティティクラスタ e と メンション mᵢ</td>
+<td>「このエンティティらしさ」</td>
+</tr>
+<tr>
+<td><strong>ψ(mᵢ, mⱼ)</strong></td>
+<td>メンション mᵢ と メンション mⱼ</td>
+<td>「このメンションと似ている既知メンション」</td>
+</tr>
+</tbody>
+</table>
+<pre><code>【φ(e, mᵢ) のイメージ】
+
+「The Dodgers' number 17」 と 「大谷翔平（エンティティ）」の類似度
+→ 直接の文字列類似度は低い（問題！）
+→ しかし、エンティティ表現が進化していれば、ベクトル空間上で近づく
+</code></pre>
+<pre><code>【ψ(mᵢ, mⱼ) のイメージ】
+
+「The Dodgers' number 17」 と 「Ohtani」 の類似度
+「The Dodgers' number 17」 と 「Shohei」 の類似度
+「The Dodgers' number 17」 と 「The $700M Man」 の類似度
+→ 過去に解決済みのメンションと新しいメンションを比較
+→ 「似たような文脈で使われている」→ 同じエンティティの可能性
+</code></pre>
+<p><strong>③ 継続的適応（Continual Adaptation）</strong></p>
+<p>これが本手法の<strong>最大の特の特徴</strong>です。エンティティの表現を<strong>固定せず、時間とともに更新</strong>します。
+更新式は強化学習でおなじみのベルマン方程式にも通じます。</p>
+<p><strong>更新式</strong></p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">u</mi><mi>C</mi></msub><mo stretchy="false">(</mo><mi>e</mi><mo stretchy="false">)</mo><mo>=</mo><mi>α</mi><mo>⋅</mo><msub><mrow><mi mathvariant="bold">E</mi><mi mathvariant="bold">n</mi><mi mathvariant="bold">c</mi></mrow><mi>E</mi></msub><mo stretchy="false">(</mo><mi>e</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="false">)</mo><mo>⋅</mo><mfrac><mn>1</mn><mrow><mi mathvariant="normal">∣</mi><mi mathvariant="script">C</mi><mo stretchy="false">(</mo><mi>e</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∣</mi></mrow></mfrac><munder><mo>∑</mo><mrow><msub><mi>m</mi><mi>i</mi></msub><mo>∈</mo><mi mathvariant="script">C</mi><mo stretchy="false">(</mo><mi>e</mi><mo stretchy="false">)</mo></mrow></munder><msub><mrow><mi mathvariant="bold">E</mi><mi mathvariant="bold">n</mi><mi mathvariant="bold">c</mi></mrow><mi>M</mi></msub><mo stretchy="false">(</mo><msub><mi>m</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{u}_C(e) = \alpha \cdot \mathbf{Enc}_E(e) + (1-\alpha) \cdot \frac{1}{|\mathcal{C}(e)|} \sum_{m_i \in \mathcal{C}(e)} \mathbf{Enc}_M(m_i)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathbf">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">e</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4445em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">Enc</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">e</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.8374em;vertical-align:-1.516em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">∣</span><span class="mord mathcal" style="margin-right:0.05834em;">C</span><span class="mopen">(</span><span class="mord mathnormal">e</span><span class="mclose">)</span><span class="mord">∣</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.809em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3281em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mrel mtight">∈</span><span class="mord mathcal mtight" style="margin-right:0.05834em;">C</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">e</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.516em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">Enc</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<table>
+<thead>
+<tr>
+<th>記号</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>u_C(e)</strong></td>
+<td>時間ステップtにおけるエンティティeの「進化した表現」</td>
+</tr>
+<tr>
+<td><strong>Enc_E(e)</strong></td>
+<td>エンティティの静的な埋め込み（Wikipedia等から取得）</td>
+</tr>
+<tr>
+<td><strong>Enc_M(mᵢ)</strong></td>
+<td>メンションmᵢの埋め込み</td>
+</tr>
+<tr>
+<td><strong>𝒞(e)</strong></td>
+<td>時間ステップtまでにエンティティeにリンクされた全メンションの集合</td>
+</tr>
+<tr>
+<td><strong>α</strong></td>
+<td>静的表現 vs 動的表現のバランスを制御するハイパーパラメータ</td>
+</tr>
+</tbody>
+</table>
+<pre><code>【更新式の直感的意味】
+
+エンティティの新しい表現 = 
+    α × 「Wikipediaに書かれている基本情報」
+  + (1-α) × 「最近、このエンティティを指して使われたメンションたちの平均」
+
+→ 新しい呼び方が増えるほど、エンティティ表現がその方向に「引っ張られる」
+→ 大谷翔平がDodgersに移籍すると、&quot;Dodgers&quot;系のメンションがクラスタに加わり、
+   エンティティ表現が&quot;Dodgers方向&quot;にシフト
+</code></pre>
+<h3 id="新規メンション--正しいエンティティの結びつけ方">「新規メンション → 正しいエンティティ」の結びつけ方</h3>
+<p><strong>Step-by-Stepの流れ</strong></p>
+<pre><code>【新しいメンション &quot;Number 41&quot; が来た場合】
+
+Step 0: 過去の時間ステップ（T1, T2）でクラスタリング済み
+        → Declan Rice のエンティティ表現 u_C(Rice) は
+           「West Ham時代のメンション」+「Arsenal移籍後のメンション」
+           で更新されている
+
+Step 1: 新規メンションのエンコード
+        &quot;Number 41&quot; → Enc_M(&quot;Number 41&quot;) = ベクトルv_new
+
+Step 2: 全エンティティとのAffinity計算
+        ・φ(Rice, &quot;Number 41&quot;) = v_new と u_C(Rice) の類似度
+        ・φ(Mount, &quot;Number 41&quot;) = v_new と u_C(Mount) の類似度
+        ・φ(Ohtani, &quot;Number 41&quot;) = v_new と u_C(Ohtani) の類似度
+        → Riceが最も高いスコア（Arsenal移籍後、背番号41になった）
+
+Step 3: Mention-Mention Affinityも併用
+        ψ(&quot;Number 41&quot;, &quot;Ricey&quot;) = 高い（同じ文脈で使われる）
+        ψ(&quot;Number 41&quot;, &quot;The West Ham boy&quot;) = 低い（古い表現）
+        → &quot;Ricey&quot;と同じクラスタ（= Rice）に属する確信が強まる
+
+Step 4: クラスタリングで確定
+        「Number 41」→ Declan Rice (Qxxxx) にリンク
+
+Step 5: エンティティ表現の更新（継続的適応）
+        u_C(Rice) ← α・Enc_E(Rice) + (1-α)・平均(既存メンション + &quot;Number 41&quot;)
+        → Riceの表現がさらに「Number 41」を含む方向に進化
+</code></pre>
+<h3 id="なぜ時間セグメントに区切るのか">なぜ「時間セグメントに区切る」のか</h3>
+<p><strong>全期間一括クラスタリングの危険性</strong></p>
+<pre><code>【時間を無視したクラスタリング】
+
+文書群（全期間混在）：
+・2020年「Twitter owner」→ Elon Musk
+・2023年「Twitter owner」→ Elon Musk
+・2024年「Twitter owner」→ 別の人物（新オーナー）
+
+→ 同じ表現でも時間が違えば指す対象が変わる
+→ 一括クラスタリング → 「Twitter owner」クラスタに2人の人物が混在 → 大混乱
+</code></pre>
+<p><strong>TempCCAの解決策</strong></p>
+<pre><code>【時間セグメントごとの独立クラスタリング + 表現の継承】
+
+T1（2020年）: 「Twitter owner」→ Elon Musk（クラスタA）
+              → u_C(Elon; T1) = 静的表現 + T1メンション平均
+
+T2（2023年）: 「Twitter owner」→ Elon Musk（クラスタA'）
+              → u_C(Elon; T2) = 静的表現 + T1&amp;T2メンション平均
+              （引き続きElonを指す）
+
+T3（2024年）: 「Twitter owner」→ 新オーナー（クラスタB）
+              → u_C(新オーナー; T3) = 静的表現 + T3メンション平均
+              （Elonの表現とは別クラスタ）
+</code></pre>
+<p><strong>各時間ステップで独立にクラスタリングする</strong>ことで、時間による意味の変化（semantic drift）を防ぎつつ、<strong>過去のクラスタ情報をエンティティ表現として継承</strong>することで、新しいメンションの解決に活かします。</p>
+<h3 id="社内ragへの当てはめ">社内RAGへの当てはめ</h3>
+<p>このメカニズムを社内環境に適用すると：</p>
+<pre><code>【社内での「進化するエンティティ」の追跡】
+
+エンティティ: 「Project Neko（社内プロジェクト）」
+
+T1（立ち上げ期）:
+  メンション: 「新規プロジェクト」「あの猫のやつ」
+  → u_C(Neko; T1) = 静的表現 + {新規プロジェクト, あの猫のやつ}
+
+T2（コードネーム定着期）:
+  メンション: 「Project Neko」「PN」「猫PJ」
+  → u_C(Neko; T2) = 静的表現 + {新規プロジェクト, あの猫のやつ, Project Neko, PN, 猫PJ}
+
+T3（略称統一期）:
+  メンション: 「PNJ」「プロジェクトネコ」
+  → u_C(Neko; T3) = 静的表現 + {..., PNJ, プロジェクトネコ}
+
+【新規メンション「ネコのやつ」が来た場合】
+→ u_C(Neko; T3) と比較 → 「あの猫のやつ」と文脈が類似 → Project Nekoにリンク
+</code></pre>
+<h3 id="まとめ手法の核心">まとめ：手法の核心</h3>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>従来手法</th>
+<th>TempCCA（本論文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>エンティティ表現</strong></td>
+<td>固定（Wikipedia埋め込み等）</td>
+<td><strong>時間とともに進化</strong></td>
+</tr>
+<tr>
+<td><strong>新規メンションの処理</strong></td>
+<td>文字列類似度 or 固定ベクトル比較</td>
+<td><strong>進化したエンティティ表現と比較 + 既知メンションとの文脈比較</strong></td>
+</tr>
+<tr>
+<td><strong>時間の扱い</strong></td>
+<td>無視（全期間一括）</td>
+<td><strong>セグメントごとに独立クラスタリング + 表現継承</strong></td>
+</tr>
+<tr>
+<td><strong>学習方式</strong></td>
+<td>バッチ学習</td>
+<td><strong>継続的適応（Continual Adaptation）</strong></td>
+</tr>
+</tbody>
+</table>
+<p>一言でまとめると：</p>
+<blockquote>
+<p><strong>「エンティティを&quot;固定された辞書項目&quot;ではなく、&quot;最近の呼ばれ方の平均ベクトル&quot;として動的に更新し続けることで、新しく生まれた呼び方でも正しくリンクできる」</strong></p>
+</blockquote>
+<p>この「進化するクラスタ表現」のアイデアは、社内RAGで略称・通称・新しい呼び方が頻繁に生まれる環境において、非常に参考になる設計思想です。</p>
+<h2 id="poc">PoC</h2>
+<p>実際に効果あるか検証してみます。</p>
+<h3 id="pocの目的">PoCの目的</h3>
+<p>社内RAGにおいて、時間とともに増える略称・通称（例：Project Neko → 猫PJ → PNJ）を自動で名寄せし、正しい文書を検索できるか検証。</p>
+<h3 id="全体アーキテクチャ">全体アーキテクチャ</h3>
+<p>仮想のお題を作ってPoCしてみます。
+以下のような質問=ユーザークエリを作って、時間経過があり固有名詞の呼び名が変わるケースを考えていきます。</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│  入力: ユーザークエリ「PNJの予算は？」                         │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  Layer 1: ベクトル名寄せ（TempCCA的）                         │
+│  ・クエリから候補メンション抽出（「PNJ」「予算」）              │
+│  ・各候補 vs 動的エンティティ表現 で類似度計算                 │
+│  ・閾値(0.4)を超えたら正規名に置換して検索                    │
+│  → 失敗したら Layer 2 へ                                     │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  Layer 2: 辞書ベースフォールバック                             │
+│  ・事前定義辞書 {&quot;pnj&quot;: &quot;Project Neko&quot;} で照合                │
+│  → 失敗したら Layer 3 へ                                     │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  Layer 3: Backward Entity Resolution                         │
+│  ・名寄せなしでRetrieverを実行（上位3件取得）                 │
+│  ・取得文書の文脈ベクトル vs 各エンティティ表現 で類似度計算   │
+│  ・最も近いエンティティを逆推定して正規化                      │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  検索: 正規化クエリで LlamaIndex Retriever を実行             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="使用技術スタック">使用技術スタック</h3>
+<p>PoCのベースはGraphRAG用のフレームワークLlamaIndexです。</p>
+<table>
+<thead>
+<tr>
+<th>コンポーネント</th>
+<th>ライブラリ・モデル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ベクトルDB/Retriever</td>
+<td><strong>LlamaIndex</strong> (<code>VectorStoreIndex</code>)</td>
+</tr>
+<tr>
+<td>埋め込みモデル（インデックス用）</td>
+<td><code>BAAI/bge-small-en-v1.5</code></td>
+</tr>
+<tr>
+<td>埋め込みモデル（名寄せ用）</td>
+<td><code>sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</code></td>
+</tr>
+<tr>
+<td>類似度計算</td>
+<td><code>sklearn.metrics.pairwise.cosine_similarity</code></td>
+</tr>
+<tr>
+<td>実行環境</td>
+<td>Google Colab（GPU不要）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="模擬データセット">模擬データセット</h3>
+<p>今回は以下のようなプロジェクトがあり、時期によって呼び名が変わっていくというケースを想定しました。
+与える文章も遷移していきます。</p>
+<p><strong>時間セグメントT1</strong>（立ち上げ期）：</p>
+<ul>
+<li>「Project Nekoは新規AI開発プロジェクトです」</li>
+<li>「Lighthouseは既存の検索基盤プロジェクト」</li>
+<li>「山田太郎は営業部の部長」</li>
+</ul>
+<p><strong>時間セグメントT2</strong>（略称定着期）：</p>
+<ul>
+<li>「PNJの進捗は良好です」</li>
+<li>「猫PJの予算が承認されました」</li>
+<li>「ネコプロのチームが拡大」</li>
+</ul>
+<p><strong>エンティティKB</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>正規名+説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q001</td>
+<td>Project Nekoは社内の新規AI開発プロジェクト。コードネームはNeko。</td>
+</tr>
+<tr>
+<td>Q002</td>
+<td>Lighthouseは既存の検索基盤プロジェクト。</td>
+</tr>
+<tr>
+<td>Q003</td>
+<td>山田太郎は営業部の部長。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>エンティティ履歴（T1で収集された呼び方）</strong>：</p>
+<pre><code class="language-python">{
+    <span class="hljs-string">&quot;Q001&quot;</span>: [<span class="hljs-string">&quot;Project Neko&quot;</span>, <span class="hljs-string">&quot;新規AI開発プロジェクト&quot;</span>, <span class="hljs-string">&quot;ネコ型AI&quot;</span>],
+    <span class="hljs-string">&quot;Q002&quot;</span>: [<span class="hljs-string">&quot;Lighthouse&quot;</span>],
+    <span class="hljs-string">&quot;Q003&quot;</span>: [<span class="hljs-string">&quot;山田太郎&quot;</span>, <span class="hljs-string">&quot;山田部長&quot;</span>],
+}
+</code></pre>
+<h3 id="ハイパーパラメータ">ハイパーパラメータ</h3>
+<p>PoCに用いるハイパーパラメータは以下の通りです。(実運用時は調整していく必要があります)</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alpha</code></td>
+<td><strong>0.3</strong></td>
+<td>静的表現の重み。低いほど過去メンション（動的）を重視</td>
+</tr>
+<tr>
+<td><code>threshold</code></td>
+<td><strong>0.4</strong></td>
+<td>名寄せ確定の閾値（コサイン類似度）</td>
+</tr>
+<tr>
+<td><code>top_k</code></td>
+<td>3〜5</td>
+<td>Retrieverの上位取得件数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>動的エンティティ表現の式</strong>：</p>
+<pre><code>u_C(e) = 0.3 × 静的ベクトル(KB説明文) + 0.7 × mean(過去メンションベクトル)
+</code></pre>
+<h3 id="colabでの再現手順">Colabでの再現手順</h3>
+<p><strong>Step 1: インストール</strong></p>
+<pre><code class="language-bash">!pip install llama-index llama-index-embeddings-huggingface sentence-transformers
+</code></pre>
+<p><strong>Step 2: モデル・データ準備</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np, re, os
+<span class="hljs-keyword">from</span> sentence_transformers <span class="hljs-keyword">import</span> SentenceTransformer
+<span class="hljs-keyword">from</span> sklearn.metrics.pairwise <span class="hljs-keyword">import</span> cosine_similarity
+<span class="hljs-keyword">from</span> llama_index.core <span class="hljs-keyword">import</span> VectorStoreIndex, Document, Settings
+<span class="hljs-keyword">from</span> llama_index.core.retrievers <span class="hljs-keyword">import</span> VectorIndexRetriever
+<span class="hljs-keyword">from</span> llama_index.embeddings.huggingface <span class="hljs-keyword">import</span> HuggingFaceEmbedding
+
+os.environ[<span class="hljs-string">&quot;HF_HUB_DISABLE_SYMLINKS_WARNING&quot;</span>] = <span class="hljs-string">&quot;1&quot;</span>
+
+<span class="hljs-comment"># 埋め込みモデル</span>
+Settings.embed_model = HuggingFaceEmbedding(model_name=<span class="hljs-string">&quot;BAAI/bge-small-en-v1.5&quot;</span>)
+sbert = SentenceTransformer(<span class="hljs-string">&#x27;sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2&#x27;</span>)
+
+<span class="hljs-comment"># 文書データ</span>
+docs_t1 = [
+    Document(text=<span class="hljs-string">&quot;Project Nekoは新規AI開発プロジェクトです。&quot;</span>, metadata={<span class="hljs-string">&quot;time&quot;</span>: <span class="hljs-string">&quot;T1&quot;</span>}),
+    Document(text=<span class="hljs-string">&quot;Lighthouseは既存の検索基盤プロジェクト。&quot;</span>, metadata={<span class="hljs-string">&quot;time&quot;</span>: <span class="hljs-string">&quot;T1&quot;</span>}),
+    Document(text=<span class="hljs-string">&quot;山田太郎は営業部の部長。&quot;</span>, metadata={<span class="hljs-string">&quot;time&quot;</span>: <span class="hljs-string">&quot;T1&quot;</span>}),
+]
+docs_t2 = [
+    Document(text=<span class="hljs-string">&quot;PNJの進捗は良好です。&quot;</span>, metadata={<span class="hljs-string">&quot;time&quot;</span>: <span class="hljs-string">&quot;T2&quot;</span>}),
+    Document(text=<span class="hljs-string">&quot;猫PJの予算が承認されました。&quot;</span>, metadata={<span class="hljs-string">&quot;time&quot;</span>: <span class="hljs-string">&quot;T2&quot;</span>}),
+    Document(text=<span class="hljs-string">&quot;ネコプロのチームが拡大。&quot;</span>, metadata={<span class="hljs-string">&quot;time&quot;</span>: <span class="hljs-string">&quot;T2&quot;</span>}),
+]
+
+<span class="hljs-comment"># エンティティKBと履歴</span>
+entity_kb = {
+    <span class="hljs-string">&quot;Q001&quot;</span>: <span class="hljs-string">&quot;Project Nekoは社内の新規AI開発プロジェクト。コードネームはNeko。&quot;</span>,
+    <span class="hljs-string">&quot;Q002&quot;</span>: <span class="hljs-string">&quot;Lighthouseは既存の検索基盤プロジェクト。&quot;</span>,
+    <span class="hljs-string">&quot;Q003&quot;</span>: <span class="hljs-string">&quot;山田太郎は営業部の部長。&quot;</span>,
+}
+entity_history = {
+    <span class="hljs-string">&quot;Q001&quot;</span>: [<span class="hljs-string">&quot;Project Neko&quot;</span>, <span class="hljs-string">&quot;新規AI開発プロジェクト&quot;</span>, <span class="hljs-string">&quot;ネコ型AI&quot;</span>],
+    <span class="hljs-string">&quot;Q002&quot;</span>: [<span class="hljs-string">&quot;Lighthouse&quot;</span>],
+    <span class="hljs-string">&quot;Q003&quot;</span>: [<span class="hljs-string">&quot;山田太郎&quot;</span>, <span class="hljs-string">&quot;山田部長&quot;</span>],
+}
+
+<span class="hljs-comment"># インデックス構築</span>
+index = VectorStoreIndex.from_documents(docs_t1 + docs_t2)
+</code></pre>
+<p><strong>Step 3: 名寄せ関数</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">extract_candidates</span>(<span class="hljs-params">query</span>):
+    <span class="hljs-string">&quot;&quot;&quot;助詞で分割して候補抽出&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">return</span> [p.strip() <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> re.split(<span class="hljs-string">r&#x27;[のはがをにで]&#x27;</span>, query) <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(p.strip()) &gt;= <span class="hljs-number">2</span>]
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">resolve_entity</span>(<span class="hljs-params">query, entity_kb, entity_history, alpha=<span class="hljs-number">0.3</span>, threshold=<span class="hljs-number">0.4</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;ベクトル名寄せ（Layer 1）&quot;&quot;&quot;</span>
+    candidates = extract_candidates(query)
+    query_vec = sbert.encode([query])
+    best_match, best_score, best_candidate = <span class="hljs-literal">None</span>, -<span class="hljs-number">1</span>, <span class="hljs-literal">None</span>
+    
+    <span class="hljs-keyword">for</span> candidate <span class="hljs-keyword">in</span> candidates:
+        cand_vec = sbert.encode([candidate])
+        <span class="hljs-keyword">for</span> eid, desc <span class="hljs-keyword">in</span> entity_kb.items():
+            static = sbert.encode([desc])
+            <span class="hljs-keyword">if</span> eid <span class="hljs-keyword">in</span> entity_history <span class="hljs-keyword">and</span> entity_history[eid]:
+                hist_vecs = sbert.encode(entity_history[eid])
+                dynamic = alpha * static + (<span class="hljs-number">1</span> - alpha) * np.mean(hist_vecs, axis=<span class="hljs-number">0</span>)
+            <span class="hljs-keyword">else</span>:
+                dynamic = static
+            sim = cosine_similarity(cand_vec, dynamic.reshape(<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>))[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]
+            <span class="hljs-keyword">if</span> sim &gt; best_score:
+                best_score, best_match, best_candidate = sim, eid, candidate
+    
+    <span class="hljs-keyword">if</span> best_score &gt;= threshold:
+        canonical = entity_kb[best_match].split(<span class="hljs-string">&quot;は&quot;</span>)[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">return</span> best_match, best_score, canonical, best_candidate
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>, best_score, <span class="hljs-literal">None</span>, <span class="hljs-literal">None</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">backward_resolution</span>(<span class="hljs-params">query, index, entity_kb, entity_history, alpha=<span class="hljs-number">0.3</span>, threshold=<span class="hljs-number">0.4</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;Backward ER（Layer 3）&quot;&quot;&quot;</span>
+    retriever = VectorIndexRetriever(index, similarity_top_k=<span class="hljs-number">3</span>)
+    nodes = retriever.retrieve(query)
+    context = <span class="hljs-string">&quot; &quot;</span>.join([n.text <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> nodes[:<span class="hljs-number">3</span>]])
+    context_vec = sbert.encode([context])
+    
+    best_match, best_score = <span class="hljs-literal">None</span>, -<span class="hljs-number">1</span>
+    <span class="hljs-keyword">for</span> eid, desc <span class="hljs-keyword">in</span> entity_kb.items():
+        static = sbert.encode([desc])
+        <span class="hljs-keyword">if</span> eid <span class="hljs-keyword">in</span> entity_history <span class="hljs-keyword">and</span> entity_history[eid]:
+            hist_vecs = sbert.encode(entity_history[eid])
+            dynamic = alpha * static + (<span class="hljs-number">1</span> - alpha) * np.mean(hist_vecs, axis=<span class="hljs-number">0</span>)
+        <span class="hljs-keyword">else</span>:
+            dynamic = static
+        sim = cosine_similarity(context_vec, dynamic.reshape(<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>))[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">if</span> sim &gt; best_score:
+            best_score, best_match = sim, eid
+    
+    <span class="hljs-keyword">if</span> best_score &gt;= threshold:
+        canonical = entity_kb[best_match].split(<span class="hljs-string">&quot;は&quot;</span>)[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">return</span> best_match, best_score, canonical, nodes
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>, best_score, <span class="hljs-literal">None</span>, nodes
+</code></pre>
+<p><strong>Step 4: RAGパイプライン実行</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">rag_with_resolution</span>(<span class="hljs-params">query, index, entity_kb, entity_history</span>):
+    <span class="hljs-comment"># Layer 1: ベクトル名寄せ</span>
+    eid, score, canonical, mention = resolve_entity(query, entity_kb, entity_history)
+    <span class="hljs-keyword">if</span> eid:
+        search_query = query.replace(mention, canonical)
+        retriever = VectorIndexRetriever(index, similarity_top_k=<span class="hljs-number">3</span>)
+        <span class="hljs-keyword">return</span> retriever.retrieve(search_query), eid, score, <span class="hljs-string">&quot;vector&quot;</span>
+    
+    <span class="hljs-comment"># Layer 3: Backward ER</span>
+    eid, score, canonical, nodes = backward_resolution(query, index, entity_kb, entity_history)
+    <span class="hljs-keyword">if</span> eid:
+        search_query = canonical + <span class="hljs-string">&quot; &quot;</span> + query
+        retriever = VectorIndexRetriever(index, similarity_top_k=<span class="hljs-number">3</span>)
+        <span class="hljs-keyword">return</span> retriever.retrieve(search_query), eid, score, <span class="hljs-string">&quot;backward&quot;</span>
+    
+    <span class="hljs-comment"># 名寄せ失敗 → そのまま検索</span>
+    retriever = VectorIndexRetriever(index, similarity_top_k=<span class="hljs-number">3</span>)
+    <span class="hljs-keyword">return</span> retriever.retrieve(query), <span class="hljs-literal">None</span>, <span class="hljs-number">0</span>, <span class="hljs-string">&quot;none&quot;</span>
+
+<span class="hljs-comment"># 実行</span>
+results, eid, score, method = rag_with_resolution(<span class="hljs-string">&quot;PNJの予算は？&quot;</span>, index, entity_kb, entity_history)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;方法: <span class="hljs-subst">{method}</span>, エンティティ: <span class="hljs-subst">{eid}</span>, 信頼度: <span class="hljs-subst">{score:<span class="hljs-number">.3</span>f}</span>&quot;</span>)
+<span class="hljs-keyword">for</span> i, r <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(results, <span class="hljs-number">1</span>):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;  <span class="hljs-subst">{i}</span>. <span class="hljs-subst">{r.text}</span>&quot;</span>)
+</code></pre>
+<h3 id="検証ポイント結果の見方">検証ポイント・結果の見方</h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>期待される結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>「Project Nekoの進捗は？」</strong></td>
+<td>Layer 1（ベクトル）で即座にQ001にリンク</td>
+</tr>
+<tr>
+<td><strong>「PNJの予算は？」（alpha=0.3）</strong></td>
+<td>Layer 1でQ001にリンク（動的表現が効く）</td>
+</tr>
+<tr>
+<td><strong>「PNJの予算は？」（alpha=1.0）</strong></td>
+<td>Layer 1は失敗 → Layer 3（Backward ER）でQ001に逆推定</td>
+</tr>
+<tr>
+<td><strong>「猫PJのチーム規模は？」</strong></td>
+<td>Layer 1でQ001にリンク</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pocの結果">PoCの結果</h3>
+<pre><code>============================================================
+【テスト1】alpha=0.3（動的表現重視）で「PNJ」を検索
+============================================================
+　クエリ: 'PNJの予算は？'
+   抽出候補: ['PNJ', '予算']
+--- Affinityスコア ---
+  φ(Project Neko, 'PNJ') = 0.5017
+  φ(Lighthouse, 'PNJ') = 0.2451
+  φ(山田太郎, 'PNJ') = 0.3533
+  φ(Project Neko, '予算') = 0.3225
+  φ(Lighthouse, '予算') = 0.1093
+  φ(山田太郎, '予算') = 0.2287
+　名寄せ: 'PNJ' → Q001(Project Neko), 信頼度=0.502
+　検索クエリ: 'Project Nekoの予算は？'
+  1. Project Nekoは新規AI開発プロジェクトです。2024年1月に立案された。 (出典: meeting)
+  2. 猫PJの予算が承認されました。来年度から本格開発開始。 (出典: mail)
+  3. 山田太郎は営業部の部長。2020年から営業部を率いている。 (出典: hr)
+
+============================================================
+【テスト2】「猫PJ」を検索
+============================================================
+　クエリ: '猫PJのチーム規模は？'
+   抽出候補: ['猫PJ', 'チーム規模']
+--- Affinityスコア ---
+  φ(Project Neko, '猫PJ') = 0.4230
+  φ(Lighthouse, '猫PJ') = 0.1292
+  φ(山田太郎, '猫PJ') = 0.3704
+  φ(Project Neko, 'チーム規模') = 0.2728
+  φ(Lighthouse, 'チーム規模') = 0.0717
+  φ(山田太郎, 'チーム規模') = 0.3082
+　名寄せ: '猫PJ' → Q001(Project Neko), 信頼度=0.423
+　検索クエリ: 'Project Nekoのチーム規模は？'
+  1. Project Nekoは新規AI開発プロジェクトです。2024年1月に立案された。 (出典: meeting)
+  2. ネコプロのチームが拡大。新たに5名が配属された。 (出典: wiki)
+  3. PNJの進捗は良好です。第2四半期のマイルストーンを達成。 (出典: slack)
+
+============================================================
+【テスト3】比較：alpha=1.0（静的のみ = 従来手法）
+============================================================
+　クエリ: 'PNJの予算は？'
+   抽出候補: ['PNJ', '予算']
+--- Affinityスコア ---
+  φ(Project Neko, 'PNJ') = 0.2834
+  φ(Lighthouse, 'PNJ') = 0.1614
+  φ(山田太郎, 'PNJ') = 0.1239
+  φ(Project Neko, '予算') = 0.1090
+  φ(Lighthouse, '予算') = 0.0550
+  φ(山田太郎, '予算') = 0.1380
+　最高スコア0.283が閾値(0.4)を下回るため、名寄せをスキップ
+　検索クエリ（名寄せスキップ）: 'PNJの予算は？'
+  1. 猫PJの予算が承認されました。来年度から本格開発開始。 (出典: mail)
+  2. PNJの進捗は良好です。第2四半期のマイルストーンを達成。 (出典: slack)
+  3. Project Nekoは新規AI開発プロジェクトです。2024年1月に立案された。 (出典: meeting)
+</code></pre>
+<p>また検索力の補完手段として逆検索を、従来手法側にも試してみました。</p>
+<pre><code>PoC用クエリ: 'PNJの予算は？'
+--- 初回検索結果 ---
+  1. 猫PJの予算が承認されました。来年度から本格開発開始。... (出典: mail)
+  2. PNJの進捗は良好です。第2四半期のマイルストーンを達成。... (出典: slack)
+  3. Project Nekoは新規AI開発プロジェクトです。2024年1月に立案され... (出典: meeting)
+--- 検索結果からの逆推定 ---
+  文脈 vs Project Neko = 0.5339
+  文脈 vs Lighthouse = 0.2009
+  文脈 vs 山田太郎 = 0.1124
+オレオレ逆推定: 検索文脈 → Q001(Project Neko), 信頼度=0.534
+  1. Project Nekoは新規AI開発プロジェクトです。2024年1月に立案された。... (出典: meeting)
+  2. 猫PJの予算が承認されました。来年度から本格開発開始。... (出典: mail)
+  3. PNJの進捗は良好です。第2四半期のマイルストーンを達成。... (出典: slack)
+</code></pre>
+<p>ということで結論、以下が分かりました。
+上出来な結果だと思います。</p>
+<ol>
+<li><strong>alpha=0.3（動的表現重視）</strong> であれば、訓練時にない略称「PNJ」も過去メンションの文脈から正しくリンクできる</li>
+<li><strong>alpha=1.0（静的のみ）</strong> ではリンクに失敗するが、<strong>Backward ER</strong> で検索文脈から逆にエンティティを特定できる</li>
+<li><strong>3層フォールバック</strong>により、単一手法の弱点を補完しながら実用的な精度を達成</li>
+</ol>
+<h2 id="総括">総括</h2>
+<p>今回の話を総括します。</p>
+<h3 id="1-何を解決するか">1. 何を解決するか</h3>
+<p>社内RAGで、<strong>時間とともに生まれる新しい略称・通称</strong>（Project Neko → 猫PJ → PNJ）を自動で名寄せし、正しい文書を検索する。</p>
+<h3 id="2-核心アイデア">2. 核心アイデア</h3>
+<p>エンティティの表現を <strong>「固定された辞書」ではなく「進化するベクトル」</strong> として扱う。</p>
+<pre><code>動的エンティティ表現 = α × 静的表現(KB説明文) + (1-α) × mean(過去にリンクされたメンションのベクトル)
+</code></pre>
+<ul>
+<li><strong>α=0.3</strong>（動的重視）にすると、訓練時にない略称「PNJ」も過去メンションの文脈から正しくリンクできる</li>
+<li><strong>α=1.0</strong>（静的のみ）だとリンク失敗するが、<strong>Backward ER</strong>（検索結果の文脈から逆にエンティティを推定）で救える</li>
+</ul>
+<h3 id="3-pocで実証したこと">3. PoCで実証したこと</h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>「Project Nekoの進捗は？」</td>
+<td>即座にQ001へリンク（信頼度0.82）</td>
+</tr>
+<tr>
+<td>「PNJの予算は？」（α=0.3）</td>
+<td>動的表現でQ001へリンク（信頼度0.50）</td>
+</tr>
+<tr>
+<td>「PNJの予算は？」（α=1.0）</td>
+<td>静的のみでは失敗 → Backward ERでQ001へ逆推定（信頼度0.53）</td>
+</tr>
+<tr>
+<td>「猫PJのチーム規模は？」</td>
+<td>動的表現でQ001へリンク（信頼度0.42）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-実装の要点">4. 実装の要点</h3>
+<ul>
+<li><strong>LlamaIndex + ローカル埋め込みモデル</strong>（OpenAI不要）</li>
+<li><strong>3層フォールバック</strong>: ①ベクトル名寄せ → ②辞書 → ③Backward ER</li>
+<li><strong>Google Colab上で動作</strong>（GPU不要）</li>
+</ul>
+<h3 id="5-結論">5. 結論</h3>
+<p>略称が増えていく社内文書環境でも、過去の呼び方をベクトルで蓄積・更新することで、新しい呼び方も正しいエンティティに結びつけ、RAGの検索精度を維持できる。
+これがDynamicER（TempCCA）を社内RAGに応用したPoCの本質です。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/FhSBK8VaLss?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
