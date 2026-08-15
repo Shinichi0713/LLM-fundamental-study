@@ -37,7 +37,7 @@
 - **著者**: Hongtao Wang ら
 - **内容**: LLMを使った**適応的グラフ精緻化とラベル伝播**による、コスト効率の良いEntity Resolution手法。すべてのペアにLLMを適用するのではなく、グラフ構造を活用して効率的にエンティティを統合するアプローチです。<source-chip title="arXiv" url="https://arxiv.org/pdf/2605.25814" />
 
----
+△
 
 ## 5. 知識グラフ上のEnd-to-End Entity ResolutionとQA
 
@@ -46,7 +46,7 @@
 - **著者**: Armin Oliya ら（Amazon Alexa AI）
 - **内容**: **微分可能な知識グラフ**を用いて、Entity Resolutionと質問応答をEnd-to-Endで学習する手法。Amazon Alexa AIの研究で、エンティティの曖昧性解消とQAを統合的に扱っています。<source-chip title="ACL Anthology" url="https://aclanthology.org/2021.emnlp-main.345.pdf" />
 
-気になる：〇
+気になる：〇→△
 
 ## 6. 時間的・因果的一貫性を考慮したEntity-Event KG
 
