@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>SAMは万能セグメンテーションモデルとして非常に有用です。
+ですが、以下のような課題があります。</p>
+<ul>
+<li>意味的にはあまり重要でない部分に対しても過剰な検知を行う</li>
+<li>検知して欲しい部分を検知しない検知力不足
+昨日取り扱った<a href="https://yoshishinnze.hatenablog.com/entry/2026/09/12/043000">SAMの過剰検知を抑制するという方法</a>について取り扱いしました。</li>
+</ul>
+<p>本日は課題のうち後者である検知力不足について対策となる方法について扱っていきます。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="論文概要">論文概要</h2>
+<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/09/08/043000">検知力不足を補う手法は以前の記事</a>で複数案検討しました。</p>
+<p>LoRAを用いる手法など複数提案しましたが、うちHQ-SAMが手法として面白かったため本日はHQ-SAMについて説明・PoCしていきます。
+HQ-SAM（<strong>Segment Anything in High Quality</strong>）は、MetaのSAM（Segment Anything Model）の<strong>マスク品質を大幅に向上させる</strong>手法として、<strong>NeurIPS 2023</strong> に採択された論文です。</p>
+<h3 id="論文の基本情報">論文の基本情報</h3>
+<p>実は国際学会 NeurIPS に採択されている論文です。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>タイトル</strong></td>
+<td>Segment Anything in High Quality</td>
+</tr>
+<tr>
+<td><strong>著者</strong></td>
+<td>Lei Ke, Mingqiao Ye, Martin Danelljan, Yifan Liu, Yu-Wing Tai, Chi-Keung Tang, Fisher Yu</td>
+</tr>
+<tr>
+<td><strong>所属</strong></td>
+<td>ETH Zürich, HKUST, Dartmouth College</td>
+</tr>
+<tr>
+<td><strong>発表</strong></td>
+<td>NeurIPS 2023</td>
+</tr>
+<tr>
+<td><strong>arXiv</strong></td>
+<td>2306.01567</td>
+</tr>
+<tr>
+<td><strong>コード</strong></td>
+<td><a href="https://github.com/SysCV/sam-hq">https://github.com/SysCV/sam-hq</a></td>
+</tr>
+<tr>
+<td>論文URL</td>
+<td><a href="https://arxiv.org/pdf/2306.01567">https://arxiv.org/pdf/2306.01567</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="研究の背景と問題意識">研究の背景と問題意識</h3>
+<p>SAMは11億個のマスクで学習された強力な基盤モデルですが、論文では以下の問題を指摘しています。</p>
+<ul>
+<li><strong>粗いマスク境界</strong>：オブジェクトの輪郭がぼやけたり、細い構造（髪の毛、凧の糸など）が無視されたりする</li>
+<li><strong>誤った予測</strong>：複雑な構造に対して壊れたマスクや大きなエラーを生じる</li>
+</ul>
+<p>特に、自動アノテーションや画像・動画編集など、<strong>高精度なマスクが必須の場面</strong>ではSAMの品質が不十分でした。</p>
+<h3 id="提案手法hq-sam">提案手法：HQ-SAM</h3>
+<p>HQ-SAMは、SAMの元の<strong>プロンプト可能な設計・効率性・ゼロショット汎化性を維持しつつ</strong>、マスク品質を高める最小限のアダプテーションです。</p>
+<p><strong>主な技術的貢献</strong></p>
+<ol>
+<li>
+<p><strong>学習可能な High-Quality Output Token</strong></p>
+<ul>
+<li>SAMのマスクデコーダに、新たな「HQ-Output Token」を追加</li>
+<li>このトークンと関連する3層のMLPが、高品質なマスクを直接予測</li>
+<li>元のSAMのoutput tokenとは別に機能</li>
+</ul>
+</li>
+<li>
+<p><strong>Global-local Feature Fusion（グローバル・ローカル特徴融合）</strong></p>
+<ul>
+<li>SAMのマスクデコーダ特徴だけでなく、<strong>ViTエンコーダの初期・最終特徴マップ</strong>も融合</li>
+<li>大域的なセマンティック情報と、局所的な細粒度の詳細を両方活用</li>
+</ul>
+</li>
+<li>
+<p><strong>SAMのパラメータを固定した効率的学習</strong></p>
+<ul>
+<li>SAMの事前学習済みパラメータは<strong>すべて固定（凍結）</strong></li>
+<li>学習するのはHQ-Output Token、関連MLP、小さな特徴融合ブロックのみ</li>
+<li>追加パラメータは<strong>0.5%未満</strong>と極めて少ない</li>
+</ul>
+</li>
+</ol>
+<p><strong>データセット：HQSeg-44K</strong></p>
+<p>高品質な学習には細粒度なアノテーションが必要なため、論文では新たなデータセット <strong>HQSeg-44K</strong> を構築しています。</p>
+<ul>
+<li>6つの既存データセットを統合</li>
+<li><strong>44,000</strong> の非常に高精度なマスクアノテーション</li>
+<li><strong>1,000以上</strong>の多様なセマンティッククラスをカバー</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\6_hq_sam\1786762220388.png" alt="1786762220388"></p>
+<p><strong>学習効率</strong></p>
+<ul>
+<li><strong>8台のRTX 3090 GPUでわずか4時間</strong>の学習で完成</li>
+<li>大規模データセット（SA-1Bの11億マスク）を使わず、小規模な高品質データセットで効率的に学習</li>
+</ul>
+<h3 id="実験結果">実験結果</h3>
+<p>10の多様なセグメンテーションデータセット（COCO、UVO、LVIS、BIG、COIFT、HR-SODなど）で評価され、<strong>うち8つはゼロショット転送</strong>の設定です。</p>
+<ul>
+<li>SAMより<strong>高品質なマスク</strong>を生成</li>
+<li><strong>ゼロショット能力を維持</strong>（SAMの強みを失わない）</li>
+<li>速度・モデルサイズのトレードオフも良好</li>
+</ul>
+<p>実験のこんな例が合わせて掲載されています。
+SAMに比べると検知して欲しい場所を検知できるようになっていると考えられますよね。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\6_hq_sam\1786762261948.png" alt="1786762261948"></p>
+<h2 id="提案手法">提案手法</h2>
+<p>HQ-SAMのGood Pointは、巨大な基な基盤モデルを壊さずに、最小限の追加で品質だけを高めるという設計です。
+そんな手法について解説していきます。</p>
+<h3 id="1-基本設計思想">1. 基本設計思想</h3>
+<p>HQ-SAMは、SAMの<strong>事前学習済みパラメータをすべて凍結</strong>した上で、極めて少ない追加パラメータ（<strong>0.5%未満</strong>）だけを学習することで、SAMのゼロショット汎化性を損なわずにマスク品質を向上させます。</p>
+<p>論文では「SAMのデコーダを直接ファインチューニングしたり、新しいデコーダモジュールを導入したりすると、ゼロショット性能が著しく劣化する」ことが示されています。そのため、既存のSAM構造を<strong>緊密に統合・再利用</strong>する設計が採用されています。</p>
+<h3 id="2-2つの主要な追加要素">2. 2つの主要な追加要素</h3>
+<p><strong>(1) High-Quality Output Token（HQ-Output Token）</strong></p>
+<p>SAMのマスクデコーダには、もともと「IoUトークン」と「マスクトークン（複数）」が入力されています。HQ-SAMでは、これらに加えて<strong>新たな学習可能なHQ-Output Token</strong>を注入します。</p>
+<ul>
+<li><strong>役割</strong>: 元のマスクトークンとは独立に、<strong>高品質なマスクを直接予測</strong>する</li>
+<li><strong>関連パラメータ</strong>: HQ-Output Tokenに対応する<strong>3層のMLP</strong>（<code>hf_mlp</code>）も新たに学習</li>
+<li>デコーダ内のトランスフォーマー処理自体はSAMの既存ものをそのまま使用</li>
+</ul>
+<p><strong>(2) Global-local Feature Fusion（グローバル・ローカル特徴融合）</strong></p>
+<p>SAMのマスクデコーダ特徴だけでは細部の再現が不十分なため、<strong>ViTエンコーダの異なる階層の特徴を融合</strong>します。</p>
+<ul>
+<li><strong>Global特徴</strong>: SAMのマスクデコーダが生成する特徴（セマンティックな大域情報）</li>
+<li><strong>Local特徴</strong>: ViTエンコーダの<strong>初期層（1st global attention block後）の特徴マップ</strong>（細粒度な局所情報）</li>
+</ul>
+<p>(2)の方は以下のモデル図の下の方に見えているGlobal-local Featureのラインをご覧頂ければと思います。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\6_hq_sam\1786762902117.png" alt="1786762902117"></p>
+<p>これらを以下の3つの畳み込み層で融合・変換します。</p>
+<table>
+<thead>
+<tr>
+<th>モジュール名</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compress_vit_feat</code></td>
+<td>ViTの初期特徴をデコーダ次元に変換・アップスケール</td>
+</tr>
+<tr>
+<td><code>embedding_encoder</code></td>
+<td>SAMのデコーダ特徴をアップスケール</td>
+</tr>
+<tr>
+<td><code>embedding_maskfeature</code></td>
+<td>融合後の特徴をさらに精緻化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-ネットワークの詳細な流れ実装ベース">3. ネットワークの詳細な流れ（実装ベース）</h3>
+<p><strong>学習時の処理フロー</strong></p>
+<pre><code>1. ViTエンコーダ
+   ↓
+   ├─→ 初期層特徴 (interm_embeddings[0]) ──→ compress_vit_feat ──┐
+   └─→ 最終層特徴 (image_embeddings) ─────→ embedding_encoder ─┤
+                                                                 ↓
+                                                          hq_features
+                                                                 ↓
+2. マスクデコーダ
+   - IoU Token + Mask Tokens + HQ-Output Token を結合
+   - SAMのトランスフォーマーで処理
+   - src（デコーダ特徴）をアップスケール
+                                                                 ↓
+   ├─→ upscaled_embedding_sam ──→ masks_sam（元のSAM予測）
+   └─→ upscaled_embedding_sam + hq_features ──→ upscaled_embedding_hq
+                                          ↓
+                                    masks_hq（HQ-SAM予測）
+</code></pre>
+<p><strong>マスク予測の仕組み</strong></p>
+<p>SAMと同様に、<strong>Hypernetwork（ハイパーネットワーク）方式</strong>を使用します。</p>
+<ul>
+<li>各マスクトークンに対応するMLPが、<strong>マスク埋め込み（upscaled embedding）の係数（重み）を生成</strong></li>
+<li>元のSAMマスク: <code>hyper_in @ upscaled_embedding_sam</code></li>
+<li>HQマスク: <code>hf_mlp(hq_token) @ upscaled_embedding_hq</code></li>
+</ul>
+<p>最終的に、SAMの予測マスクとHQ-SAMの予測マスクを<strong>結合</strong>して出力します。</p>
+<h3 id="4-学習戦略">4. 学習戦略</h3>
+<p><strong>凍結するパラメータ</strong></p>
+<ul>
+<li>SAMの<strong>画像エンコーダ（ViT）全体</strong></li>
+<li>SAMの<strong>マスクデコーダの既存パラメータ</strong>（output_upscaling, output_hypernetworks_mlps, iou_prediction_headなど）</li>
+</ul>
+<p><strong>学習するパラメータ</strong></p>
+<ul>
+<li><code>hf_token</code>（HQ-Output Token）</li>
+<li><code>hf_mlp</code>（HQ用3層MLP）</li>
+<li><code>compress_vit_feat</code>（ViT特徴変換層）</li>
+<li><code>embedding_encoder</code>（デコーダ特徴アップスケール層）</li>
+<li><code>embedding_maskfeature</code>（融合特徴精緻化層）</li>
+</ul>
+<p><strong>損失関数</strong></p>
+<ul>
+<li>標準的な<strong>バイナリクロスエントロピー損失</strong>と<strong>ダイス損失</strong>の組み合わせ</li>
+<li>HQSeg-44Kデータセットの高精度マスクに対して学習</li>
+</ul>
+<h3 id="5-推論時の動作">5. 推論時の動作</h3>
+<p>推論時には2つのモードがあります。</p>
+<p><strong>通常モード（<code>hq_token_only=False</code>）</strong></p>
+<ul>
+<li>SAMの予測マスク（<code>masks_sam</code>）とHQ予測マスク（<code>masks_hq</code>）を<strong>足し合わせる</strong></li>
+<li>SAMの大域的な正確性とHQの細部品質を両立</li>
+</ul>
+<p><strong>HQのみモード（<code>hq_token_only=True</code>）</strong></p>
+<ul>
+<li>HQ予測マスク（<code>masks_hq</code>）のみを使用</li>
+<li>より細部にフォーカスしたい場合に有効</li>
+</ul>
+<h3 id="6-なぜこの設計が有効か">6. なぜこの設計が有効か</h3>
+<p><strong>SAMのデコーダの解像度制約</strong></p>
+<ul>
+<li>トランスフォーマー処理後の特徴 <code>src</code> は空間的に粗い解像度（256×256程度のアップスケール前）</li>
+<li>2段階のConvTranspose2dでアップスケールし、最終的に256×256のマスクを生成→この過程で、 細い構造（髪の毛、凧の糸、網目など）の情報が失われやすい</li>
+</ul>
+<p>論文中でも、SAMの失敗例として「凧の糸のような細い構造を誤解釈し、壊れたマスクや大きな穴を生じる」ことが指摘されています。これはデコーダの特徴空間が粗すぎて、細部を保持できないことが主因です。</p>
+<p><strong>ViTエンコーダ初期層の高解像度情報</strong></p>
+<p>HQ-SAMはこの問題に対し、<strong>ViTエンコーダの初期層（1st global attention block後）の特徴マップ</strong>を活用します。</p>
+<table>
+<thead>
+<tr>
+<th>特徴</th>
+<th>デコーダ特徴</th>
+<th>ViT初期層特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>解像度</strong></td>
+<td>低（粗い）</td>
+<td>相対的に高（細かい）</td>
+</tr>
+<tr>
+<td><strong>保持する情報</strong></td>
+<td>大域的セマンティクス</td>
+<td>局所的なエッジ・テクスチャ・細部構造</td>
+</tr>
+<tr>
+<td><strong>役割</strong></td>
+<td>「何が」オブジェクトか</td>
+<td>「どこまで」が境界か</td>
+</tr>
+</tbody>
+</table>
+<p>エンコーダの一般的な特徴ですが、<code>interm_embeddings[0]</code>（ViTの初期層特徴）は、エンコーダの後期層よりも<strong>空間的な解像度が高く、細かい局所構造の情報をより多く保持</strong>しています。
+HQ-SAMはこれを <code>compress_vit_feat</code> によってデコーダの次元に変換し、デコーダ特徴と融合することで、<strong>失われた細部情報を復元</strong>します。</p>
+<p><strong>「単なるアップスケーリング」では不十分だったか</strong></p>
+<p>HQ-SAMの精度向上は「デコーダの低解像度特徴の限界を、エンコーダの高解像度・高周波特徴で補完したこと」 に加えて、「HQ-Output Tokenによる直接的な高品質マスク予測機構」 の両方が組み合わさった結果と考えています。</p>
+<p>論文では、HQ-SAMと異なるアプローチ（後処理リファインメントや、別デコーダの導入）を比較し、以下の問題を指摘しています：</p>
+<ul>
+<li>CRF（条件付きランダム場）ベースの後処理: 低レベルの色境界に依存し、高レベルセマンティック文脈を十分活用できない。大きなセグメンテーションエラーを修正できない。</li>
+<li>別ネットワークによるカスケードリファインメント: 過学習しやすく、ゼロショット汎化性を損なう。</li>
+</ul>
+<p>つまり、単に「解像度を上げる」だけではなく、<strong>SAMの既存知識を保持しつつ、デコーダ内で自然に高解像度情報を統合</strong>する必要がありました。</p>
+<p><strong>HQ-Output Tokenの役割（「補完」だけではない）</strong></p>
+<p>ただし、HQ-SAMの精度向上は<strong>単なる特徴融合（補完）だけでは説明できません</strong>。</p>
+<p>HQ-SAMの核心は、<strong>HQ-Output Tokenが「高品質マスク専用の予測ヘッド」として機能する</strong>点にあります：</p>
+<ul>
+<li>SAMの元のマスクトークンは、粗いマスクを予測するよう学習済み</li>
+<li>HQ-Output Tokenは、<strong>融合後の高品質特徴（upscaled_embedding_hq）を使って、直接高品質マスクを予測</strong>するよう新たに学習</li>
+<li>最終的に <code>masks_sam + masks_hq</code> として、SAMの大域的正確性とHQの細部品質を<strong>両立</strong></li>
+</ul>
+<p>つまり、**「高解像度特徴の補完」＋「その特徴を使う専用予測ヘッドの学習」**の両方が必要でした。</p>
+<p>総括するとHQ-SAMの以下の特徴によりSAMのゼロショットの性能を維持しつつ、高解像度の情報をSAMに干渉しないように保持することで、SAMの精度を改善したということです。</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ViT初期層特徴の融合</strong></td>
+<td>デコーダの低解像度特徴に、高解像度・高周波の局所情報を補完</td>
+</tr>
+<tr>
+<td><strong>HQ-Output Token + hf_mlp</strong></td>
+<td>補完された特徴を使って、高品質マスクを<strong>直接予測</strong>する専用ヘッド</td>
+</tr>
+<tr>
+<td><strong>SAMパラメータ凍結</strong></td>
+<td>11億マスクで学習されたゼロショット知識を保持</td>
+</tr>
+<tr>
+<td><strong>最終出力（SAM + HQ）</strong></td>
+<td>大域的な正確性と細部の精緻さを両立</td>
+</tr>
+</tbody>
+</table>
+<h2 id="poc">PoC</h2>
+<p>HQ-SAM 2 vs SAM 2.1 輪郭精度比較 PoC を行ってみます。</p>
+<blockquote>
+<p>自動マスク生成による物体検出と境界精度の定量的比較</p>
+</blockquote>
+<h3 id="1-poc-の目的">1. PoC の目的</h3>
+<p>画像内の物体を<strong>プロンプトなし（bbox・点指定なし）<strong>で自動検出し、<strong>SAM 2.1</strong> と <strong>HQ-SAM 2</strong> のセグメンテーション品質、特に</strong>輪郭（境界）精度</strong>を比較することを目的とする。</p>
+<ul>
+<li>人が物体位置を指定しなくても、画像内の主要物体を自動で検出できるか</li>
+<li>HQ-SAM 2 は SAM 2.1 と比較して、境界の細部がどれだけ改善されるか</li>
+<li>輪郭の複雑さ（点数・長さ）を定量的に評価する</li>
+</ul>
+<h3 id="2-使用モデル">2. 使用モデル</h3>
+<p>両モデルとも、論文著者・公式リポジトリから配布されている正規の学習済み重みを使用します。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>SAM 2.1（ベースライン）</th>
+<th>HQ-SAM 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>配布元</strong></td>
+<td>Meta AI / FAIR</td>
+<td>SysCV（lkeab）</td>
+</tr>
+<tr>
+<td><strong>重みファイル</strong></td>
+<td><code>sam2.1_hiera_tiny.pt</code></td>
+<td><code>sam2.1_hq_hiera_tiny.pt</code></td>
+</tr>
+<tr>
+<td><strong>VRAM使用量</strong></td>
+<td>~2 GB</td>
+<td>~2 GB</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>補足</strong>: VRAM制約（14.56GB）を考慮し、LargeモデルからTinyモデルに切り替え。比較の公平性は保持される。</p>
+</blockquote>
+<h3 id="3-実行手順">3. 実行手順</h3>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 環境構築</strong></td>
+<td><code>sam-hq2</code> リポジトリをcloneし、必要なパッケージをインストール</td>
+</tr>
+<tr>
+<td><strong>2. 重みダウンロード</strong></td>
+<td>公式URLから SAM 2.1 Tiny / HQ-SAM 2 Tiny のチェックポイントを取得</td>
+</tr>
+<tr>
+<td><strong>3. ベースラインSAM 2.1のパッチ</strong></td>
+<td>HQ-SAM 2のpredictorが渡す追加引数（<code>hq_token_only</code> / <code>interm_embeddings</code>）を無視するようforwardを書き換え、互換性を確保</td>
+</tr>
+<tr>
+<td><strong>4. 自動マスク生成（SAM 2.1）</strong></td>
+<td><code>SAM2AutomaticMaskGenerator</code> を使用し、画像全体をグリッド走査して物体を自動検出。結果をCPUに保存後、モデルをGPUから解放</td>
+</tr>
+<tr>
+<td><strong>5. 自動マスク生成（HQ-SAM 2）</strong></td>
+<td>同様に自動検出を実行。2つのモデルを同時にGPUに載せないことでメモリを確保</td>
+</tr>
+<tr>
+<td><strong>6. 比較対象の選択</strong></td>
+<td>検出された複数マスクの中から「面積最大」のものを自動選択（画像の主要物体と定）</td>
+</tr>
+<tr>
+<td><strong>7. 輪郭抽出</strong></td>
+<td>OpenCV の <code>findContours</code> で両マスクの輪郭を抽出</td>
+</tr>
+<tr>
+<td><strong>8. 定量的比較</strong></td>
+<td>輪郭の点数・長さを計測し、HQ-SAM 2 の改善率を算出</td>
+</tr>
+<tr>
+<td><strong>9. 可視化</strong></td>
+<td>マスク・差分・拡大表示を画像として保存</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-遭遇した課題と解決策">4. 遭遇した課題と解決策</h3>
+<p>色々エラーが出ました。
+解決策はこんな感じでした。</p>
+<p><strong>課題 1: デコーダ引数の互換性エラー</strong></p>
+<p><strong>問題</strong>: ベースラインSAM 2.1のデコーダは <code>hq_token_only</code> / <code>interm_embeddings</code> 引数を受け取れないため、<code>TypeError</code> が発生。</p>
+<p><strong>解決策</strong>: ベースラインの <code>forward</code> / <code>decoder.forward</code> をモンキーパッチし、HQ-SAM 2用の追加引数を自動的に無視するようにした。</p>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">_patched_forward</span>(<span class="hljs-params">*args, **kwargs</span>):
+    kwargs.pop(<span class="hljs-string">&quot;hq_token_only&quot;</span>, <span class="hljs-literal">None</span>)
+    kwargs.pop(<span class="hljs-string">&quot;interm_embeddings&quot;</span>, <span class="hljs-literal">None</span>)
+    <span class="hljs-keyword">return</span> _orig_forward(*args, **kwargs)
+</code></pre>
+<p><strong>課題 2: GPUメモリ不足（OutOfMemoryError）</strong></p>
+<p><strong>問題</strong>: Largeモデル（~14GB）を2つ同時にGPUに載せると、自動マスク生成の計算量でVRAMを使い果たした。</p>
+<p><strong>解決策</strong>: 以下の複合的な対を実施。</p>
+<table>
+<thead>
+<tr>
+<th>対策</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>モデルをTiny（~2GB）に変更</td>
+<td>VRAM使用量を約1/7に削減</td>
+</tr>
+<tr>
+<td>逐次ロード（1モデルずつGPU使用）</td>
+<td>同時メモリ占有を回避</td>
+</tr>
+<tr>
+<td><code>torch.cuda.empty_cache()</code></td>
+<td>キャッシュを即時解放</td>
+</tr>
+<tr>
+<td>画像リサイズ（512px制限）</td>
+<td>計算コストを低減</td>
+</tr>
+<tr>
+<td><code>crop_n_layers=0</code></td>
+<td>クロップ検出によるメモリ消費を停止</td>
+</tr>
+<tr>
+<td><code>points_per_side=16</code></td>
+<td>グリッド密度を半減</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-結果確認">5. 結果確認</h3>
+<p>Anythingモードで画像を入力して実際にマスキングされた結果を比較してみました。
+正直改善しているとはいいがたい結果に見えます。</p>
+<p>ちょっとHQ-SAM2は敏感な感じがします。
+例えば背景に隠れた見分けがつきづらい木を他とは違うと検出しています。</p>
+<p>個体識別という能力であればSAM-2よりも使えるかもしれません。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image.png" alt="alt text"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\6_hq_sam\1786771531393.png" alt="1786771531393"></p>
+<p>モデルがおかしいかと思い、ポイント指定するモードでやるときちんと人を識別してくれます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\vision_ai\image_semantic_search\doc\image\6_hq_sam\1786771695864.png" alt="1786771695864"></p>
+<p>不特定多数を検知という意味だと敏感すぎる、ということのようでした。</p>
+<h2 id="総括">総括</h2>
+<p><strong>何を解決したか</strong></p>
+<p>MetaのSAMは11億マスクで学習した強力な基盤モデルだが、<strong>境界がぼやける・細い構造（髪の毛・糸など）が消える</strong>という品質問題があった。HQ-SAMはこれを<strong>SAMのパラメータを一切触らず</strong>、極めて少ない追加（<strong>0.5%未満</strong>）で解決した。</p>
+<p><strong>技術の核心</strong></p>
+<p>SAMのデコーダ特徴は解像度が粗く、細部が失われる。HQ-SAMは以下の2つで補完する：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HQ-Output Token</strong></td>
+<td>高品質マスクを直接予測する専用ヘッド</td>
+</tr>
+<tr>
+<td><strong>ViT初期層特徴の融合</strong></td>
+<td>エンコーダの高解像度・高周波特徴をデコーダに補完</td>
+</tr>
+</tbody>
+</table>
+<p>SAMの11億マスクで学習されたゼロショット能力は<strong>凍結して保持</strong>し、HQ部分だけをHQSeg-44K（高精度4.4万マスク）で学習する。</p>
+<p><strong>PoCで判明したこと</strong></p>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>自動検出（Anything）</strong></td>
+<td>❌ 過敏になり過剰分割。背景の木なども別個体として検出</td>
+</tr>
+<tr>
+<td><strong>点プロンプト指定</strong></td>
+<td>✅ 正常動作。指定物体の境界が高精度にセグメント化</td>
+</tr>
+</tbody>
+</table>
+<p><strong>結論</strong></p>
+<p><strong>HQ-SAMは「不特定多数を勝手に検出するツール」ではなく、「指定した物体の境界を高精度に切り出すツール」</strong>。自動検出には向かないが、プロンプトで対象を絞ればSAMより明確に品質が向上する。用途は画像編集・自動アノテーション・個体の精密マスキングなど。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/FhSBK8VaLss?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
