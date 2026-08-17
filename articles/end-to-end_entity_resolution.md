@@ -1,5 +1,5 @@
 ---
-title: "end-to-end entity resolution and question answering using fifferentiable knowledge graphs"
+title: "end-to-end entity resolution and question answering"
 emoji: "🐸"
 type: "tech" # tech: 技術記事 / idea: アイデア記事
 topics: ["ai", "NLP", "Entity Resolution"]
