@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30a2;&#x30a4;&#x30c7;&#x30a2;&#x306e;&#x6240;&#x5728;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>昨日話をした<a href="https://yoshishinnze.hatenablog.com/entry/2026/10/03/043000">Kimi K3</a>に出てきたアイデアのうち 層を選択的に参照する アイデアである <strong>AttnRes</strong> という考えについて気になりました。
+ニューラルネットワークの多層構造は思考の質を向上させるうえで重要ですが、本来問題の難易度に応じて制御されるべきです。
+そんな層を選択的に参照する手法について調べてみました。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+
+<h2 id="アイデアの所在">アイデアの所在</h2>
+<p><strong>「層を選択的に参照する」というアイデア自体の原案・類似研究は複数存在します</strong>。Attention Residuals（AttnRes）はこれらの流れを受けつつ、「残差接続そのものを層間アテンションで置き換える」という具体的な形で実装したものです。</p>
+<p>以下に主な先行研究と、AttnResとの関係を整理します。</p>
+<h3 id="1-層間アテンションクロスレイヤー接続の先行研究">1. 層間アテンション・クロスレイヤー接続の先行研究</h3>
+<table>
+<thead>
+<tr>
+<th>研究名</th>
+<th>著者・年</th>
+<th>AttnResとの関係</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Depth-Adaptive Transformer</strong></td>
+<td>Elbayad et al. (2019/2020)</td>
+<td>入力の難易度に応じて「どの層で計算を終了するか」を動的に選択。AttnResの「深さ方向の動的な扱い」の先駆け。</td>
+</tr>
+<tr>
+<td><strong>Deep Transformers with Latent Depth</strong></td>
+<td>Li et al. (2020)</td>
+<td>各層を確率的にスキップする「潜在変数による深さ制御」。層の「使い分け」の原案。</td>
+</tr>
+<tr>
+<td><strong>Cross-Layer Attention</strong></td>
+<td>Brandon et al. (2024)</td>
+<td>KVキャッシュを層間で共有・圧縮し、異なる層間でアテンションを取る仕組み。AttnResの「層間アテンション」の直接的な先行概念。</td>
+</tr>
+<tr>
+<td><strong>Vertical Attention</strong></td>
+<td>Kojima et al. (2025/2026)</td>
+<td>Transformerの「層間接続」を自動探索・学習する手法。AttnResの「層を選択的に繋ぐ」という発想と極めて近い。</td>
+</tr>
+<tr>
+<td><strong>Depth-Attention: Cross-Layer Value Mixing</strong></td>
+<td>Zeng et al. (2026)</td>
+<td>後続の層が先行する層のValue表現を選択的に混合（Mixing）する手法。AttnResとほぼ同時期に独立して提案された類似アプローチ。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-動的深さレイヤールーティングの先行研究">2. 動的深さ・レイヤールーティングの先行研究</h3>
+<p>層そのものを「スキップする」「繰り返す」「順序を変える」というアイデアも、AttnResの「選択的な層参照」と概念的に重なります。</p>
+<ul>
+<li><strong>DeeBERT / DynaBERT</strong> (2020): 入力に応じて途中の層で推論を終了する「Early Exit」。「全層を必ず通す必要はない」という発想の先駆け。</li>
+<li><strong>Router-Tuning: Dynamic-Depth in Transformers</strong> (2024): 各層を通過するかどうかを「ルーター」で動的に決定。</li>
+<li><strong>Radial Networks: Dynamic Layer Routing</strong> (2024): 層の実行順序を動的に変更。</li>
+<li><strong>Dr.LLM: Dynamic Layer Routing in LLMs</strong> (2025): 大規模言語モデルでの層ルーティング。</li>
+<li><strong>MACRO: Markov Chain Routing of Transformer Layers</strong> (2026): マルコフ連鎖で層間の遷移を制御。</li>
+</ul>
+<h3 id="3-attnresの新規性は何か">3. AttnResの新規性は何か</h3>
+<p>これらの先行研究がある中で、AttnResが独自の貢献とする点は以下の通りです（論文 arXiv:2603.15031 からの推定）。</p>
+<p><strong>従来の残差接続の問題の定式化</strong></p>
+<p>標準的な残差接続（PreNorm）は「全層の出力を固定された重み1で足し合わせる」ため、深さに比例して隠れ状態が線形に成長し、各層の個別の寄与が「薄まる（dilution）」ことを数学的に指摘しました。</p>
+<p><strong>解決策：残差接続を「深さ方向のアテンション」に置き換える</strong></p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>h</mi><mrow><mi>l</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>α</mi><mn>0</mn></msub><msub><mi>h</mi><mn>1</mn></msub><mo>+</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>l</mi></munderover><msub><mi>α</mi><mi>i</mi></msub><msub><mi>f</mi><mi>i</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h_{l+1} = \alpha_0 h_1 + \sum_{i=1}^{l} \alpha_i f_i(h_i)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9028em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:3.1138em;vertical-align:-1.2777em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8361em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>各層が「過去の全層の出力」に対してソフトマックスアテンションを計算し、動的に重み付けした加重和を取ることで、固定加算の代わりに「必要な層だけを選択的に参照」します。これは従来の「層をスキップする」系の研究とは異なり、<strong>全層の情報を保持しつつ、その寄与を動的に調整する</strong>点で新しいアプローチです。</p>
+<h3 id="まとめると">まとめると</h3>
+<p>「層を選択的に参照する」という概念自体は、Depth-Adaptive Transformer（2019）やCross-Layer Attention（2024）、Vertical Attention（2025）など、<strong>少なくとも5年以上にわたる研究の流れの中に存在</strong>していました。</p>
+<p>AttnResの本質的な新規性は、「残差接続というTransformerの基盤構造そのものを、アテンション機構で置き換える」という<strong>根本的な再設計</strong>にあり、単なる層のスキップやルーティングではなく、「深さ方向の情報集約」を学習可能にした点にあります。</p>
+<h2 id="なぜ層の選択が必要か">なぜ層の選択が必要か？</h2>
+<p>そもそもですがニューラルネットワークにおいて層の選択的な参照が重要となるのでしょうか。
+層を選択的に参照することが重要な理由は、<strong>「異なる層が異なる情報を持っているのに、標準のTransformerは後続の層がその情報を自由に使えない」</strong> という構造的な問題を解決するためです。以下に具体的な理由を整理します。</p>
+<h3 id="1-標準の残差接続では情報が薄まる">1. 標準の残差接続では「情報が薄まる」</h3>
+<p>Transformerの標準的な残差接続（PreNorm）は、各層の出力を<strong>すべて同じ重み（1）で足し合わせて</strong>次に渡します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>h</mi><mrow><mi>l</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>h</mi><mi>l</mi></msub><mo>+</mo><msub><mi>f</mi><mi>l</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mi>l</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h_{l+1} = h_l + f_l(h_l)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9028em;vertical-align:-0.2083em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>これを展開すると、最終層の隠れ状態は「全層の出力の累積和」になります。問題は、**層が深くなるほど各層の個別の寄与が「薄まる（dilution）」**ことです。100層を超えるようなモデルでは、初期層が持つ重要な情報（例えば単語の基本意味や局所的な構造）が、後の層の膨大な加算の中で「埋もれて」しまい、実質的に参照できなくなります。</p>
+<h3 id="2-各層は異なる抽象度の表現を持っている">2. 各層は「異なる抽象度」の表現を持っている</h3>
+<p>Transformerの層を観察すると、以下のような傾向が知られています。</p>
+<table>
+<thead>
+<tr>
+<th>層の深さ</th>
+<th>担う情報の性質</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>浅い層（初期）</strong></td>
+<td>局所的な構文、単語の基本的な意味、近傍の関係性</td>
+</tr>
+<tr>
+<td><strong>中間層</strong></td>
+<td>句・節レベルの構造、照応関係、文脈的な曖昧性解消</td>
+</tr>
+<tr>
+<td><strong>深い層（後期）</strong></td>
+<td>高次の推論、論理関係、タスク特化の判断</td>
+</tr>
+</tbody>
+</table>
+<p>つまり、<strong>後期の層が判断を下す際に必要な情報は、必ずしも「すぐ前の層」にはない</strong>のです。しかし標準の残差接続では「直前の層の出力 + α」しか見えないため、初期層の低次ながら決定的な情報に「振り返る」ことができません。</p>
+<h3 id="3-後続の層が必要な表現を検索できるようになる">3. 後続の層が「必要な表現を検索できる」ようになる</h3>
+<p>層を選択的に参照できると、後続の層は「過去の全層の出力」を候補として持ち、<strong>「今の判断に必要な表現はどれか」をアテンションで動的に選べます</strong>。</p>
+<p>これは人間が長文を読むときに「重要な箇所だけを振り返る」のと同じです。標準の残差接続は「教科書を1ページずつ順番に読んで、前のページの内容を思い出せなくなる」状態ですが、選択的参照は「いつでも前のページを索引付きで引ける」状態になります。</p>
+<h3 id="4-勾配の流れも改善される学習の安定化">4. 勾配の流れも改善される（学習の安定化）</h3>
+<p>標準の残差接続では勾配は主に「直前の層」に逆流しますが、選択的参照では<strong>後期の層から初期層への直接的な勾配パス</strong>が生まれます。</p>
+<ul>
+<li>初期層が「重要な特徴を捉えていれば」、後期層がそれを選んで大きな重みを与える</li>
+<li>その結果、初期層にも大きな学習信号が直接届く</li>
+<li>深いモデルで起きやすい「初期層の勾配消失」が緩和され、<strong>全層が協調して学習できる</strong></li>
+</ul>
+<h2 id="アイデアの共通点">アイデアの共通点</h2>
+<p>これらの技術には <strong>「層を選択的に参照する」という目的を実現するための共通の構造と考え方</strong>が存在します。以下に主要な共通点を整理します。</p>
+<h3 id="1-アテンション機構の深さ方向への拡張">1. アテンション機構の「深さ方向への拡張」</h3>
+<p>最も根本的な共通構造は、<strong>アテンションを「トークン間（横方向）」から「層間（縦方向）」へ拡張する</strong>という考え方です。</p>
+<ul>
+<li>標準のSelf-Attention: 「どのトークンの情報を参照するか」を選択</li>
+<li>層間アテンション: 「どの層の表現を参照するか」を選択</li>
+</ul>
+<p>どちらも<strong>クエリ・キー・バリュー（QKV）の枠組み</strong>を使います。AttnResでは「現在の層が発行するクエリ」と「過去の各層の出力をキー・バリューとして」照合し、ソフトマックスで重みを決定します。Cross-Layer AttentionやDepth-Attentionも同様のQKV構造を層間に適用しています。</p>
+<h3 id="2-履歴バッファの明示的な保持">2. 「履歴バッファ」の明示的な保持</h3>
+<p>選択的参照を実現するには、<strong>過去の全層の出力をメモリ上に保持しておく</strong>必要があります。</p>
+<pre><code>履歴バッファ H = [h_1, h_2, ..., h_l]  （各層の出力を蓄積）
+現在の層 l+1 は、H に対してアテンションを計算
+</code></pre>
+<p>これは標準のTransformerでは「直前の層の出力しか保持しない」状態から、<strong>全層の履歴を「索引付きデータベース」として保持する</strong>構造的変更を意味します。AttnRes、Vertical Attention、Depth-Attentionいずれもこの「層の履歴バッファ」が前提となっています。</p>
+<h3 id="3-動的なソフトマックス重み付け入力依存の選択">3. 動的なソフトマックス重み付け（入力依存の選択）</h3>
+<p>標準の残差接続では重みは固定（<code>+1</code>）ですが、これらの技術では<strong>重みを入力に応じて動的に決定</strong>します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>α</mi><mi>i</mi></msub><mo>=</mo><mtext>softmax</mtext><mo stretchy="false">(</mo><mtext>score</mtext><mo stretchy="false">(</mo><msub><mi>q</mi><mrow><mi>l</mi><mo>+</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><msub><mi>k</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\alpha_i = \text{softmax}(\text{score}(q_{l+1}, k_i))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord text"><span class="mord">score</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">))</span></span></span></span></span></p>
+<p>これにより「この入力に対しては初期層の情報が重要」「別の入力では中間層が重要」といった、<strong>入力ごとに最適な層の組み合わせ</strong>を柔軟に選べます。Dynamic Layer RoutingやDr.LLMも同様に「入力に応じた経路選択」を行いますが、ソフトマックスによる「重み付き和」を使うか「離散的なスキップ」を使うかが主な違いです。</p>
+<h3 id="4-スパースな参照全層ではなく選択的に">4. スパースな参照（全層ではなく選択的に）</h3>
+<p>全層を常に参照すると計算コストが層数の2乗に比例して増大します。これを避けるための共通の工夫が<strong>スパース化</strong>です。</p>
+<table>
+<thead>
+<tr>
+<th>手法</th>
+<th>スパース化の方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AttnRes（Block版）</strong></td>
+<td>近傍の層ブロックだけを参照（全層参照の近似）</td>
+</tr>
+<tr>
+<td><strong>Cross-Layer Attention</strong></td>
+<td>層をグループ化し、代表層だけを参照</td>
+</tr>
+<tr>
+<td><strong>Dynamic Layer Routing</strong></td>
+<td>ルーターが「通過する層」を少数だけ選択</td>
+</tr>
+<tr>
+<td><strong>Early Exit</strong></td>
+<td>必要な深さで計算を終了し、深い層を使わない</td>
+</tr>
+</tbody>
+</table>
+<p>「全層を見る」理想形と「計算コストを抑える」実用形の間で、<strong>どこまで参照範囲を制限するか</strong>が設計上の共通のトレードオフです。</p>
+<h3 id="5-勾配ハイウェイの構構築">5. 「勾配ハイウェイ」の構構築</h3>
+<p>層を選択的に参照することで、<strong>後期層から初期層への直接的な勾配パス</strong>が生まれます。</p>
+<p>標準の残差接続では勾配は <code>l+1 → l → l-1 → ... → 1</code> と順に逆流しますが、層間アテンションでは <code>l+1 → i</code>（任意の i &lt; l+1）への直接の勾配が流れます。これは構造的に<strong>スキップ接続を多重度化した「勾配ハイウェイ」</strong> と言えます。DeeBERTやDepth-Adaptive Transformerでも「浅い出口」が深い層への勾配を短絡させる役割を担っています。</p>
+<h3 id="6-まとめ共通の構造を図式化すると">6. まとめ：共通の構造を図式化すると</h3>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\image.png" alt="alt text"></p>
+<p>これらの技術は、<strong>「Transformerは横方向（トークン間）には強いが、縦方向（層間）には弱い」</strong> という構造的な非対称性を補うという、共通の問題意識から生まれています。</p>
+<h2 id="総括">総括</h2>
+<p>層を選択的に参照するということの本質は、<strong>「深さ方向の情報の非対称性」を解消し、モデルに「必要な知識を必要なときに取り出す自律性」を与えること</strong>です。</p>
+<p>具体的には3点に集約されます。</p>
+<ol>
+<li><strong>情報の薄まりを防ぐ</strong>: 深い層ほど初期層の情報が埋もれる「dilution」を解消し、どの深さの表現も等しく参照可能にする</li>
+<li><strong>抽象度のミスマッチを解消する</strong>: 後続の層が「今必要な抽象度」の表現（局所的な構文か高次の推論か）を、過去の全層から自由に検索・統合できるようにする</li>
+<li><strong>計算を入力に応じて最適化する</strong>: 問題の難易度に応じて「どの層の知識を使うか」を動的に決定し、無駄な深さの計算を避ける</li>
+</ol>
+<p>一言で表せば、<strong>「層を通過する列車から、各層がただ受け取るだけの受動的な管ではなく、過去の全層を索引付きで検索できる能動的な情報システムへと進化させること」</strong> が本質です。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
