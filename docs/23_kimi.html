@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>中国がリリースするLLMはアメリカ本土産のLLMを凌駕する勢いがあります。
+彼らはアメリカ本土では入手可能な、高性能なGPUをさほど使うことが出来ません。
+しかし、低コストで性能はほぼ同程度と考えられる高い性能を持っています。
+本日はそんな中国産LLMの一つ Kimi について説明していきます。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="概要">概要</h2>
+<p>「先日公開されたLLMのKimi」とは、中国の <strong>Moonshot AI（月之暗面）</strong> が2026年7月27日に公開した <strong>Kimi K3</strong> を指している可能性が高いです。<source-chip title="GitHub - MoonshotAI/Kimi-K3" url="https://github.com/moonshotai/Kimi-K3" /></p>
+<h3 id="kimi-k3-の概要">Kimi K3 の概要</h3>
+<p>Kimi K3 は、Moonshot AI が開発した <strong>オープンウェイトのネイティブマルチモーダル・エージェンティックモデル</strong> です。同社がこれまでにリリースしたモデルの中で最も高性能なモデルとして位置づけられています。<source-chip title="GitHub - MoonshotAI/Kimi-K3" url="https://github.com/moonshotai/Kimi-K3" /></p>
+<p><strong>主な特徴</strong></p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>アーキテクチャ</strong></td>
+<td>Mixture-of-Experts（MoE）</td>
+</tr>
+<tr>
+<td><strong>総パラメータ数</strong></td>
+<td>2.8 兆（2.8T）</td>
+</tr>
+<tr>
+<td><strong>有効化パラメータ数</strong></td>
+<td>1,040億（104B）</td>
+</tr>
+<tr>
+<td><strong>コンテキスト長</strong></td>
+<td>100万トークン（1,048,576トークン）</td>
+</tr>
+<tr>
+<td><strong>モダリティ</strong></td>
+<td>テキスト、画像、動画</td>
+</tr>
+<tr>
+<td><strong>アテンション機構</strong></td>
+<td>Kimi Delta Attention（KDA） &amp; Gated MLA</td>
+</tr>
+<tr>
+<td><strong>エキスパート数</strong></td>
+<td>896（トークンごとに16個を選択）</td>
+</tr>
+<tr>
+<td><strong>ビジョンエンコーダー</strong></td>
+<td>MoonViT-V2（4.01億パラメータ）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>新しいアーキテクチャ</strong></p>
+<p>Kimi K3 は、従来のモデルとは異なる新しいアーキテクチャを採用しています。</p>
+<ul>
+<li><strong>Kimi Delta Attention（KDA）</strong>: 従来のアテンション機構を改良した新方式</li>
+<li><strong>Attention Residuals（AttnRes）</strong>: 効率的な学習・推論を実現</li>
+<li><strong>Stable LatentMoE</strong>: 896個のエキスパートの中から16個を選択するスパースなMoE構造。Kimi K2 と比較して約2.5倍のスケーリング効率を達成</li>
+</ul>
+<h3 id="強みと用途">強みと用途</h3>
+<p><strong>1. 長期間のコーディング（Long-Horizon Coding）</strong></p>
+<p>最小限の人間の介入で、大規模なリポジトリの操作やターミナルツールの連携、GPUカーネル最適化、コンパイラ開発、ゲーム開発、CAD、さらにはチップ設計まで対応できるとされています。<source-chip title="GitHub - MoonshotAI/Kimi-K3" url="https://github.com/moonshotai/Kimi-K3" /></p>
+<p><strong>2. エージェンティックな知識作業</strong></p>
+<p>深い調査レポートの作成、インタラクティブな可視化ダッシュボードの構築、モーションデザインや動画編集など、エンドツーエンドの知識作業を自律的に実行できます。</p>
+<p><strong>3. ネイティブマルチモーダル &amp; 長コンテキスト</strong></p>
+<p>テキスト、画像、動画を同一モデル内で理解し、最大100万トークンの長いコンテキストを処理できます。</p>
+<h3 id="ライセンスと公開形態">ライセンスと公開形態</h3>
+<p>Kimi K3 は <strong>「Kimi K3 License」</strong> のもとで <strong>フルモデルウェイトが公開</strong> されており、研究・デプロイ・さらなるイノベーションのために自由に利用可能です。これは世界初のオープンな3Tクラスモデルとして注目されています。<source-chip title="GitHub - MoonshotAI/Kimi-K3" url="https://github.com/moonshotai/Kimi-K3" /></p>
+<blockquote>
+<p><strong>3Tクラスモデル</strong><br>
+3Tクラスモデルとは、<strong>総パラメータ数が約3兆（3 Trillion）に達する大規模言語モデル</strong>のことを指します。
+<strong>用語の内訳</strong></p>
+<table>
+<thead>
+<tr>
+<th>表記</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>3T</strong></td>
+<td>3 Trillion = 3,000,000,000,000 = <strong>3兆</strong></td>
+</tr>
+<tr>
+<td><strong>クラス</strong></td>
+<td>「その規模帯に属する」という意味（例: 3兆パラメータ級）</td>
+</tr>
+<tr>
+<td>Kimi K3 は総パラメータ数が <strong>2.8兆（2.8T）</strong> なので、「約3兆クラス」として位置づけられています。</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>補足: MoEモデルでの「総パラメータ」と「有効化パラメータ」</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>Kimi K3 のような <strong>Mixture-of-Experts（MoE）</strong> モデルでは、2種類のパラメータ数が存在します。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>総パラメータ数（2.8T）</strong>: モデル全体が持つパラメータの総量。ストレージ上のモデルサイズに相当します。</li>
+<li><strong>有効化パラメータ数（104B）</strong>: 推論時に実際に使われる（活性化される）パラメータ数。1つのトークンを処理する際に動く部分のみです。
+つまり、<strong>「3Tクラス」はモデル全体の規模の大きさを示す指標</strong>であり、推論時に毎回3兆パラメータが動くわけではありません。
+<strong>規模感の比較</strong>
+他の主要モデルと比較すると、3Tクラスがどれほど大きいかが分かります。
+| モデル | 総パラメータ数 | 有効化パラメータ数 |
+|---|---|---|
+| GPT-4（推定） | 約1.8T | 約数百B（推定） |
+| Kimi K3 | <strong>2.8T</strong> | 104B |
+| Kimi K2 | 1T | 32B |
+このように、Kimi K3 は<strong>世界初のオープンな3兆パラメータ級モデル</strong>として、公開モデルの中で最も大規模な部類に入ります。
+<strong>シリーズの流れ</strong>
+Kimi K3 の前には以下のモデルが公開されていました。</li>
+<li><strong>Kimi K2</strong>（2025年7月）: 320億有効化パラメータ、1兆総パラメータのMoEモデル</li>
+<li><strong>Kimi K2.5</strong>（2026年1月）: ネイティブマルチモーダル・ビジュアルエージェンティックモデル</li>
+<li><strong>Kimi K2.6</strong>: コーディングとエージェントスウォーム能力を強化したモデル
+Kimi K3 はこの流れを受け継ぎつつ、パラメータ規模とアーキテクチャの両面で大きな進化を遂げたモデルです。</li>
+</ul>
+</blockquote>
+<h2 id="仕組み">仕組み</h2>
+<p>Kimi K3 の3つの新技術は、<strong>「大規模モデルを動かす際のボトルネック」をそれぞれ別の角度から解決</strong>しています。順を追って説明します。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\docs\image\23_kimi\1787777753375.png" alt="1787777753375"></p>
+<h3 id="1-kimi-delta-attentionkda">1. Kimi Delta Attention（KDA）</h3>
+<p><strong>従来の問題</strong></p>
+<p>Transformer のアテンション機構では、長い文章を処理する際に <strong>KVキャッシュ</strong> と呼ばれる「過去の単語の記憶」を保持する必要があります。文章が長くなるほどこのキャッシュが肥大化し、<strong>メモリ消費が爆発的に増え、処理速度が劇的に低下</strong>します。100万トークン（約75万文字）もの長文を扱う際には、この問題が深刻になります。</p>
+<p><strong>KDA の解決策</strong></p>
+<p>KDA は「<strong>差分（Delta）</strong> 」に着目します。隣接するトークン同士の関係性は、実はほとんど変わらない（＝冗長な情報が多い）という性質を利用し、<strong>全情報をそのまま保持するのではなく「変化した部分だけ」を効率的に圧縮・保持</strong>します。</p>
+<p>これにより、長文処理時のメモリ使用量を大幅に削減できます。具体的には、KVキャッシュのメモリを <strong>約75%削減</strong>し、100万トークンでのデコード速度を <strong>6.3倍</strong> に高速化したと報告されています。<source-chip title="OpenModelMap - Kimi K3 Architecture Deep Dive" url="https://openmodelmap.com/kimi-k3/architecture" /><source-chip title="zmead.com - Inside Kimi K3's Two Architectural Pillars" url="https://zmead.com/blog/kimi-k3-kda-attnres-explained/" /></p>
+<p><strong>イメージ</strong></p>
+<p>従来のアテンションは「教科書の全ページを開いたまま試験を受ける」状態でしたが、KDA は「<strong>変わった箇所だけをスマートなメモ帳にまとめて持ち歩く</strong>」ような仕組みです。</p>
+<h3 id="2-attention-residualsattnres">2. Attention Residuals（AttnRes）</h3>
+<p><strong>従来の問題</strong></p>
+<p>深層ニューラルネットワークでは、層が深くなるほど <strong>「勾配消失・勾配爆発」</strong> という問題が起きやすくなります。これは、入力から出力に向かって情報が伝わる途中で信号が弱まったり、逆伝播の学習信号が途中で消失したりする現象です。従来は「残差接続（ResNet方式）」で対処していましたが、<strong>100層を超えるような超深いモデル</strong>では、単純な残差接続だけでは情報の流れが不十分でした。</p>
+<p><strong>AttnRes の解決策</strong></p>
+<p>AttnRes は、層を通過する情報の流れを「<strong>選択的に取り出せる索引付きノート</strong>」のように改良します。全層を一律に足し合わせるのではなく、<strong>必要な層の表現を動的に選択・参照</strong>できる仕組みを導入しました。</p>
+<p>これにより、モデルの深さに比例して情報が混濁するのを防するのを防ぎ、<strong>層間の情報伝達を効率化</strong>します。結果として、トレーニング効率が <strong>25%向上</strong>し、それでいて追加オーバーヘッドは <strong>2%未満</strong>に抑えられています。<source-chip title="zmead.com - Inside Kimi K3's Two Architectural Pillars" url="https://zmead.com/blog/kimi-k3-kda-attnres-explained/" /><source-chip title="Kimi K3 Tech Blog" url="https://www.kimi.ai/blog/kimi-k3" /></p>
+<p><strong>イメージ</strong></p>
+<p>従来の残差接続は「帳簿に全取引を順番に書き連ねる」ようなものでしたが、AttnRes は「<strong>重要な取引だけを索引付きで引ける帳簿</strong>」になったと言えます。</p>
+<h3 id="3-stable-latentmoe">3. Stable LatentMoE</h3>
+<p><strong>従来の問題</strong></p>
+<p>Mixture-of-Experts（MoE）は、「多数の専門家（エキスパート）の中から必要な少数を選んで使う」ことで、<strong>総パラメータ数を増やしつつ計算コストを抑える</strong>手法です。しかし、エキスパート数が増えると以下の問題が起きます。</p>
+<ul>
+<li><strong>ルーティングの偏り</strong>: 特定のエキスパートだけに負荷が集中し、他が使われない</li>
+<li><strong>学習の不安定化</strong>: どのエキスパートを選ぶかの「ルーター」が学習中に崩壊する</li>
+<li><strong>スケーリングの限界</strong>: エキスパートを増やしても効率が上がらなくなる</li>
+</ul>
+<p><strong>Stable LatentMoE の解決策</strong></p>
+<p>Kimi K3 では <strong>896個のエキスパート</strong> の中から、各トークンごとに <strong>16個だけ</strong> を選択する超スパースな構造を採用しています。これを安定して動作させるため、以下の工夫が施されています。</p>
+<ul>
+<li><strong>Quantile Balancing（分位点バランシング）</strong>: エキスパートへの負荷分散を、ルーターのスコアの分位点から直接計算して最適化。従来のヒューリスティックな調整や敏感なハイパーパラメータを排除し、安定した負荷分散を実現</li>
+<li><strong>Per-Head Muon</strong>: アテンションの各ヘッドを独立して最適化し、大規模化しても適応的に学習できるようにする技術</li>
+<li><strong>SiTU（Sigmoid Tanh Unit）</strong>: 活性化関数を改良し、大規模MoEでの学習安定性を高める</li>
+</ul>
+<p>これにより、Kimi K2 と比較して <strong>約2.5倍のスケーリング効率</strong> を達成しています。つまり、「パラメータを増やしても計算効率が悪化しない」構造になっています。<source-chip title="Kimi K3 Tech Blog" url="https://www.kimi.ai/blog/kimi-k3" /><source-chip title="PoYo - Kimi K3 Architecture" url="https://poyo.ai/hub/kimi-k3-architecture" /></p>
+<p><strong>イメージ</strong></p>
+<p>896人の専門家がいる病院で、患者（トークン）の症状に応じて <strong>最適な16人の専門医チーム</strong> を自動で組むシステムです。ただし、特定の医師だけが疲弊しないよう、<strong>AIが常に負荷を監視・調整</strong>して安定した診療を続けられる仕組みになっています。</p>
+<h3 id="3つの技術の関係性">3つの技術の関係性</h3>
+<table>
+<thead>
+<tr>
+<th>技術</th>
+<th>解決する問題</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KDA</strong></td>
+<td>長文処理時のメモリ・速度問題</td>
+<td>長文でも高速・低メモリ</td>
+</tr>
+<tr>
+<td><strong>AttnRes</strong></td>
+<td>超深い層での情報伝達の劣化</td>
+<td>深いモデルでも効率的に学習</td>
+</tr>
+<tr>
+<td><strong>Stable LatentMoE</strong></td>
+<td>大規模MoEの学習不安定・効率低下</td>
+<td>2.8Tパラメータを実用的に動作させる</td>
+</tr>
+</tbody>
+</table>
+<p>この3つが組み合わさることで、Kimi K3 は「<strong>パラメータ数は巨大だが、推論コストは抑えられ、長文も深い層も安定して処理できる</strong>」という、従来にはなかったバランスを実現しています。</p>
+<h2 id="実験">実験</h2>
+<p>Kimi K3 は <strong>広範な性能評価と実験</strong> が行われています。公式の技術レポートと第三者による独立評価の両方が存在します。</p>
+<h3 id="1-公式ベンチマーク評価">1. 公式ベンチマーク評価</h3>
+<p>Moonshot AI は、以下のカテゴリで大規模なベンチマーク評価を公開しています。</p>
+<p><strong>推論・知識ベンチマーク</strong></p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク</th>
+<th>Kimi K3 (max)</th>
+<th>比較対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GPQA Diamond</strong></td>
+<td>93.5</td>
+<td>Claude Fable 5: 92.6, GPT-5.6 Sol: 94.1</td>
+</tr>
+<tr>
+<td><strong>HLE-Full</strong></td>
+<td>43.5 / 56.0</td>
+<td>Claude Fable 5: 53.3 / 63.0</td>
+</tr>
+<tr>
+<td><strong>AA-LCR</strong></td>
+<td>74.7</td>
+<td>Claude Fable 5: 70.0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>コーディングベンチマーク</strong></p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク</th>
+<th>Kimi K3 (max)</th>
+<th>強み</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SWE-Marathon</strong></td>
+<td>42.0</td>
+<td>GPT-5.5: 14.0, Claude Opus 4.8: 40.0</td>
+</tr>
+<tr>
+<td><strong>FrontierSWE</strong></td>
+<td>81.2</td>
+<td>Claude Opus 4.8: 66.7, GPT-5.5: 64.9</td>
+</tr>
+<tr>
+<td><strong>Terminal-Bench 2.1</strong></td>
+<td>88.3</td>
+<td>ほぼ最先端レベル</td>
+</tr>
+<tr>
+<td><strong>DeepSWE</strong></td>
+<td>67.5</td>
+<td>長期間のエンジニアリングタスクで強い</td>
+</tr>
+</tbody>
+</table>
+<p><strong>エージェント・自動化ベンチマーク</strong></p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク</th>
+<th>Kimi K3 (max)</th>
+<th>特記</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>BrowseComp</strong></td>
+<td>91.2</td>
+<td>ブラウザベースの情報収集</td>
+</tr>
+<tr>
+<td><strong>MCPMark-Verified</strong></td>
+<td>94.5</td>
+<td>MCPツール使用能力で高スコア</td>
+</tr>
+<tr>
+<td><strong>AutomationBench</strong></td>
+<td>30.8</td>
+<td>自動化タスク</td>
+</tr>
+<tr>
+<td><strong>OSWorld-Verified</strong></td>
+<td>84.8</td>
+<td>OS操作エージェント</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ビジョン・マルチモーダル</strong></p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク</th>
+<th>Kimi K3 (max)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Video-MME</strong></td>
+<td>90.0</td>
+</tr>
+<tr>
+<td><strong>MMVU</strong></td>
+<td>82.1</td>
+</tr>
+<tr>
+<td><strong>MathVision</strong></td>
+<td>94.3 / 97.8</td>
+</tr>
+<tr>
+<td><strong>MMMU-Pro</strong></td>
+<td>81.6 / 83.4</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-実際のケーススタディ実験">2. 実際のケーススタディ（実験）</h3>
+<p>ベンチマークだけでなく、<strong>実世界に近い複雑なタスク</strong>での実験も多数公開されています。</p>
+<p><strong>GPUカーネル最適化</strong></p>
+<p>24時間の時間制限で、AttnRes・KDA・MLAカーネルを最適化するタスク。Kimi K3 は Claude Fable 5 と同等の競争力を示し、GPT-5.6 Sol や Claude Opus 4.8 を大きく上回りました。<source-chip title="Kimi K3 Tech Blog" url="https://www.kimi.ai/blog/kimi-k3" /></p>
+<p><strong>GPUコンパイラのゼロから開発</strong></p>
+<p>Kimi K3 は <strong>MiniTriton</strong> というTriton風のコンパイラをゼロから構築しました。MLIR上のタイルレベルIR、最適化パス、PTXコード生成パイプラインを含み、特定のワークロードではTritonやtorch.compileを上回る性能を達成。さらに、nanoGPTのエンドツーエンド学習も安定収束させました。<source-chip title="Kimi K3 Tech Blog" url="https://www.kimi.ai/blog/kimi-k3" /></p>
+<p><strong>チップ設計</strong></p>
+<p>48時間の自律的実行で、<strong>K3自身のアーキテクチャを実行するためのチップ</strong>を設計しました。Nangate 45nmライブラリで4mm²内に146万標準セル、0.277MB SRAM、INT4 MACアレイを実装し、シミュレーションで8,700トークン/秒のデコードスループットを達成しています。<source-chip title="Kimi K3 Tech Blog" url="https://www.kimi.ai/blog/kimi-k3" /></p>
+<p><strong>科学研究の再現</strong></p>
+<p>計算天体物理学の「I-Love-Q普遍関係」を再現するタスクで、<strong>経験豊富な研究者が1〜2週間かかる作業を約2時間で完了</strong>しました。20以上の論文をレビュー・相互検証し、数値パイプラインを実装、300以上の状態方程式を評価、公開論文の公式の不整合を特定し、3,000行以上のPythonコードとインタラクティブHTMLダッシュボードを生成しました。<source-chip title="Kimi K3 Tech Blog" url="https://www.kimi.ai/blog/kimi-k3" /></p>
+<h3 id="3-独立した第三者評価">3. 独立した第三者評価</h3>
+<p>複数の独立した評価機関もKimi K3を検証しています。</p>
+<p><strong>総合評価の位置づけ</strong></p>
+<ul>
+<li><strong>AI Intelligence Index</strong>: 第3位（ただし幻覚率は51%と報告もあり）</li>
+<li><strong>CodingFleet の35ベンチマーク比較</strong>: Claude Fable 5 に22対12で敗れるも、Frontend Code Arena では1位</li>
+<li><strong>Artificial Analysis</strong>: 長文コンテキストとコーディングで高い評価</li>
+</ul>
+<p><strong>強みと弱み（第三者評価のまとめ）</strong></p>
+<table>
+<thead>
+<tr>
+<th>強み</th>
+<th>弱み</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>長期間のコーディング・SWEタスク</td>
+<td>Claude Fable 5 や GPT-5.6 Sol には総合で及ばない部分も</td>
+</tr>
+<tr>
+<td>100万トークンの長文処理</td>
+<td>一部の専門知識ベンチマーク（HLE-Fullなど）で差が出る</td>
+</tr>
+<tr>
+<td>エージェント・自動化タスク</td>
+<td>幻覚率がやや高いという報告あり</td>
+</tr>
+<tr>
+<td>ビジョン・動画理解</td>
+<td>プロプライエタリ最強モデルとの差は縮小傾向</td>
+</tr>
+<tr>
+<td>フロントエンド開発</td>
+<td>評価ハーネス（実行環境）による差が大きい</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-評価における注意点">4. 評価における注意点</h3>
+<p>第三者評価では、以下の点が指摘されています。</p>
+<ul>
+<li><strong>ハーネスの違い</strong>: 同じベンチマークでも、使用する実行環境（Claude Code、Kimi Code、Codexなど）によってスコアが大きく変動する</li>
+<li><strong>フォールバック</strong>: Claude Fable 5 は一部タスクでフォールバック（別モデルへの切り替え）を使用しており、純粋な比較が難しい場合がある</li>
+<li><strong>公開時期</strong>: 2026年7月公開時点の評価であり、モデルやベンチマークは継続的に更新される</li>
+</ul>
+<h2 id="計算リソースをどう工面したか">計算リソースをどう工面したか</h2>
+<p>まず結論ですが、<strong>Kimi K3は「高性能GPUを使わずにリリースされた」わけではなく、むしろ輸出規制下のNVIDIA高性能GPUに大規模にアクセスできたことが、実現の核心だと報じられています。</strong> ただし、2.8兆パラメータという巨大モデルでありながら「推論コストを大幅に抑えられた」のは、モデル設計の計算効率化によるものです。</p>
+<h3 id="1-ハードウェアへのアクセス規制迂回が報じられている">1. ハードウェアへのアクセス（規制迂回が報じられている）</h3>
+<p>複数の報道機関（Bloomberg、CNBC等）によれば、Moonshot AIはKimi K3の学習にあたり、<strong>Alibaba Cloudを通じて約2万台のNVIDIA Hopper/Blackwell系GPUクラスター</strong>にアクセスしたとされています。<source-chip title="CNBC" url="https://www.cnbc.com/2026/07/23/moonshot-kimi-nvidia-ai-chips-export-ban.html" /><source-chip title="FourWeekMBA" url="https://fourweekmba.com/ai-moonshot-kimi-k3-alibaba-compute-loop-export-controls/" /> これに対し、ホワイトハウス高官は米国の輸出規制対象チップへの違法アクセスを非難しており、タイなど第三国のデータセンターを経由した規制迂回の可能性も指摘されています。<source-chip title="Asia Tech Review" url="https://www.asiatechreview.com/p/alibaba-moonshot-and-the-us-government" /></p>
+<p>つまり、「高性能GPUを使わずに済んだ」のではなく、<strong>規制の網目をくぐって高性能GPUを確保した</strong>、あるいはクラウド経由で海外のGPUリソースにアクセスした、というのが実情とされています。</p>
+<h3 id="2-なぜ少ないgpuという印象があるのか計算効率の革新">2. なぜ「少ないGPU」という印象があるのか：計算効率の革新</h3>
+<p>一方で、2.8兆パラメータという規模でありながら「Claude Fable 5に対して4.6分の1のコストでコーディングタスクをこなせる」<source-chip title="AlphaSignal" url="https://alphasignal.ai/news/moonshot-ai-s-kimi-k3-beats-claude-at-coding-for-4-6x-less-money" /> などと報じられている背景には、<strong>モデル設計による計算量の劇的な削減</strong>があります。</p>
+<table>
+<thead>
+<tr>
+<th>技術</th>
+<th>効率化の仕組み</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Stable LatentMoE</strong></td>
+<td>896エキスパートのうちトークンごとに16個だけを活性化。総パラメータ2.8Tに対し、推論時の有効化パラメータは104Bに抑制。</td>
+</tr>
+<tr>
+<td><strong>KDA (Kimi Delta Attention)</strong></td>
+<td>KVキャッシュを差分圧縮し、長文デコード時のメモリを約75%削減。</td>
+</tr>
+<tr>
+<td><strong>AttnRes</strong></td>
+<td>超深層での学習収束を高速化し、トレーニング効率を25%向上。</td>
+</tr>
+</tbody>
+</table>
+<p>このため、<strong>「同じGPUあたりの学習・推論効率」が極めて高い</strong>ため、同等性能の密なモデル（Dense Model）と比較すれば「はるかに少ない実効計算量」で済んでいる、という意味では「高性能GPUをさほど使わずに済んだ」という印象が生じるのです。</p>
+<h2 id="総括">総括</h2>
+<p>今回の内容からKimi K3の本質を以下にエッセンスとしてまとめました。</p>
+<h3 id="1-モデルの位置づけ">1. モデルの位置づけ</h3>
+<p>Moonshot AIが2026年7月に公開した、<strong>世界初のオープン3Tクラス（総パラメータ2.8兆）マルチモーダル・エージェンティックモデル</strong>です。有効化パラメータは104Bと推論コストを抑えつつ、テキスト・画像・動画を統合的に処理し、100万トークンの長文にも対応します。</p>
+<h3 id="2-3つの技術的革新">2. 3つの技術的革新</h3>
+<p>巨大化による計算・メモリ・学習のボトルネックを、以下の3技術で同時に解消しています。</p>
+<ul>
+<li><strong>Kimi Delta Attention（KDA）</strong>: KVキャッシュを「差分」で圧縮し、長文処理のメモリを約75%削減、デコード速度を6.3倍高速化</li>
+<li><strong>Attention Residuals（AttnRes）</strong>: 超深層での情報伝達を「選択的索引」で最適化し、学習効率を25%向上</li>
+<li><strong>Stable LatentMoE</strong>: 896エキスパートから16個を動的選択するスパース構造を、負荷分散と安定化技術で実用的に動作させ、スケーリング効率を約2.5倍に高める</li>
+</ul>
+<h3 id="3-性能と強み">3. 性能と強み</h3>
+<p>コーディング（SWE-Marathon等）、OS操作エージェント、長文処理、動画理解で最先端クラスのベンチマークを記録しています。特に24時間〜48時間の長期自律タスク（GPUカーネル最適化、コンパイラ開発、チップ設計、科学研究の再現）で高い実用性を示しています。</p>
+<h3 id="4-限界と注意点">4. 限界と注意点</h3>
+<p>第三者評価では、Claude Fable 5やGPT-5.6 Solと比較して総合的に見劣りする場面や、幻覚率がやや高いという指摘もあります。また、ベンチマークスコアは使用する実行環境（ハーネス）に大きく依存するため、純粋なモデル間比較には注意が必要です。</p>
+<p><strong>結論として、Kimi K3は「巨大モデルの実用化」という課題に対し、長文・深層・大規模MoEの3つの技術で革新的な解を示した、オープンソースコミュニティにとって重要な里程碑（マイルストーン）です。</strong></p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
