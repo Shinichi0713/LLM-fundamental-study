@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&lbrack;DeeBERT&rbrack;&lpar;https&colon;&sol;&sol;aclanthology&period;org&sol;2020&period;acl-main&period;204&sol;&rpar;&#xff08;Dynamic Early Exiting&#xff09;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>以下、ご提示いただいた文面を <code>[文言](リンク先)</code> 形式のMarkdownリンクに統一して記載し直しました。主要な論文名・技術名・ベンチマーク名には、各々の原論文や公式ページへのリンクを付与しています。</p>
+<hr>
+<p><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> と <a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> は、どちらも <strong><a href="https://aclanthology.org/N19-1423/">BERT</a> の推論速度を上げる</strong>ことを目的とした技術ですが、<strong>アプローチが異なります</strong>。以下にそれぞれを整理します。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="deebertdynamic-early-exiting"><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a>（Dynamic Early Exiting）</h2>
+<h3 id="概要">概要</h3>
+<p><strong>「入力の難易度に応じて、途中の層で推論を打ち切る」</strong> 技術です。<a href="https://aclanthology.org/events/acl-2020/">ACL 2020</a> で発表されました。</p>
+<h3 id="仕組み概要">仕組み概要</h3>
+<p><a href="https://aclanthology.org/N19-1423/">BERT</a> の各 <a href="https://arxiv.org/abs/1706.03762">Transformer</a> 層の後に <strong>exit classifier（早期出口判定器）</strong> を付けます。入力文が推論途中で「もう十分に予測できている」と判定されたら、それ以降の層を計算せずにその場で出力を返します。</p>
+<pre><code>入力 → [Layer 1] → [Exit?] → Yes → 出力
+              ↓ No
+        [Layer 2] → [Exit?] → Yes → 出力
+              ↓ No
+        [Layer 3] → ... → [Layer 12] → 出力
+</code></pre>
+<h3 id="ポイント">ポイント</h3>
+<ul>
+<li><strong>簡単な入力</strong>（例：明らかな感情分類）は浅い層で出口し、<strong>難しい入力</strong>は最後まで計算する</li>
+<li>学習は2段階：（1）通常のファインチューニング →（2）各 exit classifier のみを学習（BERT本体は固定）</li>
+<li>出口の閾値を調整することで、<strong>精度と速度のトレードオフを自由に制御</strong>できる</li>
+</ul>
+<h3 id="効果">効果</h3>
+<p>推論時間を <strong>約 2〜4 倍</strong> 高速化できるケースが報告されています。</p>
+<h2 id="dynabertdynamic-bert-with-adaptive-width-and-depth"><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a>（Dynamic BERT with Adaptive Width and Depth）</h2>
+<h3 id="概要-1">概要</h3>
+<p><strong>「モデルの幅（層内の次元数）と深さ（層数）の両方を動的に調整できる」</strong> 技術です。<a href="https://nips.cc/virtual/2020/">NeurIPS 2020</a> で発表されました。</p>
+<h3 id="仕組み概要-1">仕組み概要</h3>
+<p><a href="https://arxiv.org/abs/1503.02531">知識蒸留（Knowledge Distillation）</a> を使い、<strong>1つのモデルに「様々なサイズのサブネットワーク」を同居させます</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>調整軸</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Width（幅）</strong></td>
+<td><a href="https://arxiv.org/abs/1706.03762">Attention head</a> 数や hidden dimension を削減（重要な head / 次元だけ残す）</td>
+</tr>
+<tr>
+<td><strong>Depth（深さ）</strong></td>
+<td>層を間引き（例：12層 → 6層、4層など）</td>
+</tr>
+</tbody>
+</table>
+<p>推論時に、デバイスの性能や許容レイテンシに応じて「どの幅・深さのサブネットを使うか」を動的に選択します。</p>
+<pre><code>Full DynaBERT (width=1.0, depth=1.0)
+├── Subnet A (width=0.75, depth=1.0)   ← 高精度
+├── Subnet B (width=0.5,  depth=0.75)  ← 中精度・中速度
+└── Subnet C (width=0.25, depth=0.5)   ← 低精度・超高速
+</code></pre>
+<h3 id="ポイント-1">ポイント</h3>
+<ul>
+<li><strong><a href="https://arxiv.org/abs/2004.08526">Once-for-all</a></strong>（一度学習すれば、あらゆるサイズから選択可能） のアプローチ</li>
+<li>幅の削減には「重要度の低い attention head やニューロンを剪定（pruning）」する手法を使用</li>
+<li>深さの削減には「均等に層を間引く」戦略を使用</li>
+</ul>
+<h2 id="deebert-vs-dynabert-の比較">DeeBERT vs DynaBERT の比較</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a></th>
+<th><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>削減対象</strong></td>
+<td>計算の「途中打ち切り」（深さ方向の動的スキップ）</td>
+<td>幅と深さの両方（モデル構造そのものの圧縮）</td>
+</tr>
+<tr>
+<td><strong>モデル数</strong></td>
+<td>1つのモデル（出口を複数設置）</td>
+<td>1つのモデル（中に多数のサブネットを包含）</td>
+</tr>
+<tr>
+<td><strong>動的制御</strong></td>
+<td>入力ごとに出口層を変える</td>
+<td>デバイスや要件に応じてサブネットを選択</td>
+</tr>
+<tr>
+<td><strong>学習方法</strong></td>
+<td>通常FT + exit classifier の追加学習</td>
+<td>知識蒸留 + 幅・深さの制約付き学習</td>
+</tr>
+<tr>
+<td><strong>主な利点</strong></td>
+<td>実装がシンプル、入力難易度に適応</td>
+<td>幅・深さの両方を自由に調整可能、幅広いデバイス対応</td>
+</tr>
+<tr>
+<td><strong>主な欠点</strong></td>
+<td>モデルサイズ自体は変わらない</td>
+<td>学習が複雑、サブネット間の干渉が課題</td>
+</tr>
+</tbody>
+</table>
+<p><strong>直感的な違い</strong></p>
+<ul>
+<li><strong><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a></strong> は「<strong>全員が同じ階段を登るが、簡単な問題の人は途中の階で降りていい</strong>」という考え方</li>
+<li><strong><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a></strong> は「<strong>階段自体を幅広・幅狭・短い・長いの複数バージョンを用意して、状況に応じて使い分ける</strong>」という考え方</li>
+</ul>
+<p>どちらも「大規模モデルをそのまま使うのはもったいない」という発想から生まれた技術で、現在の推論効率化研究（<a href="https://arxiv.org/abs/2404.02258">Mixture of Depths</a> など）の先駆けとなっています。</p>
+<h2 id="deebertの仕組み詳細"><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a>の仕組み詳細</h2>
+<p>DeeBERTが「どのタイミング（どの層）で推論を終了すべきか」を判断する仕組みは、主に<strong>各中間層における予測の不確実性（不確実さ）の評価</strong>に基づいています。</p>
+<p>具体的には、<a href="https://zenn.dev/yoshinn/articles/entropy_meaning_in_rl">エントロピー（Entropy）</a>という情報理論の指標を用いて閾値判定を行っています。</p>
+<h3 id="決定メカニズムの3つのステップ">決定メカニズムの3つのステップ</h3>
+<p>各エンコーダー層の直後に配置された中間分類器（Exit Head）で、以下の処理が順次実行されます。</p>
+<p><strong>1. 各層での確率分布の計算</strong></p>
+<p>各層の出力ベクトル（通常は <code>[CLS]</code> トークン）をその層専用のExit Headに入力し、全クラスに対する予測確率（Softmax出力）を計算します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="bold">p</mi><mo>=</mo><mtext>Softmax</mtext><mo stretchy="false">(</mo><msub><mtext>ExitHead</mtext><mi>k</mi></msub><mo stretchy="false">(</mo><msub><mi mathvariant="bold">h</mi><mi>k</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{p} = \text{Softmax}(\text{ExitHead}_k(\mathbf{h}_k))
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord mathbf">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">Softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord text"><span class="mord">ExitHead</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathbf">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">))</span></span></span></span></span></p>
+<p>ここで <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">p</mi><mo>=</mo><mo stretchy="false">[</mo><msub><mi>p</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>p</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>p</mi><mi>C</mi></msub><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbf{p} = [p_1, p_2, \dots, p_C]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord mathbf">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span> は、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span> 個のクラスそれぞれに対する予測確率です。</p>
+<p><strong>2. 不確実性（エントロピー）の算出</strong></p>
+<p>得られた確率分布 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">p</mi></mrow><annotation encoding="application/x-tex">\mathbf{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6389em;vertical-align:-0.1944em;"></span><span class="mord mathbf">p</span></span></span></span> から、予測の「曖昧さ（不確実性）」を表すエントロピー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo stretchy="false">(</mo><mi mathvariant="bold">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">S(\mathbf{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mopen">(</span><span class="mord mathbf">p</span><span class="mclose">)</span></span></span></span> を計算します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>S</mi><mo stretchy="false">(</mo><mi mathvariant="bold">p</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>C</mi></munderover><msub><mi>p</mi><mi>i</mi></msub><mi>log</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mi>p</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">S(\mathbf{p}) = - \sum_{i=1}^{C} p_i \log(p_i)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mopen">(</span><span class="mord mathbf">p</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.106em;vertical-align:-1.2777em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><strong>エントロピーが低い（0に近い）：</strong> モデルが特定クラスの予測に高い確信を持っている状態（例: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0.99</mn><mo separator="true">,</mo><mn>0.01</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.99, 0.01]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0.99</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0.01</span><span class="mclose">]</span></span></span></span> → エントロピー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\approx 0.05</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4831em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.05</span></span></span></span>）</li>
+<li><strong>エントロピーが高い：</strong> 予測が割れて迷っている状態（例: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0.50</mn><mo separator="true">,</mo><mn>0.50</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.50, 0.50]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0.50</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0.50</span><span class="mclose">]</span></span></span></span> → エントロピー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><mn>0.69</mn></mrow><annotation encoding="application/x-tex">\approx 0.69</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4831em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.69</span></span></span></span>）</li>
+</ul>
+<p><strong>3. 閾値（Threshold）との比較による判定</strong></p>
+<p>算出されたエントロピー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo stretchy="false">(</mo><mi mathvariant="bold">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">S(\mathbf{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mopen">(</span><span class="mord mathbf">p</span><span class="mclose">)</span></span></span></span> を、ユーザーがあらかじめ設定した閾値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mtext>threshold</mtext></msub></mrow><annotation encoding="application/x-tex">S_{\text{threshold}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">threshold</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> と比較します。</p>
+<ul>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo stretchy="false">(</mo><mi mathvariant="bold">p</mi><mo stretchy="false">)</mo><mo>&lt;</mo><msub><mi>S</mi><mtext>threshold</mtext></msub></mrow><annotation encoding="application/x-tex">S(\mathbf{p}) &lt; S_{\text{threshold}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mopen">(</span><span class="mord mathbf">p</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">threshold</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> の場合（早期終了）：</strong>
+「十分な確信度で判断できた」とみなし、後続の層の計算をすべてスキップして、その層での予測結果を最終出力として返します。</li>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo stretchy="false">(</mo><mi mathvariant="bold">p</mi><mo stretchy="false">)</mo><mo>≥</mo><msub><mi>S</mi><mtext>threshold</mtext></msub></mrow><annotation encoding="application/x-tex">S(\mathbf{p}) \ge S_{\text{threshold}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mopen">(</span><span class="mord mathbf">p</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">threshold</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> の場合（継続）：</strong>
+「まだ判断が曖昧である」とみなし、次のエンコーダー層へ処理を渡します。</li>
+<li><strong>最終層に到達した場合：</strong>
+一度も閾値を下回らなかった場合は、最終層のExit Head（または本来の分類器）の予測をそのまま採用します。</li>
+</ul>
+<h3 id="なぜこの方法でうまくいくのか">なぜこの方法でうまくいくのか？</h3>
+<ol>
+<li><strong>簡単・明確なデータは浅い層で解ける</strong>
+「ポジティブ／ネガティブ感情分析」のようなタスクにおいて、「素晴らしい！」のような極めて分かりやすい語彙が含まれる入力は、<a href="https://aclanthology.org/N19-1423/">BERT</a>の1〜2層目の特徴量抽出だけで十分に分類可能です。</li>
+<li><strong>複雑なデータのみ深層まで回す</strong>
+文脈依存が強い表現や二重否定など、複雑な意味理解が必要な入力のみが深い層まで処理されます。</li>
+<li><strong>推論速度と精度の動的なトレードオフ調整</strong>
+閾値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mtext>threshold</mtext></msub></mrow><annotation encoding="application/x-tex">S_{\text{threshold}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">threshold</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を大きくすると早期退出しやすくなり速度重視（低遅延）になり、小さくすると深い層まで処理されて精度重視になります。アプリケーションの要件に応じて、モデルを再学習することなく閾値だけで速度と精度のバランスを変更できます。</li>
+</ol>
+<h2 id="dynabertの仕組み詳細"><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a>の仕組み詳細</h2>
+<p>DynaBERTの仕組みを、学習の流れ、幅・深さの削減方法、知識蒸留の詳細まで含めて説明します。</p>
+<h3 id="1-全体アーキテクチャ2段階学習">1. 全体アーキテクチャ：2段階学習</h3>
+<p>DynaBERTの学習は<strong>2段階</strong>で行われます。これが単純に「幅と深さを同時に学習する」よりも精度が高い理由です。</p>
+<pre><code>Stage 1: DynaBERT_W（幅適応のみのモデル）を学習
+    ↓ 知識蒸留
+Stage 2: DynaBERT（幅＋深さの両方適応）を学習
+</code></pre>
+<p><strong>なぜ2段階か</strong>：<a href="https://aclanthology.org/N19-1423/">BERT</a>の幅と深さは互いに影響し合うため、同時に学習すると片方の知識がもう片方の学習で上書き（忘却）されやすいです。まず「幅だけ」を最適化したDynaBERT_Wを作り、それを教師として「幅＋深さ」のDynaBERTを学習することで、知識の伝達を安定させます。</p>
+<h3 id="2-stage-1-dynabert_w幅適応の学習">2. Stage 1: DynaBERT_W（幅適応）の学習</h3>
+<p><strong>2.1 幅とは何か</strong></p>
+<p><a href="https://aclanthology.org/N19-1423/">BERT</a>の<a href="https://arxiv.org/abs/1706.03762">Transformer</a>層には2つの「幅」があります。</p>
+<table>
+<thead>
+<tr>
+<th>モジュール</th>
+<th>幅の定義</th>
+<th>削減方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MHA（Multi-Head Attention）</strong></td>
+<td><a href="https://arxiv.org/abs/1706.03762">Attention head</a> の数</td>
+<td>重要度の低い head を削除</td>
+</tr>
+<tr>
+<td><strong>FFN（Feed-Forward Network）</strong></td>
+<td>中間層のニューロン数</td>
+<td>重要度の低いニューロンを削除</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2.2 重要度の計算とRewiring（配線替え）</strong></p>
+<p>単純に「後ろからheadを削る」のではなく、<strong>重要度に基づいて配線を入れ替え（rewire）</strong> します。</p>
+<ol>
+<li>
+<p><strong>各head・各ニューロンの重要度を計算</strong></p>
+<ul>
+<li>各headの出力のノルムや勾配情報から重要度スコアを算出</li>
+</ul>
+</li>
+<li>
+<p><strong>重要度順に並べ替えてRewire</strong></p>
+<ul>
+<li>重要なhead・ニューロンを「前方のインデックス」に集める</li>
+<li>例：headの重要度が <code>[低, 高, 中, 高]</code> なら、並べ替えて <code>[高, 高, 中, 低]</code> にする</li>
+</ul>
+</li>
+<li>
+<p><strong>幅の削減</strong></p>
+<ul>
+<li>幅の倍率 <code>m_w</code>（例：0.75, 0.5, 0.25）に応じて、前方から <code>m_w</code> 割合のhead・ニューロンだけを残す</li>
+<li>後方はマスク（無効化）される</li>
+</ul>
+</li>
+</ol>
+<pre><code>Rewire前: [H1(低), H2(高), H3(中), H4(高), H5(低), H6(高)]
+Rewire後: [H2(高), H4(高), H6(高), H3(中), H1(低), H5(低)]
+            ↑ m_w=0.5 でここまで有効 ↑  ここからマスク
+</code></pre>
+<p><strong>Rewireの意義</strong>：重要なheadがどのインデックスにあっても、小さいサブネットに含まれるようにする。これにより「小さいサブネット＝重要な部分だけ」を実現します。</p>
+<h3 id="3-知識蒸留knowledge-distillationの詳細">3. 知識蒸留（Knowledge Distillation）の詳細</h3>
+<p><strong>3.1 教師と生徒</strong></p>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>教師（Teacher）</th>
+<th>生徒（Student）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stage 1</td>
+<td>フルサイズの<a href="https://aclanthology.org/N19-1423/">BERT</a></td>
+<td>DynaBERT_W（各幅のサブネット）</td>
+</tr>
+<tr>
+<td>Stage 2</td>
+<td>DynaBERT_W</td>
+<td>DynaBERT（各幅×各深さのサブネット）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3.2 蒸留の対象</strong></p>
+<p>損失関数は以下の3つの和で構成されます。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mo>=</mo><msub><mi>L</mi><mrow><mi>p</mi><mi>r</mi><mi>e</mi><mi>d</mi></mrow></msub><mo>+</mo><msub><mi>λ</mi><mrow><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi></mrow></msub><mo>⋅</mo><msub><mi>L</mi><mrow><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi></mrow></msub><mo>+</mo><msub><mi>λ</mi><mrow><mi>h</mi><mi>i</mi><mi>d</mi><mi>d</mi><mi>e</mi><mi>n</mi></mrow></msub><mo>⋅</mo><msub><mi>L</mi><mrow><mi>h</mi><mi>i</mi><mi>d</mi><mi>d</mi><mi>e</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">L = L_{pred} + \lambda_{soft} \cdot L_{soft} + \lambda_{hidden} \cdot L_{hidden}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">re</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9805em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">so</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">so</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">hi</span><span class="mord mathnormal mtight">dd</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">hi</span><span class="mord mathnormal mtight">dd</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<table>
+<thead>
+<tr>
+<th>損失</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>p</mi><mi>r</mi><mi>e</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">L_{pred}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">re</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>生徒の予測と正解ラベルの交差エントロピー（通常のタスク損失）</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">L_{soft}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">so</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>教師のsoftmax出力（温度付き）と生徒の出力のKLダイバージェンス</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>h</mi><mi>i</mi><mi>d</mi><mi>d</mi><mi>e</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">L_{hidden}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">hi</span><span class="mord mathnormal mtight">dd</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>教師と生徒の中間hidden statesのMSE（層対応づけして距離を縮める）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3.3 複数サブネットの同時学習</strong></p>
+<p>1つのミニバッチで、<strong>複数の幅（および深さ）のサブネットをすべて学習</strong>します。</p>
+<pre><code>for each mini-batch:
+    for m_w in [1.0, 0.75, 0.5, 0.25]:  # 幅の候補
+        for m_d in [1.0, 0.75, 0.5]:      # 深さの候補（Stage 2のみ）
+            そのサブネットの損失を計算 → 勾配を累積
+    累積した勾配で1回パラメータ更新
+</code></pre>
+<p>これにより、<strong>1つのモデルが全サイズのサブネットを同時に最適化</strong>されます。</p>
+<h3 id="4-stage-2-dynabert幅深さ適応の学習">4. Stage 2: DynaBERT（幅＋深さ適応）の学習</h3>
+<p><strong>4.1 深さの削減</strong></p>
+<p>深さの倍率 <code>m_d</code> に応じて、層を間引きます。</p>
+<ul>
+<li><strong>間引き戦略</strong>：「Every Other（交互に削除）」
+<ul>
+<li>例：12層で <code>m_d = 0.5</code> なら、層 <code>[1, 3, 5, 7, 9, 11]</code> を残す</li>
+<li>均等に間引くことで、情報伝達の偏りを防ぐ</li>
+</ul>
+</li>
+</ul>
+<p><strong>4.2 深さと幅の組み合わせ</strong></p>
+<p>Stage 2では、幅と深さの<strong>全組み合わせ</strong>のサブネットを学習します。</p>
+<table>
+<thead>
+<tr>
+<th>幅 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mi>w</mi></msub></mrow><annotation encoding="application/x-tex">m_w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></th>
+<th>深さ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">m_d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></th>
+<th>サブネット例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>1.0</td>
+<td>フルサイズ（教師に相当）</td>
+</tr>
+<tr>
+<td>0.75</td>
+<td>1.0</td>
+<td>幅75%、深さ100%</td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>0.75</td>
+<td>幅50%、深さ75%</td>
+</tr>
+<tr>
+<td>0.25</td>
+<td>0.5</td>
+<td>幅25%、深さ50%（最小）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-推論時の動作">5. 推論時の動作</h3>
+<p>学習後、DynaBERTは<strong>1つのモデルファイル</strong>として保存されます。推論時には、デバイスのリソース状況に応じて「どのサブネットを使うか」を動的に選択できます。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 擬似的な使用イメージ</span>
+<span class="hljs-keyword">if</span> device_battery &gt; <span class="hljs-number">50</span>% <span class="hljs-keyword">and</span> latency_requirement == <span class="hljs-string">&quot;relaxed&quot;</span>:
+    use_subnet(width=<span class="hljs-number">1.0</span>, depth=<span class="hljs-number">1.0</span>)   <span class="hljs-comment"># 高精度</span>
+<span class="hljs-keyword">elif</span> device_battery &gt; <span class="hljs-number">20</span>%:
+    use_subnet(width=<span class="hljs-number">0.75</span>, depth=<span class="hljs-number">0.75</span>) <span class="hljs-comment"># 中精度</span>
+<span class="hljs-keyword">else</span>:
+    use_subnet(width=<span class="hljs-number">0.25</span>, depth=<span class="hljs-number">0.5</span>)  <span class="hljs-comment"># 超低消費電力</span>
+</code></pre>
+<p><strong>重要</strong>：サブネットごとに個別のモデルを保存・ロードする必要はありません。同じパラメータを共有しつつ、マスクとインデックス指定だけで切り替えます。</p>
+<h3 id="6-まとめdynabertの技術的特徴">6. まとめ：DynaBERTの技術的特徴</h3>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rewiring</strong></td>
+<td>重要なhead・ニューロンを前方に集め、小さいサブネットにも含まれるように配置</td>
+</tr>
+<tr>
+<td><strong>2段階学習</strong></td>
+<td>幅適応（DynaBERT_W）→ 幅＋深さ適応（DynaBERT）の順で、知識の忘却を防ぐ</td>
+</tr>
+<tr>
+<td><strong>知識蒸留</strong></td>
+<td>予測・soft出力・hidden statesの3レベルで教師から生徒へ知識を伝達</td>
+</tr>
+<tr>
+<td><strong>同時学習</strong></td>
+<td>1つのミニバッチで全サブネットの勾配を累積し、1回の更新で全サイズを最適化</td>
+</tr>
+<tr>
+<td><strong>動的推論</strong></td>
+<td>デバイスのリソースに応じて、マスク切り替えだけでサブネットを変更</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a>の本質は「<strong>1つのモデルに無数のサブネットを同居させ、<a href="https://arxiv.org/abs/2004.04037">Rewiring</a>と蒸留で全サイズが高品質になるように設計する</strong>」ことにあります。これにより、エッジデバイスの多様な制約に対して「モデルを選ぶ」のではなく「モデルの中からサイズを選ぶ」という柔軟な展開が可能になります。</p>
+<h2 id="効果-1">効果</h2>
+<p>以下、両論文の実論文の実論文の実験結果を紐解きながら、それぞれの効果を比較して説明します。</p>
+<h3 id="deebert-の実験結果acl-2020"><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> の実験結果（<a href="https://aclanthology.org/events/acl-2020/">ACL 2020</a>）</h3>
+<p><strong>実験設定</strong></p>
+<ul>
+<li><strong>ベースモデル</strong>：<a href="https://aclanthology.org/N19-1423/">BERT-base</a>、<a href="https://arxiv.org/abs/1907.11692">RoBERTa-base</a></li>
+<li><strong>評価データセット</strong>：<a href="https://gluebenchmark.com/">GLUE</a> の6タスク（<a href="https://gluebenchmark.com/tasks/">SST-2</a>、<a href="https://gluebenchmark.com/tasks/">MRPC</a>、<a href="https://gluebenchmark.com/tasks/">QNLI</a>、<a href="https://gluebenchmark.com/tasks/">RTE</a>、<a href="https://gluebenchmark.com/tasks/">QQP</a>、<a href="https://gluebenchmark.com/tasks/">MNLI</a>）</li>
+<li><strong>比較手法</strong>：<a href="https://arxiv.org/abs/1910.01108">DistilBERT</a>、<a href="https://arxiv.org/abs/1909.11556">LayerDrop</a></li>
+<li><strong>測定環境</strong>：NVIDIA Tesla P100、サンプルを1つずつ処理（バッチなし）</li>
+</ul>
+<p><strong>主な結果</strong></p>
+<table>
+<thead>
+<tr>
+<th>効果</th>
+<th>数値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>最大推論時間削減</strong></td>
+<td><strong>約40%</strong>（BERT-base、品質低下最小で）</td>
+</tr>
+<tr>
+<td><strong>精度低下</strong></td>
+<td>多くのタスクで <strong>1%未満〜数%程度</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>タスク別の傾向（論文 Table 1 より）</strong></p>
+<p><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> はエントロピ閾値 <code>S</code> を調整することで、<strong>精度と速度のトレードオフを連続的に制御</strong>できます。</p>
+<ul>
+<li><strong><a href="https://gluebenchmark.com/tasks/">SST-2</a></strong>（感情分析、比較的簡単）：浅い層で多くのサンプルが出口。時間削減が大きい</li>
+<li><strong><a href="https://gluebenchmark.com/tasks/">MNLI</a></strong>（自然言語推論、比較的困難）：深い層まで計算が必要なサンプルが多い。時間削減率はやや小さい</li>
+<li><strong><a href="https://gluebenchmark.com/tasks/">RTE</a></strong>（含意認識、小規模データ）：時々「浅い層の方が精度が高い」という逆転現象も観測。これは全層使用による過学習を早期出口が回避したと解釈されています</li>
+</ul>
+<p><strong>層の冗長性に関する分析</strong></p>
+<p>論文の追加分析では、<strong><a href="https://aclanthology.org/N19-1423/">BERT</a> と <a href="https://arxiv.org/abs/1907.11692">RoBERTa</a> で層の振る舞いが異なる</strong>ことが明らかになりました。</p>
+<ul>
+<li><strong><a href="https://aclanthology.org/N19-1423/">BERT</a></strong>：中盤の層（6〜8層付近）で性能が頭打ちになり、それ以降はほぼ変化なし</li>
+<li><strong><a href="https://arxiv.org/abs/1907.11692">RoBERTa</a></strong>：後半の層にかけても性能が向上し続ける傾向。ただし出口後の性能低下はBERTより急峻</li>
+</ul>
+<p>このことから、<strong><a href="https://aclanthology.org/N19-1423/">BERT</a> の方が層の冗長性が高く、早期出口の効果を享受しやすい</strong>と結論付けられています。</p>
+<h3 id="dynabert-の実験結果neurips-2020"><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> の実験結果（<a href="https://nips.cc/virtual/2020/">NeurIPS 2020</a>）</h3>
+<p><strong>実験設定</strong></p>
+<ul>
+<li><strong>ベースモデル</strong>：<a href="https://aclanthology.org/N19-1423/">BERT-base</a>、<a href="https://arxiv.org/abs/1907.11692">RoBERTa-base</a></li>
+<li><strong>評価データセット</strong>：<a href="https://gluebenchmark.com/">GLUE</a> 全タスク、<a href="https://rajpurkar.github.io/SQuAD-explorer/">SQuAD</a> v1.1</li>
+<li><strong>サブネット構成</strong>：幅倍率 <code>[1.0, 0.75, 0.5, 0.25]</code> × 深さ倍率 <code>[1.0, 0.75, 0.5]</code> = <strong>12種類のサブネット</strong></li>
+<li><strong>比較手法</strong>：<a href="https://arxiv.org/abs/1910.01108">DistilBERT</a>、<a href="https://arxiv.org/abs/1909.10351">TinyBERT</a>、<a href="https://arxiv.org/abs/1909.11556">LayerDrop</a> など</li>
+<li><strong>効率指標</strong>：パラメータ数、FLOPs、GPUレイテンシ、ARM CPUレイテンシ（4軸で評価）</li>
+</ul>
+<p><strong>主な結果</strong></p>
+<table>
+<thead>
+<tr>
+<th>効果</th>
+<th>数値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>フルサイズ時の精度</strong></td>
+<td>元の <a href="https://aclanthology.org/N19-1423/">BERT-base</a> / <a href="https://arxiv.org/abs/1907.11692">RoBERTa-base</a> と<strong>同等</strong></td>
+</tr>
+<tr>
+<td><strong>同サイズ圧縮手法との比較</strong></td>
+<td><strong>既存手法（<a href="https://arxiv.org/abs/1910.01108">DistilBERT</a>、<a href="https://arxiv.org/abs/1909.10351">TinyBERT</a> 等）を一貫して上回る</strong></td>
+</tr>
+<tr>
+<td><strong>最小サブネット時</strong></td>
+<td>幅25% × 深さ50% でも、同サイズの他手法を上回る精度を維持</td>
+</tr>
+<tr>
+<td><strong>DynaRoBERTa</strong></td>
+<td>元の <a href="https://arxiv.org/abs/1907.11692">RoBERTa-base</a> を<strong>上回る性能</strong>を複数タスクで達成</td>
+</tr>
+</tbody>
+</table>
+<p><strong>タスク別の傾向</strong></p>
+<ul>
+<li><strong><a href="https://gluebenchmark.com/tasks/">CoLA</a></strong>（言語受容性）：特に強い性能向上。Rewiring により「文法的に正しいか」を判断する attention head が小さいサブネットにも残るため</li>
+<li><strong><a href="https://gluebenchmark.com/tasks/">RTE</a> / <a href="https://gluebenchmark.com/tasks/">MRPC</a></strong>（推論タスク）：大きな圧縮率でも精度低下を抑えられている</li>
+<li><strong><a href="https://rajpurkar.github.io/SQuAD-explorer/">SQuAD</a></strong>（質問応答）：幅・深さの両方を削減しても、他の圧縮手法より高い F1 を維持</li>
+</ul>
+<p><strong>アブレーション研究の結果</strong></p>
+<table>
+<thead>
+<tr>
+<th>変更</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rewiring を除去</strong></td>
+<td>平均 <a href="https://gluebenchmark.com/">GLUE</a> スコアが <strong>2ポイント以上低下</strong></td>
+</tr>
+<tr>
+<td><strong>蒸留＋データ拡張を除去</strong></td>
+<td>DynaBERT_W の性能が <strong>約1.5ポイント低下</strong></td>
+</tr>
+<tr>
+<td><strong>DynaBERT_W を中間教師にしない</strong>（元BERTから直接蒸留）</td>
+<td>小さいサブネットで<strong>大きな精度低下</strong>。2段階学習の有効性が確認された</td>
+</tr>
+<tr>
+<td><strong>深さ優先（Depth-first）学習</strong></td>
+<td>幅優先（Width-first）より<strong>劣る結果</strong>。特に高に高圧縮率で顕著</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deebert-vs-dynabert効果の比較"><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> vs <a href="https://arxiv.org/abs/2004.04037">DynaBERT</a>：効果の比較</h3>
+<table>
+<thead>
+<tr>
+<th>比較軸</th>
+<th><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a></th>
+<th><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>最大速度向上</strong></td>
+<td>約 <strong>40%</strong> の推論時間削減</td>
+<td>幅25%×深さ50% で <strong>約75〜90%</strong> の計算量削減（FLOPs ベース）</td>
+</tr>
+<tr>
+<td><strong>精度維持</strong></td>
+<td>小〜中程度の圧縮で<strong>品質低下最小</strong></td>
+<td>幅広い圧縮率で<strong>一貫して高い精度</strong>を維持</td>
+</tr>
+<tr>
+<td><strong>柔軟性</strong></td>
+<td>入力ごとに<strong>動的</strong>に出口層を変える</td>
+<td>デバイス・要件に応じて<strong>12種類のサブネット</strong>から選択</td>
+</tr>
+<tr>
+<td><strong>モデルサイズ削減</strong></td>
+<td><strong>なし</strong>（モデル自体はフルサイズのまま）</td>
+<td><strong>あり</strong>（サブネットによりパラメータ数も削減）</td>
+</tr>
+<tr>
+<td><strong>メモリ効率</strong></td>
+<td>改善なし（全パラメータを保持）</td>
+<td>大幅改善（小さいサブネットはメモリも少ない）</td>
+</tr>
+<tr>
+<td><strong>実装の簡易さ</strong></td>
+<td><strong>簡単</strong>（off-ramp を追加するだけ）</td>
+<td><strong>複雑</strong>（Rewiring、2段階蒸留、複数サブネット同時学習）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="結論どちらを選ぶか">結論：どちらを選ぶか</h3>
+<table>
+<thead>
+<tr>
+<th>優先事項</th>
+<th>推奨</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>推論速度のみ</strong>を上げたい（モデルサイズは気にしない）</td>
+<td><strong><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a></strong></td>
+</tr>
+<tr>
+<td><strong>速度速度＋メモリ＋複数デバイス対応</strong>を同時に実現したい</td>
+<td><strong><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a></strong></td>
+</tr>
+<tr>
+<td><strong>実装コストを最小化</strong>したい</td>
+<td><strong><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a></strong></td>
+</tr>
+<tr>
+<td><strong>幅広い圧縮率で高い精度</strong>を保証したい</td>
+<td><strong><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a></strong></td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> は「<strong>同じモデルで、簡単な入力は早く終わらせる</strong>」という発想で、実装が非常にシンプルなのが強みです。一方、<a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> は「<strong>1つのモデルに様々なサイズを同居させ、どのサイズでも高品質を保証する</strong>」という発想で、エッジデバイス展開の多様な制約に対応できるのが強みです。</p>
+<p>両者は排他ではなく、<strong><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> のサブネットに対して <a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> の早期出口を組み合わせる</strong>ことで、さらに細かい効率最適化が可能になるという研究も後に続いています。</p>
+<h2 id="総括">総括</h2>
+<p>両研究の結果を俯瞰すると、本質的には <strong>「大規模言語モデルの『均一計算』という前提を覆し、入力と環境に応じた『不均一計算』のパラダイムを確立した」</strong> ことにあります。</p>
+<p>以下、3つの軸で総括します。</p>
+<h3 id="1-計算の民主化全入力に同じリソースは不要">1. 計算の「民主化」：全入力に同じリソースは不要</h3>
+<p>従来の深層学習では、<strong>「どんな入力でも全層を通す」</strong> が暗黙の前提でした。<a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> の実験結果が示したのは、<strong>入力の難易度は一様ではない</strong>という当たり前の事実を、モデルアーキテクチャに組み込んだことです。</p>
+<ul>
+<li><strong><a href="https://gluebenchmark.com/tasks/">SST-2</a></strong> の「素晴らしい！」のような単純な入力は、1〜2層で95%以上の確信を持てる</li>
+<li><strong><a href="https://gluebenchmark.com/tasks/">MNLI</a></strong> の複雑な含意関係だけが、深い層を必要とする</li>
+</ul>
+<p>このことは、<strong>「モデルの容量」と「入力の複雑性」を切り離して考える</strong>という発想転換を促しました。モデルが大きいからといって、全入力に対して最大の計算リソースを投入する必要はない。これは後の <strong><a href="https://arxiv.org/abs/2404.02258">Mixture of Depths</a></strong>（Google DeepMind, 2024）や <strong>Early Exit in LLMs</strong> の直接的な先駆けとなっています。</p>
+<h3 id="2-モデルの多様性1つの重みセットから無数のモデルを生成">2. モデルの「多様性」：1つの重みセットから無数のモデルを生成</h3>
+<p><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> が示した本質的な洞察は、<strong>「モデル圧縮＝1つの小さいモデルを作る」ではない</strong>ということです。</p>
+<p>従来の <a href="https://arxiv.org/abs/1910.01108">DistilBERT</a> や <a href="https://arxiv.org/abs/1909.10351">TinyBERT</a> は「<a href="https://aclanthology.org/N19-1423/">BERT</a> を1つの固定サイズに縮小」していましたが、<a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> は <strong>「1つの重みセットの中に、幅×深さの全組み合わせのサブネットを同居させる」</strong> ことで、<strong>「<a href="https://arxiv.org/abs/2004.08526">Once-for-all</a>」</strong> という新しい圧縮哲学を提示しました。</p>
+<p>これの本質的な意味は2つあります。</p>
+<table>
+<thead>
+<tr>
+<th>意味</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>デプロイの効率化</strong></td>
+<td>エッジデバイスごとに別モデルを用意・管理する必要がなくなる</td>
+</tr>
+<tr>
+<td><strong>計算と精度のPareto最適解を1回の学習で獲得</strong></td>
+<td>従来は圧縮率ごとに個別に学習していたが、<a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> は1回の学習で全圧縮率の最適解をカバー</td>
+</tr>
+</tbody>
+</table>
+<p>Rewiring と2段階蒸留は単なる実装テクニックではなく、<strong>「サブネット間で知識を共有しつつ、それぞれが独立して高品質になる」</strong> ための知恵として、後の <strong><a href="https://arxiv.org/abs/2109.00031">AutoTinyBERT</a></strong> や <strong><a href="https://arxiv.org/abs/2004.08526">SuperTransformer</a></strong> などの研究に継承されています。</p>
+<h3 id="3-動的推論dynamic-inferenceという新しい最適化軸の確立">3. 「動的推論（Dynamic Inference）」という新しい最適化軸の確立</h3>
+<p>両研究を合わせると、推論効率化の最適化軸が <strong>「静的」から「動的」</strong> に移行したことが明確になります。</p>
+<pre><code>【従来の静的圧縮】
+モデルA（大）→ 高精度・低速
+モデルB（中）→ 中精度・中速度  
+モデルC（小）→ 低精度・高速
+
+【DeeBERT / DynaBERT の動的圧縮】
+1つのモデル → 入力や環境に応じて計算量が自動的に変化
+</code></pre>
+<p>これは、<strong>「モデルを選ぶ」最適化から「モデルの中で計算量を選ぶ」最適化</strong>へのパラダイムシフトです。この発想は、後の以下の研究に直結しています。</p>
+<ul>
+<li><strong><a href="https://arxiv.org/abs/2404.02258">Mixture of Depths</a></strong>（2024）：各トークンごとに計算層の深さを動的に変える</li>
+<li><strong><a href="https://arxiv.org/abs/2211.17192">Speculative Decoding</a></strong>（2022〜）：小さいモデルで草案を作り、大きいモデルで検証する</li>
+<li><strong><a href="https://arxiv.org/abs/2309.06180">PagedAttention</a> / <a href="https://arxiv.org/abs/2309.06180">vLLM</a></strong>（2023）：メモリの動的割り当てによる効率化</li>
+</ul>
+<h3 id="結論もったいないを数理的に解決した">結論：「もったいない」を数理的に解決した</h3>
+<p><a href="https://aclanthology.org/N19-1423/">BERT</a> 以降の大規模言語モデルに対する最大の批判は <strong>「パラメータの大部分が、大部分の入力に対して無駄である」</strong> というものでした。</p>
+<p><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a> と <a href="https://arxiv.org/abs/2004.04037">DynaBERT</a> は、この「もったいない」を<strong>2つの異なるアプローチで数理的に解決</strong>しました。</p>
+<ul>
+<li><strong><a href="https://aclanthology.org/2020.acl-main.204/">DeeBERT</a></strong>：「入力の難易度」という<strong>縦</strong>縦軸**（層方向）で不均一化</li>
+<li><strong><a href="https://arxiv.org/abs/2004.04037">DynaBERT</a></strong>：「デバイスの制約」という<strong>横軸</strong>（幅・深さ方向）で不均一化</li>
+</ul>
+<p>両者を組み合わせることで、<strong>「どの入力に・どのデバイスで・どれだけの計算を割くか」</strong> という、推論効率化の最も本質的な問いに対する答えの原型が示された。これが、両研究が2020年に発表されながら今も引用され続ける理由です。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>

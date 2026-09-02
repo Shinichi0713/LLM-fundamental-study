@@ -1,13 +1,16 @@
+以下、ご提示いただいた文面を `[文言](リンク先)` 形式のMarkdownリンクに統一して記載し直しました。主要な論文名・技術名・ベンチマーク名には、各々の原論文や公式ページへのリンクを付与しています。
 
-DeeBERT と DynaBERT は、どちらも **BERT の推論速度を上げる**ことを目的とした技術ですが、**アプローチが異なります**。以下にそれぞれを整理します。
+---
 
-## DeeBERT（Dynamic Early Exiting）
+[DeeBERT](https://aclanthology.org/2020.acl-main.204/) と [DynaBERT](https://arxiv.org/abs/2004.04037) は、どちらも **[BERT](https://aclanthology.org/N19-1423/) の推論速度を上げる**ことを目的とした技術ですが、**アプローチが異なります**。以下にそれぞれを整理します。
+
+## [DeeBERT](https://aclanthology.org/2020.acl-main.204/)（Dynamic Early Exiting）
 
 ### 概要
-**「入力の難易度に応じて、途中の層で推論を打ち切る」** 技術です。ACL 2020 で発表されました。<source-chip title="ACL Anthology" url="https://aclanthology.org/2020.acl-main.204/" />
+**「入力の難易度に応じて、途中の層で推論を打ち切る」** 技術です。[ACL 2020](https://aclanthology.org/events/acl-2020/) で発表されました。
 
 ### 仕組み概要
-BERT の各 Transformer 層の後に **exit classifier（早期出口判定器）** を付けます。入力文が推論途中で「もう十分に予測できている」と判定されたら、それ以降の層を計算せずにその場で出力を返します。
+[BERT](https://aclanthology.org/N19-1423/) の各 [Transformer](https://arxiv.org/abs/1706.03762) 層の後に **exit classifier（早期出口判定器）** を付けます。入力文が推論途中で「もう十分に予測できている」と判定されたら、それ以降の層を計算せずにその場で出力を返します。
 
 ```
 入力 → [Layer 1] → [Exit?] → Yes → 出力
@@ -25,17 +28,17 @@ BERT の各 Transformer 層の後に **exit classifier（早期出口判定器�
 ### 効果
 推論時間を **約 2〜4 倍** 高速化できるケースが報告されています。
 
-## DynaBERT（Dynamic BERT with Adaptive Width and Depth）
+## [DynaBERT](https://arxiv.org/abs/2004.04037)（Dynamic BERT with Adaptive Width and Depth）
 
 ### 概要
-**「モデルの幅（層内の次元数）と深さ（層数）の両方を動的に調整できる」** 技術です。NeurIPS 2020 で発表されました。<source-chip title="NeurIPS 2020" url="https://proceedings.neurips.cc/paper/2020/hash/6f5216f8d89b086c18298e043bfe48ed-Abstract.html" />
+**「モデルの幅（層内の次元数）と深さ（層数）の両方を動的に調整できる」** 技術です。[NeurIPS 2020](https://nips.cc/virtual/2020/) で発表されました。
 
 ### 仕組み概要
-知識蒸留（Knowledge Distillation）を使い、**1つのモデルに「様々なサイズのサブネットワーク」を同居させます**。
+[知識蒸留（Knowledge Distillation）](https://arxiv.org/abs/1503.02531) を使い、**1つのモデルに「様々なサイズのサブネットワーク」を同居させます**。
 
 | 調整軸 | 内容 |
 |---|---|
-| **Width（幅）** | Attention head 数や hidden dimension を削減（重要な head / 次元だけ残す） |
+| **Width（幅）** | [Attention head](https://arxiv.org/abs/1706.03762) 数や hidden dimension を削減（重要な head / 次元だけ残す） |
 | **Depth（深さ）** | 層を間引き（例：12層 → 6層、4層など） |
 
 推論時に、デバイスの性能や許容レイテンシに応じて「どの幅・深さのサブネットを使うか」を動的に選択します。
@@ -48,13 +51,13 @@ Full DynaBERT (width=1.0, depth=1.0)
 ```
 
 ### ポイント
-- **Once-for-all（一度学習すれば、あらゆるサイズから選択可能）** のアプローチ
+- **[Once-for-all](https://arxiv.org/abs/2004.08526)**（一度学習すれば、あらゆるサイズから選択可能） のアプローチ
 - 幅の削減には「重要度の低い attention head やニューロンを剪定（pruning）」する手法を使用
 - 深さの削減には「均等に層を間引く」戦略を使用
 
 ## DeeBERT vs DynaBERT の比較
 
-| 項目 | DeeBERT | DynaBERT |
+| 項目 | [DeeBERT](https://aclanthology.org/2020.acl-main.204/) | [DynaBERT](https://arxiv.org/abs/2004.04037) |
 |---|---|---|
 | **削減対象** | 計算の「途中打ち切り」（深さ方向の動的スキップ） | 幅と深さの両方（モデル構造そのものの圧縮） |
 | **モデル数** | 1つのモデル（出口を複数設置） | 1つのモデル（中に多数のサブネットを包含） |
@@ -63,14 +66,14 @@ Full DynaBERT (width=1.0, depth=1.0)
 | **主な利点** | 実装がシンプル、入力難易度に適応 | 幅・深さの両方を自由に調整可能、幅広いデバイス対応 |
 | **主な欠点** | モデルサイズ自体は変わらない | 学習が複雑、サブネット間の干渉が課題 |
 
-__直感的な違い__
+**直感的な違い**
 
-- **DeeBERT** は「**全員が同じ階段を登るが、簡単な問題の人は途中の階で降りていい**」という考え方
-- **DynaBERT** は「**階段自体を幅広・幅狭・短い・長いの複数バージョンを用意して、状況に応じて使い分ける**」という考え方
+- **[DeeBERT](https://aclanthology.org/2020.acl-main.204/)** は「**全員が同じ階段を登るが、簡単な問題の人は途中の階で降りていい**」という考え方
+- **[DynaBERT](https://arxiv.org/abs/2004.04037)** は「**階段自体を幅広・幅狭・短い・長いの複数バージョンを用意して、状況に応じて使い分ける**」という考え方
 
-どちらも「大規模モデルをそのまま使うのはもったいない」という発想から生まれた技術で、現在の推論効率化研究（Mixture of Depths など）の先駆けとなっています。
+どちらも「大規模モデルをそのまま使うのはもったいない」という発想から生まれた技術で、現在の推論効率化研究（[Mixture of Depths](https://arxiv.org/abs/2404.02258) など）の先駆けとなっています。
 
-## DeeBERTの仕組み詳細
+## [DeeBERT](https://aclanthology.org/2020.acl-main.204/)の仕組み詳細
 
 DeeBERTが「どのタイミング（どの層）で推論を終了すべきか」を判断する仕組みは、主に**各中間層における予測の不確実性（不確実さ）の評価**に基づいています。
 
@@ -80,7 +83,7 @@ DeeBERTが「どのタイミング（どの層）で推論を終了すべきか�
 
 各エンコーダー層の直後に配置された中間分類器（Exit Head）で、以下の処理が順次実行されます。
 
-__1. 各層での確率分布の計算__
+**1. 各層での確率分布の計算**
 
 各層の出力ベクトル（通常は `[CLS]` トークン）をその層専用のExit Headに入力し、全クラスに対する予測確率（Softmax出力）を計算します。
 
@@ -88,16 +91,16 @@ $$\mathbf{p} = \text{Softmax}(\text{ExitHead}_k(\mathbf{h}_k))$$
 
 ここで $\mathbf{p} = [p_1, p_2, \dots, p_C]$ は、$C$ 個のクラスそれぞれに対する予測確率です。
 
-__2. 不確実性（エント立性）の算出__
+**2. 不確実性（エントロピー）の算出**
 
 得られた確率分布 $\mathbf{p}$ から、予測の「曖昧さ（不確実性）」を表すエントロピー $S(\mathbf{p})$ を計算します。
 
 $$S(\mathbf{p}) = - \sum_{i=1}^{C} p_i \log(p_i)$$
 
-* **エントロピーが低い（0に近い）：** モデルが特定クラスの予測に高い確信を持っている状態（例: $[0.99, 0.01]$ $\rightarrow$ エントロピー $\approx 0.05$）
-* **エントロピーが高い：** 予測が割れて迷っている状態（例: $[0.50, 0.50]$ $\rightarrow$ エントロピー $\approx 0.69$）
+* **エントロピーが低い（0に近い）：** モデルが特定クラスの予測に高い確信を持っている状態（例: $[0.99, 0.01]$ → エントロピー $\approx 0.05$）
+* **エントロピーが高い：** 予測が割れて迷っている状態（例: $[0.50, 0.50]$ → エントロピー $\approx 0.69$）
 
-__3. 閾値（Threshold）との比較による判定__
+**3. 閾値（Threshold）との比較による判定**
 
 算出されたエントロピー $S(\mathbf{p})$ を、ユーザーがあらかじめ設定した閾値 $S_{\text{threshold}}$ と比較します。
 
@@ -111,13 +114,13 @@ __3. 閾値（Threshold）との比較による判定__
 ### なぜこの方法でうまくいくのか？
 
 1. **簡単・明確なデータは浅い層で解ける**
-「ポジティブ／ネガティブ感情分析」のようなタスクにおいて、「素晴らしい！」のような極めて分かりやすい語彙が含まれる入力は、BERTの1〜2層目の特徴量抽出だけで十分に分類可能です。
+「ポジティブ／ネガティブ感情分析」のようなタスクにおいて、「素晴らしい！」のような極めて分かりやすい語彙が含まれる入力は、[BERT](https://aclanthology.org/N19-1423/)の1〜2層目の特徴量抽出だけで十分に分類可能です。
 2. **複雑なデータのみ深層まで回す**
 文脈依存が強い表現や二重否定など、複雑な意味理解が必要な入力のみが深い層まで処理されます。
 3. **推論速度と精度の動的なトレードオフ調整**
 閾値 $S_{\text{threshold}}$ を大きくすると早期退出しやすくなり速度重視（低遅延）になり、小さくすると深い層まで処理されて精度重視になります。アプリケーションの要件に応じて、モデルを再学習することなく閾値だけで速度と精度のバランスを変更できます。
 
-## DynaBERTの仕組み詳細
+## [DynaBERT](https://arxiv.org/abs/2004.04037)の仕組み詳細
 
 DynaBERTの仕組みを、学習の流れ、幅・深さの削減方法、知識蒸留の詳細まで含めて説明します。
 
@@ -131,20 +134,20 @@ Stage 1: DynaBERT_W（幅適応のみのモデル）を学習
 Stage 2: DynaBERT（幅＋深さの両方適応）を学習
 ```
 
-**なぜ2段階か**：BERTの幅と深さは互いに影響し合うため、同時に学習すると片方の知識がもう片方の学習で上書き（忘却）されやすいです。まず「幅だけ」を最適化したDynaBERT_Wを作り、それを教師として「幅＋深さ」のDynaBERTを学習することで、知識の伝達を安定させます。<source-chip title="NeurIPS 2020" url="https://proceedings.neurips.cc/paper/2020/hash/6f5216f8d89b086c18298e043bfe48ed-Abstract.html" />
+**なぜ2段階か**：[BERT](https://aclanthology.org/N19-1423/)の幅と深さは互いに影響し合うため、同時に学習すると片方の知識がもう片方の学習で上書き（忘却）されやすいです。まず「幅だけ」を最適化したDynaBERT_Wを作り、それを教師として「幅＋深さ」のDynaBERTを学習することで、知識の伝達を安定させます。
 
 ### 2. Stage 1: DynaBERT_W（幅適応）の学習
 
-__2.1 幅とは何か__
+**2.1 幅とは何か**
 
-BERTのTransformer層には2つの「幅」があります。
+[BERT](https://aclanthology.org/N19-1423/)の[Transformer](https://arxiv.org/abs/1706.03762)層には2つの「幅」があります。
 
 | モジュール | 幅の定義 | 削減方法 |
 |---|---|---|
-| **MHA（Multi-Head Attention）** | Attention head の数 | 重要度の低い head を削除 |
+| **MHA（Multi-Head Attention）** | [Attention head](https://arxiv.org/abs/1706.03762) の数 | 重要度の低い head を削除 |
 | **FFN（Feed-Forward Network）** | 中間層のニューロン数 | 重要度の低いニューロンを削除 |
 
-__2.2 重要度の計算とRewiring（配線替え）__
+**2.2 重要度の計算とRewiring（配線替え）**
 
 単純に「後ろからheadを削る」のではなく、**重要度に基づいて配線を入れ替え（rewire）** します。
 
@@ -169,19 +172,19 @@ Rewire後: [H2(高), H4(高), H6(高), H3(中), H1(低), H5(低)]
 
 ### 3. 知識蒸留（Knowledge Distillation）の詳細
 
-__3.1 教師と生徒__
+**3.1 教師と生徒**
 
 | 段階 | 教師（Teacher） | 生徒（Student） |
 |---|---|---|
-| Stage 1 | フルサイズのBERT | DynaBERT_W（各幅のサブネット） |
+| Stage 1 | フルサイズの[BERT](https://aclanthology.org/N19-1423/) | DynaBERT_W（各幅のサブネット） |
 | Stage 2 | DynaBERT_W | DynaBERT（各幅×各深さのサブネット） |
 
-__3.2 蒸留の対象__
+**3.2 蒸留の対象**
 
 損失関数は以下の3つの和で構成されます。
 
 $$
-L = L_{pred} + λ_{soft} * L_{soft} + λ_{hidden} * L_{hidden}
+L = L_{pred} + \lambda_{soft} \cdot L_{soft} + \lambda_{hidden} \cdot L_{hidden}
 $$
 
 | 損失 | 内容 |
@@ -190,14 +193,14 @@ $$
 | $L_{soft}$ | 教師のsoftmax出力（温度付き）と生徒の出力のKLダイバージェンス |
 | $L_{hidden}$ | 教師と生徒の中間hidden statesのMSE（層対応づけして距離を縮める） |
 
-__3.3 複数サブネットの同時学習__
+**3.3 複数サブネットの同時学習**
 
 1つのミニバッチで、**複数の幅（および深さ）のサブネットをすべて学習**します。
 
 ```
 for each mini-batch:
     for m_w in [1.0, 0.75, 0.5, 0.25]:  # 幅の候補
-        for m_d in [1.0, 0.75, 0.5]:      # 深さの候裘（Stage 2のみ）
+        for m_d in [1.0, 0.75, 0.5]:      # 深さの候補（Stage 2のみ）
             そのサブネットの損失を計算 → 勾配を累積
     累積した勾配で1回パラメータ更新
 ```
@@ -206,7 +209,7 @@ for each mini-batch:
 
 ### 4. Stage 2: DynaBERT（幅＋深さ適応）の学習
 
-__4.1 深さの削減__
+**4.1 深さの削減**
 
 深さの倍率 `m_d` に応じて、層を間引きます。
 
@@ -214,11 +217,11 @@ __4.1 深さの削減__
   - 例：12層で `m_d = 0.5` なら、層 `[1, 3, 5, 7, 9, 11]` を残す
   - 均等に間引くことで、情報伝達の偏りを防ぐ
 
-__4.2 深さと幅の組み合わせ__
+**4.2 深さと幅の組み合わせ**
 
 Stage 2では、幅と深さの**全組み合わせ**のサブネットを学習します。
 
-| 幅 `m_w` | 深さ `m_d` | サブネット例 |
+| 幅 $m_w$ | 深さ $m_d$ | サブネット例 |
 |---|---|---|
 | 1.0 | 1.0 | フルサイズ（教師に相当） |
 | 0.75 | 1.0 | 幅75%、深さ100% |
@@ -251,6 +254,158 @@ else:
 | **同時学習** | 1つのミニバッチで全サブネットの勾配を累積し、1回の更新で全サイズを最適化 |
 | **動的推論** | デバイスのリソースに応じて、マスク切り替えだけでサブネットを変更 |
 
-DynaBERTの本質は「**1つのモデルに無数のサブネットを同居させ、Rewiringと蒸留で全サイズが高品質になるように設計する**」ことにあります。これにより、エッジデバイスの多様な制約に対して「モデルを選ぶ」のではなく「モデルの中からサイズを選ぶ」という柔軟な展開が可能になります。
+[DynaBERT](https://arxiv.org/abs/2004.04037)の本質は「**1つのモデルに無数のサブネットを同居させ、[Rewiring](https://arxiv.org/abs/2004.04037)と蒸留で全サイズが高品質になるように設計する**」ことにあります。これにより、エッジデバイスの多様な制約に対して「モデルを選ぶ」のではなく「モデルの中からサイズを選ぶ」という柔軟な展開が可能になります。
 
+## 効果
 
+以下、両論文の実論文の実論文の実験結果を紐解きながら、それぞれの効果を比較して説明します。
+
+### [DeeBERT](https://aclanthology.org/2020.acl-main.204/) の実験結果（[ACL 2020](https://aclanthology.org/events/acl-2020/)）
+
+**実験設定**
+- **ベースモデル**：[BERT-base](https://aclanthology.org/N19-1423/)、[RoBERTa-base](https://arxiv.org/abs/1907.11692)
+- **評価データセット**：[GLUE](https://gluebenchmark.com/) の6タスク（[SST-2](https://gluebenchmark.com/tasks/)、[MRPC](https://gluebenchmark.com/tasks/)、[QNLI](https://gluebenchmark.com/tasks/)、[RTE](https://gluebenchmark.com/tasks/)、[QQP](https://gluebenchmark.com/tasks/)、[MNLI](https://gluebenchmark.com/tasks/)）
+- **比較手法**：[DistilBERT](https://arxiv.org/abs/1910.01108)、[LayerDrop](https://arxiv.org/abs/1909.11556)
+- **測定環境**：NVIDIA Tesla P100、サンプルを1つずつ処理（バッチなし）
+
+**主な結果**
+
+| 効果 | 数値 |
+|---|---|
+| **最大推論時間削減** | **約40%**（BERT-base、品質低下最小で） |
+| **精度低下** | 多くのタスクで **1%未満〜数%程度** |
+
+**タスク別の傾向（論文 Table 1 より）**
+
+[DeeBERT](https://aclanthology.org/2020.acl-main.204/) はエントロピ閾値 `S` を調整することで、**精度と速度のトレードオフを連続的に制御**できます。
+
+- **[SST-2](https://gluebenchmark.com/tasks/)**（感情分析、比較的簡単）：浅い層で多くのサンプルが出口。時間削減が大きい
+- **[MNLI](https://gluebenchmark.com/tasks/)**（自然言語推論、比較的困難）：深い層まで計算が必要なサンプルが多い。時間削減率はやや小さい
+- **[RTE](https://gluebenchmark.com/tasks/)**（含意認識、小規模データ）：時々「浅い層の方が精度が高い」という逆転現象も観測。これは全層使用による過学習を早期出口が回避したと解釈されています
+
+**層の冗長性に関する分析**
+
+論文の追加分析では、**[BERT](https://aclanthology.org/N19-1423/) と [RoBERTa](https://arxiv.org/abs/1907.11692) で層の振る舞いが異なる**ことが明らかになりました。
+
+- **[BERT](https://aclanthology.org/N19-1423/)**：中盤の層（6〜8層付近）で性能が頭打ちになり、それ以降はほぼ変化なし
+- **[RoBERTa](https://arxiv.org/abs/1907.11692)**：後半の層にかけても性能が向上し続ける傾向。ただし出口後の性能低下はBERTより急峻
+
+このことから、**[BERT](https://aclanthology.org/N19-1423/) の方が層の冗長性が高く、早期出口の効果を享受しやすい**と結論付けられています。
+
+### [DynaBERT](https://arxiv.org/abs/2004.04037) の実験結果（[NeurIPS 2020](https://nips.cc/virtual/2020/)）
+
+**実験設定**
+- **ベースモデル**：[BERT-base](https://aclanthology.org/N19-1423/)、[RoBERTa-base](https://arxiv.org/abs/1907.11692)
+- **評価データセット**：[GLUE](https://gluebenchmark.com/) 全タスク、[SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) v1.1
+- **サブネット構成**：幅倍率 `[1.0, 0.75, 0.5, 0.25]` × 深さ倍率 `[1.0, 0.75, 0.5]` = **12種類のサブネット**
+- **比較手法**：[DistilBERT](https://arxiv.org/abs/1910.01108)、[TinyBERT](https://arxiv.org/abs/1909.10351)、[LayerDrop](https://arxiv.org/abs/1909.11556) など
+- **効率指標**：パラメータ数、FLOPs、GPUレイテンシ、ARM CPUレイテンシ（4軸で評価）
+
+**主な結果**
+
+| 効果 | 数値 |
+|---|---|
+| **フルサイズ時の精度** | 元の [BERT-base](https://aclanthology.org/N19-1423/) / [RoBERTa-base](https://arxiv.org/abs/1907.11692) と**同等** |
+| **同サイズ圧縮手法との比較** | **既存手法（[DistilBERT](https://arxiv.org/abs/1910.01108)、[TinyBERT](https://arxiv.org/abs/1909.10351) 等）を一貫して上回る** |
+| **最小サブネット時** | 幅25% × 深さ50% でも、同サイズの他手法を上回る精度を維持 |
+| **DynaRoBERTa** | 元の [RoBERTa-base](https://arxiv.org/abs/1907.11692) を**上回る性能**を複数タスクで達成 |
+
+**タスク別の傾向**
+
+- **[CoLA](https://gluebenchmark.com/tasks/)**（言語受容性）：特に強い性能向上。Rewiring により「文法的に正しいか」を判断する attention head が小さいサブネットにも残るため
+- **[RTE](https://gluebenchmark.com/tasks/) / [MRPC](https://gluebenchmark.com/tasks/)**（推論タスク）：大きな圧縮率でも精度低下を抑えられている
+- **[SQuAD](https://rajpurkar.github.io/SQuAD-explorer/)**（質問応答）：幅・深さの両方を削減しても、他の圧縮手法より高い F1 を維持
+
+**アブレーション研究の結果**
+
+| 変更 | 影響 |
+|---|---|
+| **Rewiring を除去** | 平均 [GLUE](https://gluebenchmark.com/) スコアが **2ポイント以上低下** |
+| **蒸留＋データ拡張を除去** | DynaBERT_W の性能が **約1.5ポイント低下** |
+| **DynaBERT_W を中間教師にしない**（元BERTから直接蒸留） | 小さいサブネットで**大きな精度低下**。2段階学習の有効性が確認された |
+| **深さ優先（Depth-first）学習** | 幅優先（Width-first）より**劣る結果**。特に高に高圧縮率で顕著 |
+
+### [DeeBERT](https://aclanthology.org/2020.acl-main.204/) vs [DynaBERT](https://arxiv.org/abs/2004.04037)：効果の比較
+
+| 比較軸 | [DeeBERT](https://aclanthology.org/2020.acl-main.204/) | [DynaBERT](https://arxiv.org/abs/2004.04037) |
+|---|---|---|
+| **最大速度向上** | 約 **40%** の推論時間削減 | 幅25%×深さ50% で **約75〜90%** の計算量削減（FLOPs ベース） |
+| **精度維持** | 小〜中程度の圧縮で**品質低下最小** | 幅広い圧縮率で**一貫して高い精度**を維持 |
+| **柔軟性** | 入力ごとに**動的**に出口層を変える | デバイス・要件に応じて**12種類のサブネット**から選択 |
+| **モデルサイズ削減** | **なし**（モデル自体はフルサイズのまま） | **あり**（サブネットによりパラメータ数も削減） |
+| **メモリ効率** | 改善なし（全パラメータを保持） | 大幅改善（小さいサブネットはメモリも少ない） |
+| **実装の簡易さ** | **簡単**（off-ramp を追加するだけ） | **複雑**（Rewiring、2段階蒸留、複数サブネット同時学習） |
+
+### 結論：どちらを選ぶか
+
+| 優先事項 | 推奨 |
+|---|---|
+| **推論速度のみ**を上げたい（モデルサイズは気にしない） | **[DeeBERT](https://aclanthology.org/2020.acl-main.204/)** |
+| **速度速度＋メモリ＋複数デバイス対応**を同時に実現したい | **[DynaBERT](https://arxiv.org/abs/2004.04037)** |
+| **実装コストを最小化**したい | **[DeeBERT](https://aclanthology.org/2020.acl-main.204/)** |
+| **幅広い圧縮率で高い精度**を保証したい | **[DynaBERT](https://arxiv.org/abs/2004.04037)** |
+
+[DeeBERT](https://aclanthology.org/2020.acl-main.204/) は「**同じモデルで、簡単な入力は早く終わらせる**」という発想で、実装が非常にシンプルなのが強みです。一方、[DynaBERT](https://arxiv.org/abs/2004.04037) は「**1つのモデルに様々なサイズを同居させ、どのサイズでも高品質を保証する**」という発想で、エッジデバイス展開の多様な制約に対応できるのが強みです。
+
+両者は排他ではなく、**[DynaBERT](https://arxiv.org/abs/2004.04037) のサブネットに対して [DeeBERT](https://aclanthology.org/2020.acl-main.204/) の早期出口を組み合わせる**ことで、さらに細かい効率最適化が可能になるという研究も後に続いています。
+
+## 総括
+
+両研究の結果を俯瞰すると、本質的には **「大規模言語モデルの『均一計算』という前提を覆し、入力と環境に応じた『不均一計算』のパラダイムを確立した」** ことにあります。
+
+以下、3つの軸で総括します。
+
+### 1. 計算の「民主化」：全入力に同じリソースは不要
+
+従来の深層学習では、**「どんな入力でも全層を通す」** が暗黙の前提でした。[DeeBERT](https://aclanthology.org/2020.acl-main.204/) の実験結果が示したのは、**入力の難易度は一様ではない**という当たり前の事実を、モデルアーキテクチャに組み込んだことです。
+
+- **[SST-2](https://gluebenchmark.com/tasks/)** の「素晴らしい！」のような単純な入力は、1〜2層で95%以上の確信を持てる
+- **[MNLI](https://gluebenchmark.com/tasks/)** の複雑な含意関係だけが、深い層を必要とする
+
+このことは、**「モデルの容量」と「入力の複雑性」を切り離して考える**という発想転換を促しました。モデルが大きいからといって、全入力に対して最大の計算リソースを投入する必要はない。これは後の **[Mixture of Depths](https://arxiv.org/abs/2404.02258)**（Google DeepMind, 2024）や **Early Exit in LLMs** の直接的な先駆けとなっています。
+
+### 2. モデルの「多様性」：1つの重みセットから無数のモデルを生成
+
+[DynaBERT](https://arxiv.org/abs/2004.04037) が示した本質的な洞察は、**「モデル圧縮＝1つの小さいモデルを作る」ではない**ということです。
+
+従来の [DistilBERT](https://arxiv.org/abs/1910.01108) や [TinyBERT](https://arxiv.org/abs/1909.10351) は「[BERT](https://aclanthology.org/N19-1423/) を1つの固定サイズに縮小」していましたが、[DynaBERT](https://arxiv.org/abs/2004.04037) は **「1つの重みセットの中に、幅×深さの全組み合わせのサブネットを同居させる」** ことで、**「[Once-for-all](https://arxiv.org/abs/2004.08526)」** という新しい圧縮哲学を提示しました。
+
+これの本質的な意味は2つあります。
+
+| 意味 | 説明 |
+|---|---|
+| **デプロイの効率化** | エッジデバイスごとに別モデルを用意・管理する必要がなくなる |
+| **計算と精度のPareto最適解を1回の学習で獲得** | 従来は圧縮率ごとに個別に学習していたが、[DynaBERT](https://arxiv.org/abs/2004.04037) は1回の学習で全圧縮率の最適解をカバー |
+
+Rewiring と2段階蒸留は単なる実装テクニックではなく、**「サブネット間で知識を共有しつつ、それぞれが独立して高品質になる」** ための知恵として、後の **[AutoTinyBERT](https://arxiv.org/abs/2109.00031)** や **[SuperTransformer](https://arxiv.org/abs/2004.08526)** などの研究に継承されています。
+
+### 3. 「動的推論（Dynamic Inference）」という新しい最適化軸の確立
+
+両研究を合わせると、推論効率化の最適化軸が **「静的」から「動的」** に移行したことが明確になります。
+
+```
+【従来の静的圧縮】
+モデルA（大）→ 高精度・低速
+モデルB（中）→ 中精度・中速度  
+モデルC（小）→ 低精度・高速
+
+【DeeBERT / DynaBERT の動的圧縮】
+1つのモデル → 入力や環境に応じて計算量が自動的に変化
+```
+
+これは、**「モデルを選ぶ」最適化から「モデルの中で計算量を選ぶ」最適化**へのパラダイムシフトです。この発想は、後の以下の研究に直結しています。
+
+- **[Mixture of Depths](https://arxiv.org/abs/2404.02258)**（2024）：各トークンごとに計算層の深さを動的に変える
+- **[Speculative Decoding](https://arxiv.org/abs/2211.17192)**（2022〜）：小さいモデルで草案を作り、大きいモデルで検証する
+- **[PagedAttention](https://arxiv.org/abs/2309.06180) / [vLLM](https://arxiv.org/abs/2309.06180)**（2023）：メモリの動的割り当てによる効率化
+
+### 結論：「もったいない」を数理的に解決した
+
+[BERT](https://aclanthology.org/N19-1423/) 以降の大規模言語モデルに対する最大の批判は **「パラメータの大部分が、大部分の入力に対して無駄である」** というものでした。
+
+[DeeBERT](https://aclanthology.org/2020.acl-main.204/) と [DynaBERT](https://arxiv.org/abs/2004.04037) は、この「もったいない」を**2つの異なるアプローチで数理的に解決**しました。
+
+- **[DeeBERT](https://aclanthology.org/2020.acl-main.204/)**：「入力の難易度」という**縦**縦軸**（層方向）で不均一化
+- **[DynaBERT](https://arxiv.org/abs/2004.04037)**：「デバイスの制約」という**横軸**（幅・深さ方向）で不均一化
+
+両者を組み合わせることで、**「どの入力に・どのデバイスで・どれだけの計算を割くか」** という、推論効率化の最も本質的な問いに対する答えの原型が示された。これが、両研究が2020年に発表されながら今も引用され続ける理由です。
