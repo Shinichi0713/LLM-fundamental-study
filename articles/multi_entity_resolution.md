@@ -1,24 +1,22 @@
 ---
-title: "End-to-End Entity Resolution and Question Answering Using Differentiable Knowledge Graphs"
+title: "End-to-End Entity Resolution and Question Answering"
 emoji: "🐸"
 type: "tech" # tech: 技術記事 / idea: アイデア記事
 topics: ["ai", "NLP", "Entity Resolution"]
 published: true
 ---
-
 NLPでクラシックな課題名寄せに関する2020年にESWCで採択された論文について解説してきます。
 
 ### 論文情報
 
-| 項目 | 内容 |
-|---|---|
-| **タイトル** | Incremental Multi-source Entity Resolution for Knowledge Graph Completion |
-| **著者** | Alieh Saeedi, Eric Peukert, Erhard Rahm |
-| **所属** | University of Leipzig & ScaDS.AI Dresden/Leipzig（ドイツ） |
-| **会議** | **ESWC 2020**（The Semantic Web） |
-| **フレームワーク** | **FAMER**（Fast Multi-source Entity Resolution System） |
-| **PDF** | https://dbs.uni-leipzig.de/files/research/publications/2020-6/pdf/FAMER_Incremental_eswc2020.pdf |
-
+| 項目                     | 内容                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| **タイトル**       | Incremental Multi-source Entity Resolution for Knowledge Graph Completion                        |
+| **著者**           | Alieh Saeedi, Eric Peukert, Erhard Rahm                                                          |
+| **所属**           | University of Leipzig & ScaDS.AI Dresden/Leipzig（ドイツ）                                       |
+| **会議**           | **ESWC 2020**（The Semantic Web）                                                          |
+| **フレームワーク** | **FAMER**（Fast Multi-source Entity Resolution System）                                    |
+| **PDF**            | https://dbs.uni-leipzig.de/files/research/publications/2020-6/pdf/FAMER_Incremental_eswc2020.pdf |
 
 ### 解決しようとした問題
 
@@ -133,28 +131,26 @@ __3. n-depth reclustering（クラスタ修復）__
 
 3つの実世界データセットで評価：
 
-| 発見 | 内容 |
-|---|---|
-| **① 単純逐次追加の限界** | 1件ずつ追加するナイーブな手法は、追加順序によって精度が大きく変動 |
-| **② max-bothの有効性** | セット単位の最適割り当てで、順序依存性を部分的に緩和 |
+| 発見                                      | 内容                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------ |
+| **① 単純逐次追加の限界**           | 1件ずつ追加するナイーブな手法は、追加順序によって精度が大きく変動  |
+| **② max-bothの有効性**             | セット単位の最適割り当てで、順序依存性を部分的に緩和               |
 | **③ n-depth reclusteringの優位性** | **修復手法を入れると、バッチ処理と同等のクラスタ品質を達成** |
-| **④ 並列化のスケーラビリティ** | FAMERフレームワークによる分散処理で、大規模データにも対応可能 |
-
+| **④ 並列化のスケーラビリティ**     | FAMERフレームワークによる分散処理で、大規模データにも対応可能      |
 
 ### 社内RAGとの関連
 
 以下のような**階層的な名寄せアーキテクチャ**が構想できます：
 
-| レイヤー | 役割 | 対応論文・手法 |
-|---|---|---|
-| **L1: クエリ時の動的名寄せ** | 略称・通称をリアルタイムに解決 | DynamicER（TempCCA） |
+| レイヤー                                     | 役割                                           | 対応論文・手法            |
+| -------------------------------------------- | ---------------------------------------------- | ------------------------- |
+| **L1: クエリ時の動的名寄せ**           | 略称・通称をリアルタイムに解決                 | DynamicER（TempCCA）      |
 | **L2: 文書蓄積時の増分クラスタリング** | 新規文書から抽出したエンティティを既存KGに統合 | **FAMER（本論文）** |
-| **L3: 辞書・ルールフォールバック** | 高頻度別名の高速解決 | 独自辞書 |
-| **L4: Backward ER** | 検索結果からの逆推定 | PoCで実装 |
+| **L3: 辞書・ルールフォールバック**     | 高頻度別名の高速解決                           | 独自辞書                  |
+| **L4: Backward ER**                    | 検索結果からの逆推定                           | PoCで実装                 |
 
 **本論文からの教訓**：
+
 > **「新規エンティティ（メンション）を1件ずつ処理するのではなく、セット単位で最適化し、過去の誤りを修復するメカニズムを入れることで、時間とともに劣化しない名寄せKGを維持できる」**
 
 これは、社内WikiやSlackログが日々流入する環境で、**エンティティ辞書・履歴を自動更新し続ける基盤**を設計する上で非常に重要な示唆です。
-
-
