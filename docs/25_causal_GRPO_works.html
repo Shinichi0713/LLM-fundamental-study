@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>LLMの強化学習は現在はPPO系の手法を用いることがベースとなってきています。
+こんな中PPOでは推論タスクでの中間ステップの時間がかかることから中間ステップが長くなり、計算コストも大きいという課題がありました。</p>
+<p>そんな状況に一石を投じたのがDeepSeekの「クリティックを完全に捨てて、グループ内の相対評価で代用する」ということに目を付けたGRPOです。
+そんなGRPOがなぜワークするかという根拠を説明する面白い論文を見つけました。</p>
+<p>査読はついてないのですが、性能向上を主張ではなく、理論の裏付けを行う論文なので、ブラックボックスのまま未消化になる心配も低いと思いました。</p>
+<p>読んでいきます。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="概要">概要</h2>
+<p>論文の概要についてはこんなところです。</p>
+<h3 id="論文情報カード">論文情報カード</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>タイトル</strong></td>
+<td>Demystifying Group Relative Policy Optimization: Its Policy Gradient is a U-Statistic</td>
+</tr>
+<tr>
+<td><strong>日本語訳</strong></td>
+<td>「GRPOを解明する：そのポリシーグラディエントは実はU-統計量である」</td>
+</tr>
+<tr>
+<td><strong>著者</strong></td>
+<td>Hongyi Zhou, Kai Ye, Erhan Xu, Jin Zhu, Ying Yang, Shijin Gong, Chengchun Shi</td>
+</tr>
+<tr>
+<td><strong>採択状況</strong></td>
+<td><strong>arXiv preprint</strong>（2026年3月1日公開）。現時点では査読付き学会での採択情報は未公開</td>
+</tr>
+<tr>
+<td><strong>論文リンク</strong></td>
+<td><a href="https://arxiv.org/abs/2603.01162">arXiv:2603.01162</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="一言でいうと">一言でいうと</h3>
+<blockquote>
+<p><strong>DeepSeek-R1の中核技術であるGRPOが「なぜ機能するのか」を、1948年に確立された古典的統計学の「U-統計量」という理論で初めて数学的に解明した論文。</strong></p>
+</blockquote>
+<h3 id="3つの主要な貢献">3つの主要な貢献</h3>
+<ul>
+<li>
+<p><strong>GRPOのポリシーグラディエントが「U-統計量」であることを証明</strong></p>
+<ul>
+<li>「グループ平均でクリティック（価値関数）を代替する」というGRPOの核心操作が、統計学的に最適な推定量であることを示した</li>
+</ul>
+</li>
+<li>
+<p><strong>GRPOが「オラクル性」を持つことを証明</strong></p>
+<ul>
+<li>サンプル数が増えると、GRPOは「真の価値関数を知っている理想的なアルゴリズム」と漸近的に等価になることを示した。つまり、クリティックネットワークを省略しても、理論的には情報を失わない</li>
+</ul>
+</li>
+<li>
+<p><strong>最適なグループサイズのスケーリング則を導出</strong></p>
+<ul>
+<li>「1プロンプトあたり何個の出力をサンプリングすべきか」という実務上の最重要ハイパーパラメータについて、データとモデルアーキテクチャのみで決まる普遍的な法則を提示</li>
+</ul>
+</li>
+</ul>
+<h3 id="なぜこの論文が面白いか">なぜこの論文が面白いか</h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>理論的価値</strong></td>
+<td>実務で広く使われるGRPOの「なぜグループ平均が良いのか」という直感を、70年以上の歴史を持つU-統計量の理論で厳密に説明した</td>
+</tr>
+<tr>
+<td><strong>実用的価値</strong></td>
+<td>最適なグループサイズを経験的に探る必要がなく、理論式から導出できるようになった</td>
+</tr>
+<tr>
+<td><strong>影響力</strong></td>
+<td>DeepSeek-R1（Nature掲載）の学習アルゴリズムの理論的基盤を示したため、今後の推論RL研究の前提知識になりうる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="補足採択状況について">補足：採択状況について</h3>
+<p>現時点（2026年9月）では、本論文は<strong>arXiv上のpreprint</strong>です。ただし、内容の理論的完成度が高く、GRPOという現在最も注目されている推論RLアルゴリズムの数学的基盤を示しているため、NeurIPS・ICML・ICLRなどのトップ会議、あるいは統計学・機械学習の理論系ジャーナルへの採択が今後発表される可能性が高いと考えられます。</p>
+<h2 id="grpoとは">GRPOとは</h2>
+<p>GRPO（Group Relative Policy Optimization）は、LLM（大規模言語モデル）を強化学習で学習させる際に使われる比較的新しいアルゴリズムです。DeepSeek-R1などの学習で採用されたことで広く知られるようになりました。</p>
+<p>以下、段階的に説明いたします。</p>
+<h3 id="1-なぜ-grpo-が生まれたのか">1. なぜ GRPO が生まれたのか</h3>
+<p>従来、LLMの強化学習では <strong>PPO（Proximal Policy Optimization）</strong> という手法が主流でした。しかし PPO には大きな問題があります。</p>
+<h3 id="ppo-の問題点">PPO の問題点</h3>
+<p>PPO では、モデルが「この回答は何点か？」を判断するために、<strong>Value Model（価値モデル）</strong> という別のニューラルネットワークが必要です。</p>
+<pre><code>[Policy Model]  「回答を生成する」本体モデル
+[Value Model]   「その回答の良さを予測する」別モデル
+</code></pre>
+<p>この Value Model には以下の問題があります。</p>
+<ul>
+<li><strong>メモリ消費が膨大</strong>：Policy と Value の2つの大規模モデルを同時にGPUに乗せる必要がある</li>
+<li><strong>学習が不安定</strong>：Value Model の精度が悪いと、Policy の学習も崩れる</li>
+<li><strong>実装が複雑</strong>：2つのモデルの学習を同時に管理する必要がある</li>
+</ul>
+<h3 id="2-grpo-の核心的なアイデア">2. GRPO の核心的なアイデア</h3>
+<p>GRPO は <strong>「Value Model を完全に廃止する」</strong> ことを目指しました。</p>
+<p>代わりに、GRPO は以下の考え方を採用しています。</p>
+<blockquote>
+<p><strong>「同じ問題に対して、モデルに複数の回答を生成させて、それらを互いに比較すれば、どれが良いか分かるのではないか？」</strong></p>
+</blockquote>
+<p>つまり、<strong>「絶対的なスコア」を予測するのではなく、「グループ内での相対的な良さ」を使って学習する</strong>のです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\docs\image\25_causal_GRPO_works\1788647634381.png" alt="1788647634381"></p>
+<h3 id="3-grpo-の具体的な流れ">3. GRPO の具体的な流れ</h3>
+<p>GRPO の学習は、以下の5ステップで行われます。</p>
+<p><strong>ステップ1：問題（プロンプト）を与える</strong></p>
+<pre><code>プロンプト: 「1+1は？」
+</code></pre>
+<p><strong>ステップ2：グループで複数回答を生成する</strong></p>
+<p>同じプロンプトに対して、現在のモデルに <strong>複数回（例：4回）</strong> 回答させます。</p>
+<pre><code>回答A: 「2です」      → 正解
+回答B: 「1です」      → 不正解
+回答C: 「2です」      → 正解
+回答D: 「11です」     → 不正解
+</code></pre>
+<p>この「4つの回答のセット」が <strong>Group（グループ）</strong> です。</p>
+<p><strong>ステップ3：各回答に報酬（Reward）を与える</strong></p>
+<p>報酬モデル（またはルールベースの判定）で、各回答にスコアをつけます。</p>
+<pre><code>回答A: 1.0点（正解）
+回答B: 0.0点（不正解）
+回答C: 1.0点（正解）
+回答D: 0.0点（不正解）
+</code></pre>
+<p><strong>ステップ4：グループ平均からの「相対的な良さ」を計算する</strong></p>
+<p>4つの回答の平均スコアは <code>0.5</code> です。各回答がこの平均より良いか悪いかを計算します。</p>
+<pre><code>回答A: 1.0 - 0.5 = +0.5  ← 平均より良い
+回答B: 0.0 - 0.5 = -0.5  ← 平均より悪い
+回答C: 1.0 - 0.5 = +0.5  ← 平均より良い
+回答D: 0.0 - 0.5 = -0.5  ← 平均より悪い
+</code></pre>
+<p>この差分（<strong>相対的な優位性</strong>）が、学習の信号になります。</p>
+<p><strong>ステップ5：モデルを更新する</strong></p>
+<ul>
+<li>平均より<strong>良かった回答（A, C）</strong> を生成しやすくなるようにモデルを調整</li>
+<li>平均より<strong>悪かった回答（B, D）</strong> を生成しにくくなるようにモデルを調整</li>
+</ul>
+<p>PPO と同様に、<strong>一度に大きく変わりすぎないよう制限（クリッピング）</strong> をかけながら、少しずつモデルを更新します。</p>
+<h3 id="4-ppo-と-grpo-の比較">4. PPO と GRPO の比較</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>PPO</th>
+<th>GRPO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Value Model</strong></td>
+<td>必要（別モデル）</td>
+<td><strong>不要</strong></td>
+</tr>
+<tr>
+<td><strong>メモリ使用量</strong></td>
+<td>多い（Policy + Value）</td>
+<td>少ない（Policy のみ）</td>
+</tr>
+<tr>
+<td><strong>評価方法</strong></td>
+<td>絶対スコアを予測</td>
+<td>グループ内での相対評価</td>
+</tr>
+<tr>
+<td><strong>実装の複雑さ</strong></td>
+<td>複雑</td>
+<td>比較的シンプル</td>
+</tr>
+<tr>
+<td><strong>学習の安定性</strong></td>
+<td>Value の精度に依存</td>
+<td>グループ内比較なので比較的安定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-なぜグループ比較がうまくいくのか">5. なぜ「グループ比較」がうまくいくのか</h3>
+<p>LLM の強化学習では、「正解のスコア」を絶対的に定義するのが非常に難しいです。</p>
+<p>例えば数学の証明問題では：</p>
+<ul>
+<li>途中まで合っていて最後が間違い → 0.5点？</li>
+<li>別の証明方法 → 1.0点？</li>
+<li>論理的に正しいが形式が違う → 何点？</li>
+</ul>
+<p>このような「曖昧な採点」を絶対値で予測する Value Model は苦労します。</p>
+<p>しかし GRPO では <strong>「同じ問題に対する複数の回答を比べれば、相対的な良さは分かりやすい」</strong> と考えます。</p>
+<p>人間も「100点満点で何点か？」を即座に答えるより、「AとBどっちが良い？」と比較する方が簡単であるのと同じ発想です。</p>
+<h3 id="6-メリットと注意点">6. メリットと注意点</h3>
+<p><strong>メリット</strong></p>
+<ul>
+<li><strong>GPU メモリを大幅に節約</strong>：Value Model が不要なため、同じサイズのモデルでも半分近いメモリで学習可能</li>
+<li><strong>実装がシンプル</strong>：PPO よりもコードが短く、バグが入りにくい</li>
+<li><strong>報酬モデルの設計が楽</strong>：絶対スコアの精度より、比較の公平性が重要になる</li>
+</ul>
+<p><strong>注意点・限界</strong></p>
+<ul>
+<li><strong>グループサイズが重要</strong>：グループ内の回答数が少なすぎると、相対評価の精度が落ちる</li>
+<li><strong>報酬の設計に依存</strong>：報酬モデル自体に偏りがあると、グループ比較も偏る</li>
+<li><strong>計算コスト</strong>：同じプロンプトに対して複数回答を生成するため、サンプリングの回数が増える</li>
+</ul>
+<h3 id="7-一言でまとめると">7. 一言でまとめると</h3>
+<blockquote>
+<p><strong>GRPO は「Value Model を使わず、同じ問題に対する複数回答をグループ内で比較して、相対的な良さから学習する」強化学習手法です。</strong></p>
+</blockquote>
+<p>「絶対的な点数を予測する」のではなく、「みんなの回答を見比べて、自分より良い回答を真似して、悪い回答を避ける」という、より人間らしい比較学習の仕組みと言えます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\docs\image\25_causal_GRPO_works\1788647127250.png" alt="1788647127250"></p>
+<h2 id="動作の解明">動作の解明</h2>
+<p>この論文は、GRPOが「なぜValue Modelなしでうまくいくのか」を<strong>統計学の古典的な理論「U-statistic（U統計量）」</strong> という視点で厳密に証明した画期的な研究です。</p>
+<p>以下、段階的に解説いたします。</p>
+<h3 id="1-論文が解き明かそうとした4つの疑問">1. 論文が解き明かそうとした4つの疑問</h3>
+<p>GRPOはDeepSeek-R1などで実用的に成功していましたが、理論的な裏付けは不十分でした。著者らは以下の問いを立てました。</p>
+<table>
+<thead>
+<tr>
+<th>疑問</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Q1</strong></td>
+<td>なぜGRPOはそんなに効果的なのか？</td>
+</tr>
+<tr>
+<td><strong>Q2</strong></td>
+<td>グループ平均でCritic（価値関数）を近似する根拠は何か？</td>
+</tr>
+<tr>
+<td><strong>Q3</strong></td>
+<td>有限サンプル・漸近的な収束性は保証できるか？</td>
+</tr>
+<tr>
+<td><strong>Q4</strong></td>
+<td>1つのプロンプトあたり、いくつの回答をサンプリングすべきか？</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-核心的な発見grpoのpolicy-gradientはu-statisticである">2. 核心的な発見：「GRPOのPolicy GradientはU-statisticである」</h3>
+<p><strong>U-statistic（U統計量）とは？</strong></p>
+<p>統計学で1948年にHoeffdingが提唱した古典的な概念です。直感的には、</p>
+<blockquote>
+<p><strong>「データの中からすべてのペア（または組み合わせ）を作り、その平均を取ることで、より精度の高い推定量を作る手法」</strong></p>
+</blockquote>
+<p>です。</p>
+<p><strong>具体例：平均の推定</strong></p>
+<p>通常の標本平均は「各データ点をそのまま足して割る」だけですが、U-statisticでは例えば「すべての2つのデータの平均の平均」を取ることで、より分散が小さい推定量を作れます。</p>
+<pre><code>通常の平均:  (x₁ + x₂ + x₃) / 3
+
+U-statistic的発想:  [(x₁+x₂)/2 + (x₁+x₃)/2 + (x₂+x₃)/2] / 3
+</code></pre>
+<p>後者は「データ同士を比較して構造を捉える」ため、より頑健な推定ができます。</p>
+<h3 id="3-grpoがu-statisticであるとはどういうことか">3. GRPOがU-statisticであるとはどういうことか</h3>
+<p>GRPOのPolicy Gradient（モデル更新の方向を決める勾配）は、以下の構造を持っています。</p>
+<pre><code>GRPOのPolicy Gradient = グループ内のすべての回答ペアの比較から計算される
+</code></pre>
+<p>つまり、GRPOは以下の2ステップで勾配を計算しています。</p>
+<ol>
+<li><strong>同じプロンプトに対してG個の回答を生成</strong>（グループを作る）</li>
+<li><strong>各回答の報酬をグループ平均と比較</strong>して、相対的な優位性を計算</li>
+</ol>
+<p>この「グループ内の複数サンプルを使って、ペアワイズな比較から推定量を作る」という構造が、<strong>まさにU-statisticの定義</strong>に一致する、というのが論文の核心です。</p>
+<h3 id="4-この発見から導かれる3つの重要な結論">4. この発見から導かれる3つの重要な結論</h3>
+<p><strong>結論1：Oracle Property（オラクル性）</strong></p>
+<blockquote>
+<p><strong>GRPOは、真のCritic（価値関数）にアクセスできる「理想的なアルゴリズム」と漸近的に等価である</strong></p>
+</blockquote>
+<p>つまり、GRPOは「Value Modelを持たない」にもかかわらず、<strong>理論上はValue Modelを完璧に持っている場合と同じ性能に漸近的に到達できる</strong>ことが証明されました。</p>
+<p>これが <strong>Q1（なぜGRPOは効果的か）</strong> と <strong>Q2（グループ平均の根拠は何か）</strong> に答えています。</p>
+<p><strong>結論2：Optimality（最適性）</strong></p>
+<blockquote>
+<p><strong>GRPOは、広いクラスのPolicy Gradientアルゴリズムの中で、漸近的にMSE（平均二乗誤差）とSuboptimality Gap（最適解との差）を最小化する</strong></p>
+</blockquote>
+<p>つまり、GRPOは「Value Modelなし」という制約の中で、<strong>理論的に最適な方法でCriticを近似している</strong>ことが示されました。</p>
+<p><strong>結論3：Universal Scaling Law（普遍的スケーリング則）</strong></p>
+<blockquote>
+<p><strong>最適なグループサイズGは、訓練データとモデルアーキテクチャのみに依存し、訓練予算やイテレーション数には依存しない</strong></p>
+</blockquote>
+<p>これは <strong>Q4（いくつの回答をサンプリングすべきか）</strong> に答えています。</p>
+<ul>
+<li>最適なGは、ハイパーパラメータ探索なしで<strong>理論的に決定可能</strong></li>
+<li>モデルやデータが変わらない限り、一度決めたGを使い続ければよい</li>
+</ul>
+<h3 id="5-直感的な理解多数決の智慧を数学的に正当化">5. 直感的な理解：「多数決の智慧」を数学的に正当化</h3>
+<p>GRPOの「グループ平均でCriticを近似する」という手法は、以下の直感に対応しています。</p>
+<blockquote>
+<p><strong>「1つの回答の絶対的な良さを評価するのは難しいが、同じ問題に対する複数の回答を比べれば、どれが良いかは分かりやすい」</strong></p>
+</blockquote>
+<p>論文はこの直感を、<strong>U-statisticの理論を使って厳密に証明</strong>しました。</p>
+<ul>
+<li>グループ内比較は「データ同士の構造」を捉えるU-statistic的推定</li>
+<li>その結果、サンプル数を増やすと真の価値関数に収束する</li>
+<li>だからValue Modelなしでも、十分なサンプル数で「擬似的にValue Modelと同等の情報」を得られる</li>
+</ul>
+<h3 id="6-論文の意義を一言で">6. 論文の意義を一言で</h3>
+<blockquote>
+<p><strong>「GRPOはValue Modelを捨てた“安い代替案”ではなく、U-statisticとして理論的に最適な推定を行う“本物のアルゴリズム”である」</strong></p>
+</blockquote>
+<p>これまでは「Value Modelが重いから、グループ平均で代用している」という実利的な理解でしたが、この論文は <strong>「グループ平均こそが、統計学的に最適なCritic推定方法である」</strong> ことを数学的に示しました。</p>
+<h2 id="実験">実験</h2>
+<p>本論文では、理論的主張を裏付けるために、<strong>大きく2つの実験パート</strong>が実施されています。以下にまとめます。</p>
+<h3 id="実験の全体構成">実験の全体構成</h3>
+<p>論文の実験は以下の2つに分かれています。</p>
+<table>
+<thead>
+<tr>
+<th>パート</th>
+<th>目的</th>
+<th>対応する理論的主張</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 勾配評価実験</strong></td>
+<td>GRPOのPolicy GradientのMSE（平均二乗乗誤差）を測定し、Oracle推定量との比較</td>
+<td>Oracle Property、Optimality</td>
+</tr>
+<tr>
+<td><strong>2. ポリシー最適化実験</strong></td>
+<td>実際にGRPOで学習し、グループサイズと性能の関係を検証</td>
+<td>Universal Scaling Law</td>
+</tr>
+</tbody>
+</table>
+<h3 id="実験1勾配評価実験gradient-evaluation">実験1：勾配評価実験（Gradient Evaluation）</h3>
+<p><strong>目的</strong></p>
+<p>GRPOのPolicy Gradient推定量が、理論的に予測された通りに<strong>Oracle推定量（真の価値関数を知っている理想的な推定量）に近づくか</strong>を実証します。</p>
+<p><strong>使用モデル</strong></p>
+<ul>
+<li><strong>Qwen/Qwen2.5-0.5B-Instruct</strong></li>
+</ul>
+<p><strong>使用データセット</strong></p>
+<ul>
+<li><strong>Kyleyee/arithmetic-few-shot</strong>: ICL（In-Context Learning）モデルの勾配評価用</li>
+<li><strong>Kyleyee/arithmetic-test</strong>: BaseモデルおよびInstructモデルの勾配評価用</li>
+</ul>
+<p><strong>実験手順</strong></p>
+<ol>
+<li><strong>Oracle Vの計算</strong>: 各プロンプトに対して、Monte Carloロールアウトで<strong>1,000回</strong>サンプリングし、真の期待報酬（Oracle価値関数）を近似</li>
+<li><strong>3つの推定量のMSE比較</strong>:
+<ul>
+<li><strong>Vanilla REINFORCE</strong>: ベースラインなしの勾配推定</li>
+<li><strong>GRPO</strong>: グループ平均をベースラインとして使用</li>
+<li><strong>Oracle</strong>: 真の価値関数をベースラインとして使用</li>
+</ul>
+</li>
+</ol>
+<p><strong>検証結果（Figure 4）</strong></p>
+<ul>
+<li>グループサイズGを増やすと、<strong>GRPOのMSEがOracleのMSEに漸近的に収束</strong></li>
+<li>Vanilla REINFORCEはGを増やしても改善が限定的</li>
+<li>これにより「GRPOはValue ModelなしでOracleと同等の性能に到達できる」という<strong>Oracle Property</strong>が実証されました</li>
+</ul>
+<h3 id="実験2ポリシー最適化実験policy-optimization">実験2：ポリシー最適化実験（Policy Optimization）</h3>
+<p><strong>目的</strong></p>
+<p>理論的に導出した<strong>最適グループサイズのスケーリング則</strong>が、実際のLLM学習でも成立するかを検証します。</p>
+<p><strong>使用モデル</strong></p>
+<ul>
+<li><strong>Qwen/Qwen2.5-Math-7B</strong>（数学推論タスク向けモデル）</li>
+</ul>
+<p><strong>使用フレームワーク</strong></p>
+<ul>
+<li><strong>VERL</strong>（Volcengine Erlang RLフレームワーク）</li>
+</ul>
+<p><strong>実験内容</strong></p>
+<ol>
+<li>
+<p><strong>グループサイズGを変化させた学習</strong>:</p>
+<ul>
+<li>G = 2, 4, 8, 16, 32, 64 など、様々なグループサイズでGRPO学習を実行</li>
+<li>固定された総サンプリング予算の中で、GとバッチサイズBのトレードオフを検証</li>
+</ul>
+</li>
+<li>
+<p><strong>ベンチマーク評価</strong>:</p>
+<ul>
+<li><strong>GSM8K</strong>（小学算数の文章題データセット）で精度を評価</li>
+<li>最適なGが存在することを実証（Figure 3, Figure 5）</li>
+</ul>
+</li>
+</ol>
+<p><strong>検証結果</strong></p>
+<ul>
+<li><strong>最適なグループサイズG*が存在</strong>: Gが小さすぎると分散が大きく、大きすぎると1サンプルあたりのプロンプト数（B）が減り、性能が低下</li>
+<li><strong>スケーリング則の普遍性</strong>: 最適なGは訓練予算やイテレーション数によらず、<strong>データセットとモデルアーキテクチャのみで決定</strong></li>
+<li>理論式 G* = √(c₃/c₁) が実験的に確認された</li>
+</ul>
+<h3 id="実験で使用された主要なデータセットとモデルまとめ">実験で使用された主要なデータセットとモデルまとめ</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>勾配評価実験</th>
+<th>ポリシー最適化実験</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>モデル</strong></td>
+<td>Qwen2.5-0.5B-Instruct</td>
+<td>Qwen2.5-Math-7B</td>
+</tr>
+<tr>
+<td><strong>データセット</strong></td>
+<td>arithmetic-few-shot, arithmetic-test</td>
+<td>GSM8K</td>
+</tr>
+<tr>
+<td><strong>GPU要件</strong></td>
+<td>1 GPU（48GB+ VRAM）</td>
+<td>4+ GPUs（各96GB+ VRAM）</td>
+</tr>
+<tr>
+<td><strong>フレームワーク</strong></td>
+<td>独自Pythonスクリプト</td>
+<td>VERL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="実験が裏付けた理論的主張">実験が裏付けた理論的主張</h3>
+<table>
+<thead>
+<tr>
+<th>理論的主張</th>
+<th>実験による証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GRPOはU-statisticである</strong></td>
+<td>グループ内比較構造がMSEのO(1/G)収束を示す</td>
+</tr>
+<tr>
+<td><strong>Oracle Property</strong></td>
+<td>Gを増やすとGRPOのMSEがOracleのMSEに一致</td>
+</tr>
+<tr>
+<td><strong>Optimality</strong></td>
+<td>GRPOがVanilla REINFORCEを一貫して上回る</td>
+</tr>
+<tr>
+<td><strong>Universal Scaling Law</strong></td>
+<td>GSM8Kで最適Gが理論予測と一致、かつ訓練予算に依存しない</td>
+</tr>
+</tbody>
+</table>
+<h2 id="総括">総括</h2>
+<p>この論文の本質は、<strong>「GRPOのグループ平均は、単なる“安い代用品”ではなく、統計学的に最適な推定方法である」</strong> という一点に尽きます。</p>
+<p>より具体的には、以下の3つの核心を示しています：</p>
+<h3 id="1-grpoのpolicy-gradientはu-statisticという統計学的に最適な構造を持つ">1. GRPOのPolicy Gradientは「U-statistic」という統計学的に最適な構造を持つ</h3>
+<p>同じプロンプトに対する複数回答の<strong>相対比較</strong>から勾配を推定するというGRPOの仕組みは、1948年に提唱された統計学の「U-statistic」と完全に一致します。これにより、グループ平均によるCritic近似に厳密な数学的正当性が与えられました。</p>
+<h3 id="2-value-modelなしで神の視点oracleと同等の性能に到達できる">2. Value Modelなしで「神の視点（Oracle）」と同等の性能に到達できる</h3>
+<p>GRPOは、真の価値関数を完備した理想的なアルゴリズムと<strong>漸近的に等価</strong>です。つまり、重いValue Modelを別途学習しなくても、十分なグループサイズを確保すれば「本物のCriticを持っている時と同じ理論限界」に到達できます。</p>
+<h3 id="3-最適なグループサイズgは訓練予算ではなくタスクの性質で決まる">3. 最適なグループサイズGは訓練予算ではなく「タスクの性質」で決まる</h3>
+<p>最適なGはモデルやデータの性質のみで決まり、<strong>訓練時間や計算コストには依存しません</strong>。一度決めれば固定できる「普遍的スケーリング則」が存在します。</p>
+<h3 id="一言でまとめると">一言でまとめると：</h3>
+<blockquote>
+<p><strong>「GRPOはValue Modelを省略した“妥協案”ではなく、統計学的に最適化された“本物のアルゴリズム”である」</strong></p>
+</blockquote>
+<p>これが、DeepSeek-R1などでGRPOが驚異的な効率を発揮する理由の理論的解明です。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/GBvnpowsPPg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
