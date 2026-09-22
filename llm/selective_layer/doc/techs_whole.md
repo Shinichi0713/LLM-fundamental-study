@@ -138,3 +138,80 @@ __Deciding How to Decide: Dynamic Routing in Artificial Neural Networks (2017)__
 この2本の論文が、現在のレイヤー選択研究の**両輪**を形成しています。前者が「どの層を使うか」の**構造**を、後者が「いくら計算するか」の**適応性**をそれぞれ開拓しました。
 
 もし特定の系統についてさらに深く知りたい論文がございましたら、お知らせください。
+
+
+## LLM向け
+
+はい、Stochastic Depth（ランダムな層ドロップ）とは異なり、**入力や問題の難易度に応じてレイヤーを選択する**研究は、別の系統として発展してきました。以下に主要な論文を系統別にご紹介いたします。
+
+---
+
+## 系統1：入力の難易度に応じて計算ステップ数を変える
+
+### Adaptive Computation Time (ACT) (2016)
+- **著者**: Alex Graves（Google DeepMind）
+- **発表**: 2016年
+- **概要**: RNNが**入力を受けてから出力を出すまでの計算ステップ数を、入力の複雑さに応じて学習する**手法を提案しました。シンプルな入力には少ないステップ、複雑な入力には多いステップを使います。これは「すべての入力に同じ計算量を使う必要はない」という核心的洞察を、**初めて学習可能な形で実現**した論文です。<source-chip title="arXiv" url="https://arxiv.org/abs/1603.08983" />
+
+### Spatially Adaptive Computation Time (SACT) (2017)
+- **著者**: Michael Figurnov ら（Google, HSE, CMU）
+- **発表**: [CVPR 2017](https://openaccess.thecvf.com/content_cvpr_2017/html/Figurnov_Spatially_Adaptive_Computation_CVPR_2017_paper.html)
+- **概要**: ACTをResNetに拡張し、**画像の「領域」ごとに計算ステップ数を変える**手法を提案しました。画像内の簡単な部分（空など）では少ない層で処理し、複雑な部分（物体の境界など）では多くの層を使います。画像分類・物体検出・セマンティックセグメンテーションなど、問題に依存せず適用可能です。<source-chip title="arXiv" url="https://arxiv.org/abs/1612.02297" />
+
+### Depth-Adaptive Transformer (2020)
+- **著者**: Maha Elbayad ら（Facebook AI Research）
+- **発表**: [ICLR 2020](https://arxiv.org/abs/1910.10073)
+- **概要**: Transformerで**入力シーケンスの難易度に応じて異なる層深さで予測を行う**モデルを提案。例えば、簡単な翻訳文（"Merci." → "Thank you."）は浅い層で出力し、難しい文は深い層まで計算します。複数の「出口」を設け、どこで停止するかを学習します。<source-chip title="arXiv" url="https://arxiv.org/abs/1910.10073" />
+
+---
+
+## 系統2：トークンごとに層を選択する（現在の主流）
+
+### Mixture-of-Depths (MoD) (2024)
+- **著者**: David Raposo ら（Google DeepMind）
+- **発表**: 2024年
+- **概要**: Transformerの各層で、**トークンごとにその層を通過させるかスキップするかをルーターが動的に決定**します。重要なトークンには計算を集中させ、不要なトークンは恒等写像でバイパスします。これはStochastic Depthの「ランダムドロップ」を、**入力に応じた学習可能な選択へと進化させた**ものです。<source-chip title="arXiv" url="https://arxiv.org/abs/2404.02258" />
+
+### Token-Selective Attention (2025)
+- **著者**: Ahmed Abdelmuniem Abdalla
+- **発表**: 2026年（arXiv先行公開）
+- **概要**: 標準的なTransformerがすべてのトークンに同じ数の層を適用するのに対し、**トークンの文脈的脈的難易度に応じて層数を変える**手法を提案しています。<source-chip title="arXiv" url="https://arxiv.org/html/2605.05222v1" />
+
+### Router-Tuning (2024)
+- **著者**: Shwai He ら（University of Maryland, Tencent AI Lab）
+- **発表**: 2024年
+- **概要**: Mixture of Depths（MoD）を発展させ、**ルーターのみを微調整することで動的深度調整**を実現する手法です。既存の事前学習済みモデルに対しても適用可能です。<source-chip title="arXiv" url="https://arxiv.org/html/2410.13184v2" />
+
+---
+
+## 系統3：条件付き計算・専門家選択（MoEの系統）
+
+### Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer (2017)
+- **著者**: Noam Shazeer ら（Google Brain, Jeff Dean, Geoffrey Hinton など）
+- **発表**: [ICLR 2017](https://arxiv.org/abs/1701.06538)
+- **概要**: **入力に応じて一部の「専門家（層）」のみを活性化する**条件付き計算手法を提案。ネットワークの容量を大幅に増やしつつ、計算コストは増やさないというアイデアを実現しました。現在のMixture-of-Experts（MoE）モデルの直接的な起源です。<source-chip title="arXiv" url="https://arxiv.org/abs/1701.06538" />
+
+---
+
+## 系統4：早期終了（Early Exit）
+
+### BranchyNet / Shallow-Deep Networks など
+- ネットワークの途中に複数の「出口」を設け、**モデル自身が予測の自信度に応じて早めに出力する**手法群です。簡単な入力は浅い層で、難しい入力は深い層で出力します。
+
+---
+
+## 系譜のまとめ
+
+「入力に応じてレイヤーを選択する」研究の発展を時系列で整理すると：
+
+| 年 | 論文 | 選択の単位 | 核心 |
+|---|------|----------|------|
+| 2016 | [ACT (Graves)](https://arxiv.org/abs/1603.08983) | 計算ステップ数 | 入力の複雑さに応じて計算回数を変える |
+| 2017 | [SACT (Figurnov)](https://arxiv.org/abs/1612.02297) | 画像の領域ごと | 画像内で難易度の異なる領域に異なる計算量 |
+| 2017 | [MoE (Shazeer)](https://arxiv.org/abs/1701.06538) | 専門家（層） | 入力に応じて一部の層のみ活性化 |
+| 2020 | [Depth-Adaptive Transformer](https://arxiv.org/abs/1910.10073) | シーケンスごと | 簡単な文は浅い層で、難しい文は深い層で |
+| 2024 | [Mixture-of-Depths](https://arxiv.org/abs/2404.02258) | トークン・層ごと | 各層でトークンごとに通過/スキップを学習 |
+
+Stochastic Depth（ランダム）から、ACT・SACT（難易度に応じた計算量調整）を経て、現在のMoD（トークンごとの動的ルーティング）へと発展してきたことがお分かりいただけるかと思います。特に [SACT](https://arxiv.org/abs/1612.02297) は、Stochastic Depthと同年（2016年）にarXivに投稿され、**「どの位置にどれだけ計算を使うか」を学習する**という点で、Stochastic Depthの「ランダムドロップ」と対をなす重要な研究です。
+
+
