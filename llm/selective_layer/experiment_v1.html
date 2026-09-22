@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;&#x65b9;&#x6cd5;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日本ブログで、<a href="https://yoshishinnze.hatenablog.com/entry/2026/10/08/043000">DeeBERT（Dynamic Early Exiting for BERT）なるモデル</a>を説明しました。
+このモデルはBERTをベースに、回答の確信度に応じて回答の打ち切りを行うというもので、現在LLMでも活用されているレイヤ選択の概念を先駆けて実証したモデルです。</p>
+<p>このモデルの有効性や、どのような仕組みで実現されたか。
+日本語で説明されたサイトはないようでしたので、本ブログで扱おうと思います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="実験方法">実験方法</h2>
+<p>有効性についてはやはり実験で確認するのが一番です。実験の実装の途中で仕組みも解説出来ます。
+ということで実験方法について説明します。</p>
+<p>DeeBERTのように、中間層（Off-ramp）で予測信頼度を評価して途中で推論を打ち切る（Early Exit）動的推論（Adaptive Inference）の実験は<strong>非常に現実的であり、個人・研究室単位の環境でも十分に実行可能</strong>です。</p>
+<p>実験設計の具体策、計測すべき指標、および学習・評価用データの選定方針を以下にまとめます。</p>
+<h3 id="1-実験で検証すべき3つの主要観点">1. 実験で検証すべき3つの主要観点</h3>
+<p>まず評価指標としてどんなことが考えられるかです。
+3つ観点があります。</p>
+<p><strong>① 計算量改善（どれだけ速くなったか）</strong></p>
+<ul>
+<li><strong>フロー（FLOPs）の削減量</strong>: 各サンプルが到達したレイヤー数に応じて、全何層分のFLOPs（浮動小数点演算数）を節約できたかを算出。</li>
+<li><strong>実測スループット/レイテンシ</strong>: GPU（またはCPU）上での Batch Size=1 時のレスポンスタイム（ms）や、1秒あたりの処理サンプル数（samples/sec）。</li>
+</ul>
+<p><strong>② 打ち切り位置の分布（どこで打ち切られたか）</strong></p>
+<ul>
+<li><strong>レイヤー別退出比率</strong>: 各層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>L</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">l \in \{1, 2, \dots, L\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">L</span><span class="mclose">}</span></span></span></span> で退出したサンプルの割合 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>e</mi><mi>x</mi><mi>i</mi><mi>t</mi><mo>=</mo><mi>l</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(exit=l)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">e</span><span class="mord mathnormal">x</span><span class="mord mathnormal">i</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mclose">)</span></span></span></span> をプロット。</li>
+<li><strong>難易度との相関分析</strong>: 短文・明確な否定語が含まれる「簡単なサンプル」と、構文が複雑で長文な「難しいサンプル」で退出位置がどう変化したかの定性・定量分析。</li>
+</ul>
+<p><strong>③ 精度への影響（どの程度劣化・維持したか）</strong></p>
+<ul>
+<li><strong>精度-速度のトレードオフ曲線</strong>: 判定のしきい値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>（エントロピー閾値）を連続的に変化させ、「平均計算量（または推論時間）」 vs 「Accuracy / F1-score」のパレート曲線を描画。</li>
+<li><strong>Full-BERTとの比較</strong>: 全層（12層）を通した場合の精度に対し、平均何層のパスで何%の精度を維持できたか。</li>
+</ul>
+<p>この中で一番気になるのは<strong>打ち切り位置</strong>と<strong>精度</strong>です。
+時間に関しては打ち切り位置の結果として出てくる指標となります。</p>
+<h3 id="2-実験設計プロトコルの要点">2. 実験設計・プロトコルの要点</h3>
+<p>DeeBERTの標準的な実験プロシージャに準拠することで、再現性の高い比較が可能です。</p>
+<pre><code>[Stage 1: Pre-trained BERT] 
+       │
+       ▼
+[Stage 2: Backbone &amp; Output Layer Fine-tuning] ── タスクの最終層を学習
+       │
+       ▼
+[Stage 3: Off-ramps Fine-tuning] ── Backboneを固定し、中間分類器（Off-ramp）のみを学習
+       │
+       ▼
+[Stage 4: Threshold Selection &amp; Evaluation] ── 検証データで閾値Sをチューニングし評価
+
+</code></pre>
+<p><strong>打ち切り判定のメカニズム</strong></p>
+<p>計算打ち切りは実際の実装通りで実現します。
+各中間層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi></mrow><annotation encoding="application/x-tex">l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> の予測確率分布 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">z_l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> における<strong>エントロピー</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><mo>∑</mo><msub><mi>P</mi><mi>i</mi></msub><mi>log</mi><mo>⁡</mo><msub><mi>P</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">H(z_l) = -\sum P_i \log P_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を計算します。</p>
+<ul>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="false">)</mo><mo>&lt;</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">H(z_l) &lt; S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>（信頼度が高い）</strong>: そこで推論を即時打ち切り、結果を出力。</li>
+<li><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="false">)</mo><mo>≥</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">H(z_l) \ge S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>（確信が持てない）</strong>: 次のトランスフォーマー層へ送信。</li>
+</ul>
+<h3 id="3-学習評価データの選定方針">3. 学習・評価データの選定方針</h3>
+<p>DeeBERTのようなアーキテクチャの実験には、<strong>タスクの難易度に明確なバリエーションが存在するデータセット</strong>を選ぶことが最も重要です。</p>
+<p><strong>推奨データセット</strong></p>
+<p>標準的なベンチマークである<strong>GLUE Benchmark</strong>に含まれるタスク、または日本語タスクであれば<strong>JGLUE</strong>が最適です。</p>
+<ul>
+<li>
+<p><strong>2クラス文書分類（感情分析・偏向判定）</strong></p>
+</li>
+<li>
+<p><strong>データ例</strong>: SST-2 (GLUE) / WRIME (日本語感情分析)</p>
+</li>
+<li>
+<p><strong>適している理由</strong>: 文脈がストレートなテキスト（例：「最高だった！」）は初期層（2〜4層）で即座に打ち切られ、二重否定や入り組んだ表現のみが深層に到達するため、<strong>打ち切り効果が明確に現れやすい</strong>です。</p>
+</li>
+<li>
+<p><strong>自然言語推論（NLI） / 類似度判定</strong></p>
+</li>
+<li>
+<p><strong>データ例</strong>: MNLI, QNLI (GLUE) / JSNLI (日本語NLI)</p>
+</li>
+<li>
+<p><strong>適している理由</strong>: 前提と仮説の関係性を解くタスクであり、単語の重複が多い簡単なペアと、高度な論理推論を要する難しいペアの差が激しいため、<strong>層ごとの退出分布の実験・分析に最適</strong>です。</p>
+</li>
+<li>
+<p><strong>質問応答・テキスト含意</strong></p>
+</li>
+<li>
+<p><strong>データ例</strong>: SQuAD (※分類タスク化した場合) / JSQuAD</p>
+</li>
+<li>
+<p><strong>適している理由</strong>: スパン抽出や長文解釈が必要になり、平均到達層が深くなる傾向を観察できます。</p>
+</li>
+</ul>
+<p><strong>避けるべきデータセット</strong></p>
+<ul>
+<li><strong>難易度が極端に均一なデータ</strong>: 全サンプルが数単語で終わる簡単なタスク（早期退出が100%初期層に集中して比較にならない）や、極めて複雑で全層通さないと解けない難問専用データセット（計算量改善が得られない）。</li>
+</ul>
+<h3 id="4-実験結果の可視化イメージ">4. 実験結果の可視化イメージ</h3>
+<p>実験時には以下のような指標のプロット・集計を作成します。</p>
+<ul>
+<li>
+<p><strong>閾値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> とレイテンシ・精度の関係</strong></p>
+</li>
+<li>
+<p>横軸：平均通過層数（あるいは1サンプルあたりの平均推論時間 ms）</p>
+</li>
+<li>
+<p>縦軸：Accuracy (%)</p>
+</li>
+<li>
+<p>パレート境界を確認し、「精度低下 0.5% 以内で計算量を 30〜40% 削減できるポイント」を探します。</p>
+</li>
+<li>
+<p><strong>サンプル難易度別の層退出ヒストグラム</strong></p>
+</li>
+<li>
+<p>正解サンプルと不正解サンプル、あるいはテキスト長（Short / Medium / Long）ごとの退出層分布をスタックバーチャートで視覚化。</p>
+</li>
+</ul>
+<h2 id="実験の実装">実験の実装</h2>
+<p>前節の内容を踏まえてGoogle Colab環境で、JGLUEの日本語データセット（MARC-jaまたはJNLI）と事前学習済みの日本語BERTを用いて、DeeBERTの動作原理・打ち切り位置分布・正解率の変化を検証する実装スクリプトを作成しました。</p>
+<p>以下のアーキテクチャ概要のとおり、各Transformer層の出力に分類器（Off-ramp）を取り付け、エントロピー閾値によって推論を早期終了（Early Exit）させます。</p>
+<h3 id="1-google-colabでの実装コード">1. Google Colabでの実装コード</h3>
+<p>まずは実験に必要なパッケージです。
+datasetsは最新バージョンではなく、パッチ処理が制限なく実行できる <code>2.21.0</code> とします。</p>
+<pre><code>!pip install fugashi ipadic unidic-lite
+!pip install &quot;datasets==2.21.0&quot; -q
+</code></pre>
+<p>その上で以下のコードをColabのセルにコピー＆ペーストして実行してください（GPU環境を推奨します）。</p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> DataLoader
+<span class="hljs-keyword">import</span> torch.optim <span class="hljs-keyword">as</span> optim
+<span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> AutoTokenizer, AutoModel
+<span class="hljs-keyword">from</span> datasets <span class="hljs-keyword">import</span> load_dataset
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-comment"># 1. DeeBERTモデル定義（中間層分類器を持つBERT）</span>
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">DeeBertForSequenceClassification</span>(nn.Module):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, pretrained_model_name, num_labels</span>):
+        <span class="hljs-built_in">super</span>().__init__()
+        self.bert = AutoModel.from_pretrained(pretrained_model_name)
+        self.num_layers = self.bert.config.num_hidden_layers
+        self.num_labels = num_labels
+        
+        <span class="hljs-comment"># 各Transformerブロック（中間層）の直後に配置する軽量分類器 (Off-ramps)</span>
+        hidden_size = self.bert.config.hidden_size
+        self.off_ramps = nn.ModuleList([
+            nn.Sequential(
+                nn.Dropout(<span class="hljs-number">0.1</span>),
+                nn.Linear(hidden_size, num_labels)
+            ) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(self.num_layers)
+        ])
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, input_ids, attention_mask, eval_threshold=<span class="hljs-literal">None</span></span>):
+        <span class="hljs-string">&quot;&quot;&quot;
+        eval_threshold が None の場合: 通常学習（全中間層の損失を計算）
+        eval_threshold が float の場合: 動的推論（エントロピーが閾値未満で打ち切り）
+        &quot;&quot;&quot;</span>
+        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=<span class="hljs-literal">True</span>)
+        hidden_states = outputs.hidden_states[<span class="hljs-number">1</span>:] <span class="hljs-comment"># Embedding層を除いた各層の出力 [12, Batch, Seq, Hidden]</span>
+
+        <span class="hljs-keyword">if</span> eval_threshold <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+            <span class="hljs-comment"># 【学習時】各中間層の logits を計算</span>
+            all_logits = []
+            <span class="hljs-keyword">for</span> layer_idx <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(self.num_layers):
+                <span class="hljs-comment"># [CLS] トークンのベクトルを各中間分類器に入力</span>
+                cls_rep = hidden_states[layer_idx][:, <span class="hljs-number">0</span>, :]
+                logits = self.off_ramps[layer_idx](cls_rep)
+                all_logits.append(logits)
+            <span class="hljs-keyword">return</span> all_logits
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-comment"># 【推論時】エントロピーに基づいた早期打ち切り</span>
+            batch_size = input_ids.size(<span class="hljs-number">0</span>)
+            final_preds = torch.zeros(batch_size, dtype=torch.long, device=input_ids.device)
+            exit_layers = torch.zeros(batch_size, dtype=torch.<span class="hljs-built_in">int</span>, device=input_ids.device)
+            active_indices = torch.arange(batch_size, device=input_ids.device)
+
+            <span class="hljs-keyword">for</span> layer_idx <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(self.num_layers):
+                cls_rep = hidden_states[layer_idx][active_indices, <span class="hljs-number">0</span>, :]
+                logits = self.off_ramps[layer_idx](cls_rep)
+                probs = torch.softmax(logits, dim=-<span class="hljs-number">1</span>)
+                
+                <span class="hljs-comment"># エントロピー計算: H(x) = - sum(p * log(p))</span>
+                entropy = -torch.<span class="hljs-built_in">sum</span>(probs * torch.log(probs + <span class="hljs-number">1e-12</span>), dim=-<span class="hljs-number">1</span>)
+                preds = torch.argmax(logits, dim=-<span class="hljs-number">1</span>)
+
+                <span class="hljs-comment"># 閾値以下の判定（十分な確信度）または 最終層に到達した場合</span>
+                exited_mask = (entropy &lt; eval_threshold) | (layer_idx == self.num_layers - <span class="hljs-number">1</span>)
+                
+                <span class="hljs-comment"># 打ち切られたサンプルの結果を記録</span>
+                exited_indices = active_indices[exited_mask]
+                <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(exited_indices) &gt; <span class="hljs-number">0</span>:
+                    final_preds[exited_indices] = preds[exited_mask]
+                    exit_layers[exited_indices] = layer_idx + <span class="hljs-number">1</span> <span class="hljs-comment"># 1-indexed</span>
+
+                <span class="hljs-comment"># まだ打ち切られていないサンプルのみ次の層へ</span>
+                active_indices = active_indices[~exited_mask]
+                <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(active_indices) == <span class="hljs-number">0</span>:
+                    <span class="hljs-keyword">break</span>
+
+            <span class="hljs-keyword">return</span> final_preds, exit_layers
+
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-comment"># 2. データ準備 (JGLUE / MARC-ja: 2クラス感情分析)</span>
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+device = torch.device(<span class="hljs-string">&quot;cuda&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)
+model_name = <span class="hljs-string">&quot;cl-tohoku/bert-base-japanese-whole-word-masking&quot;</span>
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+<span class="hljs-comment"># Parquet形式で配られている最新互換リポジトリから取得</span>
+<span class="hljs-comment"># (MARC-ja タスクを指定)</span>
+raw_dataset = load_dataset(<span class="hljs-string">&quot;shunk031/JGLUE&quot;</span>, name=<span class="hljs-string">&quot;MARC-ja&quot;</span>)
+
+<span class="hljs-comment"># データセットの列名を確認して前処理</span>
+<span class="hljs-comment"># ※ MARC-ja のテキスト列は &quot;sentence&quot; または &quot;text&quot;、ラベルは &quot;label&quot;</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">preprocess_function</span>(<span class="hljs-params">examples</span>):
+    text_column = <span class="hljs-string">&quot;sentence&quot;</span> <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;sentence&quot;</span> <span class="hljs-keyword">in</span> examples <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;text&quot;</span>
+    <span class="hljs-keyword">return</span> tokenizer(
+        examples[text_column], 
+        truncation=<span class="hljs-literal">True</span>, 
+        max_length=<span class="hljs-number">128</span>, 
+        padding=<span class="hljs-string">&quot;max_length&quot;</span>
+    )
+
+<span class="hljs-comment"># トークナイズ処理とPyTorch DataLoader化</span>
+tokenized_dataset = raw_dataset.<span class="hljs-built_in">map</span>(preprocess_function, batched=<span class="hljs-literal">True</span>)
+tokenized_dataset.set_format(<span class="hljs-string">&quot;torch&quot;</span>, columns=[<span class="hljs-string">&quot;input_ids&quot;</span>, <span class="hljs-string">&quot;attention_mask&quot;</span>, <span class="hljs-string">&quot;label&quot;</span>])
+
+<span class="hljs-comment"># 学習・検証用の分割データ取得</span>
+train_loader = DataLoader(tokenized_dataset[<span class="hljs-string">&quot;train&quot;</span>].shuffle(seed=<span class="hljs-number">42</span>).select(<span class="hljs-built_in">range</span>(<span class="hljs-number">3000</span>)), batch_size=<span class="hljs-number">32</span>)
+val_loader = DataLoader(tokenized_dataset[<span class="hljs-string">&quot;validation&quot;</span>].select(<span class="hljs-built_in">range</span>(<span class="hljs-number">1000</span>)), batch_size=<span class="hljs-number">32</span>)
+
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-comment"># 3. 2段階学習 (Two-Stage Fine-Tuning)</span>
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+model = DeeBertForSequenceClassification(model_name, num_labels=<span class="hljs-number">2</span>).to(device)
+
+<span class="hljs-comment"># --- Stage 1: Backbone + 最終層の学習 ---</span>
+optimizer_st1 = optim.AdamW(model.parameters(), lr=<span class="hljs-number">2e-5</span>)
+criterion = nn.CrossEntropyLoss()
+
+model.train()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;=== Stage 1: Backbone &amp; Final Layer Fine-tuning ===&quot;</span>)
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>): <span class="hljs-comment"># デモ用に1エポック</span>
+    <span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> train_loader:
+        optimizer_st1.zero_grad()
+        input_ids = batch[<span class="hljs-string">&quot;input_ids&quot;</span>].to(device)
+        attention_mask = batch[<span class="hljs-string">&quot;attention_mask&quot;</span>].to(device)
+        labels = batch[<span class="hljs-string">&quot;label&quot;</span>].to(device)
+
+        all_logits = model(input_ids, attention_mask)
+        loss = criterion(all_logits[-<span class="hljs-number">1</span>], labels) <span class="hljs-comment"># 最終層のみの損失</span>
+        loss.backward()
+        optimizer_st1.step()
+
+<span class="hljs-comment"># --- Stage 2: Backboneをフリーズし、中間分類器（Off-ramps）を学習 ---</span>
+<span class="hljs-keyword">for</span> param <span class="hljs-keyword">in</span> model.bert.parameters():
+    param.requires_grad = <span class="hljs-literal">False</span>
+
+optimizer_st2 = optim.AdamW(model.off_ramps.parameters(), lr=<span class="hljs-number">1e-3</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;=== Stage 2: Off-ramps Fine-tuning ===&quot;</span>)
+model.train()
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>):
+    <span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> train_loader:
+        optimizer_st2.zero_grad()
+        input_ids = batch[<span class="hljs-string">&quot;input_ids&quot;</span>].to(device)
+        attention_mask = batch[<span class="hljs-string">&quot;attention_mask&quot;</span>].to(device)
+        labels = batch[<span class="hljs-string">&quot;label&quot;</span>].to(device)
+
+        all_logits = model(input_ids, attention_mask)
+        <span class="hljs-comment"># 全層の損失の総和（あるいは平均）をとって最適化</span>
+        total_loss = <span class="hljs-built_in">sum</span>(criterion(logits, labels) <span class="hljs-keyword">for</span> logits <span class="hljs-keyword">in</span> all_logits)
+        total_loss.backward()
+        optimizer_st2.step()
+
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-comment"># 4. 評価実験（エントロピー閾値を変えて精度と退出位置を計測）</span>
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+model.<span class="hljs-built_in">eval</span>()
+
+thresholds = [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.1</span>, <span class="hljs-number">0.3</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.7</span>] <span class="hljs-comment"># 0.0は事実上全層パス</span>
+results = {}
+
+<span class="hljs-keyword">with</span> torch.no_grad():
+    <span class="hljs-keyword">for</span> thr <span class="hljs-keyword">in</span> thresholds:
+        all_preds = []
+        all_exits = []
+        all_labels = []
+
+        <span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> val_loader:
+            input_ids = batch[<span class="hljs-string">&quot;input_ids&quot;</span>].to(device)
+            attention_mask = batch[<span class="hljs-string">&quot;attention_mask&quot;</span>].to(device)
+            labels = batch[<span class="hljs-string">&quot;label&quot;</span>].to(device)
+
+            preds, exit_layers = model(input_ids, attention_mask, eval_threshold=thr)
+            
+            all_preds.extend(preds.cpu().numpy())
+            all_exits.extend(exit_layers.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+
+        accuracy = np.mean(np.array(all_preds) == np.array(all_labels))
+        avg_exit_layer = np.mean(all_exits)
+        
+        results[thr] = {
+            <span class="hljs-string">&quot;accuracy&quot;</span>: accuracy,
+            <span class="hljs-string">&quot;avg_layer&quot;</span>: avg_exit_layer,
+            <span class="hljs-string">&quot;exit_distribution&quot;</span>: all_exits
+        }
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Threshold: <span class="hljs-subst">{thr:<span class="hljs-number">.1</span>f}</span> | Accuracy: <span class="hljs-subst">{accuracy*<span class="hljs-number">100</span>:<span class="hljs-number">.2</span>f}</span>% | Avg Exit Layer: <span class="hljs-subst">{avg_exit_layer:<span class="hljs-number">.2</span>f}</span>&quot;</span>)
+
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-comment"># 5. 結果の可視化</span>
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+fig, (ax1, ax2) = plt.subplots(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, figsize=(<span class="hljs-number">12</span>, <span class="hljs-number">5</span>))
+
+<span class="hljs-comment"># (1) 平均打ち切り層数 vs 正解率 (Trade-off Curve)</span>
+avg_layers = [res[<span class="hljs-string">&quot;avg_layer&quot;</span>] <span class="hljs-keyword">for</span> res <span class="hljs-keyword">in</span> results.values()]
+accuracies = [res[<span class="hljs-string">&quot;accuracy&quot;</span>] * <span class="hljs-number">100</span> <span class="hljs-keyword">for</span> res <span class="hljs-keyword">in</span> results.values()]
+
+ax1.plot(avg_layers, accuracies, marker=<span class="hljs-string">&#x27;o&#x27;</span>, color=<span class="hljs-string">&#x27;b&#x27;</span>, linestyle=<span class="hljs-string">&#x27;-&#x27;</span>)
+ax1.set_xlabel(<span class="hljs-string">&quot;Average Exit Layer Number&quot;</span>)
+ax1.set_ylabel(<span class="hljs-string">&quot;Accuracy (%)&quot;</span>)
+ax1.set_title(<span class="hljs-string">&quot;Trade-off between Speed (Exit Layer) and Accuracy&quot;</span>)
+ax1.grid(<span class="hljs-literal">True</span>)
+
+<span class="hljs-comment"># (2) 特定閾値における打ち切り位置の分布ヒストグラム</span>
+target_thr = <span class="hljs-number">0.3</span>
+ax2.hist(results[target_thr][<span class="hljs-string">&quot;exit_distribution&quot;</span>], bins=<span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">14</span>), align=<span class="hljs-string">&#x27;left&#x27;</span>, rwidth=<span class="hljs-number">0.8</span>, color=<span class="hljs-string">&#x27;orange&#x27;</span>)
+ax2.set_xticks(<span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">13</span>))
+ax2.set_xlabel(<span class="hljs-string">&quot;Exit Layer&quot;</span>)
+ax2.set_ylabel(<span class="hljs-string">&quot;Sample Count&quot;</span>)
+ax2.set_title(<span class="hljs-string">f&quot;Exit Layer Distribution (Threshold = <span class="hljs-subst">{target_thr}</span>)&quot;</span>)
+
+plt.tight_layout()
+plt.show()
+</code></pre>
+<h3 id="2-実験結果の確認ポイント">2. 実験結果の確認ポイント</h3>
+<p>スクリプトを実行すると、以下2つの観点から精度と計算量のトレードオフを確認できます。</p>
+<ul>
+<li><strong>打ち切り位置の分布（右図ヒストグラム）</strong>:
+簡単な構文や肯定・否定が明解な文章は第2〜4層など前半で退出（Exit）し、複雑な文脈のサンプルのみが第10〜12層まで到達する分布の偏りを確認できます。</li>
+<li><strong>正解率とのトレードオフ（左図曲線）</strong>:
+閾値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> を調整することで、平均処理層数を12層から6〜8層程度まで削減（<strong>約30〜50%の計算量削減</strong>）しても、正解率の低下をわずか数%以内に抑えられるポイント（パレート最適点）が把握できます。</li>
+</ul>
+<h2 id="学習結果">学習結果</h2>
+<h3 id="学習の結果">学習の結果</h3>
+<p>上記を実行した結果このような結果が得られました。
+DeeBERTの動的推論（Early Exit）の挙動が現れています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\image\experiment_v1\1789190374848.png" alt="1789190374848"></p>
+<p>得られた結果をもとに、「計算量改善」「打ち切り位置」「精度への影響」の3点から分析します。</p>
+<h3 id="1-総合評価と数値サマリー">1. 総合評価と数値サマリー</h3>
+<table>
+<thead>
+<tr>
+<th>エントロピー閾値 (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>)</th>
+<th>Accuracy (%)</th>
+<th>平均通過層数 (全12層)</th>
+<th>計算量（層数ベース）削減率</th>
+<th>定性的な挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0.0</strong> (基準)</td>
+<td><strong>92.60%</strong></td>
+<td>12.00 層</td>
+<td>0.0%</td>
+<td>全サンプルが第12層（最深層）まで通過</td>
+</tr>
+<tr>
+<td><strong>0.1</strong> (高確信)</td>
+<td><strong>92.60%</strong></td>
+<td><strong>10.11 層</strong></td>
+<td><strong>15.8% 削減</strong></td>
+<td><strong>精度を100%維持したまま計算量を削減</strong></td>
+</tr>
+<tr>
+<td><strong>0.3</strong> (中確信)</td>
+<td><strong>90.30%</strong></td>
+<td><strong>3.15 層</strong></td>
+<td><strong>73.8% 削減</strong></td>
+<td><strong>わずか2.3%の精度低下で速度が約3.8倍に</strong></td>
+</tr>
+<tr>
+<td><strong>0.5 / 0.7</strong></td>
+<td>84.60%</td>
+<td>1.00 層</td>
+<td>91.7% 削減</td>
+<td>ほぼ全てのサンプルが第1層で即時打ち切り</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-観点別ディープダイブ分析">2. 観点別ディープダイブ分析</h3>
+<p><strong>① 精度維持と計算量削減（Trade-off）の分析</strong></p>
+<ul>
+<li>
+<p><strong>閾値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">S = 0.1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.1</span></span></span></span> の発見（無傷の高速化）</strong></p>
+</li>
+<li>
+<p>正解率が <strong>92.60% のまま1ミリも低下せず</strong>、平均通過層数が 12.00層 ➔ 10.11層 に減少しました。</p>
+</li>
+<li>
+<p>これは「難易度の低い簡単なサンプル（約15〜20%）」が第8〜10層付近で早期退出しても、最深層と同じ正しく確信度の高い予測を出せていることを意味します。</p>
+</li>
+<li>
+<p><strong>閾値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mn>0.3</mn></mrow><annotation encoding="application/x-tex">S = 0.3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.3</span></span></span></span> のパレート最適性</strong></p>
+</li>
+<li>
+<p>平均通過層数がわずか <strong>3.15層</strong>（全12層中、上流の約25%しか通らない）になりながら、精度は <strong>90.30%</strong> を維持しています。</p>
+</li>
+<li>
+<p>推論レイテンシを約70%以上カット（スループット約3.8倍）しながら、精度低下をわずか2.3ptに抑えられており、実務的なリアルタイム推論環境（エッジデバイスや高スループットAPI）において非常に強力な設定値と言えます。</p>
+</li>
+</ul>
+<p><strong>② 打ち切り位置の分布と閾値の感度分析</strong></p>
+<ul>
+<li><strong>閾値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mn>0.5</mn><mo>∼</mo><mn>0.7</mn></mrow><annotation encoding="application/x-tex">S = 0.5 \sim 0.7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.5</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.7</span></span></span></span> における飽和現象</strong></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>≥</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">S \ge 0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.5</span></span></span></span> に設定すると、平均通過層数が <strong>1.00層</strong>（＝全員が第1層で退出）になり、精度が 84.60% まで落ち込んでいます。</li>
+<li>理由: 今回用いた感情分析（MARC-ja）のような2クラス分類では、Off-rampの出力ロジットが少し偏るだけでエントロピーが容易に <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn></mrow><annotation encoding="application/x-tex">0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.5</span></span></span></span> 未満になるためです（2クラスの均等分布時の最大エントロピーは <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ln</mi><mo>⁡</mo><mo stretchy="false">(</mo><mn>2</mn><mo stretchy="false">)</mo><mo>≈</mo><mn>0.693</mn></mrow><annotation encoding="application/x-tex">\ln(2) \approx 0.693</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">ln</span><span class="mopen">(</span><span class="mord">2</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.693</span></span></span></span>）。</li>
+<li><strong>示唆</strong>: 2クラス分類における DeeBERT の有効なエントロピー閾値の検索範囲は <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.0</mn><mo>≤</mo><mi>S</mi><mo>≤</mo><mn>0.3</mn></mrow><annotation encoding="application/x-tex">0.0 \le S \le 0.3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7804em;vertical-align:-0.136em;"></span><span class="mord">0.0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.3</span></span></span></span></strong> の狭い領域に集中していることが分かります。</li>
+</ul>
+<h2 id="フルbertと精度の比較">フルBERTと精度の比較</h2>
+<p>上記学習したDeeBERT（今回の動的推論モデル）と、学習元である元のBERT（通常推論モデル）の精度比較を行い、DeeBERTの性能について確認してみます。</p>
+<p>実験の比較ロジック、コードの修正方法、および比較時の分析ポイントを以下にまとめます。</p>
+<h3 id="1-比較の観点と検証ロジック">1. 比較の観点と検証ロジック</h3>
+<p>比較対象となる「学習元のBERT」には以下の2パターンが存在します。</p>
+<ol>
+<li><strong>Full-BERT（12層全てを通した推論）</strong></li>
+</ol>
+<ul>
+<li><strong>定義</strong>: DeeBERTの第12層（最終層）の出力のみを使用する推論。</li>
+<li><strong>役割</strong>: 今回の動的推論（Early Exit）によって「どれくらい精度が落ちたか（または維持できたか）」のベースラインとなります。</li>
+</ul>
+<ol start="2">
+<li><strong>Layer-pruned BERT（静的な層削減）</strong></li>
+</ol>
+<ul>
+<li><strong>定義</strong>: DeeBERTの「平均通過層数（例: 3.15層）」に合わせて、最初からBERTを浅い層（例: 3層目や4層目）で一律切断して固定推論させるモデル。</li>
+<li><strong>役割</strong>: 単にモデルを小さく（浅く）した場合と比較して、「サンプルの難易度に応じて動的に層を変えること（Dynamic Early Exit）の優位性」を証明します。</li>
+</ul>
+<h3 id="2-比較実験用スクリプトcolab用">2. 比較実験用スクリプト（Colab用）</h3>
+<p>前回の評価ループを拡張し、「DeeBERT（動的）」と「元のBERT（全層および各単独層）」の精度を同一データセット（<code>val_loader</code>）で比較するコードです。</p>
+<p>以下のコードを評価セクションに追加して実行してください。</p>
+<pre><code class="language-python"><span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-comment"># 各単独層（元のBERTを途中で切断した場合）および Full-BERT の評価</span>
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;=== Baseline: Single Layer / Full-BERT Evaluation ===&quot;</span>)
+
+single_layer_results = {}
+
+<span class="hljs-keyword">with</span> torch.no_grad():
+    <span class="hljs-comment"># 各 Off-ramp（第1層〜第12層）の単独精度を計測</span>
+    <span class="hljs-keyword">for</span> layer_idx <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(model.num_layers):
+        all_preds = []
+        all_labels = []
+
+        <span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> val_loader:
+            input_ids = batch[<span class="hljs-string">&quot;input_ids&quot;</span>].to(device)
+            attention_mask = batch[<span class="hljs-string">&quot;attention_mask&quot;</span>].to(device)
+            labels = batch[<span class="hljs-string">&quot;label&quot;</span>].to(device)
+
+            <span class="hljs-comment"># eval_threshold=None で全層の logits を取得</span>
+            all_logits = model(input_ids, attention_mask, eval_threshold=<span class="hljs-literal">None</span>)
+            
+            <span class="hljs-comment"># 該当する層の logits から予測を出力</span>
+            logits = all_logits[layer_idx]
+            preds = torch.argmax(logits, dim=-<span class="hljs-number">1</span>)
+
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+
+        acc = np.mean(np.array(all_preds) == np.array(all_labels))
+        single_layer_results[layer_idx + <span class="hljs-number">1</span>] = acc
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Layer <span class="hljs-subst">{layer_idx + <span class="hljs-number">1</span>:2d}</span> Alone Accuracy: <span class="hljs-subst">{acc * <span class="hljs-number">100</span>:<span class="hljs-number">.2</span>f}</span>%&quot;</span>)
+
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+<span class="hljs-comment"># 結果の可視化：DeeBERT (動的) vs 固定層 (静的/Full-BERT)</span>
+<span class="hljs-comment"># ---------------------------------------------------------</span>
+plt.figure(figsize=(<span class="hljs-number">9</span>, <span class="hljs-number">5</span>))
+
+<span class="hljs-comment"># 1. 各単独層（固定）の精度をプロット</span>
+layers = <span class="hljs-built_in">list</span>(single_layer_results.keys())
+single_accs = [acc * <span class="hljs-number">100</span> <span class="hljs-keyword">for</span> acc <span class="hljs-keyword">in</span> single_layer_results.values()]
+plt.plot(layers, single_accs, marker=<span class="hljs-string">&#x27;s&#x27;</span>, color=<span class="hljs-string">&#x27;gray&#x27;</span>, linestyle=<span class="hljs-string">&#x27;--&#x27;</span>, label=<span class="hljs-string">&#x27;Static Layer (Original BERT truncated)&#x27;</span>)
+
+<span class="hljs-comment"># 2. DeeBERT（動的打ち切り）のトレードオフ曲線をプロット</span>
+deebert_avg_layers = [res[<span class="hljs-string">&quot;avg_layer&quot;</span>] <span class="hljs-keyword">for</span> res <span class="hljs-keyword">in</span> results.values()]
+deebert_accs = [res[<span class="hljs-string">&quot;accuracy&quot;</span>] * <span class="hljs-number">100</span> <span class="hljs-keyword">for</span> res <span class="hljs-keyword">in</span> results.values()]
+plt.plot(deebert_avg_layers, deebert_accs, marker=<span class="hljs-string">&#x27;o&#x27;</span>, color=<span class="hljs-string">&#x27;red&#x27;</span>, linewidth=<span class="hljs-number">2</span>, label=<span class="hljs-string">&#x27;DeeBERT (Dynamic Early Exit)&#x27;</span>)
+
+<span class="hljs-comment"># グラフ装飾</span>
+plt.axhline(y=single_layer_results[<span class="hljs-number">12</span>]*<span class="hljs-number">100</span>, color=<span class="hljs-string">&#x27;blue&#x27;</span>, linestyle=<span class="hljs-string">&#x27;:&#x27;</span>, label=<span class="hljs-string">f&#x27;Full-BERT (12 Layers): <span class="hljs-subst">{single_layer_results[<span class="hljs-number">12</span>]*<span class="hljs-number">100</span>:<span class="hljs-number">.2</span>f}</span>%&#x27;</span>)
+plt.xlabel(<span class="hljs-string">&quot;Average Number of Executed Layers&quot;</span>)
+plt.ylabel(<span class="hljs-string">&quot;Accuracy (%)&quot;</span>)
+plt.title(<span class="hljs-string">&quot;Comparison: Dynamic Early Exit (DeeBERT) vs Static Truncation&quot;</span>)
+plt.grid(<span class="hljs-literal">True</span>)
+plt.legend()
+plt.show()
+
+</code></pre>
+<h3 id="3-結果の分析">3. 結果の分析</h3>
+<p>上記コードを実行した結果は以下のように得られました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\image\experiment_v1\1789190654546.png" alt="1789190654546"></p>
+<p><strong>1. 動的早期退出（DeeBERT）の圧倒的な優位性</strong></p>
+<p>赤線（DeeBERT）が灰色の破線（Static Layer）に対して<strong>常に上側に大きく位置している点</strong>が、この実験の有効性を示すことになります。。</p>
+<ul>
+<li><strong>同じ計算量（通過層数）での精度差</strong></li>
+<li><strong>平均 3.15 層</strong>の時点を比較すると、一律で第3層切断を行った Static Layer（約 84.6%）に対し、DeeBERT は <strong>90.3%</strong> と、<strong>約 5.7pt 以上高い正解率</strong>を達成しています。</li>
+<li>これは「一律で浅い層で切る」のではなく、「簡単な入力は浅い層で退出させ、難しい入力だけを深層まで送る」という<strong>サンプルごとの動的な計算資源配分が極めて効果的に機能している証明</strong>となります。</li>
+</ul>
+<p><strong>2. 静的切断（Static Layer）の限界と特徴</strong></p>
+<p>灰色の点線（Static Layer）の挙動を見ると、モデルを静的に途中で切断した場合の性能限界が分かります。</p>
+<ul>
+<li>
+<p><strong>第1層〜第6層での停滞</strong></p>
+</li>
+<li>
+<p>第1層から第6層付近までは、精度が <strong>約 84.6%</strong> 付近の平坦な状態（ボトム）に留まっています。</p>
+</li>
+<li>
+<p>これは、初期層の表現力（単語埋め込みに近い段階）だけでは分類問題の複雑さを捉えきれず、事実上ランダムまたは最も頻度の高いクラスへの偏り程度の性能しか得られていないことを示します。</p>
+</li>
+<li>
+<p><strong>第8層以降の急激な精度向上</strong></p>
+</li>
+<li>
+<p>第7〜8層（約 85.3%）を超えたあたりから一気に精度が立ち上がり、第10層で <strong>90.8%</strong>、第11層で <strong>92.3%</strong>、第12層で <strong>92.6%</strong>（Full-BERTと同等）へ到達します。</p>
+</li>
+<li>
+<p>言語モデルの高次な抽象表現やタスク分類に必要な知識の多くが、<strong>モデルの中盤以降（第8層〜第12層）で構築されている</strong>ことが視覚的に理解できます。</p>
+</li>
+</ul>
+<p><strong>3. DeeBERTのパレート最適点（実用上のベストプラクティス）</strong></p>
+<p>グラフ上の赤色のプロット（DeeBERT）から、用途に応じた2つの最適設定値が見えてきます。</p>
+<ul>
+<li>
+<p><strong>① 完全無傷の高速化（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">S=0.1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.1</span></span></span></span> のポイント: 平均10.11層）</strong></p>
+</li>
+<li>
+<p>平均約10層の通過で、Full-BERT（12層）の最高精度 <strong>92.60% を100%維持</strong>しています。</p>
+</li>
+<li>
+<p>精度低下のリスクを冒さずに<strong>約 16% の計算量を削減</strong>できる設定です。</p>
+</li>
+<li>
+<p><strong>② コストパフォーマンス最大化（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><mn>0.3</mn></mrow><annotation encoding="application/x-tex">S=0.3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.3</span></span></span></span> のポイント: 平均3.15層）</strong></p>
+</li>
+<li>
+<p>精度は Full-BERT からわずか 2.3pt 低下（92.6% ➔ 90.3%）にとどまる一方で、計算量を <strong>約 74% 削減（処理速度は約3.8倍向上）</strong> させています。</p>
+</li>
+<li>
+<p>Static Layer で同等の 3層付近を通した場合（84.6%）と比べて遥かに高い実用精度を誇ります。</p>
+</li>
+</ul>
+<p>この実験結果は、<strong>「DeeBERTによる動的推論は、単なるモデル軽量化（Pruning/Truncation）に比べてはるかに効率的に精度-計算量トレードオフを改善する」</strong> という論文上の主張をJGLUE（MARC-ja）上で実証できたと言えます。</p>
+<h2 id="総括">総括</h2>
+<p>今回の試行により、一律にモデルを小さくするのではなく、<strong>入力の難易度に応じて推論の深さを動的に変えることで、精度をほぼ維持したまま計算量を大幅に削減できる</strong>ということが分かりました。</p>
+<p>具体的には、BERTの各中間層に分類器を設置し、予測の確信度（エントロピー）が閾値を下回った時点で推論を打ち切る「DeeBERT」という手法を、日本語のJGLUE（MARC-ja）で実験した結果です。</p>
+<p>重要な発見は3つです。</p>
+<ol>
+<li><strong>無傷の高速化が可能</strong>：閾値を0.1に設定すると、最高精度92.60%を1ptも落とさずに、平均10.1層（約16%の計算量削減）で済みました。</li>
+<li><strong>劇的な効率化</strong>：閾値0.3では、精度がわずか2.3pt低下するだけで、平均3.2層（約74%削減、約3.8倍速）まで短縮できました。</li>
+<li><strong>動的配分の優位性</strong>：同じ3層程度の計算量で、BERTを静的に3層で切った場合は精度84.6%でしたが、DeeBERTでは90.3%を達成しました。つまり「簡単な文は浅い層で退出させ、難しい文だけ深層まで通す」という動的な計算資源の配分が、一律の層削減より圧倒的に効率的であることが実証されました。</li>
+</ol>
+<p>一言でまとめると、<strong>全ての入力を同じ深さで処理するのは無駄が多く、文の難易度に応じて推論を途中で止める『動的早期退出』が、精度と速度の両立において有効である</strong> ということになると思います。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/3uTYZjJPP0I?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+        </body>
+        </html>
