@@ -209,3 +209,60 @@ ax2.set_title(f"Exit Layer Distribution (Threshold = {target_thr})")
 
 plt.tight_layout()
 plt.show()
+
+
+# ---------------------------------------------------------
+# 各単独層（元のBERTを途中で切断した場合）および Full-BERT の評価
+# ---------------------------------------------------------
+print("=== Baseline: Single Layer / Full-BERT Evaluation ===")
+
+single_layer_results = {}
+
+with torch.no_grad():
+    # 各 Off-ramp（第1層〜第12層）の単独精度を計測
+    for layer_idx in range(model.num_layers):
+        all_preds = []
+        all_labels = []
+
+        for batch in val_loader:
+            input_ids = batch["input_ids"].to(device)
+            attention_mask = batch["attention_mask"].to(device)
+            labels = batch["label"].to(device)
+
+            # eval_threshold=None で全層の logits を取得
+            all_logits = model(input_ids, attention_mask, eval_threshold=None)
+            
+            # 該当する層の logits から予測を出力
+            logits = all_logits[layer_idx]
+            preds = torch.argmax(logits, dim=-1)
+
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+
+        acc = np.mean(np.array(all_preds) == np.array(all_labels))
+        single_layer_results[layer_idx + 1] = acc
+        print(f"Layer {layer_idx + 1:2d} Alone Accuracy: {acc * 100:.2f}%")
+
+# ---------------------------------------------------------
+# 結果の可視化：DeeBERT (動的) vs 固定層 (静的/Full-BERT)
+# ---------------------------------------------------------
+plt.figure(figsize=(9, 5))
+
+# 1. 各単独層（固定）の精度をプロット
+layers = list(single_layer_results.keys())
+single_accs = [acc * 100 for acc in single_layer_results.values()]
+plt.plot(layers, single_accs, marker='s', color='gray', linestyle='--', label='Static Layer (Original BERT truncated)')
+
+# 2. DeeBERT（動的打ち切り）のトレードオフ曲線をプロット
+deebert_avg_layers = [res["avg_layer"] for res in results.values()]
+deebert_accs = [res["accuracy"] * 100 for res in results.values()]
+plt.plot(deebert_avg_layers, deebert_accs, marker='o', color='red', linewidth=2, label='DeeBERT (Dynamic Early Exit)')
+
+# グラフ装飾
+plt.axhline(y=single_layer_results[12]*100, color='blue', linestyle=':', label=f'Full-BERT (12 Layers): {single_layer_results[12]*100:.2f}%')
+plt.xlabel("Average Number of Executed Layers")
+plt.ylabel("Accuracy (%)")
+plt.title("Comparison: Dynamic Early Exit (DeeBERT) vs Static Truncation")
+plt.grid(True)
+plt.legend()
+plt.show()
