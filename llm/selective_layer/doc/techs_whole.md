@@ -81,3 +81,60 @@ Residual connection の通過情報をゲーティングすることで、層間
 これらの技術は、モデルを「ブラックボックス」として使うのではなく、**「どの層が何を担当し、どの方向を操作すれば振る舞いが変わるか」**を科学的に扱うための基盤となっています。特に、Representation Engineering と Knowledge Editing は、モデルの安全性調整や事実更新の新たなパラダイムとして注目されています。
 
 
+## レイヤ選択のオリジン
+
+はい、現在のレイヤー選択研究には明確な「起源」となる論文が存在し、大きく**3つの系統**に分類できます。それぞれの系譜をご説明いたします。
+
+### 系統1：層の確率的ドロップ（プルーニング・圧縮の起源）
+
+__Stochastic Depth (2016)__
+- **著者**: Gao Huang, Yu Sun, Zhuang Liu, Daniel Sedra, Kilian Q. Weinberger（Cornell University, Tsinghua University）
+- **発表**: ECCV 2016
+- **概要**: ResNetなどの非常に深い畳み込みネットワークにおいて、**学習時に層（残差ブロック）を確率的にドロップする**手法を提案しました。これにより、非常に深いネットワークの学習を安定化させ、正則化効果も得られます。被引用数は約2,000回に達し、現在の層スキップ・プルーニング研究の最も直接的な起源です。<source-chip title="arXiv" url="https://arxiv.org/abs/1603.09382" />
+
+**発展**: Stochastic Depth → **LayerDrop (Fan et al., 2019/2020)** → 現在のLLM層プルーニング（LaCo, FinerCut, DLP など）
+
+__LayerDrop (2019/2020)__
+- **著者**: Angela Fan, Edouard Grave, Armand Joulin（Facebook AI Research）
+- **発表**: ICLR 2020
+- **概要**: Stochastic DepthをTransformerに拡張し、**学習時に層をランダムにドロップし、推論時に任意の深度のサブモデルを抽出できる**手法（LayerDrop）を提案。これはTransformer時代における動的深度選択の直接的な先駆けとなりました。<source-chip title="arXiv" url="https://arxiv.org/pdf/1909.11556" />
+
+### 系統2：適応的計算時間（動的深度・計算量調整の起源）
+
+__Adaptive Computation Time (ACT) (2016)__
+- **著者**: Alex Graves（Google DeepMind）
+- **発表**: 2016年
+- **概要**: RNNが**入力を受けてから出力を出すまでの計算ステップ数を、入力の難易度に応じて学習する**アルゴリズムを提案。これは「すべての入力に同じ計算量を使う必要はない」という核心的な洞察を初めて形式化したものです。被引用数は360回以上。<source-chip title="arXiv" url="https://arxiv.org/abs/1603.08983" />
+
+**発展**: ACT → **Depth-Adaptive Transformer (Elbayad et al., 2019)** → **PonderNet (2021)** → 現在の動的深度調整・トークンルーティング（Mixture-of-Depths, Token-Select, BUDDY など）
+
+__Depth-Adaptive Transformer (2019)__
+- **著者**: Maha Elbayad, Jiatao Gu, Edouard Grave, Michael Auli（Facebook AI）
+- **発表**: 2019年
+- **概要**: ACTの考え方をTransformerに初めて本格的に応用し、**入力シーケンスの難易度に応じて異なる層深さで予測を行う**モデルを提案。現在の動的深度ルーティング研究の直接的な先駆けです。<source-chip title="arXiv" url="https://arxiv.org/abs/1910.10073" />
+
+### 系統3：動的ルーティング（経路選択の起源）
+
+__Deciding How to Decide: Dynamic Routing in Artificial Neural Networks (2017)__
+- **著者**: Mason McGill, Pietro Perona（Caltech）
+- **発表**: ICML 2017
+- **概要**: ニューラルネットワーク内で**入力信号に応じて異なる経路（パス）を動的に選択する**手法を体系的に評価した基盤的な研究。現在のトークンレベル動的ルーティングの理論的基盤となっています。<source-chip title="PMLR" url="https://proceedings.mlr.press/v70/mcgill17a/mcgill17a.pdf" />
+
+### 系譜のまとめ
+
+| 系統 | 起源論文（年） | 核心的アイデア | 現在の代表的研究 |
+|------|-------------|--------------|---------------|
+| **層の確率的ドロップ** | Stochastic Depth (2016) | 学習時に層をランダムにドロップ | LayerDrop, LaCo, FinerCut, DLP |
+| **適応的計算時間** | Adaptive Computation Time (2016) | 入力の難易度に応じて計算ステップを変える | Mixture-of-Depths, Token-Select, BUDDY |
+| **動的ルーティング** | McGill & Perona (2017) | 入力に応じて異なる経路を選択 | Radial Networks, Dr.LLM, HeRo |
+
+### 特に注目すべき「原点」
+
+もっとも影響力が大きいのは、**2016年にほぼ同時期に発表された2本の論文**です：
+
+1. **Stochastic Depth (Huang et al., 2016)**: 「層をスキップする」という物理的な操作の起源
+2. **Adaptive Computation Time (Graves, 2016)**: 「入力に応じて計算量を変える」という概念的な起源
+
+この2本の論文が、現在のレイヤー選択研究の**両輪**を形成しています。前者が「どの層を使うか」の**構造**を、後者が「いくら計算するか」の**適応性**をそれぞれ開拓しました。
+
+もし特定の系統についてさらに深く知りたい論文がございましたら、お知らせください。
