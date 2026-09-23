@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x660e;&#x7d30;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/09/22/043000">LLMのレイヤを選択する手法として(レイヤの打ち切りを選択する手法として)DeeBERT</a>を説明しました。
+その後も問題に応じてレイヤを使い分けるという研究は続けられています。
+本日説明するのはそんな後続手法で、現在につながるレイヤ選択の手法であるDepth-Adaptive Transformerです。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="論文明細">論文明細</h2>
+<p><a href="https://arxiv.org/abs/1910.10073">Depth-Adaptive Transformer</a> の論文明細を以下にまとめます。</p>
+<h3 id="論文情報">論文情報</h3>
+<p>本論文はLLM関係のトップカンファレンスの一つICLRに採択されています。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>タイトル</strong></td>
+<td>Depth-Adaptive Transformer</td>
+</tr>
+<tr>
+<td><strong>著者</strong></td>
+<td>Maha Elbayad, Jiatao Gu, Édouard Grave, Michael Auli</td>
+</tr>
+<tr>
+<td><strong>発表会議</strong></td>
+<td><a href="https://iclr.cc/virtual/2020/poster/1770">ICLR 2020</a> (International Conference on Learning Representations)</td>
+</tr>
+<tr>
+<td><strong>発表年</strong></td>
+<td>2020年</td>
+</tr>
+<tr>
+<td><strong>arXiv</strong></td>
+<td><a href="https://arxiv.org/abs/1910.10073">1910.10073</a></td>
+</tr>
+<tr>
+<td><strong>OpenReview</strong></td>
+<td><a href="https://openreview.net/forum?id=SJg7KhVKPH">forum?id=SJg7KhVKPH</a></td>
+</tr>
+<tr>
+<td><strong>著者所属</strong></td>
+<td>Maha Elbayad: Univ. Grenoble Alpes（研究はFacebook AI Researchインターン中に実施）; Jiatao Gu, Édouard Grave, Michael Auli: Facebook AI Research</td>
+</tr>
+<tr>
+<td><strong>Meta Research</strong></td>
+<td><a href="https://research.facebook.com/publications/depth-adaptive-transformer/">research.facebook.com/publications/depth-adaptive-transformer</a></td>
+</tr>
+<tr>
+<td><strong>HAL（フランス学術アーカイブ）</strong></td>
+<td><a href="https://inria.hal.science/hal-02422914">inria.hal.science/hal-02422914</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="補足">補足</h3>
+<ul>
+<li><strong>ICLR (International Conference on Learning Representations)</strong> は、深層学習・表現学習分野における世界トップクラスの国際会議です。OpenReviewによるダブルブラインド査読(※)を採用しており、本論文も査読を経て採択されています。<a href="https://iclr.cc/virtual/2020/poster/1770">ICML</a></li>
+<li>本論文は2019年10月22日に <a href="https://arxiv.org/abs/1910.10073">arXiv</a> に先行公開された後、ICLR 2020に採択されました。</li>
+<li>第一著者の Maha Elbayad 氏は、当時 Univ. Grenoble Alpes（フランス・グルノーブル大学）の博士課程学生で、Facebook AI Research（FAIR）でのインターンシップ中に本研究を行いました。</li>
+<li>共著者の Michael Auli 氏、Édouard Grave 氏、Jiatao Gu 氏はいずれも FAIR（現 Meta AI）の研究者です。特に Michael Auli 氏は音声認識・機械翻訳分野で広く知られる研究者です。</li>
+<li>ICLRの論文は通常 proceedings として出版されますが、DOIの付与は論文によって異なります。本論文の主要な参照先は <a href="https://arxiv.org/abs/1910.10073">arXiv:1910.10073</a> および <a href="https://openreview.net/forum?id=SJg7KhVKPH">OpenReview</a> となります。<source-chip title="arXiv" url="https://arxiv.org/abs/1910.10073" /></li>
+</ul>
+<p>※ダブルブラインド査読：
+ダブルブラインド査読（double-blind peer review）とは、査読者（レビュアー）も投稿者（著者）も互いの身元を知らない状態で論文を査読する方式です。
+著名大学や有名研究者の論文が、名前だけで有利に評価されることを防ぎます。
+逆に、無名の研究者や新興機関の論文が不当に不利にならないよう保護します。</p>
+<h2 id="解決しようとした課題">解決しようとした課題</h2>
+<p><a href="https://arxiv.org/abs/1910.10073">Depth-Adaptive Transformer</a> が解決しようとした課題は、<strong>「すべての入力シーケンスに対して同じ計算量を使うことの非効率性」</strong> です。具体的には以下の3つの課題が挙げられています。</p>
+<h3 id="1-固定計算量による無駄">1. 固定計算量による無駄</h3>
+<p>最先端のシーケンス・トゥ・シーケンスモデル（Transformer 等）は、<strong>入力が簡単でも難しくても、すべてのサンプルに対して同じ数の層・同じ計算量を消費</strong>します。例えば、機械翻訳で「Thank you」のような短いフレーズを翻訳するのに、数十億パラメータの巨大モデル全体を使う必要はありません。しかし、当時のモデルはこのような簡単な入力にも最大計算量を適用していました。<source-chip title="arXiv" url="https://arxiv.org/abs/1910.10073" /></p>
+<h3 id="2-速度と精度のトレードオフ">2. 速度と精度のトレードオフ</h3>
+<p>大規模なモデルは難しい例を処理するために必要ですが、簡単な例に対しては過剰です。研究者は常に「精度を維持しつつ推論速度を上げたい」という課題に直面していましたが、モデルサイズを小さくすると難しい例の精度が落ちるというジレンマがありました。</p>
+<h3 id="3-動的計算の構造化予測への未適用">3. 動的計算の構造化予測への未適用</h3>
+<p>動的計算（入力に応じて計算ステップ数を変える）のアイデア自体は <a href="https://arxiv.org/abs/1603.08983">Graves (2016) の ACT</a> や <a href="https://arxiv.org/abs/1808.08947">Universal Transformers</a> で既に存在していましたが、以下の問題がありました。</p>
+<ul>
+<li><strong>Universal Transformers</strong>: 同じ層を繰り返し適用するだけで、<strong>異なる層（異なる容量）を使い分ける</strong>ことはできませんでした</li>
+<li><strong>早期終了（Early Exit）</strong>: 画像分類では <a href="https://arxiv.org/abs/1703.09877">Huang et al. 2017</a> などで研究されていましたが、<strong>構造化予測（機械翻訳などのシーケンス生成）</strong> への拡張は未解決でした</li>
+<li>機械翻訳では、あるトークンで早期終了すると、後続のトークンの自己注意機構に影響が及ぶという<strong>構造的な複雑性</strong>がありました</li>
+</ul>
+<h3 id="論文が指摘した根本的な矛盾">論文が指摘した根本的な矛盾</h3>
+<blockquote>
+<p><strong>「難しい例には深いモデルが必要だが、簡単な例には浅いモデルで十分。しかし現在のモデルは、どちらの例にも同じ深さを使っている」</strong></p>
+</blockquote>
+<p><a href="https://arxiv.org/abs/1910.10073">Depth-Adaptive Transformer</a> は、<strong>デコーダの各層に出口（output classifier）を設け、入力の難易度に応じて異なる層深さで予測を行う</strong>ことで、この矛盾を解決しました。</p>
+<h2 id="提案手法">提案手法</h2>
+<p><a href="https://arxiv.org/abs/1910.10073">Depth-Adaptive Transformer</a> が提案した手法は、<strong>「デコーダの各層に出口を設け、入力の難易度に応じて異なる層深さで予測を行う」</strong> というものです。以下に仕組みを段階的に説明いたします。</p>
+<h3 id="1-基本的なアイデア多層出口">1. 基本的なアイデア：多層出口</h3>
+<p>標準の Transformer は、デコーダの最終層（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 層目）の隠れ状態 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>h</mi><mi>t</mi><mi>N</mi></msubsup></mrow><annotation encoding="application/x-tex">h_t^N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0883em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span> だけから次のトークンを予測します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>∣</mo><msubsup><mi>h</mi><mi>t</mi><mi>N</mi></msubsup><mo stretchy="false">)</mo><mo>=</mo><mtext>softmax</mtext><mo stretchy="false">(</mo><mi>W</mi><msubsup><mi>h</mi><mi>t</mi><mi>N</mi></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(y_{t+1} \mid h_t^N) = \text{softmax}(W h_t^N)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1413em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1413em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p><a href="https://arxiv.org/abs/1910.10073">Depth-Adaptive Transformer</a> では、<strong>すべての層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">n = 1, \dots, N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> に独立した出力分類器 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">W_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を設け</strong>、どの層でも予測が可能にします。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>n</mi><mo>:</mo><mspace width="1em"/><mi>p</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>∣</mo><msubsup><mi>h</mi><mi>t</mi><mi>n</mi></msubsup><mo stretchy="false">)</mo><mo>=</mo><mtext>softmax</mtext><mo stretchy="false">(</mo><msub><mi>W</mi><mi>n</mi></msub><msubsup><mi>h</mi><mi>t</mi><mi>n</mi></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\forall n: \quad p(y_{t+1} \mid h_t^n) = \text{softmax}(W_n h_t^n)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">∀</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>これにより、モデルは「浅い層で十分自信があればそこで出力し、なければ深い層まで進む」ことができるようになります。</p>
+<h3 id="2-学習方法2つの訓練レジーム">2. 学習方法：2つの訓練レジーム</h3>
+<p>論文では、複数の出口を持つデコーダをどう学習するかについて、2つの手法を提案しています。</p>
+<p><strong>2.1 Aligned Training（整列訓練）</strong></p>
+<p>すべての層の出口を<strong>同時に最適化</strong>します。各層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> に対して損失を計算し、重み付き平均を取ります。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>dec</mtext></msub><mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mrow><munder><mo>∑</mo><mi>n</mi></munder><msub><mi>ω</mi><mi>n</mi></msub></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msub><mi>ω</mi><mi>n</mi></msub><mo>⋅</mo><mi>log</mi><mo>⁡</mo><mi>p</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mi>t</mi></msub><mo>∣</mo><msubsup><mi>h</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{dec}} = -\frac{1}{\sum_n \omega_n} \sum_{n=1}^{N} \omega_n \cdot \log p(y_t \mid h_{t-1}^n)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">dec</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.0954em;vertical-align:-1.2671em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.0017em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9857em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8829em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2671em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0553em;vertical-align:-0.3053em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3053em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li>すべての層が「正解を予測できるよう」学習されます</li>
+<li>実験の結果、<strong>一様な重み</strong>（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>n</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\omega_n = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>）が最も BLEU が高かったと報告されています</li>
+</ul>
+<p><strong>問題点</strong>: 学習時はすべての層の隠れ状態が揃っている前提ですが、推論時はあるトークンが早期終了すると、後続のトークンの自己注意に影響が出ます。</p>
+<p><strong>2.2 Mixed Training（混合訓練）</strong></p>
+<p>学習・推論の不一致を解消するため、<strong>ランダムにサンプリングした終了パターン</strong>で訓練します。</p>
+<ul>
+<li>各文に対して <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span> 通りの終了了層シーケンス <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>n</mi><mn>1</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>n</mi><mrow><mi mathvariant="normal">∣</mi><mi>y</mi><mi mathvariant="normal">∣</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(n_1, \dots, n_{|y|})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3552em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mtight">∣</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> をランダムにサンプリング</li>
+<li>あるトークンが層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">n_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> で終了した場合、それ以降の層の隠れ状態は<strong>最後に計算された状態をコピー</strong>します</li>
+<li>これにより、推論時と同じ「不完全な隠れ状態」条件下で学習できます</li>
+</ul>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>dec</mtext></msub><mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mi>M</mi></mfrac><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></munderover><mi>log</mi><mo>⁡</mo><mi>p</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mi>t</mi></msub><mo>∣</mo><msubsup><mi>h</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow><msubsup><mi>n</mi><mi>t</mi><mrow><mo stretchy="false">(</mo><mi>m</mi><mo stretchy="false">)</mo></mrow></msubsup></msubsup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{dec}} = -\frac{1}{M} \sum_{m=1}^{M} \log p(y_t \mid h_{t-1}^{n_t^{(m)}})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">dec</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.0954em;vertical-align:-1.2671em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8829em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2671em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.6142em;vertical-align:-0.3246em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2895em;"><span style="top:-2.4751em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7414em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2895em;margin-right:0.05em;"><span class="pstrut" style="height:2.7414em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0591em;"><span style="top:-2.2452em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5357em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.0591em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5357em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">m</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2905em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3246em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\depth_adaptive_transformer\image\readme\1790117649041.png" alt="1790117649041"></p>
+<h3 id="3-終了判定の方法">3. 終了判定の方法</h3>
+<p>「どの層で止めるか」を決定するモジュールとして、論文では複数の設計を比較しています。</p>
+<p><strong>3.1 シーケンス全体で統一（Sequence-level）</strong></p>
+<p><strong>すべてのトークンを同じ層数で処理</strong>します。</p>
+<ul>
+<li><strong>Multinomial Classifier</strong>: デコーダの最初の隠れ状態から、終了層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>N</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">n \in \{1, \dots, N\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">}</span></span></span></span> を多項分布で予測</li>
+<li><strong>Binomial Classifier</strong>: 各層ごとに「ここで止めるか/止めないか」を二値分類し、累積して終了層を決定</li>
+</ul>
+<p><strong>3.2 トークンごとに個別（Token-level）</strong></p>
+<p><strong>トークンごとに異なる終了層</strong>を選びます。</p>
+<ul>
+<li><strong>Score Thresholding</strong>: 各層の出口ロジットのソフトマックス確率の最大値が閾値（例：0.9）を超えたら終了</li>
+<li><strong>Oracle Supervision</strong>: 「この層で既に正解トークンが argmax になっているか」を教師信号として学習</li>
+</ul>
+<h3 id="4-自己注意との整合性状態コピー">4. 自己注意との整合性：状態コピー</h3>
+<p>機械翻訳のデコーダでは、トークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> の計算に、過去のトークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mi>t</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1, \dots, t-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> の隠れ状態が必要です（自己注意）。</p>
+<p>あるトークンが早期終了（例：層3で停止）した場合、後続のトークンは層4以降の「過去の隠れ状態」が存在しません。</p>
+<p><strong>解決策</strong>: 早期終了したトークンの層3の隠れ状態を、<strong>層4以降にもコピー</strong>します。ただし、各層固有の key/value 投影は適用します。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>h</mi><mi>t</mi><mi>k</mi></msubsup><mo>=</mo><msubsup><mi>h</mi><mi>t</mi><msub><mi>n</mi><mi>t</mi></msub></msubsup><mspace width="1em"/><mo stretchy="false">(</mo><mtext>for </mtext><mi>k</mi><mo>&gt;</mo><msub><mi>n</mi><mi>t</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h_t^{k} = h_t^{n_t} \quad (\text{for } k &gt; n_t)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1461em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7463em;"><span style="top:-2.4542em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2963em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2458em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:1em;"></span><span class="mopen">(</span><span class="mord text"><span class="mord">for </span></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>これにより、自己注意機構が正常に機能しつつ、実際には浅い層の計算のみが行われたことになります。</p>
+<h3 id="5-推論時の動作">5. 推論時の動作</h3>
+<p>推論時のフローは以下の通りです。</p>
+<ol>
+<li>エンコーダは通常通り全層を実行</li>
+<li>デコーダはトークンを1つずつ生成</li>
+<li>各トークンについて、層1から順に計算</li>
+<li>各層で出口分類器がロジットを出力 → 自信度を計算</li>
+<li>自信度が閾値を超えたら、その層の予測を採用して次のトークンへ</li>
+<li>閾値を超えなければ、次の層へ進む</li>
+</ol>
+<h2 id="実験">実験</h2>
+<p>今回実施する実験は、入力されたデータの難易度に応じて推論に使用するトランスフォーマーの層数（深さ）を動的に変更する「Depth-Adaptive Transformer（動的層数適応型トランスフォーマー）」の構築と挙動検証を行うこととします。</p>
+<p>実験の内容、アーキテクチャの構成、および使用したデータセットの詳細は以下の通りです。</p>
+<p>元論文ではデコーダで終了するかの制御をしていますが、手法の以下のエッセンスはエンコーダであっても確認できると考えています。
+本実験ではエンコーダでの終了判定で実験を行います。</p>
+<ul>
+<li>表現の段階的集約: 深い層へ進むにつれて抽象度の高い表現が獲得されるため、「浅い層の時点で十分な確信度が得られれば計算を打ち切る」というアプローチ。</li>
+<li>計算コストの動的削減: 難易度の低いサンプルには浅い層（少ないFLOPs）、難しいサンプルには全層（高いFLOPs）を割り振る。</li>
+<li>微分不可能性の克服: 退出判定の離散的な分岐（Gumbel-Softmax等）を工夫して学習させる構造。</li>
+</ul>
+<h3 id="1-実験の内容学習メカニズム">1. 実験の内容（学習メカニズム）</h3>
+<p>モデルが「高い正解率の維持」と「計算コスト（通過層数）の削減」を自律的に両立できるかを検証しました。</p>
+<ul>
+<li><strong>微分可能な動的ルーティング</strong>: 各層で推論を「打ち切る（Exit）」か「継続する（Continue）」かの二値判定を行うにあたり、Gumbel-Softmax法を使用しました。これにより、離散的な分岐判定を維持したまま、ネットワーク全体をエンドツーエンドで誤差逆伝播（学習）できるようにしています。</li>
+<li><strong>2つの損失関数の同時最適化</strong>: 正解を導くための「タスク損失（Cross Entropy）」と、通過した層数の期待値を最小化する「深度ペナルティ（Depth Loss）」を加算して最適化しました。</li>
+<li><strong>ウォームアップ・スケジューリング</strong>: 学習初期からペナルティを与えると、モデルが「精度を諦めて全データを1層目で退出させる」という局所最適解に陥ることが判明したため、最初の12エポックはペナルティを0にして全8層で問題を解かせ、その後に徐々にペナルティを課す仕組み（Warmup）を導入して解決しました。</li>
+</ul>
+<h3 id="2-レイヤの構成アーキテクチャ">2. レイヤの構成（アーキテクチャ）</h3>
+<p>PyTorchベースの最大8層からなるカスタムTransformerエンコーダを構築しました。</p>
+<ul>
+<li>
+<p><strong>基本仕様</strong>: 隠れ層の次元数 <code>d_model=128</code>、アテンションヘッド数 <code>nhead=4</code>、フィードフォワード層次元数 <code>dim_ff=256</code>。</p>
+</li>
+<li>
+<p><strong>Depth-Adaptive Block（各層の内部構造）</strong>:
+通常のTransformerブロック（Multi-Head Attention + FFN + LayerNorm）に加え、以下の2つの専用モジュールを各層に内包しています。</p>
+</li>
+<li>
+<p><strong>Exit Gate（退出ゲート）</strong>: 先頭トークンの表現を受け取り、線形層で「Exit（0）」か「Continue（1）」のロジットを計算します。</p>
+</li>
+<li>
+<p><strong>Classifier（分類器）</strong>: その層で推論を打ち切った場合に、最終的なクラス分類（0か1か）を出力します。</p>
+</li>
+<li>
+<p><strong>推論フロー</strong>: 入力データが各層を通過するたびにゲートが判定を行い、Exitの確率が高まった時点で実質的に計算が打ち切られ、その層の予測結果が最終出力として採用されます。</p>
+</li>
+</ul>
+<h3 id="3-使用したデータセット">3. 使用したデータセット</h3>
+<p>モデルに「問題の難易度に応じて層の深さを使い分ける」ことを強制するため、長さ16のシーケンスデータ（語彙サイズ50）に対して、以下3つの難易度（Tier）を均等に混在させたアルゴリズム的合成データを生成して使用しました。</p>
+<ul>
+<li>
+<p><strong>Tier 1: 局所判定タスク（Easy）</strong></p>
+</li>
+<li>
+<p><strong>ルール</strong>: シーケンス内の特定の1要素（インデックス1の値）が閾値（25）より大きいかを判定します。</p>
+</li>
+<li>
+<p><strong>想定層数</strong>: 1〜2層（局所的な参照のみで即答可能）。</p>
+</li>
+<li>
+<p><strong>Tier 2: 広域比較タスク（Medium）</strong></p>
+</li>
+<li>
+<p><strong>ルール</strong>: シーケンスの前半部分の最大値と、後半部分の最小値を抽出して大小を比較します。</p>
+</li>
+<li>
+<p><strong>想定層数</strong>: 3〜5層（シーケンス全体へのAttentionと、中間状態の比較が必要）。</p>
+</li>
+<li>
+<p><strong>Tier 3: 長距離状態走査タスク（Ultra-Hard）</strong></p>
+</li>
+<li>
+<p><strong>ルール</strong>: 先頭から末尾まで要素を1つずつ読み込み、「奇数・偶数」によって次の状態（State）に対する計算ルール（加算や乗算のモジュロ演算）が切り替わる連鎖的なパリティ問題です。</p>
+</li>
+<li>
+<p><strong>想定層数</strong>: 7〜8層（1回のAttentionホップでは原理的に解けず、層を重ねて状態を逐次更新し続けることが必須）。</p>
+</li>
+</ul>
+<p>このデータと学習手法を組み合わせたことで、学習終盤には簡単な問題は浅い層で、難しい問題は最深層まで使って回答する「3峰性の動的なレイヤー退出分布」が確認できる実験となりました。</p>
+<h3 id="4-学習結果">4. 学習結果</h3>
+<p>学習段階のエポックごとのロスや正解率の推移は以下の通りです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\depth_adaptive_transformer\image\readme\1790116450266.png" alt="1790116450266"></p>
+<p>学習後のValidationのフェーズでのアウトプットは以下でした。
+うーん。。。正解率が70%切ってますね。。。</p>
+<pre><code>=== 評価結果 ===
+Validation Accuracy: 67.30%
+Average Executed Layers: 2.10 / 8 layers
+</code></pre>
+<p>そしてこの状態でのレイヤでの打ち切りですが、以下のようになりました。
+レイヤ2で打ち切りが最大ですが、レイヤ1やレイヤ3にも打ち切りがあり、問題に応じて打ち切りの判断を行っていることが確認出来ます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\depth_adaptive_transformer\image\readme\1790116465093.png" alt="1790116465093"></p>
+<p>因みに、ネットワークパラメータの分布をtensorboardで確認してました。
+見方は奥が学習開始段階で、手前が学習終了段階です。
+学習が進むにつれてロングテールと呼ばれる裾野が長い分布になっています。
+特定の値だけ大きいという状態になると、特徴量一部にフォーカスすることを意味しますが、今回結果は扁平。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\depth_adaptive_transformer\image\readme\1790116780310.png" alt="1790116780310"></p>
+<p>代わりにclassifierが特定の値に注目するという構図のようです。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\llm\selective_layer\depth_adaptive_transformer\image\readme\1790117293007.png" alt="1790117293007"></p>
+<h3 id="論文で報告される実験結果">論文で報告される実験結果</h3>
+<table>
+<thead>
+<tr>
+<th>研究</th>
+<th>課題</th>
+<th>Depth-Adaptive Transformer の改善点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://arxiv.org/abs/1603.08983">ACT (Graves, 2016)</a></td>
+<td>RNN における動的計算</td>
+<td>Transformer に拡張し、<strong>異なる層を使い分ける</strong></td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/1808.08947">Universal Transformers</a></td>
+<td>同じ層を繰り返し適用</td>
+<td><strong>毎ステップ異なる層</strong>を適用し容量も調整</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/1612.02297">SACT (Figurnov, 2017)</a></td>
+<td>画像の領域ごとの計算調整</td>
+<td>**シーケンス生成（機械翻訳）**への拡張</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/1703.09877">早期終了 (Huang et al., 2017)</a></td>
+<td>画像分類での早期終了</td>
+<td>デコーダの<strong>自己注意と連動した動的深度制御</strong></td>
+</tr>
+</tbody>
+</table>
+<p>実験結果として、IWSLT14 ドイツ語-英語翻訳で、ベースライン Transformer と同等の精度を、<strong>デコーダ層の4分の1以下の計算量</strong>で達成したことが報告されています。</p>
+<h2 id="総括">総括</h2>
+<p>本日記事のエッセンスを簡潔にまとめます。</p>
+<p><strong>記事の内容を一言で</strong></p>
+<p>本日扱ったDepth-Adaptive Transformerは <strong>「Transformerのデコーダ各層に出口を設け、入力の難易度に応じて異なる深さで予測を打ち切る」</strong> 手法です。</p>
+<p><strong>解決した課題</strong>
+当時のTransformerは、簡単な文（「Thank you.」）も難しい文も同じ層数で処理していました。これは計算の無駄であり、速度と精度のトレードオフを悪化させていました。</p>
+<p><strong>提案手法の核心</strong></p>
+<ol>
+<li><strong>多層出口</strong>: デコーダの各層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> に独立した出力分類器 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">W_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を設け、どの層でも予測可能にする</li>
+<li><strong>終了判定</strong>: ソフトマックス確率の自信度が閾値を超えたらその層で出力、超えなければ次の層へ</li>
+<li><strong>状態コピー</strong>: 早期終了したトークンの隠れ状態を上層にコピーし、自己注意機構を維持</li>
+<li><strong>Mixed Training</strong>: ランダムな終了パターンで学習し、学習・推論の不一致を解消</li>
+</ol>
+<p><strong>実験結果</strong></p>
+<p><strong>目的</strong>: Depth-Adaptive Transformer のエッセンス（「難易度に応じて層を使い分ける」）を、エンコーダでの早期終了で再現・検証する。</p>
+<p><strong>手法の核心</strong>:</p>
+<ul>
+<li>8層の Transformer エンコーダに、各層に Exit Gate（退出判定）と Classifier（分類器）を設置</li>
+<li>Gumbel-Softmax で微分可能な離散的退出判定を実現</li>
+<li>タスク損失（Cross Entropy）と深度ペナルティ（層数の期待値最小化）を同時最適化</li>
+<li>学習初期（12エポック）はペナルティ0で全層を使わせる Warmup を導入（局所最適解回避のため）</li>
+</ul>
+<p><strong>データ</strong>: 難易度3段階の合成データ</p>
+<ul>
+<li>Tier 1（Easy）: 局所判定 → 1〜2層で解ける</li>
+<li>Tier 2（Medium）: 広域比較 → 3〜5層が必要</li>
+<li>Tier 3（Hard）: 長距離状態走査 → 7〜8層が必要</li>
+</ul>
+<p><strong>結果</strong>:</p>
+<ul>
+<li>正解率 67.30% と課題は残るものの、<strong>平均2.10層という浅い計算</strong>で動作</li>
+<li>退出分布が層1〜3に分散しており、<strong>入力に応じて異なる層で打ち切る動作</strong>を確認</li>
+<li>パラメータ分布は扁平（特徴量全体を使う）だが、<strong>Classifier が特定の値に注目</strong>する構**する構図が観測された</li>
+</ul>
+<p><strong>結論</strong>: 精度は未成熟ながら、「問題の難易度に応じて層の深さを使い分ける」という Depth-Adaptive の核心動作は実験的に確認できた。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/LAmZrJFe9cw?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
