@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+            <h2 id="概要">概要</h2>
+<p>「ワールドモデル（World Model）」について、わかりやすく説明いたします。</p>
+<h3 id="1-核心となる考え方">1. 核心となる考え方</h3>
+<p>ワールドモデルとは、<strong>AIが「世界がどう動くか」を内部に構築した予測モデル</strong>のことです。
+つまり、AIが「今この行動を取ると、未来はこう変化するだろう」と想像できるようになるための「頭の中のシミュレータ」です。</p>
+<h3 id="2-直感的な例え">2. 直感的な例え</h3>
+<p><strong>運転免許の学科試験を思い出してください。</strong></p>
+<p>本番の車に乗る前に、教科書や教習所で「ハンドルを右に切ると車体は右に進む」「スピードが出ているときに急ブレーキを踏むと横滑りする」といった<strong>世界のルール</strong>を学びますよね。</p>
+<p>ワールドモデルも同じです。
+AIが実際に行動を起こす前に、あるいは行動しながら、「世界のルール」を学習し、頭の中で「もしこうしたらどうなる？」とシミュレーションできるようになります。</p>
+<h3 id="3-どうやって動くのか">3. どうやって動くのか</h3>
+<p>ワールドモデルは主に以下の3つの要素で成り立ちます。</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>役割</th>
+<th>例え</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>表現モデル（Representation Model）</strong></td>
+<td>目の前の情報を圧縮して理解する</td>
+<td>カメラ映像から「車がいる」「道が曲がっている」を抽出</td>
+</tr>
+<tr>
+<td><strong>遷移モデル（Transition Model / Dynamics Model）</strong></td>
+<td>「次の状態はどうなるか」を予測する</td>
+<td>アクセルを踏んだら速度が上がる、と予測</td>
+</tr>
+<tr>
+<td><strong>報酬予測（Reward Prediction）</strong></td>
+<td>その行動が良い結果か悪い結果かを予測する</td>
+<td>この操作ならゴールに近づく、あるいは衝突する</td>
+</tr>
+</tbody>
+</table>
+<p>AIはまず現実のデータ（動画、センサーデータなど）から「世界の法則」を学びます。
+そして、実際に体を動かす前に、この内部モデルの中で「もし右に行ったら…」「もし止まったら…」と何十回もシミュレーションし、最良の行動を選びます。</p>
+<h3 id="4-何が便利なのか">4. 何が便利なのか</h3>
+<p>ワールドモデルがあると、AIは以下のことができるようになります。</p>
+<ul>
+<li><strong>少ない試行で学習できる</strong>: 実際に何百回も転んでロボットを壊さなくても、頭の中で練習できる</li>
+<li><strong>計画が立てられる</strong>: 「3手先まで読む」ような戦略的行動が可能になる</li>
+<li><strong>創造ができる</strong>: 現実にない状況も想像できるため、物語生成や映像生成にも応用される</li>
+</ul>
+<h3 id="5-よく混同される概念との違い">5. よく混同される概念との違い</h3>
+<p><strong>通常のAI（判別モデル）</strong>: 「この画像は猫です」→ 今を見分ける
+<strong>ワールドモデル</strong>: 「このボールを投げると、あそこに落ちます」→ 未来を予測・シミュレーションする</p>
+<p>ワールドモデルは「何かを認識する」のではなく、<strong>「世界がどう動くかを理解する」</strong> ことを目指しています。</p>
+<h2 id="強化学習の環境との違い">強化学習の環境との違い</h2>
+<p>とても良い質問です。この違いを理解すると、ワールドモデルの役割がさらに明確になります。</p>
+<h3 id="1-核心となる違い">1. 核心となる違い</h3>
+<p>一言で言えば、</p>
+<ul>
+<li><strong>強化学習の環境</strong>: 本物の世界（外側にあるもの）</li>
+<li><strong>ワールドモデル</strong>: 本物をまねて頭の中で作った「模造品」（内側にあるもの）</li>
+</ul>
+<p>です。</p>
+<h3 id="2-直感的な例え-1">2. 直感的な例え</h3>
+<p><strong>自動車教習所を想像してください。</strong></p>
+<ul>
+<li><strong>RLの環境</strong>: 実際の教習車と教習所のコース。本当にエンジンをかけて、本当にブレーキを踏む。ぶつかったら本当に凹む。</li>
+<li><strong>ワールドモデル</strong>: 家でプレイする「運転シミュレータゲーム」。コントローラーを操作すると画面の車が動く。何度衝突しても怪我も出ないし、修理費もかからない。</li>
+</ul>
+<p>AIにとっても同じです。RLの環境は「本当に行動して本当に結果を受け取る場所」ですが、ワールドモデルは「頭の中で安全に練習するための模擬空間」です。</p>
+<h3 id="3-具体的な違い">3. 具体的な違い</h3>
+<table>
+<thead>
+<tr>
+<th>比較項目</th>
+<th>強化学習の環境</th>
+<th>ワールドモデル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>存在場所</strong></td>
+<td>外側（シミュレータ、ロボット、ゲーム画面など）</td>
+<td>内側（AIのニューラルネットワークの中）</td>
+</tr>
+<tr>
+<td><strong>正確さ</strong></td>
+<td>「本物」なので常に正しい</td>
+<td>予測なので、近似値。時々間違う</td>
+</tr>
+<tr>
+<td><strong>試行のコスト</strong></td>
+<td>時間がかかる。壊れるリスクがある</td>
+<td>一瞬で何千回もシミュレーション可能</td>
+</tr>
+<tr>
+<td><strong>使い方</strong></td>
+<td>実際に行動して報酬をもらう</td>
+<td>「もしこうしたらどうなる？」と想像する</td>
+</tr>
+<tr>
+<td><strong>情報の形</strong></td>
+<td>生の観測（画像、センサー値など）</td>
+<td>圧縮された表現や予測された次の状態</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-なぜ両方必要なのか">4. なぜ両方必要なのか</h3>
+<p>ここが重要なポイントです。ワールドモデルはRLを<strong>補助する</strong>ために使われます。</p>
+<p><strong>RLだけの場合の問題点:</strong>
+ロボットが「歩く」を学びたいとき、実際に1万回転倒しながら学習するのは時間がかかり、ロボットも壊れます。</p>
+<p><strong>ワールドモデルを使った場合:</strong></p>
+<ol>
+<li>まず少しだけ本物の環境で遊んで、データを集める</li>
+<li>そのデータから「世界の法則」を学んで、ワールドモデルを作る</li>
+<li>これ以降の練習は<strong>頭の中のワールドモデル</strong>で行う。1秒で何百回も「右足を出したらどうなる？」とシミュレーション</li>
+<li>良さそうな歩き方が見つかったら、最後に本物の環境で試す</li>
+</ol>
+<p>このように、<strong>本物の環境は「最終試験」</strong>、<strong>ワールドモデルは「自宅での模擬試験」</strong> のような関係です。</p>
+<h3 id="5-境界ワールドモデルの限界">5. 境界：ワールドモデルの限界</h3>
+<p>ワールドモデルは便利ですが、完璧ではありません。</p>
+<ul>
+<li><strong>予測できない出来事</strong>: 突然飛び出してきた自転車、風で飛ばされた紙など、学習時に見たことのないものは予測が外れます。</li>
+<li><strong>誤差の蓄積</strong>: 「次の状態」を予測し、その予測された状態からさらに「次の次」を予測すると、少しずつズレが大きくなっていきます。</li>
+</ul>
+<p>だからこそ、ワールドモデルで練習した後も、<strong>時々本物の環境に戻って確認する</strong>必要があるのです。</p>
+<h2 id="応用例">応用例</h2>
+<p>ワールドモデルの実際の応用例について、最新の研究動向も含めてご紹介いたします。</p>
+<h3 id="1-ロボティクスロボット制御">1. ロボティクス（ロボット制御）</h3>
+<p>これが最も古典的で、かつ現在も最も活発な応用分野です。</p>
+<p><strong>Dreamer（DeepMind）</strong>
+強化学習エージェントが「頭の中のワールドモデル」で何千回も練習し、実際のロボット動作を大幅に効率化します。最新版のDreamer 4では、複雑な制御タスクをワールドモデル内部で学習できることが示されています。<source-chip title="TechXplore" url="https://techxplore.com/news/2025-10-deepmind-ai-agent-tasks-scalable.html" /></p>
+<p><a href="https://arxiv.org/html/2404.12377v1"><strong>RoboDreamer</strong></a>
+ロボットが「想像力」を使って作業を計画できるようにするための構成要素型ワールドモデルです。言語指示（「赤いブロックを左に移動して」など）から、ロボットが頭の中で動作をシミュレーションし、最適な手順を見つけます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\0_world_model\1790157619309.png" alt="1790157619309"></p>
+<p><a href="http://arxiv.org/abs/2606.13672v2"><strong>WEAVER / MANIPDREAMER / DreamX-Phi 1.0</strong></a>
+これらはいずれも「ロボットマニピュレーション（物体を掴む・動かす）」に特化したワールドモデルです。カメラ映像から「この動作をすると物体はこう動く」を予測し、失敗しにくい動作計画を立てます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\0_world_model\1790157753583.png" alt="1790157753583"></p>
+<h3 id="2-自動運転">2. 自動運転</h3>
+<p><a href="https://arxiv.org/html/2411.14499v4">自動運転車は「周囲の車や人が次にどう動くか」を正確に予測</a>する必要があります。ワールドモデルはここで大活躍します。</p>
+<ul>
+<li><strong>周囲車両の行動予測</strong>: 他の車が車線変更するか、停止するかを数秒先まで予測</li>
+<li><strong>リスクシミュレーション</strong>: 「このまま走行したら衝突するか？」を頭の中で確認</li>
+<li><strong>悪天候・夜間の補完</strong>: 視認性が悪い状況でも、学習した「世界の法則」から状況を推測</li>
+</ul>
+<p>この分野では、ワールドモデルが「今の状況理解」と「未来予測」の両方を担います。</p>
+<h3 id="3-動画生成シミュレーションsoraなど">3. 動画生成・シミュレーション（Soraなど）</h3>
+<p>OpenAIの<strong>Sora</strong>のような動画生成モデルも、広義にはワールドモデルの一種と見なされています。</p>
+<ul>
+<li><strong>物理法則の学習</strong>: ボールが落ちる、水が流れる、光の反射などを自然に再現</li>
+<li><strong>因果関係の把握</strong>: 「火に近づくと氷が溶ける」といった関係を映像で表現</li>
+</ul>
+<p>ただし、<a href="https://arxiv.org/pdf/2403.05131">Sora</a>が「本当に世界の法則を理解しているのか、それとも見たことのあるパターンを巧みに繋いでいるだけなのか」は、現在も研究者の間で議論の最中です。</p>
+<h3 id="4-ゲームai">4. ゲームAI</h3>
+<p><strong>生成型ゲーム</strong>
+ワールドモデルが「次のゲーム画面」を生成し、プレイヤーの行動に応じてリアルタイムに世界を作り上げます。従来のあらかじめ作られたマップではなく、AIがその場で世界を「想像」しながら展開するゲームが研究されています。</p>
+<h3 id="5-社会シミュレーションsocial-simulacra">5. 社会シミュレーション（Social Simulacra）</h3>
+<p>これは少し抽象的ですが、人々の行動や社会の動きをシミュレートする応用です。</p>
+<ul>
+<li><strong>都市の交通流シミュレーション</strong></li>
+<li><strong>災害時の人々の避難行動予測</strong></li>
+<li><strong>経済活動や世論形成のモデル化</strong></li>
+</ul>
+<p><a href="https://arxiv.org/html/2411.14499v4">人間の意思決定プロセスをワールドモデル</a>として構築し、「この政策を実施したら社会はどう動くか」を仮想的に試験できます。</p>
+<h2 id="実際どんなものなのか">実際どんなものなのか？</h2>
+<p>応用例のうちロボティクスで触れたWEAVERを例にどんなものか考えてみます。</p>
+<h3 id="1-つまりこういうものです">1. つまりこういうものです</h3>
+<p><strong>WEAVERは「ロボット専用の頭脳内シミュレータ」です。</strong></p>
+<p>カメラで見た映像から「このまま動かしたら未来はこうなる」と予測し、その予測を使って「どの動作が一番うまくいきそうか」を自ら選べるようになるAIです。</p>
+<p>構成だけで言うと以下のようなものです。</p>
+<p><strong>構成</strong></p>
+<p><strong>「ビジョンつきLLM（VLM）のエンコーダ」ではなく、「ビデオ生成モデルの pretrained encoder」です。</strong></p>
+<p>WEAVERの論文では以下のように書かれています。</p>
+<blockquote>
+<p>「ビデオ生成コミュニティから、pretrained encoder [35] の使用を採用した（out-of-distribution robustness のため）」<source-chip title="arXiv" url="http://arxiv.org/abs/2606.13672v2" /></p>
+</blockquote>
+<p>つまり、<strong>ビデオ生成モデル（動画を生成・圧縮するモデル）</strong> のエンコーダを使っています。</p>
+<p><strong>WEAVERの正確な構造</strong></p>
+<table>
+<thead>
+<tr>
+<th>構成要素</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>エンコーダ</strong></td>
+<td>ビデオ生成モデルの pretrained encoder（画像・動画を圧縮した潜在表現に変換）</td>
+</tr>
+<tr>
+<td><strong>メモリ・アーキテクチャ</strong></td>
+<td>複数カメラ視点・過去の履歴を統合</td>
+</tr>
+<tr>
+<td><strong>予測機構</strong></td>
+<td>Flow matching + Diffusion forcing で未来の潜在表現を予測</td>
+</tr>
+<tr>
+<td><strong>ヘッド1</strong></td>
+<td><strong>Reward head</strong>（その行動は成功するか）</td>
+</tr>
+<tr>
+<td><strong>ヘッド2</strong></td>
+<td><strong>Critic head / Value head</strong>（長期的に見て有利か）</td>
+</tr>
+</tbody>
+</table>
+<p><img src="file:///d:\PycharmProjects\LLM-research\image\0_world_model\1790159835572.png" alt="1790159835572"></p>
+<p><strong>なぜ「ビデオ生成モデルのエンコーダ」なのか</strong></p>
+<p>VLMのエンコーダは「画像の内容をテキストに繋ぐ」ために設計されています。</p>
+<p>一方、WEAVERに必要だったのは「<strong>画像や動画を圧縮して、未来のフレームを再構成できる潜在表現</strong>」を作る能力です。これはビデオ生成モデルのエンコーダの方が適していました。</p>
+<h3 id="2-直感的な例え-2">2. 直感的な例え</h3>
+<p><strong>料理動画を見ながら「あ、あそこで火が強すぎると焦げるな」と頭の中で想像するあなた</strong>を想像してください。</p>
+<ul>
+<li>目の前の食材や鍋の状態を見て（カメラ映像）</li>
+<li>「もし今強火にしたら…」と未来を想像する（未来状態の予測）</li>
+<li>「焦げて失敗しそうだから中火にしよう」と判断する（報酬・価値の評価）</li>
+</ul>
+<p>WEAVERはまさにこれをロボットができるようにする技術です。</p>
+<h3 id="3-何が他と違うのか">3. 何が他と違うのか</h3>
+<p>ワールドモデルは他にもありますが、WEAVERは3つの点で特別です。</p>
+<table>
+<thead>
+<tr>
+<th>特徴</th>
+<th>他のモデル</th>
+<th>WEAVER</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>速さ</strong></td>
+<td>未来予測に時間がかかる</td>
+<td>5〜10倍速く予測できる</td>
+</tr>
+<tr>
+<td><strong>長期的な一貫性</strong></td>
+<td>数秒先の予測で矛盾が出る</td>
+<td>長い作業でも予測がぶれにくい</td>
+</tr>
+<tr>
+<td><strong>多視点対応</strong></td>
+<td>1台のカメラ前提</td>
+<td>複数カメラの情報を統合できる</td>
+</tr>
+</tbody>
+</table>
+<p>つまり、<strong>「速く・長く・正確に」</strong> 想像できるのがWEAVERの強みです。</p>
+<h3 id="4-ロボットが何に使うのか">4. ロボットが何に使うのか</h3>
+<p>WEAVERを使うと、ロボットは以下のことができます。</p>
+<ol>
+<li>
+<p><strong>自分の動きを自己評価する</strong>
+「今の動き、成功しそう？」→ 実際に動かさなくても頭の中で採点</p>
+</li>
+<li>
+<p><strong>動きを練習して改善する</strong>
+失敗しそうな動きを頭の中で何度も修正して、良い動きを見つける</p>
+</li>
+<li>
+<p><strong>その場で計画を立てる</strong>
+予期せぬ状況でも「この場合はこう動こう」と瞬時に考える</p>
+</li>
+</ol>
+<h3 id="5-境界まだ完璧ではない">5. 境界：まだ完璧ではない</h3>
+<p>もちろん、WEAVERも限界があります。</p>
+<ul>
+<li><strong>予測はあくまで「想像」</strong>: 本物と完全に一致するわけではありません</li>
+<li><strong>見たことのない状況には弱い</strong>: 学習時にない珍しいケースでは予測が外れることも</li>
+<li><strong>実際に動かして確認は必要</strong>: 頭の中だけでは不十分で、時々本物で検証が必要</li>
+</ul>
+<h2 id="ワールドモデルのメリットデメリット">ワールドモデルのメリット/デメリット</h2>
+<p>ワールドモデルのメリットとデメリットについて、これまでの議論を踏まえて整理して説明いたします。</p>
+<h3 id="メリット">メリット</h3>
+<p><strong>1. 実世界での試行回数を劇的に減らせる</strong></p>
+<p>ロボットが実際に動かして学ぶには、時間がかかる上に機械を壊すリスクがあります。ワールドモデルは「頭の中で練習」できるため、現実世界での危険な失敗を大幅に減らせます。<a href="http://arxiv.org/abs/2606.13672v2">WEAVERの論文</a>でも、<strong>実世界での相互作用なしにポリシーを38%改善</strong>できたと報告されています。</p>
+<p><strong>2. 圧倒的な速度で学習・計画できる</strong></p>
+<p>現実のロボットが1回動作する間に、ワールドモデル内では数千回のシミュレーションが可能です。WEAVERは従来のワールドモデルより<strong>5〜10倍高速</strong>に予測できるため、リアルタイムの計画にも使えます。</p>
+<p><strong>3. 未来予測に基づく計画が立てられる</strong></p>
+<p>「3手先まで読む」ような戦略的行動が可能になります。自動運転であれば「この車が割り込んでくる可能性がある」と予測して減速する、といった判断ができます。</p>
+<p><strong>4. テスト時のスケーリング</strong></p>
+<p>推論時に「より多くシミュレーションを回せば、より良い答えが出やすい」という性質があります。これは人間が「よく考えてから答える」のと同じで、計算資源を増やすことで性能が向上します。</p>
+<h3 id="デメリット">デメリット</h3>
+<p><strong>1. 予測誤差の蓄積（Compounding Error）</strong></p>
+<p>「次の状態」を予測し、その予測結果からさらに「次の次」を予測すると、少しずつズレが大きくなっていきます。これを <strong>「夢の中で夢を見る」</strong> ような状態で、長期的な予測ほど現実から乖離しやすいです。</p>
+<p><strong>2. 分布外（OOD）への脆弱性</strong></p>
+<p>学習時に見たことのない状況では、予測が大きく外れることがあります。例えば、通常とは異なる形の物体や、予期しない障害物が現れた場合です。WEAVERはpretrainedエンコーダを使うことでこの問題を軽減していますが、完全には解決されていません。</p>
+<p><strong>3. 高い学習コスト</strong></p>
+<p>良いワールドモデルを作るには、まず十分な量の実世界データが必要です。モデル自体も複雑なため、学習に多くの計算資源と時間がかかります。</p>
+<p><strong>4. 信頼性・安全性の課題</strong></p>
+<p>ワールドモデルが「自信を持って間違った予測」を出すことがあります。モデル自身が予測の不確実性を正しく認識できない場合、間違った判断に基づいて行動してしまうリスクがあります。</p>
+<p><strong>5. 長期予測の一貫性維持が難しい</strong></p>
+<p>複数ステップにわたる作業（例：「箱を開けて、中身を取り出して、別の箱に入れる」）では、各ステップの予測が一貫している必要があります。これを維持するのは技術的に非常に難しく、WEAVERもこの「長期的一貫性」を主要な課題の一つとして掲げています。</p>
+<h3 id="比較リスト">比較リスト</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>メリット</th>
+<th>デメリット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>効率性</strong></td>
+<td>実世界の試行を大幅に削減</td>
+<td>最初に良いモデルを作るのが大変</td>
+</tr>
+<tr>
+<td><strong>速度</strong></td>
+<td>頭の中で何千回もシミュレーション</td>
+<td>予測誤差が蓄積して現実と乖離</td>
+</tr>
+<tr>
+<td><strong>能力</strong></td>
+<td>未来予測・計画が可能</td>
+<td>学習時にない状況に弱い</td>
+</tr>
+<tr>
+<td><strong>スケーラビリティ</strong></td>
+<td>計算を増やせば性能向上</td>
+<td>長期予測の一貫性維持が難しい</td>
+</tr>
+<tr>
+<td><strong>安全性</strong></td>
+<td>危険な失敗を事前に防げる</td>
+<td>自信満々で間違うことがある</td>
+</tr>
+</tbody>
+</table>
+<h2 id="総括">総括</h2>
+<p>今回説明したワールドモデルの「本質」について、これまでの議論を総括してお話しします。</p>
+<h3 id="1-ワールドモデルとは">1. ワールドモデルとは</h3>
+<p>一言で表すと、</p>
+<blockquote>
+<p><strong>「AIが世界の&quot;因果構造&quot;を頭の中に構築すること」</strong> です。</p>
+</blockquote>
+<p>「猫か犬かを見分ける」のは認識です。
+「このボールを投げるとあそこに落ちる」のは予測です。
+そして予測の裏にある「投げたら落ちる」という<strong>力の関係・物理法則・因果の連鎖</strong>を内部化していること。これがワールドモデルの本質です。</p>
+<h3 id="2-直感人間と同じことをaiにやらせる">2. 直感：人間と同じことをAIにやらせる</h3>
+<p>人間は生まれてから世界と触れ合い、無意識のうちに「世界モデル」を獲得します。</p>
+<ul>
+<li>コップから水がこぼれるのを見て「水は高い所から低い所へ流れる」と学ぶ</li>
+<li>ボールを転がして「硬いものは跳ねる」と学ぶ</li>
+<li>人の表情を見て「怒っていると次は叱られるかも」と予測する</li>
+</ul>
+<p>これらはすべて「観察した事象の裏にあるルール」を頭の中に構築していることです。</p>
+<p>ワールドモデルは、AIにこの能力を与えようとする試みです。</p>
+<h3 id="3-本質をなぜ因果構造と呼ぶのか">3. 本質をなぜ「因果構造」と呼ぶのか</h3>
+<p>これが重要なポイントです。</p>
+<table>
+<thead>
+<tr>
+<th>レベル</th>
+<th>何をしているか</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>パターン認識</strong></td>
+<td>「こう見えるものは猫だ」</td>
+<td>画像分類</td>
+</tr>
+<tr>
+<td><strong>相関の記憶</strong></td>
+<td>「赤い信号の後は止まる車が多い」</td>
+<td>統計的予測</td>
+</tr>
+<tr>
+<td><strong>因果構造の理解</strong></td>
+<td>「重力があるからボールは落ちる」</td>
+<td>ワールドモデル</td>
+</tr>
+</tbody>
+</table>
+<p>ワールドモデルは「赤い信号と停止車両が一緒に現れる」という相関を覚えるのではなく、「信号が赤→ドライバーがブレーキを踏む→車が止まる」という<strong>因果の連鎖</strong>を理解しようとします。</p>
+<p>だからこそ、見たことのない状況でも「もしこうしたらどうなるか」を想像できるのです。</p>
+<h3 id="4-境界ワールドモデルが本当に理解しているのか">4. 境界：ワールドモデルが「本当に理解している」のか</h3>
+<p>これは現在も研究者の間で議論のある問いです。</p>
+<p><strong>「本当の理解」か「ただの高度な模倣」か</strong></p>
+<p>Soraが生成する動画は物理法則に従って見えます。ボールが跳ね、水が流れます。
+しかし、これは「物理法則を理解している」からなのか、「ただ見たことのある動画のパターンを巧みに繋いでいる」だけなのか、判然としません。</p>
+<p>WEAVERのようなロボット用ワールドモデルは、実際の行動結果と予測を比較できるため、「理解度」を検証しやすいという利点があります。</p>
+<h3 id="5-なぜワールドモデルがagiに近づくと言われるのか">5. なぜワールドモデルがAGIに近づくと言われるのか</h3>
+<p>Yann LeCunをはじめとする研究者がワールドモデルを重視するのは、<strong>「知能の本質は予測にある」</strong> と考えているからです。</p>
+<p>人間の脳も常に「次に何が起きるか」を予測しています。予測が外れると「驚き」として認識され、それが学習の原動力になります。</p>
+<p>ワールドモデルが持つべき本質的な能力は：</p>
+<ol>
+<li><strong>観測から抽象化する能力</strong>（本質だけを取り出す）</li>
+<li><strong>抽象空間で未来をシミュレートする能力</strong>（頭の中で試す）</li>
+<li><strong>予測と現実の差から学ぶ能力</strong>（驚きから成長する）</li>
+</ol>
+<p>この3つがそろったとき、AIは単なる「パターン認識機」から「世界を理解する存在」へと近づきます。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/LAmZrJFe9cw?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
