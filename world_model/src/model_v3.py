@@ -181,3 +181,213 @@ if __name__ == "__main__":
         imag_feat = torch.cat(imag_state, dim=-1)
         imag_reward = world_model.reward_pred(imag_feat)
         print(f"Step {t+1} imagined reward shape:", imag_reward.shape)
+
+import collections
+import random
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.distributions import kl_divergence
+
+# 先ほど定義した WorldModel クラスを使用
+# from world_model import WorldModel
+
+# ----------------------------------------------------------------------
+# 1. 時系列データ用リプレイバッファ (Replay Buffer)
+# ----------------------------------------------------------------------
+class SequenceReplayBuffer:
+    """ワールドモデルの時系列学習に必要な (obs, action, reward) のシーケンスを保持"""
+    def __init__(self, capacity: int = 1000, seq_len: int = 50):
+        self.capacity = capacity
+        self.seq_len = seq_len
+        self.buffer = collections.deque(maxlen=capacity)
+
+    def push(self, episode_obs, episode_actions, episode_rewards):
+        """1エピソード全体の軌跡を追加 (obs: T+1, actions: T, rewards: T)"""
+        self.buffer.append({
+            'obs': torch.tensor(episode_obs, dtype=torch.float32),
+            'action': torch.tensor(episode_actions, dtype=torch.float32),
+            'reward': torch.tensor(episode_rewards, dtype=torch.float32).unsqueeze(-1)
+        })
+
+    def sample(self, batch_size: int):
+        """ランダムなエピソードから固定長 seq_len のシーケンスをサンプリング"""
+        batch_obs, batch_actions, batch_rewards = [], [], []
+
+        while len(batch_obs) < batch_size:
+            ep = random.choice(self.buffer)
+            ep_len = len(ep['action'])
+            if ep_len >= self.seq_len:
+                start = random.randint(0, ep_len - self.seq_len)
+                end = start + self.seq_len
+
+                batch_obs.append(ep['obs'][start:end + 1])     # (seq_len + 1, C, H, W)
+                batch_actions.append(ep['action'][start:end]) # (seq_len, action_dim)
+                batch_rewards.append(ep['reward'][start:end]) # (seq_len, 1)
+
+        # 形状変換: (B, T, ...)
+        return (torch.stack(batch_obs), 
+                torch.stack(batch_actions), 
+                torch.stack(batch_rewards))
+
+    def __len__(self):
+        return len(self.buffer)
+
+
+# ----------------------------------------------------------------------
+# 2. ワールドモデルの学習ループ (Trainer)
+# ----------------------------------------------------------------------
+class WorldModelTrainer:
+    def __init__(self, model: nn.Module, lr: float = 1e-4, kl_scale: float = 1.0):
+        self.model = model
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+        self.kl_scale = kl_scale
+
+    def train_step(self, obs_seq: torch.Tensor, action_seq: torch.Tensor, reward_seq: torch.Tensor):
+        """
+        obs_seq:    (B, T+1, C, H, W)
+        action_seq: (B, T, action_dim)
+        reward_seq: (B, T, 1)
+        """
+        self.model.train()
+        self.optimizer.zero_grad()
+
+        B, T, _ = action_seq.shape
+        device = obs_seq.device
+
+        state = self.model.rssm.init_state(B, device)
+
+        recon_loss = 0.0
+        reward_loss = 0.0
+        kl_loss = 0.0
+
+        # 時系列に沿って展開して損失を計算 (BPTT: Backpropagation Through Time)
+        for t in range(T):
+            obs_t = obs_seq[:, t]
+            next_obs = obs_seq[:, t + 1]
+            act_t = action_seq[:, t]
+            rew_t = reward_seq[:, t]
+
+            # 1ステップ順伝播
+            state, recon_obs, pred_reward, prior_dist, post_dist = self.model(obs_t, act_t, state)
+
+            # 1. 再構成損失 (Reconstruction Loss) - 画像復元精度
+            recon_loss += F.mse_loss(recon_obs, obs_t)
+            
+            # 2. 報酬予測損失 (Reward Loss)
+            reward_loss += F.mse_loss(pred_reward, rew_t)
+
+            # 3. KL ダイバージェンス (Prior と Posterior の差を最小化)
+            kl_t = kl_divergence(post_dist, prior_dist).sum(-1).mean()
+            # Free Bits (最小KL補正) で過度な正則化を防ぐ
+            kl_loss += torch.clamp(kl_t, min=1.0)
+
+        # タイムステップ数 T で正規化
+        recon_loss /= T
+        reward_loss /= T
+        kl_loss /= T
+
+        # 全体損失 (Total Loss)
+        total_loss = recon_loss + reward_loss + self.kl_scale * kl_loss
+
+        total_loss.backward()
+        # 勾配クリッピング (RNN の勾配爆発防止)
+        nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=100.0)
+        self.optimizer.step()
+
+        return {
+            'total_loss': total_loss.item(),
+            'recon_loss': recon_loss.item(),
+            'reward_loss': reward_loss.item(),
+            'kl_loss': kl_loss.item()
+        }
+
+
+# ----------------------------------------------------------------------
+# 3. 潜在空間での推論・未来予測 (Inference & Imagination)
+# ----------------------------------------------------------------------
+@torch.no_grad()
+def predict_future(model: nn.Module, initial_obs: torch.Tensor, action_plan: torch.Tensor):
+    """
+    初期観測 1 枚から始めて、モデル内部の「夢」の中で将来の状況・画像・報酬を予測する
+
+    initial_obs: (1, C, H, W) 初期観測
+    action_plan: (H, action_dim) 未来に実行予定の行動計画 (H: Horizon)
+    """
+    model.eval()
+    device = initial_obs.device
+    horizon = action_plan.size(0)
+
+    # 1. 初期観測をエンコードして初期状態を作成
+    embed = model.encoder(initial_obs)
+    dummy_action = torch.zeros(1, action_plan.size(-1), device=device)
+    state, _, _, _ = model.rssm.observe(embed, dummy_action)
+
+    predicted_images = []
+    predicted_rewards = []
+
+    # 2. 観測を得ずに内部モデル (Imagine) だけを回して未来を予測
+    for t in range(horizon):
+        act_t = action_plan[t].unsqueeze(0) # (1, action_dim)
+        
+        # Prior（事前分布）のみで次の隠れ状態を想像
+        state, prior_dist = model.rssm.imagine(act_t, state)
+
+        # 隠れ状態 (h_t, z_t) から画像と報酬を予測
+        feat = torch.cat(state, dim=-1)
+        pred_img = model.decoder(feat)
+        pred_rew = model.reward_pred(feat)
+
+        predicted_images.append(pred_img)
+        predicted_rewards.append(pred_rew.item())
+
+    return torch.cat(predicted_images, dim=0), predicted_rewards
+
+
+# ----------------------------------------------------------------------
+# 4. 動作検証メイン処理
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    action_dim = 6
+    seq_len = 10
+    batch_size = 4
+
+    # モデルおよびバッファ、トレーナーの構築
+    from world_model import WorldModel
+    model = WorldModel(action_dim=action_dim).to(device)
+    buffer = SequenceReplayBuffer(capacity=100, seq_len=seq_len)
+    trainer = WorldModelTrainer(model, lr=1e-3)
+
+    # --- ダミーデータ作成 & バッファ挿入 ---
+    print("--- 1. ダミー軌跡データの蓄積 ---")
+    for _ in range(10):
+        ep_obs = torch.randn(20, 3, 64, 64)      # 20ステップの観測画像
+        ep_act = torch.randn(20, action_dim)      # 行動
+        ep_rew = torch.randn(20)                  # 報酬
+        buffer.push(ep_obs, ep_act, ep_rew)
+    print(f"バッファ内のエピソード数: {len(buffer)}")
+
+    # --- 学習ループ実行 ---
+    print("\n--- 2. ワールドモデルの学習ループ ---")
+    for epoch in range(3):
+        obs_batch, act_batch, rew_batch = buffer.sample(batch_size)
+        metrics = trainer.train_step(
+            obs_batch.to(device), 
+            act_batch.to(device), 
+            rew_batch.to(device)
+        )
+        print(f"Epoch {epoch+1} | "
+              f"Total Loss: {metrics['total_loss']:.4f} | "
+              f"Recon Loss: {metrics['recon_loss']:.4f} | "
+              f"KL Loss: {metrics['kl_loss']:.4f}")
+
+    # --- 未来予測 (推論) のテスト ---
+    print("\n--- 3. 未来予測（イマジネーション推論）の実行 ---")
+    init_obs = torch.randn(1, 3, 64, 64).to(device)
+    future_actions = torch.randn(5, action_dim).to(device) # 5ステップ先の行動計画
+
+    pred_imgs, pred_rews = predict_future(model, init_obs, future_actions)
+    print(f"予測画像の形状 (Horizon=5) : {pred_imgs.shape}") # (5, 3, 64, 64)
+    print(f"予測された各ステップの報酬   : {[round(r, 3) for r in pred_rews]}")
