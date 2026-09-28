@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x73fe;&#x624b;&#x6bb5;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/09/27/043000">前回ワールドモデル</a>について説明しました。</p>
+<p>ですが、ワールドモデルが実際にどのような実現手段があるかについて、もう少し深く知りたいと考えました。</p>
+<p>本日テーマ：
+ワールドモデルの実現法について理解する。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="実現手段">実現手段</h2>
+<p>ワールドモデルの実現法は、現在<strong>大きく4つのアプローチ</strong>が存在します。それぞれの考え方と特徴を整理して説明いたします。</p>
+<h3 id="1-rssm再帰的状態空間モデル方式">1. RSSM（再帰的状態空間モデル）方式</h3>
+<p><strong>代表例</strong>: Dreamer v1/v2/v3/v4, PlaNet</p>
+<p><strong>考え方</strong>:
+世界を「確率的な状態」と「決定論的な履歴」の組み合わせとして表現します。</p>
+<pre><code>[観測画像] → エンコーダ → [潜在状態 z] + [決定論的状態 h] → 次の状態を予測
+</code></pre>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li><strong>確率的要素</strong>: 「同じ状況でも次は複数ありうる」（予測不可能性）を表現</li>
+<li><strong>決定論的要素</strong>: 「過去の履歴は一意に決まる」を表現</li>
+<li><strong>潜在空間で動作</strong>: 画像そのものではなく、圧縮された「潜在表現」の中で未来をシミュレーション</li>
+</ul>
+<p><strong>メリット</strong>: 軽量で学習が安定し、ロボット制御に実績あり
+<strong>デメリット</strong>: 長期予測で誤差が蓄積しやすい</p>
+<h3 id="2-jepa共同埋め込み予測アーキテクチャ方式">2. JEPA（共同埋め込み予測アーキテクチャ）方式</h3>
+<p><strong>代表例</strong>: V-JEPA, I-JEPA, JEPA-WMs（Meta/Yann LeCun推奨）</p>
+<p><strong>考え方</strong>:
+「画像そのものを生成する」のではなく、「画像の意味を圧縮した表現（埋め込み）の中で未来を予測する」方式です。</p>
+<pre><code>[画像A] → エンコーダ → [表現 sA]
+[画像B] → エンコーダ → [表現 sB]
+
+「sA から sB への変化」を予測する（ピクセルは生成しない）
+</code></pre>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li><strong>ピクセル生成をしない</strong>: 画像を直接生成するのではなく、「表現の変化」を予測</li>
+<li><strong>計算効率が高い</strong>: 画像生成に比べて軽量</li>
+<li><strong>本質的な構造に注目</strong>: 「見た目の細部」ではなく「何がどう変わったか」を捉える</li>
+</ul>
+<p><strong>メリット</strong>: ピクセルレベルの生成誤差に悩まされない、計算が速い
+<strong>デメリット</strong>: 表現を画像に戻す（デコード）が必要な場合は別途デコーダが必要</p>
+<h3 id="3-動画生成拡散モデルベース方式">3. 動画生成/拡散モデルベース方式</h3>
+<p><strong>代表例</strong>: WEAVER, Ctrl-World, Sora, Genie</p>
+<p><strong>考え方</strong>:
+「次のフレームの画像（動画）を直接生成する」ことで世界の動きをモデル化します。</p>
+<pre><code>[現在の画像] + [行動: &quot;右に移動&quot;] → [次の画像を生成]
+</code></pre>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li><strong>高忠実度</strong>: 生成映像が現実に近い</li>
+<li><strong>物理法則の自然な獲得</strong>: 大量の動画データから物理を「暗黙的に」学習</li>
+<li><strong>フローマッチング/拡散</strong>: 近年の動画生成技術を応用</li>
+</ul>
+<p><strong>メリット</strong>: 人間にも直感的に理解できる、物理法則を自然に学習できる
+<strong>デメリット</strong>: 計算コストが高い、長期予測で矛盾が生じやすい</p>
+<h3 id="4-transformer--状態空間モデルssm方式">4. Transformer / 状態空間モデル（SSM）方式</h3>
+<p><strong>代表例</strong>: Transformer-based WM, Mamba-3 × JEPA, RWKV-WM</p>
+<p><strong>考え方</strong>:
+「世界の時間発展を文章の次トークン予測と同じように扱う」アプローチです。</p>
+<pre><code>[過去の観測列] → Transformer/SSM → [次の観測の予測]
+</code></pre>
+<p><strong>特徴</strong>:</p>
+<ul>
+<li><strong>長期依存の把握</strong>: Transformerの「注意機構」で遠く過去の情報も参照可能</li>
+<li><strong>スケーラビリティ</strong>: 大規模言語モデルと同じ技術スタックを流用可能</li>
+<li><strong>SSM（Mambaなど）</strong>: Transformerより軽量で長い系列を処理可能</li>
+</ul>
+<p><strong>メリット</strong>: 長期の一貫性が保ちやすい、スケールしやすい
+<strong>デメリット</strong>: 計算リソースが必要、ロボットのリアルタイム制御には遅い場合がある</p>
+<h3 id="比較表">比較表</h3>
+<table>
+<thead>
+<tr>
+<th>アプローチ</th>
+<th>何を予測するか</th>
+<th>強み</th>
+<th>弱み</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RSSM</strong></td>
+<td>潜在状態の確率分布</td>
+<td>軽量・安定・実績あり</td>
+<td>長期予測で誤差蓄積</td>
+<td>ロボット制御</td>
+</tr>
+<tr>
+<td><strong>JEPA</strong></td>
+<td>表現（埋め込み）の変化</td>
+<td>効率的・本質構造に注目</td>
+<td>デコードが別途必要</td>
+<td>計画・制御</td>
+</tr>
+<tr>
+<td><strong>動画生成</strong></td>
+<td>ピクセル（次の画像）</td>
+<td>直感的・物理を自然に学習</td>
+<td>重い・長期で矛盾</td>
+<td>シミュレーション・生成</td>
+</tr>
+<tr>
+<td><strong>Transformer/SSM</strong></td>
+<td>系列の次の要素</td>
+<td>長期依存・スケーラブル</td>
+<td>リアルタイム制御には遅い</td>
+<td>長期計画・推論</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-最近のトレンドハイブリッド化">5. 最近のトレンド：ハイブリッド化</h3>
+<p>実は最近の最先端モデルは<strong>上記を組み合わせる</strong>方向に進んでいます。</p>
+<p><strong>WEAVERの例</strong>:</p>
+<ul>
+<li>動画生成モデルのエンコーダ（動画生成系）</li>
+<li>JEPA的な「潜在空間での予測」（JEPA系）</li>
+<li>RSSM的な報酬・価値ヘッド（RSSM系）</li>
+<li>Flow matchingによる高速生成（動画生成系）</li>
+</ul>
+<p>つまり、「動画生成モデルの表現力」＋「JEPAの効率性」＋「RSSMの制御実績」を組み合わせているのです。</p>
+<h2 id="ワールドモデルにより獲得するもの">ワールドモデルにより獲得するもの</h2>
+<p>各実現手段について、「<strong>何を予測するか</strong>」と「<strong>その結果モデルが何を獲得するか</strong>」を整理いたします。</p>
+<h3 id="1-rssm再帰的状態空間モデル">1. RSSM（再帰的状態空間モデル）</h3>
+<p><strong>予測できるもの</strong></p>
+<ul>
+<li>次の<strong>潜在状態の確率分布</strong>（「次はこういう状態になりうる」という確率）</li>
+<li><strong>報酬値</strong>（その行動が成功するかどうか）</li>
+<li><strong>価値</strong>（長期的に見て有利かどうか）</li>
+</ul>
+<p><strong>モデルが獲得できるもの</strong></p>
+<ul>
+<li><strong>世界の確率的ダイナミクス</strong>: 「同じ行動でも結果は複数ありうる」という不確実性を数値として表現できる</li>
+<li><strong>圧縮された状態表現</strong>: 画像の「見た目」ではなく「状態の本質」を潜在空間に凝縮した知識</li>
+<li><strong>行動評価の能力</strong>: 実際に動かさなくても「この動作は何%成功するか」を推定できる</li>
+</ul>
+<h3 id="2-jepa共同埋め込み予測アーキテクチャ">2. JEPA（共同埋め込み予測アーキテクチャ）</h3>
+<p><strong>予測できるもの</strong></p>
+<ul>
+<li><strong>表現（埋め込み）空間での変化</strong>（「この表現が次はこう変わる」）</li>
+<li><strong>特徴量レベルの未来状態</strong>（ピクセルではなく、意味レベルでの次の状態）</li>
+</ul>
+<p><strong>モデルが獲得できるもの</strong></p>
+<ul>
+<li><strong>本質的な因果構造</strong>: 見た目の細部ではなく「何がどう変わったか」という本質的な関係</li>
+<li><strong>冗長性を除いた世界の法則</strong>: 影の変化やノイズなど無関係な変化を無視し、本質だけを捉える能力</li>
+<li><strong>計算効率的な予測</strong>: 画像を生成しないため、軽量に高速な予測が可能</li>
+</ul>
+<h3 id="3-動画生成拡散モデルベース">3. 動画生成/拡散モデルベース</h3>
+<p><strong>予測できるもの</strong></p>
+<ul>
+<li><strong>次のフレーム画像（ピクセル）そのもの</strong>（「次の瞬間の画面はこう見える」）</li>
+<li><strong>物理的な変化の視覚的展開</strong>（物体の落下、液体の流れ、光の反射など）</li>
+</ul>
+<p><strong>モデルが獲得できるもの</strong></p>
+<ul>
+<li><strong>物理法則の暗黙的な理解</strong>: 重力、摩擦、衝突などを映像として自然に再現できる知識</li>
+<li><strong>視覚的一貫性</strong>: 「人間が見て自然だと感じる」未来を生成する能力</li>
+<li><strong>直感的なシミュレーション</strong>: 生成映像を見ることで、人間もAIも「次がどうなるか」を直感的に理解できる</li>
+</ul>
+<h3 id="4-transformer--状態空間モデルssm">4. Transformer / 状態空間モデル（SSM）</h3>
+<p><strong>予測できるもの</strong></p>
+<ul>
+<li><strong>系列の次の要素</strong>（観測、行動、報酬の長期系列から次を予測）</li>
+<li><strong>長期にわたる文脈を考慮した未来</strong>（遠く過去の出来事も参照して次を予測）</li>
+</ul>
+<p><strong>モデルが獲得できるもの</strong></p>
+<ul>
+<li><strong>長期的な依存関係</strong>: 「10秒前の出来事が今の結果に影響する」ような長期因果を捉える能力</li>
+<li><strong>スケーラブルな世界知識</strong>: 大規模データから多様な状況パターンを獲得できる</li>
+<li><strong>文脈に応じた柔軟な予測</strong>: 状況に応じて予測の組み方を変えられる適応力</li>
+</ul>
+<h2 id="総括">総括</h2>
+<p>これまでの議論を統合して、ワールドモデルの実現法と獲得物について総括いたします。</p>
+<h3 id="1-ワールドモデルの本質">1. ワールドモデルの本質</h3>
+<p>ワールドモデルとは、<strong>AIが「世界の因果構造と物理法則」を内部化し、頭の中で未来をシミュレートできるようにする予測モデル</strong>です。</p>
+<p>「何が写っているかを見分ける」のではなく、「この行動をすると世界がどう変化するか」を理解し、想像できるようになることが本質です。</p>
+<h3 id="2-実現手段の4つのアプローチ">2. 実現手段の4つのアプローチ</h3>
+<p><strong>(1) RSSM（再帰的状態空間モデル）</strong></p>
+<p>世界を「確率的な状態」と「決定論的な履歴」の組み合わせとして表現し、<strong>潜在空間の中で未来をシミュレーション</strong>します。</p>
+<ul>
+<li><strong>予測対象</strong>: 次の潜在状態の確率分布、報酬、価値</li>
+<li><strong>獲得するもの</strong>: 世界の確率的ダイナミクス、圧縮された状態表現、行動評価能力</li>
+<li><strong>強み</strong>: 軽量・安定・ロボット制御に実績あり</li>
+<li><strong>弱み</strong>: 長期予測で誤差が蓄積しやすい</li>
+</ul>
+<p><strong>(2) JEPA（共同埋め込み予測アーキテクチャ）</strong></p>
+<p><strong>画像そのものではなく、画像の意味を圧縮した表現（埋め込み）の変化を予測</strong>します。</p>
+<ul>
+<li><strong>予測対象</strong>: 表現空間での変化、特徴量レベルの未来状態</li>
+<li><strong>獲得するもの</strong>: 冗長性を除いた本質的な因果構造、計算効率的な予測能力</li>
+<li><strong>強み</strong>: ピクセル生成誤差に悩まされない、高速</li>
+<li><strong>弱み</strong>: 表現を画像に戻す（デコード）には別途デコーダが必要</li>
+</ul>
+<p><strong>(3) 動画生成/拡散モデルベース</strong></p>
+<p><strong>次のフレーム画像（ピクセル）そのものを生成</strong>することで世界の動きをモデル化します。</p>
+<ul>
+<li><strong>予測対象</strong>: 次の画像（ピクセル）、物理変化の視覚的展開</li>
+<li><strong>獲得するもの</strong>: 物理法則の暗黙的理解、視覚的一貫性、直感的なシミュレーション能力</li>
+<li><strong>強み</strong>: 人間にも直感的に理解できる、物理を自然に学習</li>
+<li><strong>弱み</strong>: 計算コストが高い、長期予測で矛盾が生じやすい</li>
+</ul>
+<p><strong>(4) Transformer / 状態空間モデル（SSM）</strong></p>
+<p><strong>世界の時間発展を系列の次要素予測として扱い</strong>、長期文脈を考慮して未来を予測します。</p>
+<ul>
+<li><strong>予測対象</strong>: 観測・行動・報酬の系列の次の要素</li>
+<li><strong>獲得するもの</strong>: 長期的な依存関係、スケーラブルな世界知識、文脈に応じた柔軟な予測</li>
+<li><strong>強み</strong>: 長期の一貫性が保ちやすい、スケールしやすい</li>
+<li><strong>弱み</strong>: リアルタイム制御には遅い場合がある</li>
+</ul>
+<h3 id="3-何を予測するかが何を獲得するかを決める">3. 「何を予測するか」が「何を獲得するか」を決める</h3>
+<p>同じ「未来予測」を目指しても、予測の対象が違えば獲得する知識の性質も変わります。</p>
+<table>
+<thead>
+<tr>
+<th>予測の対象</th>
+<th>獲得する知識の形</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ピクセル（動画生成）</td>
+<td>物理法則を「見た目」として獲得</td>
+</tr>
+<tr>
+<td>表現・埋め込み（JEPA）</td>
+<td>物理法則を「意味」として獲得</td>
+</tr>
+<tr>
+<td>確率分布（RSSM）</td>
+<td>物理法則を「不確実性込みで」獲得</td>
+</tr>
+<tr>
+<td>系列要素（Transformer/SSM）</td>
+<td>物理法則を「長期文脈込みで」獲得</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-最近のトレンドハイブリッド化">4. 最近のトレンド：ハイブリッド化</h3>
+<p>最先端のモデルは上記を組み合わせる方向に進んでいます。</p>
+<p><strong>WEAVERの例</strong>:</p>
+<ul>
+<li>動画生成モデルの pretrained encoder（動画生成系の表現力）</li>
+<li>JEPA的な潜在空間での予測（JEPA系の効率性）</li>
+<li>RSSM的な報酬・価値ヘッド（RSSM系の制御実績）</li>
+<li>Flow matchingによる高速生成（動画生成系の技術）</li>
+</ul>
+<p>つまり、<strong>「表現力」＋「効率性」＋「制御実績」</strong> を統合して、より完全なワールドモデルを目指しています。</p>
+<h3 id="5-メリットとデメリットの総括">5. メリットとデメリットの総括</h3>
+<p><strong>メリット</strong></p>
+<ul>
+<li><strong>実世界の試行を劇的に減らせる</strong>: 頭の中で練習できるため、危険な失敗を事前に防げる</li>
+<li><strong>圧倒的な速度で学習・計画</strong>: 現実の1回の動作の間に数千回のシミュレーションが可能</li>
+<li><strong>未来予測に基づく計画</strong>: 「3手先まで読む」戦略的行動が可能</li>
+<li><strong>テスト時のスケーリング</strong>: 計算資源を増やせば性能が向上する</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li><strong>予測誤差の蓄積</strong>: 長期予測ほど現実から乖離しやすい</li>
+<li><strong>分布外（OOD）への脆弱性</strong>: 学習時にない状況では予測が外れる</li>
+<li><strong>高い学習コスト</strong>: 良いモデルを作るには大量のデータと計算資源が必要</li>
+<li><strong>信頼性の課題</strong>: 自信満々で間違った予測を出すことがある</li>
+</ul>
+<h3 id="6-応用分野">6. 応用分野</h3>
+<table>
+<thead>
+<tr>
+<th>分野</th>
+<th>ワールドモデルの役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ロボティクス</strong></td>
+<td>動作のシミュレーションと計画（Dreamer, WEAVERなど）</td>
+</tr>
+<tr>
+<td><strong>自動運転</strong></td>
+<td>周囲環境の未来予測とリスク評価</td>
+</tr>
+<tr>
+<td><strong>動画生成</strong></td>
+<td>物理法則に従った映像生成（Soraなど）</td>
+</tr>
+<tr>
+<td><strong>ゲーム</strong></td>
+<td>リアルタイム世界生成</td>
+</tr>
+<tr>
+<td><strong>社会シミュレーション</strong></td>
+<td>人間行動・社会動態の予測</td>
+</tr>
+</tbody>
+</table>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/LAmZrJFe9cw?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
