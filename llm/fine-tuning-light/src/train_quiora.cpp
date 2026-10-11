@@ -169,3 +169,84 @@ int main() {
     std::cout << "\nSUCCESS: Transformers and PEFT architectures successfully emulated in C++!" << std::endl;
     return 0;
 }
+
+
+struct Tensor {
+    std::vector<float> data;
+    std::vector<size_t> shape;
+    std::vector<float> grad;
+
+    Tensor matmul(const Tensor& other) const;
+    Tensor softmax(int dim) const;
+    Tensor log_softmax(int dim) const;
+    void zero_grad();
+    // ...
+};
+
+struct LoRALinear {
+    Tensor weight;      // 凍結された事前学習重み
+    Tensor lora_a;      // 学習対象: (in_features, rank)
+    Tensor lora_b;      // 学習対象: (rank, out_features)
+    float alpha;
+    int rank;
+
+    Tensor forward(const Tensor& x);
+    void backward(const Tensor& grad_output);
+    void update_params(AdamW& opt);
+};
+
+struct CausalLM {
+    Embedding embed;
+    std::vector<DecoderBlock> blocks;
+    LayerNorm final_ln;
+    Linear lm_head;
+
+    Tensor forward(const std::vector<int>& tokens);
+    Tensor backward(const Tensor& grad_logits);
+};
+
+// 教師モデル（凍結）からlogitsを取得
+Tensor teacher_logits = teacher_model.forward(batch_tokens);
+Tensor teacher_prob = teacher_logits.softmax(-1);
+
+// 生徒モデルからlogitsを取得
+Tensor student_logits = student_model.forward(batch_tokens);
+Tensor student_logprob = student_logits.log_softmax(-1);
+
+// KLダイバージェンス（教師 → 生徒）
+float loss_distill = kl_div_loss(student_logprob, teacher_prob);
+
+// 通常のCE損失（新規タスク）
+float loss_task = cross_entropy_loss(student_logits, batch_labels);
+
+// 合計損失
+float loss = loss_task + lambda_distill * loss_distill;
+
+
+// 新規タスクデータ 80% + 旧タスクデータ 20%
+auto mixed_batch = mix_batches(new_task_batches, rehearsal_batches, 0.2f);
+
+for (int epoch = 0; epoch < epochs; ++epoch) {
+    for (int step = 0; step < steps_per_epoch; ++step) {
+        auto batch = dataloader.next();
+        
+        // Forward
+        auto teacher_out = teacher.forward(batch.tokens);
+        auto student_out = student.forward(batch.tokens);
+        
+        // Loss
+        float loss = compute_lwf_loss(student_out, teacher_out, batch.labels, lambda);
+        
+        // Backward
+        student.backward(loss.grad());
+        
+        // Gradient accumulation
+        if ((step + 1) % accum_steps == 0) {
+            optimizer.step();
+            optimizer.zero_grad();
+            scheduler.step();
+        }
+    }
+    save_lora_weights(epoch);
+}
+
