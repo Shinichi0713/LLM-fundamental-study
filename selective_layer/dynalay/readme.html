@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>深層学習はニューラルネットワークのレイヤ数が多数であることから、データをいろんな観点で判断することが出来る。
+結果、特徴量エンジニアリングや特徴量の解析力を獲得しています。
+しかし、すべてのレイヤを活用することがベストではありません。
+問題に応じてレイヤ選択する能力を持つことで、この問題はこのレイヤで解けるという選択を行い、計算量の削減をすることが出来ます。</p>
+<p>今回はそんなレイヤ選択能力で著名な論文であるDynaLayについて説明していきます。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="論文概要">論文概要</h2>
+<p><a href="https://arxiv.org/abs/2312.12781">DynaLay: An Introspective Approach to Dynamic Layer Selection for Deep Networks</a>（Mathur &amp; Plis, NeurIPS 2023 Workshop OPT）の概要を以下にまとめます。</p>
+<h3 id="論文情報">論文情報</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>タイトル</strong></td>
+<td>DynaLay: An Introspective Approach to Dynamic Layer Selection for Deep Networks</td>
+</tr>
+<tr>
+<td><strong>著者</strong></td>
+<td>Mrinal Mathur, Sergey Plis</td>
+</tr>
+<tr>
+<td><strong>所属</strong></td>
+<td>TReNDS Center, Georgia State University</td>
+</tr>
+<tr>
+<td><strong>発表</strong></td>
+<td><a href="https://opt-ml.org/papers/2023/paper42.pdf">NeurIPS 2023 Workshop: OPT 2023</a> (Optimization for Machine Learning)</td>
+</tr>
+<tr>
+<td><strong>arXiv</strong></td>
+<td><a href="https://arxiv.org/abs/2312.12781">2312.12781</a></td>
+</tr>
+<tr>
+<td><strong>PDF</strong></td>
+<td><a href="https://arxiv.org/pdf/2312.12781">arxiv.org/pdf/2312.12781</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="解決しようとした課題">解決しようとした課題</h2>
+<p><a href="https://arxiv.org/abs/2312.12781">DynaLay</a> が解決しようとした課題は、<strong>「深層モデルがすべての入力に一律の計算量を使うことによる非効率性」</strong> です。具体的には以下の3点です。</p>
+<h3 id="1-計算コストの急増">1. 計算コストの急増</h3>
+<p>深層モデルは大規模化するほど学習・推論に多大なリソースと時間を要します。すべての入力に最大計算量を適用するため、モデルが大きくなるほどこの問題は深刻化します。</p>
+<h3 id="2-一律計算のムダ">2. 一律計算のムダ</h3>
+<p>従来のモデルは<strong>入力の難易度に関わらず同じ層数・同じ計算量</strong>を使います。簡単な入力（一目で分かる例）にも深い層まで計算する必要があり、計算リソースが無駄になります。逆に、難しい入力に対しては追加の計算が有益な場合もありますが、固定深度ではその調整ができません。</p>
+<h3 id="3-ワンサイズフィットオール戦略の限界">3. 「ワンサイズフィットオール」戦略の限界</h3>
+<p>すべての入力に同じアーキテクチャを適用する従来手法では、<strong>入力ごとの計算量を最適化</strong>することができません。簡単な入力は浅い計算で、難しい入力は深い計算で処理したいという直感的な要求を満たせません。</p>
+<h2 id="提案手法">提案手法</h2>
+<p><a href="https://arxiv.org/abs/2312.12781">DynaLay</a> が提案した手法は、<strong>「メインモデルの内部状態を観察する決定エージェントが、入力ごとに Fixed-Point Iterative 層の反復回数を動的に選択する」</strong> 内省的アーキテクチャです。以下に詳細を説明いたします。</p>
+<h3 id="1-アーキテクチャ全体の構成">1. アーキテクチャ全体の構成</h3>
+<p>DynaLay は3つの主要コンポーネントから構成されます。</p>
+<table>
+<thead>
+<tr>
+<th>コンポーネント</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Main Model（予測モデル）</strong></td>
+<td>FPI層を備え、実際の予測を行う深層ネットワーク</td>
+</tr>
+<tr>
+<td><strong>Agent（決定エージェント）</strong></td>
+<td>メインモデルの内部活性化を観察し、次にどの層を使うか選択する</td>
+</tr>
+<tr>
+<td><strong>Observer Model（観察モデル）</strong></td>
+<td>メインモデルの内部動態を監視し、予測が不安定そうな時に介入して追加反復を促す</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-fixed-point-iterative-fpi-層">2. Fixed-Point Iterative (FPI) 層</h3>
+<p>DynaLay の計算の核となるのが <strong>FPI層</strong> です。</p>
+<p><strong>仕組み</strong></p>
+<p>各 FPI層は、不動点方程式 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo separator="true">,</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z = f(z, x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span> を反復的に解きます。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>z</mi><mrow><mo stretchy="false">(</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo>=</mo><mi>f</mi><mo stretchy="false">(</mo><msup><mi>z</mi><mrow><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></msup><mo separator="true">,</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">z^{(k+1)} = f(z^{(k)}, x)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.938em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.188em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.938em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span></span></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>: 層への入力</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>z</mi><mrow><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">z^{(k)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.888em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 回目の反復における潜在表現</li>
+<li>初期値 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>z</mi><mrow><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">z^{(0)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.888em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">0</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span> から開始し、収束条件 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mi>z</mi><mrow><mo stretchy="false">(</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo>−</mo><msup><mi>z</mi><mrow><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow></msup><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><mo>&lt;</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">||z^{(k+1)} - z^{(k)}|| &lt; \epsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mord">∣∣</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mbin mtight">+</span><span class="mord mtight">1</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mord">∣∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ϵ</span></span></span></span> を満たすまで反復</li>
+</ul>
+<p><strong>パラメータ共有</strong></p>
+<p>同じインデックス <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> の FPI層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">A_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> は<strong>パラメータ共有（parameter tied）</strong> されています。つまり、同じ層を何度も反復適用する構造であり、異なる反復回数で異なる「有効深度」を実現します。</p>
+<p><strong>理論的保証</strong></p>
+<p>FPI層は<strong>収縮写像（Contraction Mapping）</strong> の原理に従います。</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>T</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>T</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><mi>k</mi><mo>⋅</mo><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mspace width="1em"/><mo stretchy="false">(</mo><mn>0</mn><mo>&lt;</mo><mi>k</mi><mo>&lt;</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">d(T(x), T(y)) \leq k \cdot d(x, y) \quad (0 &lt; k &lt; 1)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:1em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span></p>
+<p>この性質により、Banachの不動点定理から<strong>唯一の不動点が存在し、反復が必ず収束する</strong>ことが保証されます。これにより、<a href="https://arxiv.org/abs/1903.10373">Deep Equilibrium Models (DEQ)</a> のような明示的なソルバーを必要とせず、数値的安定性が得られます。</p>
+<h3 id="3-エージェント決定エージェントの動作">3. エージェント（決定エージェント）の動作</h3>
+<p>エージェントは強化学習の枠組みで学習され、各入力に対して以下を決定します。</p>
+<p><strong>観察入力</strong></p>
+<p>エージェントへの入力は、<strong>メインモデルの内部活性化（activations）</strong> です。つまり、モデルが「今どう思っているか」を観察します。</p>
+<p><strong>行動空間</strong></p>
+<p>各ステップでエージェントは以下のいずれかを選択します。</p>
+<ul>
+<li><strong>FPI層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">A_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を適用</strong>: 特定の層を反復使用し、表現をさらに洗練させる</li>
+<li><strong>NOP（No-Operation）</strong>: 計算を打ち切り、現在の表現で予測を出力する</li>
+</ul>
+<p><strong>内省的判断</strong></p>
+<p>エージェントは「この内部表現で十分予測できるか、それともさらに反復が必要か」を判断します。これが <strong>introspection（内省）</strong> の核心です。</p>
+<h3 id="4-observer-model観察モデルの役割">4. Observer Model（観察モデル）の役割</h3>
+<p>Observer Model は単なる層選択を超えた、<strong>メタ的な監視メカニズム</strong>です。</p>
+<p><strong>機能</strong></p>
+<ul>
+<li>メインモデルの内部動態を継続的に監視</li>
+<li>予測器（メインモデル）が<strong>間違いそうな内部表現</strong>を持っているかを検出</li>
+<li>検出した場合、<strong>予測器にさらなる反復を強制</strong>し、収束（convergence）を達成させる</li>
+</ul>
+<p><strong>意義</strong></p>
+<p>これにより、エージェントだけでは見落としがちな「予測の不安定性」を Observer が補完し、<strong>複雑な入力に対して自動的に計算リソースを追加配分</strong>します。</p>
+<h3 id="5-学習メカニズム">5. 学習メカニズム</h3>
+<p><strong>報酬関数</strong></p>
+<p>エージェントの学習には、以下を考慮した新しい報酬関数が設計されています。</p>
+<ul>
+<li><strong>予測精度の報酬</strong>: 正解に近い予測を行えば高い報酬</li>
+<li><strong>計算コストのペナルティ</strong>: 使用した層数・反復回数が多いほどペナルティ</li>
+<li><strong>内省の促進</strong>: メインモデルの内部状態から「学べる」ことを報酬化</li>
+</ul>
+<p><strong>学習の目的</strong></p>
+<p>エージェントは以下のトレードオフを最適化するように学習します。</p>
+<blockquote>
+<p><strong>「精度を維持しつつ、必要最小限の計算で予測を完了する」</strong></p>
+</blockquote>
+<h3 id="6-推論時の動作フロー">6. 推論時の動作フロー</h3>
+<ol>
+<li><strong>入力を受け取る</strong>: メインモデルに入力 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> を与える</li>
+<li><strong>初期表現を計算</strong>: 入力投影などで初期潜在表現 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>z</mi><mrow><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">z^{(0)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.888em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">0</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span> を得る</li>
+<li><strong>エージェントが内部状態を観察</strong>: メインモデルの活性化を読み取る</li>
+<li><strong>行動選択</strong>:
+<ul>
+<li>エージェントが NOP を選べば → 現在の表現で分類器に通して出力</li>
+<li>エージェントが FPI層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">A_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を選べば → 反復を実行し、新しい内部状態へ</li>
+</ul>
+</li>
+<li><strong>Observer が監視</strong>: 予測が不安定そうなら追加反復を要求</li>
+<li><strong>収束または NOP で終了</strong>: 不動点に達するか、エージェントが打ち切りを決定するまで繰り返す</li>
+</ol>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\dynalay\image\readme\1792221259005.png" alt="1792221259005"></p>
+<h3 id="理論的基盤収縮写像">理論的基盤：収縮写像</h3>
+<p>DynaLay は<strong>Banach の不動点定理</strong>に基づく理論的保証を持ちます。</p>
+<blockquote>
+<p><strong>定理</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>:</mo><mi>X</mi><mo>→</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">T: X \to X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span></span></span> が収縮写像（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>T</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>T</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><mi>k</mi><mo>⋅</mo><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">d(T(x), T(y)) \leq k \cdot d(x, y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>&lt;</mo><mi>k</mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 &lt; k &lt; 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6835em;vertical-align:-0.0391em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>）ならば、<strong>唯一の不動点 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">x^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6887em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6887em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> が存在</strong>し、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo stretchy="false">(</mo><msup><mi>x</mi><mo>∗</mo></msup><mo stretchy="false">)</mo><mo>=</mo><msup><mi>x</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">T(x^*) = x^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6887em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6887em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6887em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> を満たす。</p>
+</blockquote>
+<p>これにより、明示的なソルバー（<a href="https://arxiv.org/abs/1903.10373">Deep Equilibrium Models (DEQ)</a> 等で使用）を必要とせず、数値的安定性を保証しています。</p>
+<h2 id="実験結果">実験結果</h2>
+<p>論文で述べられている実験と実験結果についてまとめます。</p>
+<h3 id="実験の目的">実験の目的</h3>
+<p>DynaLay の実験では、以下を検証しています。</p>
+<ol>
+<li><strong>精度の維持</strong>: 従来の固定深度深層モデルと同等の分類精度を達成できるか</li>
+<li><strong>計算コストの削減</strong>: 入力の複雑さに応じた動的層選択により、推論時の計算オーバーヘッドを大幅に削減できるか</li>
+<li><strong>内省メカニズムの有効性</strong>: エージェントが内部状態を観察して適切に層を選択できるか</li>
+</ol>
+<h3 id="実験設定">実験設定</h3>
+<p><strong>アーキテクチャ</strong></p>
+<ul>
+<li><strong>メインモデル</strong>: Fixed-Point Iterative (FPI) 層を備えた深層ネットワーク</li>
+<li><strong>エージェント</strong>: 強化学習エージェント（メインモデルの内部活性化を観察し、層選択または NOP を決定）</li>
+<li><strong>Observer Model</strong>: メインモデルの内部動態を監視し、予測が不安定な場合に追加反復を促す</li>
+</ul>
+<p><strong>報酬関数の設計</strong></p>
+<p>エージェントの学習には、以下の3要素を組み合わせた<strong>多面的報酬関数</strong>が使用されています。</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>分類精度</strong></td>
+<td>正解に近い予測を行えば高い報酬</td>
+</tr>
+<tr>
+<td><strong>計算時間</strong></td>
+<td>使用した層数・反復回数が少ないほど報酬（計算コストの抑制）</td>
+</tr>
+<tr>
+<td><strong>冗長層選択のペナルティ</strong></td>
+<td>無駄な層の反復選択に対してペナルティを与える</td>
+</tr>
+</tbody>
+</table>
+<p>この報酬関数により、<strong>「精度を維持しつつ必要最小限の計算で予測を完了する」</strong> というトレードオフが最適化されます。</p>
+<h3 id="実験結果-1">実験結果</h3>
+<p>論文で報告されている主な結果は以下の通りです。</p>
+<p><strong>1. 精度と計算効率のトレードオフ</strong></p>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>分類精度</strong></td>
+<td>従来の固定深度深層モデルと<strong>同等の精度</strong>を達成</td>
+</tr>
+<tr>
+<td><strong>計算オーバーヘッド</strong></td>
+<td><strong>大幅な削減</strong>を確認</td>
+</tr>
+<tr>
+<td><strong>適応性</strong></td>
+<td>簡単な入力には最小計算、複雑な入力には追加反復を自動配分</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2. 内省メカニズムの動作確認</strong></p>
+<ul>
+<li>エージェントがメインモデルの<strong>内部活性化を観察</strong>し、入力の難易度に応じて適切に層を選択することが確認された</li>
+<li><strong>Observer Model</strong> が予測の不安定性を検出し、追加の反復を要求することで、複雑な入力に対する精度を維持</li>
+</ul>
+<h3 id="結果の意義">結果の意義</h3>
+<p>DynaLay の実験は、以下の点で意義があります。</p>
+<ol>
+<li><strong>動的深度調整の実用性</strong>: 強化学習エージェントによる内省的層選択が、実際に計算コストを削減しつつ精度を維持できることを実証</li>
+<li><strong>理論と実践の接続</strong>: 収縮写像による理論的保証（FPI層の収束性）を持ちながら、実際の深層モデルで有効性を確認</li>
+<li><strong>「考える」モデルへの一歩</strong>: 単に「弾道的に（ballistically）」答えを出すのではなく、<strong>入力の難易度を見て計算量を調整する</strong>モデルの原型を示した</li>
+</ol>
+<h3 id="歴史的意義と位置づけ">歴史的意義と位置づけ</h3>
+<p>DynaLay は「レイヤー選択」の系譜において、以下の点で特徴的です。</p>
+<table>
+<thead>
+<tr>
+<th>研究</th>
+<th>アプローチ</th>
+<th>DynaLay の違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://arxiv.org/abs/1603.09382">Stochastic Depth (2016)</a></td>
+<td>ランダムに層をドロップ</td>
+<td><strong>入力に応じた内省的選択</strong></td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/1910.10073">Depth-Adaptive Transformer (2020)</a></td>
+<td>自信度に基づく早期終了</td>
+<td><strong>強化学習エージェントによる層選択</strong></td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2107.05407">PonderNet (2021)</a></td>
+<td>いつ「考えるのをやめるか」を学習</td>
+<td><strong>FPI 層との組み合わせ・収縮写像理論</strong></td>
+</tr>
+<tr>
+<td><strong>DynaLay (2023)</strong></td>
+<td><strong>エージェントが内部状態を観察して層選択</strong></td>
+<td>内省的アーキテクチャ + 理論的保証</td>
+</tr>
+</tbody>
+</table>
+<p>特に、「モデルが自分の内部状態を見て判断する」という<strong>内省性（introspection）</strong> の概念は、単なる計算効率化を超えた、<strong>「考える」モデル</strong>への一歩として位置づけられています。</p>
+<h2 id="総括">総括</h2>
+<p><a href="https://arxiv.org/abs/2312.12781">DynaLay</a> が LLM（大規模言語モデル）に果たした役割について、論文の記述に基づきつつ、研究系譜における位置づけを含めて述べます。</p>
+<h3 id="1-llm-に果たした役割">1. LLM に果たした役割</h3>
+<p><strong>直接的な実験はないが、概念的・原理的な示唆が大きい</strong></p>
+<p><a href="https://arxiv.org/abs/2312.12781">DynaLay</a> 自体は <strong>FPI 層を用いた一般深層ネットワーク</strong> を対象とした研究であり、Transformer や LLM への直接適用実験は論文には記載されていません。しかし、以下の点で LLM の効率化研究に<strong>先行概念として重要な役割</strong>を果たしています。</p>
+<p><strong>(1) 「一律計算」の非効率性を一般深層モデルで実証</strong></p>
+<p>LLM はすべての入力トークン・すべての推論ステップで<strong>同じ層数</strong>（例えば 96 層）を通過します。DynaLay は、この「ワンサイズフィットオール」の問題を<strong>一般深層モデルで実証</strong>し、「入力の難易度に応じて計算量を変えるべき」という原理を示しました。これは後続の LLM 向け動的深度調整研究（<a href="https://arxiv.org/abs/2404.02258">Mixture-of-Depths</a> など）への<strong>概念的土台</strong>となっています。</p>
+<p><strong>(2) 「内省（introspection）」という設計思想の提示</strong></p>
+<p>DynaLay の核心である「モデルが自分の内部活性化を観察して、計算を続けるか止めるかを判断する」という<strong>内省的メカニズム</strong>は、LLM における以下の研究方向への示唆を与えます。</p>
+<ul>
+<li><strong>Self-reflective LLM</strong>: モデルが自身の不確実性を認識し、必要に応じて追加の推論ステップを実行する</li>
+<li><strong>Early Exit for LLM</strong>: 簡単なトークンや簡単な入力には浅い層で出力し、難しい場合のみ深い層まで計算する動的推論</li>
+<li><strong>Test-time compute scaling</strong>: 推論時に問題の難易度に応じて計算量を増減させるアプローチ</li>
+</ul>
+<p><strong>(3) 強化学習エージェントによる動的計算配分の原型</strong></p>
+<p>DynaLay が採用した「強化学習エージェントが内部状態を観察して計算ステップを選択する」という枠組みは、LLM における <strong>token-level や layer-level の動的ルーティング</strong> の先駆け的アイデアです。後続研究で発展した <a href="https://arxiv.org/abs/2404.02258">Mixture-of-Depths</a> の「トークンごとに層を通過/スキップする動的ルーティング」は、この DynaLay が提示した <strong>「入力に応じた計算量の動的配分」</strong> という原理を LLM スケールで実現したものと解釈できます。</p>
+<p><strong>(4) 理論的保証付き動的深度調整の示唆</strong></p>
+<p>DynaLay が採用した<strong>収縮写像（Contraction Mapping）</strong> による FPI 層の収束保証は、LLM における動的深度モデル（<a href="https://arxiv.org/abs/2107.05407">PonderNet</a> など）と比較して、<strong>数値的安定性を理論的に保証できる動的計算</strong>の可能性を示唆しています。</p>
+<h3 id="2-本論文の簡潔な総括">2. 本論文の簡潔な総括</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>課題</strong></td>
+<td>深層モデルがすべての入力に一律の計算量を使うことによる非効率性</td>
+</tr>
+<tr>
+<td><strong>提案手法</strong></td>
+<td>FPI 層を備えたメインモデル + 内部活性化を観察する RL エージェント + Observer Model による動的層選択アーキテクチャ</td>
+</tr>
+<tr>
+<td><strong>核心アイデア</strong></td>
+<td>モデルが自分の内部状態を「内省」し、簡単な入力は浅く、難しい入力は深く計算する</td>
+</tr>
+<tr>
+<td><strong>理論的基盤</strong></td>
+<td>収縮写像による FPI 層の収束保証（Banach の不動点定理）</td>
+</tr>
+<tr>
+<td><strong>実験結果</strong></td>
+<td>従来の固定深度モデルと同等の精度を維持しつつ、計算オーバーヘッドを大幅削減</td>
+</tr>
+<tr>
+<td><strong>意義</strong></td>
+<td>「考える（内省する）モデル」の原型を提示。入力難易度に応じた動的計算配分の実用性を実証</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-一言でまとめると">3. 一言でまとめると</h3>
+<blockquote>
+<p><strong>DynaLay は「モデルが自分の内部状態を見て、必要なだけ計算し、不要なら止める」という内省的動的深度調整の原型を提示し、後続の LLM 効率化研究（動的ルーティング、推論時計算スケーリング）に原理的・概念的な先行例を提供した。</strong></p>
+</blockquote>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/-W66swluqC8?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
