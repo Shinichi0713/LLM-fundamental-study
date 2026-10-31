@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>前回ニューラルネットワークのレイヤ選択の初期の研究である <a href="https://yoshishinnze.hatenablog.com/entry/2026/11/30/043000">ACT（Adaptive Computation Time）</a>について説明しました。
+レイヤ選択はニューラルネットワークの計算時間短縮やリソース削減で重要な技術です。</p>
+<p>今回はACTがどの程度うまくワークするかを検証するため実験を行ってみました。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="実験">実験</h2>
+<p>見るべき情報の量がサンプルごとに変わる Parity（偶奇）問題により、ACTの成果であるニューラルネットワークが考える時間（計算ステップ数）を、問題の難しさに応じて自分で調整できるかを検証していきます。</p>
+<h3 id="問題設定どこを見ていつまで考えるかが都度変わる-parity問題">問題設定：「どこを見て、いつまで考えるか」が都度変わる Parity問題</h3>
+<p><strong>タスクの内容</strong></p>
+<p>今回ACTの機能を実装したニューラルネットワークで解かせる問題は Parity問題 と呼ばれるものとします。
+入力は <strong>16次元（または32, 64次元）のベクトル</strong>です。各要素は <strong>-1、0、+1</strong> のいずれかです。</p>
+<ul>
+<li><strong>+1 の個数が偶数なら答えは 0</strong></li>
+<li><strong>+1 の個数が奇数なら答えは 1</strong></li>
+</ul>
+<p>これだけ聞くと単純ですが、以下の2つの「動的な要素」が加わります。</p>
+<p><strong>① 「見るべき場所」が毎回変わる</strong></p>
+<p>非ゼロ（-1 または +1）な要素が現れる <strong>位置</strong> は、サンプルごとにランダムです。モデルは毎回「今回はどの次元に答えがあるのか」を探す必要があります。</p>
+<p><strong>② 「見るべき要素の数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>」が毎回変わる</strong></p>
+<p>非ゼロ要素の個数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> は、サンプルごとに <strong>1個から最大 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi></mrow><annotation encoding="application/x-tex">D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span> 個まで</strong> ばらつきます。</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> が小さい（非ゼロが少ない）→ 簡単。早く答えが出せます。</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> が大きい（非ゼロが多い）→ 難しい。多くの要素を順番に確認しないと答えが出ません。</li>
+</ul>
+<p>この「<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> が分からないまま、モデルが自分で『もう十分確認した』と判断して計算を止める」というのが、ACT の核心です。</p>
+<h3 id="parity問題とは">parity問題とは</h3>
+<p>Parity問題とは、**「入力の中にある 1 の個数が偶数か奇数かを答える問題」**です。</p>
+<p>例えば：</p>
+<pre><code>入力: [0, 1, 0, 1, 1]  →  1 が 3個 → 奇数 → 答え: 1
+入力: [0, 1, 0, 1, 0]  →  1 が 2個 → 偶数 → 答え: 0
+</code></pre>
+<p><strong>ニューラルネットワークには難しい</strong></p>
+<p>Parityのどの要素も「同じくらい重要」であり、重要なデータを見つけることが特徴のニューラルネットワークには難しい問題とされてます。</p>
+<p>画像なら「耳の部分を見れば猫かどうか分かる」といった局所的な手がかりがありますが、Parity問題では<strong>1つの要素を変えるだけで答えが反転</strong>します。つまり、すべての入力を均等に確認しなければ正解できません。</p>
+<p>また、今回の実験ではさらに以下の条件が加わっています。</p>
+<ul>
+<li><strong>1 が現れる位置が毎回ランダム</strong></li>
+<li><strong>1 の個数（見るべき要素数）が毎回変わる</strong></li>
+</ul>
+<p>このため、モデルは「どこを見て、いつまで考えれば十分か」を自分で判断する必要があります。</p>
+<h3 id="検証点">検証点</h3>
+<p>今回検証しようとしている ACT（Adaptive Computation Time）の特性は、<strong>「問題の難しさに応じて、モデル自身が考える時間（計算ステップ数）を動的に決める」</strong> という点にあります。</p>
+<p><strong>1. 入力ごとに異なる計算ステップ数</strong>
+通常のニューラルネットワークは「何層」か「何ステップ」かがあらかじめ固定されていますが、ACT では<strong>サンプルごとに計算ステップ数が変わります</strong>。</p>
+<ul>
+<li>簡単な問題（非ゼロ要素が少ない）→ 早く止まる</li>
+<li>難しい問題（非ゼロ要素が多い）→ 長く考える</li>
+</ul>
+<p><strong>2. 精度と計算コストのトレードオフの学習</strong>
+モデルは「正解すること」と「早く止まること」の両方を同時に学習します。</p>
+<ul>
+<li>正解に近いほど損失（BCE）が減る</li>
+<li>ステップ数が多いほど ponder cost（計算ペナルティ）が増える</li>
+</ul>
+<p>モデルはこのバランスを取りながら、「必要最小限のステップで正解する」ことを学習します。</p>
+<p><strong>3. 自律的な停止判断</strong>
+人間が「ここで止めて」と指示するのではなく、<strong>モデル自身が隠れ状態を見て「もう十分情報が集まった」と判断して停止します</strong>。</p>
+<h2 id="どのようなネットワーク構造で実現されるか">どのようなネットワーク構造で実現されるか</h2>
+<p>実験に用いるネットワーク構造について説明します。</p>
+<h3 id="-思考ステップgrucell">① 思考ステップ：GRUCell</h3>
+<pre><code class="language-python">self.cell = nn.GRUCell(D + <span class="hljs-number">2</span>, H)
+</code></pre>
+<p>GRUCell（Gated Recurrent Unit Cell）は、リカレントニューラルネットワーク（RNN）の代表的な構造である GRUの1ステップ分（セル単位）の処理を行うモジュールです。
+LSTM（Long Short-Term Memory）の軽量版として考案され、時系列データや順次処理を行うモデルで広く使われています。</p>
+<p>GRUCellを用いることで、各ステップで隠れ状態 <code>s</code> を更新する再帰ユニットを構成します。
+これが <strong>「考える」</strong> 役割を担います。入力 <code>x</code> は最初のステップだけ与えられ、以降はゼロベクトルが入力されるため、モデルは「最初に見た情報をどう記憶・加工するか」をステップごとに繰り返します。</p>
+<h3 id="-停止判定機構halt-ネットワーク">② 停止判定機構：Halt ネットワーク</h3>
+<pre><code class="language-python">self.halt = nn.Linear(H, <span class="hljs-number">1</span>)
+</code></pre>
+<p>ハルト確率は、ACTにおいて、「この計算ステップで、もう考えるのを止めていいかどうか」を表す 0〜1 の確率のことです。
+各ステップの隠れ状態 <code>s</code> を見て、「このステップで止まる確率」を出力します。シグモイド関数で 0〜1 の確率に変換されます。</p>
+<pre><code class="language-python">h = torch.sigmoid(self.halt(s)).squeeze(-<span class="hljs-number">1</span>)
+</code></pre>
+<p>バイアス <code>HALT_BIAS = -1.5</code> が初期値として与えられており、<strong>最初は「止まりにくい」</strong> ように細工します。
+しっかり検討を進めるほど回答に確信を持つようになります。</p>
+<h3 id="-累積的な出力の重み付け">③ 累積的な出力の重み付け</h3>
+<pre><code class="language-python">y_acc = y_acc + p * y
+halt_sum = halt_sum + p
+</code></pre>
+<p>各ステップで出た予測 <code>y</code> を、そのステップの「停止確率 <code>p</code>」で重み付けして累積していきます。最終的な出力は、すべてのステップの予測の<strong>重み付き平均</strong>になります。
+早く止まれば初期ステップの出力が支配的になり、長く考えれば後期ステップの出力が反映されることになります。</p>
+<h3 id="-ponder-cost計算コストペナルティ">④ Ponder Cost（計算コストペナルティ）</h3>
+<pre><code class="language-python">loss = F.binary_cross_entropy(y, t) + tau * rho.mean()
+</code></pre>
+<p>損失関数に「ステップ数 <code>rho</code> に比例するペナルティ項」を加えています。<code>tau</code> が大きいほど「長く考えること」が強く抑制されます。
+初めに考察にペナルティが強いと、考えないモデルになってしまいます。
+適度に調整をするようにするため <code>tau</code> を 0 から徐々に増やす「ウォームアップ」を採用し、<strong>先に正解の仕方を覚えてから、効率化を学ばせる</strong>ようにします。</p>
+<h3 id="act-の効果検証の工夫点">ACT の効果検証の工夫点</h3>
+<p>今回検証ではACTのに以下の工夫を盛り込み、<strong>「学習が立ち上がらない」という ACT の有名な難題を克服できるか</strong>を検証しています。</p>
+<p><strong>検証項目①：カリキュラム学習の効果</strong></p>
+<ul>
+<li>最初から難しい問題（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> が大きい）を解こうとすると、ACT は「いつ止まればいいか」を学習できずに失敗しやすいです。</li>
+<li>そこで、<strong>まず <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> が小さい簡単な問題（<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">k_{max}=2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ma</span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span>）だけを解かせ、精度が上がったら少しずつ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> を増やす</strong>「カリキュラム学習」を導入しています。</li>
+<li><strong>検証のポイント</strong>：段階的に難易度を上げることで、 halt（停止）機構と parity 分類器を同時に学習できるか。</li>
+</ul>
+<p><strong>検証項目②：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi></mrow><annotation encoding="application/x-tex">\tau</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span>（ポンダーコスト）のウォームアップの効果</strong></p>
+<ul>
+<li>ACT には「計算ステップが多いほどペナルティを与える」<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi></mrow><annotation encoding="application/x-tex">\tau</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span> という係数があります。これが最初から大きいと、モデルは「早く止まることだけ」を学習して精度を犠牲にします。</li>
+<li>コードでは、<strong>最初は <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\tau=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>（ペナルティなし）で十分に学習させ、その後 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi></mrow><annotation encoding="application/x-tex">\tau</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span> をゆっくり上げて「効率的に止まること」を後から学習させます</strong>。</li>
+<li><strong>検証のポイント</strong>：「先に正解の仕方を覚え、その後で効率化する」という学習順序が機能するか。</li>
+</ul>
+<p><strong>検証項目③：停止バイアスの効果</strong></p>
+<ul>
+<li>halt（停止）判定を行うネットワークの初期バイアスを <strong>-2.0</strong> に設定しています。これにより、<strong>最初は「まだ止まらない（もっと計算する）」方向に偏らせます</strong>。</li>
+<li><strong>検証のポイント</strong>：初期の halt 確率を低く抑えることで、学習初期に勾配が流れやすくなり、 halt 機構が育つか。</li>
+</ul>
+<p><strong>検証項目④：GRU の採用効果</strong></p>
+<ul>
+<li>状態更新に GRUCell を使っています。これは LSTM より軽量で、 halt 判定と出力生成を同じ隠れ状態で行う際に、学習が安定しやすいと期待されています。</li>
+<li><strong>検証のポイント</strong>：単純な再帰構造でも、 halt と推論を同時に学習できるか。</li>
+</ul>
+<p><strong>検証項目⑤：固定ステップ版との比較（Sanity Check）</strong></p>
+<ul>
+<li>まず「固定で8ステップ計算するモデル」で学習できるかを確認します。</li>
+<li><strong>検証のポイント</strong>：もし固定ステップでも学習できないなら、「ACT の問題」ではなく「タスク自体が難しすぎる」か「モデル/最適化の設定が悪い」ことが分かります。</li>
+</ul>
+<p><strong>検証項目⑥：「難しい問題ほど長く考える」動的制御の獲得</strong></p>
+<ul>
+<li>学習後、<code>report_by_k</code> によって <strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>（非ゼロ要素数）の大きさ別</strong> に精度と平均 ponder（実際の計算ステップ数）を集計しています。</li>
+<li><strong>検証のポイント</strong>：
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> が小さいサンプルでは、早く止まっているか（無駄な計算をしていないか）</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> が大きいサンプルでは、しっかり計算ステップを増やしているか</li>
+<li>つまり、**「問題の複雑さに応じた賢い計算量の使い分け」**ができているか。</li>
+</ul>
+</li>
+</ul>
+<p><strong>検証項目⑦：最大ステップ到達率（hit-M）の健全性</strong></p>
+<ul>
+<li>モデルが「止まり方を学習できていない」と、常に最大ステップ数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span> まで計算し続けてしまいます。</li>
+<li><code>hit-M</code>（最大ステップに到達する割合）を監視することで、halt 機構が暴走・停止不全になっていないかを確認します。</li>
+<li><strong>検証のポイント</strong>：適切なタイミングで止まる「自律的な制御」が獲得できているか。</li>
+</ul>
+<h2 id="学習">学習</h2>
+<h3 id="実装コード">実装コード</h3>
+<p>以下レポジトリに今回実験のコードを保管しています。</p>
+<p><a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/selective_layer/adaptive_computation_time/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/selective_layer/adaptive_computation_time/src</a></p>
+<p>学習はPhase AとPhase Bを分けています。</p>
+<p>Phase A:</p>
+<p>モデルが今回の問題に対して十分に考えられる状態になるまで学習を行います。</p>
+<p>Phase B:</p>
+<p>モデルの熟考の考えの長さに対してペナルティを与えるようにしていきます。
+→正答率を保つ最適な打ち切り時間を少しづつ学んでいくようにしていきました。</p>
+<h3 id="学習結果">学習結果</h3>
+<p>フェーズAの学習結果です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\adaptive_computation_time\doc\image\experiment\1792810314444.png" alt="1792810314444"></p>
+<p>上段: 各イテレーションでの検証精度。色は k_max を示し、カリキュラムが段階的に進行する様子が可視化されています。緑の破線は Phase A の終了目標 (0.985)、オレンジの点線はカリキュラム閾値 (0.93) です。
+中段: 平均 ponder（計算ステップ数）。赤の破線は最大ステップ数 M=32 です。
+下段: hit-M（最大ステップ到達率）。Phase A では初期に高くなりますが、後半に低下する様子が確認できます。</p>
+<p>フェーズBの学習結果です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\adaptive_computation_time\doc\image\experiment\1792810344795.png" alt="1792810344795"></p>
+<p>上段: 精度の推移。tau の自動制御によって精度を維持しながらステップ数を圧縮しています。
+2段目: ponder の推移。Phase B の開始直後に 11.82 から 6.04 へ急減し、その後も 5〜6 ステップで安定しています。
+3段目: tau の対数スケール推移。精度が高いと tau を上げ、低いと下げるフィードバック制御の振動が確認できます。
+下段: Spearman 相関係数。負の値のまま推移しており、「難しい問題ほど短く考える」傾向が改善されていないことが示されています。</p>
+<h3 id="結果">結果</h3>
+<p>半分成功で、半分は期待と逆です。ACT で狙う「難しい入力ほど長く考える」は実験結果からは成立していません。</p>
+<p><strong>うまくいった点</strong></p>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>第3版</th>
+<th>今回</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>精度</td>
+<td>0.970</td>
+<td><strong>0.993</strong></td>
+</tr>
+<tr>
+<td>平均ポンダー</td>
+<td>24.7</td>
+<td><strong>5.1</strong></td>
+</tr>
+<tr>
+<td>上限到達率</td>
+<td>62.8%</td>
+<td><strong>0%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>計算量は約 5 分の 1 になり、精度はACTの導入に比べてむしろ上がり、上限による打ち切りがなくなりました。</p>
+<p><strong>うまくいっていない点</strong></p>
+<p>k=1 で約 6.0 ステップ、k=16 で約 3.6 ステップと、難しい入力ほど早く止まっています。さらに、最も早く止まる k=15,16 で精度が落ちています（0.968、0.923）。これは「考える時間を削ったから間違えた」と読めるので、適応としては逆向きです。</p>
+<h3 id="考察">考察</h3>
+<ol>
+<li>
+<p><strong>このタスクは、この容量では k に応じた深さを必要としない可能性があります。</strong> 隠れ 256 の GRU なら、+1 の個数を数えて偶奇を出す処理を 2〜3 ステップで並列に実行できます。k が増えても必要なステップ数はほとんど増えません。論文のように ponder が k とともに増えるのは、容量が小さく、直列に処理せざるを得ない設定だからかもしれません。</p>
+</li>
+<li>
+<p><strong>τ の制御目標が全体平均の精度なので、難所が犠牲になっています。</strong> k=15,16 は全データの 1/8 しかなく、そこを落としても平均精度は 0.99 近くを保てます。コントローラが「平均 0.98 以上なら τ を上げる」ので、難所の精度を犠牲にして、全体のステップ数を削る方向に圧力がかかります。</p>
+</li>
+<li>
+<p><strong>固定ステップとの比較がまだありません。</strong> 6 ステップ固定でも精度 0.99 に達するなら、ACT の利点は示せていません。ACT が有効だと言うには、平均 5.1 ステップの ACT が、同じ平均ステップの固定モデルより良いことを示す必要があります。</p>
+</li>
+</ol>
+<h2 id="総括">総括</h2>
+<p>ACT を用いた Parity 問題実験の結果を簡潔にまとめると以下の通りです。</p>
+<ul>
+<li><strong>計算効率は大幅に改善</strong>：平均 ponder を約 25 ステップから <strong>5.1 ステップ</strong> に削減しつつ、全体精度 <strong>99.3%</strong> を達成。最大ステップ到達率も 0% となり、無駄な計算がなくなりました。</li>
+<li><strong>しかし「難易度適応」は逆方向</strong>：ACT の目標である「難しい問題ほど長く考える」動的制御は成立せず、<strong>難しい問題（k が大きい）ほど早く止まる</strong>傾向が観測されました（Spearman = -0.67）。</li>
+<li><strong>難所の精度が犠牲に</strong>：k = 15〜16 の最難領域で精度が低下（92.3〜96.8%）しており、τ の自動制御が全体平均精度を優先するあまり、少数派の難しいサンプルを切り捨てる方向に働いています。</li>
+<li><strong>原因の仮説</strong>：GRU（隠れ次元 256）の容量が大きく、並列に処理できたため「k に応じた深さ」が不要だった可能性、および固定ステップとの優位性比較が未完了であることが指摘されています。</li>
+</ul>
+<p>計算コストの削減には成功したが、難易度に応じた賢い計算量の使い分けは実現できなかったという結果になりました。
+原因考察すれば改善は出来そうですが、一つ、計算コスト削減の選択肢に出来そうということが確認出来ました。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/8vCFnSNz0E4?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
