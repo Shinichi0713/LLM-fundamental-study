@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日より話していた<a href="https://yoshishinnze.hatenablog.com/entry/2026/12/06/043000">ニューラルネットワークのレイヤ選択機能</a>に関して、現在でも応用されている手法であるLayerSkipについて解説していきます。</p>
+<p>本手法はMetaのAIチーム FAIR が開発を行い、ACL 2024で採択された論文です。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="論文概要">論文概要</h2>
+<p>LayerSkipは、Meta（FAIR）の研究チームによる、<strong>LLMの推論を加速するためのエンドツーエンドな手法</strong>です。<a href="https://arxiv.org/abs/2404.16710">LayerSkip</a></p>
+<h3 id="論文明細">論文明細</h3>
+<p><strong>発表学会</strong></p>
+<ul>
+<li><strong>ACL 2024</strong>（第62回計算言語学協会年次大会）</li>
+<li>採択区分：Long Papers</li>
+<li>論文ID：<code>2024.acl-long.681</code></li>
+<li>掲載ページ：pp. 12622-12642</li>
+</ul>
+<p><strong>著者</strong></p>
+<ul>
+<li><strong>Mostafa Elhoushi</strong>（Meta FAIR, 共同第一著者）</li>
+<li><strong>Akshat Shrivastava</strong>（Meta FAIR, 共同第一著者）</li>
+<li>Diana Liskovich（Meta GenAI）</li>
+<li>Basil Hosmer（Meta FAIR）</li>
+<li>Bram Wasti（Meta GenAI）</li>
+<li>Liangzhen Lai（Meta Reality Labs）</li>
+<li>Anas Mahmoud</li>
+<li>Bilge Acun（Meta FAIR）</li>
+<li>Saurabh Agarwal</li>
+<li>Ahmed Roman</li>
+<li>Ahmed A Aly</li>
+<li>Beidi Chen</li>
+<li>Carole-Jean Wu</li>
+</ul>
+<p><strong>arXiv情報</strong></p>
+<ul>
+<li><strong>arXiv:2404.16710</strong></li>
+<li>初回投稿：2024年4月25日</li>
+<li>最終版（v4）：2024年10月18日</li>
+</ul>
+<p><strong>オープンソース</strong></p>
+<ul>
+<li><strong>GitHub</strong>: <code>facebookresearch/LayerSkip</code></li>
+<li><strong>Hugging Face</strong>: <code>facebook/layerskip-llama</code>（学習済みモデル公開）</li>
+</ul>
+<h3 id="問題意識">問題意識</h3>
+<p>従来のTransformerは、すべての入力に対して<strong>すべてのレイヤーを順番に通過</strong>させます。しかし、簡単なクエリには深い計算が不要であり、難しいクエリにはより多くの計算が必要です。この「一律の計算」が推論の非効率の原因になっていました。</p>
+<h3 id="骨となる3つのアイデア">骨となる3つのアイデア</h3>
+<p>LayerSkipは、<strong>「学習時の工夫」と「推論時の工夫」を組み合わせる</strong>ことで、追加のモジュールなしに早期終了を実現します。</p>
+<p><strong>1. 学習時：レイヤードロップアウト + 早期終了損失</strong></p>
+<ul>
+<li>学習中に<strong>ランダムにレイヤーをドロップ</strong>させます</li>
+<li>重要な点は、<strong>浅い層のドロップ率を低く、深い層のドロップ率を高く</strong>設定すること</li>
+<li>さらに、<strong>すべてのTransformerレイヤーが同じ出口（exit）を共有</strong>する早期終了損失を追加</li>
+<li>これにより、モデルは「途中の浅い層の出力でも正解を出せるように」学習されます</li>
+</ul>
+<p><strong>2. 推論時：早期終了（Early Exit）</strong></p>
+<ul>
+<li>学習済みモデルに<strong>補助レイヤーや追加モジュールを一切加えず</strong>、浅い層で自信があればそこで出力</li>
+<li>通常の早期終了手法と異なり、LayerSkipは学習時のドロップアウトによって「浅い層でも使えるモデル」に育てているため、精度低下が少ない</li>
+</ul>
+<p><strong>3. 推論時：自己投機的デコーディング（Self-Speculative Decoding）</strong></p>
+<ul>
+<li>浅い層でドラフト（仮の出力）を生成し、残りの深い層で<strong>検証・訂正</strong>を行う</li>
+<li>他の投機的デコーディング手法と比べて、<strong>ドラフトモデルを別途用意する必要がない</strong>（同じモデルの浅い層と深い層を使う）</li>
+<li>メモリフットプリントが小さく、ドラフト生成と検証で計算と活性化を共有できる</li>
+</ul>
+<h3 id="実験結果">実験結果</h3>
+<p>Llama系モデル（様々なサイズ）で検証し、以下の加速を達成しています。</p>
+<table>
+<thead>
+<tr>
+<th>タスク</th>
+<th>加速率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要約（CNN/DM）</td>
+<td><strong>最大2.16倍</strong></td>
+</tr>
+<tr>
+<td>コード生成</td>
+<td><strong>1.82倍</strong></td>
+</tr>
+<tr>
+<td>意味解析（TOPv2）</td>
+<td><strong>2.0倍</strong></td>
+</tr>
+</tbody>
+</table>
+<p>学習パイプラインも多様で、<strong>スクラッチからの事前学習、継続事前学習、特定ドメインのファインチューニング、特定タスクのファインチューニング</strong>のすべてで有効性を確認しています。</p>
+<h3 id="なぜ重要か">なぜ重要か</h3>
+<p>LayerSkipの最大の特徴は、<strong>「モデル構造を変えず、追加モジュールも不要」</strong> で、学習時のドロップアウト戦略の変更だけで「浅い層でも使えるモデル」を育てられる点です。これにより、既存のLLM推論パイプラインに比較的容易に組み込める実用的な加速手法となっています。<a href="https://github.com/facebookresearch/LayerSkip">LayerSkip GitHub</a></p>
+<h2 id="解決したい課題">解決したい課題</h2>
+<p>LayerSkipが解決しようとしている課題は、<strong>「Transformerはすべての入力に対して一律で深い計算を行うため、推論が非効率になる」</strong> という点です。以下、2つの側面で整理します。</p>
+<h3 id="課題1一律計算による無駄">課題1：一律計算による無駄</h3>
+<p>通常のTransformerは、入力が簡単な問いかけであろうと複雑な推論が必要な問いであろうと、<strong>すべてのレイヤーを最後まで通過</strong>させます。</p>
+<ul>
+<li>簡単なクエリ（例：「こんにちは」の翻訳）には浅い層だけで十分</li>
+<li>難しいクエリ（例：数学の証明）には深い層が必要</li>
+</ul>
+<p>にも関わらず、両方に同じ計算量を使うため、<strong>簡単な入力に対して計算リソースが無駄</strong>になっています。</p>
+<h3 id="課題2従来の早期終了手法の限界">課題2：従来の早期終了手法の限界</h3>
+<p>「浅い層で自信があればそこで出力する」という早期終了（Early Exit）は以前から研究されていましたが、以下の問題がありました。</p>
+<ul>
+<li><strong>浅い層の精度が低い</strong>：通常の学習では、浅い層は「深い層への前処理」としてしか育っていないため、途中で出力しても精度が大きく低下する</li>
+<li><strong>追加モジュールが必要</strong>：精度を保つために補助レイヤーや分岐構造を追加すると、モデルが複雑化し、メモリ・実装コストが増える</li>
+<li><strong>推論パイプラインの改修</strong>：既存のLLM推論インフラに組み込みにくい</li>
+</ul>
+<h2 id="提案手法">提案手法</h2>
+<p>LayerSkipの提案手法は、<strong>「学習時にモデルを浅い層でも使えるように育て、推論時に浅い層でドラフトを出して深い層で訂正する」</strong> という2段階の構成です。</p>
+<h3 id="1-学習時の工夫浅い層でも使えるモデルを育てる">1. 学習時の工夫：浅い層でも使えるモデルを育てる</h3>
+<p>通常のTransformerは、浅い層が「深い層への前処理」としてしか学習されないため、途中で出力しても精度が悪くなります。LayerSkipは以下の2つの技術でこれを解消します。</p>
+<p><strong>① レイヤードロップアウト（Layer Dropout）</strong></p>
+<p>学習中にランダムにレイヤーを「飛ばす（ドロップ）」ことで、モデルに「途中の層でも正解を出せ」と強制します。</p>
+<ul>
+<li><strong>浅い層</strong>：ドロップ率を<strong>低く</strong>設定（重要なので残す）</li>
+<li><strong>深い層</strong>：ドロップ率を<strong>高く</strong>設定（浅い層だけで済む場面を学習させる）</li>
+</ul>
+<p>これにより、浅い層だけでもある程度の出力能力を持つようになります。</p>
+<p><strong>② 早期終了損失（Early Exit Loss）</strong></p>
+<p>すべてのTransformerレイヤーに<strong>同じ出口（exit）を共有させる</strong>損失を追加します。</p>
+<ul>
+<li>通常は最終層の出力だけで損失を計算</li>
+<li>LayerSkipでは、途中の各層の出力も最終層と同じ基準で評価</li>
+<li>結果として、<strong>どの層から出ても同じ品質の出力が期待できる</strong>モデルに育つ</li>
+</ul>
+<p><strong>ポイント</strong>：補助レイヤーや追加モジュールは一切不要。既存のTransformer構造のまま、学習方法だけを変える。</p>
+<h3 id="2-推論時の工夫速くて正確な出力">2. 推論時の工夫：速くて正確な出力</h3>
+<p>学習済みモデルは「浅い層でもそれなりに正解を出せる」ようになっているので、推論時に以下の2つの戦略を使います。</p>
+<p><strong>① 早期終了（Early Exit）</strong></p>
+<p>入力が簡単な場合、浅い層で自信があればそこで即座に出力します。</p>
+<ul>
+<li>追加のモジュールや分岐構造は不要</li>
+<li>通常のTransformer推論パイプラインにそのまま組み込める</li>
+</ul>
+<p><strong>② 自己投機的デコーディング（Self-Speculative Decoding）</strong></p>
+<p>これがLayerSkipの最大の特徴です。</p>
+<p>自己投機的デコーディングとは、同じ1つのモデルで「仮の出力（ドラフト）」と「本番の検証・訂正」の両方を行う推論加速手法です。
+通常の投機的デコーディングでは、小さなドラフトモデルと大きな本モデルの2つのモデルが必要でしたが、LayerSkipでは以下のように動作します。</p>
+<ul>
+<li>浅い層だけでドラフトを生成：モデルの前半の層だけを通して、仮のトークン列を素早く生成</li>
+<li>残りの深い層で検証・訂正：同じモデルの後半の層を使って、ドラフトが正しいか確認し、間違いがあれば修正</li>
+</ul>
+<p>浅い層で出したドラフトは確かに速いですが、表現力不足となり、不適と考えられるトークンを含む可能性があります。
+精度はやはり深い層の方が良いわけです。
+そこで、深い層がドラフトを検証して、修正すべき点を上書きするという仕組みをとります。
+投機的デコーディングの基本思想は「仮の出力を素早く出し、本番で確認する」であり、検証なしには速さと精度の両立が成立しません。</p>
+<p>なぜ「自己」なのか： ドラフト生成も検証も同じモデルの中で完結するためです。別のモデルを用意する必要がなく、メモリ増加がゼロです。</p>
+<p>なぜ速いのか： ドラフトは浅い層だけで生成できるので計算量が少なく、かつドラフト生成時の中間活性化を検証時にそのまま再利用できるため、無駄な計算がありません。</p>
+<pre><code>【通常の投機的デコーディング】
+小さなドラフトモデル → 大きな本モデルで検証・訂正
+（別のモデルが必要でメモリが2倍）
+
+【LayerSkipの自己投機的デコーディング】
+同じモデルの浅い層でドラフト → 同じモデルの残りの深い層で検証・訂正
+（モデルは1つだけ。メモリ増加なし）
+</code></pre>
+<p><strong>なぜ「自己」なのか：</strong></p>
+<ul>
+<li>ドラフト生成と検証が<strong>同じモデル</strong>の中で完結</li>
+<li>浅い層の活性化を深い層の検証にそのまま再利用できる</li>
+<li>他の投機的デコーディング手法と比べて<strong>メモリフットプリントが大幅に小さい</strong></li>
+</ul>
+<h3 id="まとめlayerskipの提案手法の全体像">まとめ：LayerSkipの提案手法の全体像</h3>
+<pre><code>【学習時】
+通常のTransformer + レイヤードロップアウト（浅い層は残す、深い層は飛ばす）
+                    + 早期終了損失（すべての層が同じ出口を共有）
+                    ↓
+         「浅い層でも使えるモデル」が育つ
+
+【推論時】
+入力 → 浅い層でドラフト生成 → 残りの深い層で検証・訂正 → 出力
+       （簡単ならここで早期終了）
+                    ↓
+         精度を保ちながら最大2倍以上の加速
+</code></pre>
+<p><strong>本質的には、「浅い層と深い層を同じモデルの中で使い分ける」ことで、計算の無駄を省きつつ精度を維持する</strong>手法です。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\layer_skip\image\readme\1793408001864.png" alt="1793408001864"></p>
+<h2 id="実験">実験</h2>
+<p>LayerSkip論文で行われた実験とその結果は以下の通りです。</p>
+<h3 id="実験設定">実験設定</h3>
+<p><strong>使用モデル：</strong> Llama系モデル（複数のサイズ）</p>
+<p><strong>学習パイプラインの多様性：</strong> 以下4つの異なる学習シナリオすべてで有効性を検証しています。</p>
+<ol>
+<li>スクラッチからの事前学習</li>
+<li>継続事前学習</li>
+<li>特定データドメインへのファインチューニング</li>
+<li>特定タスクへのファインチューニング</li>
+</ol>
+<p><strong>評価タスク：</strong></p>
+<ul>
+<li>要約（CNN/DM）</li>
+<li>コード生成</li>
+<li>意味解析（TOPv2）</li>
+</ul>
+<h3 id="実験結果-1">実験結果</h3>
+<p><strong>1. 推論加速の達成</strong></p>
+<table>
+<thead>
+<tr>
+<th>タスク</th>
+<th>加速率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CNN/DM要約</td>
+<td><strong>最大2.16倍</strong></td>
+</tr>
+<tr>
+<td>コード生成</td>
+<td><strong>1.82倍</strong></td>
+</tr>
+<tr>
+<td>TOPv2意味解析</td>
+<td><strong>2.0倍</strong></td>
+</tr>
+</tbody>
+</table>
+<p>加速範囲はタスクによって<strong>1.34倍〜2.16倍</strong>でした。</p>
+<p><strong>2. 早期終了精度の向上</strong></p>
+<p>通常のLlama 7Bでは、各トークンの予測に平均<strong>23.45層</strong>（全32層中）が必要であり、完璧な予測器があっても計算量を**最大26%**しか節約できませんでした。LayerSkipの学習レシピ（レイヤードロップアウト＋早期終了損失）を適用することで、<strong>浅い層での早期終了精度が大幅に向上</strong>し、実際に少ない層数で高品質な出力が得られるようになりました。</p>
+<p><strong>3. 自己投機的デコーディングの有効性</strong></p>
+<p>他の投機的デコーディング手法と比較して、以下の利点が確認されました。</p>
+<ul>
+<li><strong>メモリフットプリントが小さい</strong>：ドラフトモデルを別途用意する必要がなく、同じモデル内で完結</li>
+<li><strong>計算と活性化の共有</strong>：ドラフト生成時の中間活性化を検証時にそのまま再利用できる</li>
+<li><strong>精度低下なし</strong>：深い層での検証・訂正により、フルモデルと同等の出力品質を維持</li>
+</ul>
+<p><strong>4. モデル構造の変更なし</strong></p>
+<p>すべての実験で、<strong>補助レイヤーや追加モジュールを一切加えていない</strong>既存のTransformer構造のまま、学習方法の変更だけで上記の成果を達成しています。これがLayerSkipの実用的な強みです。<a href="https://arxiv.org/abs/2404.16710">LayerSkip</a></p>
+<h2 id="総括">総括</h2>
+<p>LayerSkipの本質的な価値は以下の3点です。</p>
+<p><strong>1. 構造変更なしで「動的深度」を実現した実用性</strong>
+追加モジュールや補助レイヤーを一切加えず、既存のTransformerに学習方法の変更だけを適用することで、推論時に浅い層で早期終了したり、自己投機的デコーディングで加速したりできる点です。既存の推論インフラに組み込みやすいという実用上の価値が大きいです。</p>
+<p><strong>2. 「浅い層も使えるモデル」を育てる学習設計</strong>
+通常のTransformerは浅い層が「深い層への前処理」にしかなりませんが、レイヤードロップアウト（浅い層は残し、深い層を飛ばす）と早期終了損失（全層が同じ出口を共有）により、<strong>浅い層だけでも正解を出せるモデル</strong>を育てました。これは「深度を入力の難易度に応じて動的に割り当てる」という発想の転換です。</p>
+<p><strong>3. 精度を保ったままの大幅な推論加速</strong>
+自己投機的デコーディングにより、同じモデルの浅い層でドラフトを生成し深い層で検証・訂正することで、<strong>メモリ増加ゼロ</strong>で最大2.16倍の推論加速を達成。精度低下なしに計算の無駄を省くという、効率性と品質の両立を実現しました。</p>
+
+            
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/8vCFnSNz0E4?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
