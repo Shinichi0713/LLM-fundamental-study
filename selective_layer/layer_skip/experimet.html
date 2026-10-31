@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日説明したLLMの出力を浅いレイヤでも出来るように制御する手法である<a href="https://yoshishinnze.hatenablog.com/entry/2026/12/18">LayerSkip</a>。
+問題に応じて浅いレイヤと深いレイヤを使い分けを行うことが出来るようになるとされています。</p>
+<p>実際にどの程度精度を維持して、早期出力が可能か確認してみたいと思います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="実験">実験</h2>
+<p>今回実験する内容について説明していきます。</p>
+<h3 id="1-実験の意味なぜこの実験をするのか">1. 実験の意味：なぜこの実験をするのか</h3>
+<p>現在のLLM（ChatGPTなどの裏で動くモデル）は、文章を1文字（1トークン）作るたびに、<strong>数十層ものTransformerレイヤーを全部通します</strong>。これは、簡単な「こんにちは」の返事を作るときも、複雑な数学の証明をするときも、同じです。</p>
+<p>しかし、<strong>簡単な文章には深い計算は不要</strong>です。毎回全部の層を通すのは、電気代も時間も無駄になっています。</p>
+<p>LayerSkipという研究は、<strong>簡単な入力には浅い層だけで済ませ、難しい入力だけ深い層まで使う</strong> ことで、速くて正確な推論を目指しています。この実験は、そのLayerSkipの仕組みが<strong>本当に「浅い層でも正確に答えられるモデル」を作れるのか</strong>を、小さなモデルで実際に学習させて検証するものです。</p>
+<h3 id="2-解く問題この実験で何をするのか">2. 解く問題：この実験で何をするのか</h3>
+<p>実験では、以下の3つのステップでLayerSkipの効果を確かめます。</p>
+<p><strong>ステップ1：学習前の「各層で止めたらどうなるか」を測る</strong></p>
+<p>通常のモデルでは、途中の層（例：全24層のうち8層目）で計算を止めて出力させると、精度が大きく低下します。まずこの <strong>「途中で止めた場合の性能（<a href="https://zenn.dev/yoshinn/articles/what_perplexity_is">perplexity</a>）」をベースラインとして記録</strong>します。</p>
+<p><strong>ステップ2：LayerSkipの学習レシピを適用する</strong></p>
+<p>以下の2つの手法を用いてモデルを再学習します。</p>
+<ul>
+<li><strong>レイヤードロップアウト</strong>：学習中にランダムに深い層を飛ばし、「浅い層だけで正解を出せ」と強制する</li>
+<li><strong>早期終了損失</strong>：すべての層の出力を同じ基準で評価し、どの層から出ても同じ品質を目指す</li>
+</ul>
+<p><strong>ステップ3：学習後に再び「各層で止めたらどうなるか」を測る</strong></p>
+<p>学習後、再び同じように途中の層で止めて性能を測り、<strong>浅い層での精度が改善したか</strong>を比較します。さらに、浅い層で仮の出力（ドラフト）を作り、深い層で確認・訂正する<strong>自己投機的デコーディング</strong>も試します。</p>
+<h3 id="3-期待される効果実験で確認したいこと">3. 期待される効果：実験で確認したいこと</h3>
+<p>この実験で確認したいのは、以下の3つです。</p>
+<table>
+<thead>
+<tr>
+<th>確認したいこと</th>
+<th>期待される結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>浅い層でも正確に答えられるようになるか</strong></td>
+<td>学習後、途中の層で止めた場合のperplexityが学習前より大幅に改善している</td>
+</tr>
+<tr>
+<td><strong>推論を速くできるか</strong></td>
+<td>浅い層だけで早期終了できるため、計算量が減り、推論時間が短縮される</td>
+</tr>
+<tr>
+<td><strong>精度を保ったまま速くできるか</strong></td>
+<td>自己投機的デコーディングで、浅い層のドラフトを深い層が訂正することで、フルモデルと同等の品質を維持したまま加速できる</td>
+</tr>
+</tbody>
+</table>
+<p>つまり、この実験の目的は <strong>「LayerSkipの学習レシピを実際に回して、『浅い層でも使えるモデル』が本当に作れるのか」を数値で確認する</strong>ことです。小さなモデルで成功すれば、大きなモデル（Llamaなど）でも同じ原理が使えるという証拠になります。</p>
+<h3 id="4-実施内容">4. 実施内容</h3>
+<p>実験はいつものGoogle Colabで実施します。
+そのため、<strong>小型の本物のLLM</strong>を使い、<strong>実際のテキストデータ</strong>でLayerSkipの学習を行います。以下にモデル・データ・実験方法を順に説明します。</p>
+<p><strong>1. 使用モデル：Qwen/Qwen2.5-0.5B</strong></p>
+<p>実験に使うのは、Alibabaが開発した <strong>Qwen2.5-0.5B</strong> という小型の言語モデルです。</p>
+<ul>
+<li><strong>パラメータ数</strong>：約5億（0.5B = 5億パラメータ）</li>
+<li><strong>層数</strong>：24層のTransformerデコーダ</li>
+<li><strong>選んだ理由</strong>：本物のLLM構造を持ちながら、Google Colabの無料GPU（T4）でも動かせるサイズ</li>
+</ul>
+<p>LayerSkipでは、何も学習していないモデルでは浅いレイヤはほとんど機能しません。そのため、ある程度学習済みのモデルであることが求められます。
+今回選んだモデルは、すでに大量のテキストで事前学習済みです。
+実験では、この学習済みモデルに対して <strong>LayerSkipの学習レシピ（レイヤードロップアウト + 早期終了損失）を「継続学習」として追加</strong>します。</p>
+<p><strong>2. 学習データ：WikiText-2</strong></p>
+<p>学習データには、<strong>Salesforce/wikitext の wikitext-2-raw-v1</strong> を使用します。</p>
+<ul>
+<li><strong>内容</strong>：Wikipediaの記事から作られた英語のテキストコーパス</li>
+<li><strong>特徴</strong>：比較的きれいな文章で、言語モデルの学習・評価の標準的なベンチマークとして広く使われている</li>
+<li><strong>使い方</strong>：文章をトークン（数字）に変換し、256トークンずつの塊に区切って学習</li>
+</ul>
+<p>つまり、モデルは「次に来る単語を予測する」という言語モデリングのタスクを、実際のWikipedia文章で学習します。</p>
+<p><strong>3. 実験の方法：4ステップでLayerSkipの効果を検証</strong></p>
+<p>実験は以下の4ステップで進みます。</p>
+<p><strong>ステップ1：学習前のベースライン測定</strong></p>
+<p>まず、<strong>LayerSkipの学習を一切行わない状態</strong>で、各Transformer層の途中で止めた場合の性能を測ります。</p>
+<ul>
+<li>例えば「4層目で止める」「8層目で止める」「12層目で止める」...「24層目（最終層）で止める」というように、複数の層で計算を中断</li>
+<li>各層の出力をそのままLM Headに通し、次のトークン予測の精度（perplexity）を計算</li>
+<li><strong>期待される結果</strong>：浅い層（4層・8層など）で止めると、perplexityが大きく悪化する（＝途中で止めると精度が落ちる）</li>
+</ul>
+<p><strong>ステップ2：LayerSkipの学習</strong></p>
+<p>事前学習済みモデルに対して、LayerSkipの2つの工夫を適用した継続学習を行います。</p>
+<ul>
+<li><strong>レイヤードロップアウト</strong>：学習中に、深い層を確率的に飛ばす。浅い層は残しやすく、深い層ほど飛ばしやすく設定</li>
+<li><strong>早期終了損失</strong>：24層すべての中間出力を、同じ最終LayerNormとLM Headで評価し、すべての層で「次のトークン予測の損失」を計算して合計に加える</li>
+</ul>
+<p>学習パラメータの例：</p>
+<ul>
+<li>バッチサイズ：2（累積勾配で実質16）</li>
+<li>学習ステップ：300ステップ</li>
+<li>学習率：2e-5</li>
+<li>混合精度：fp16（T4対応）またはbf16</li>
+</ul>
+<p><strong>ステップ3：学習後の性能比較</strong></p>
+<p>学習後に、再び「各層で止めた場合のperplexity」を測ります。</p>
+<ul>
+<li><strong>確認したいこと</strong>：学習後の方が、浅い層（4層・8層・12層など）で止めたときのperplexityが改善しているか</li>
+<li><strong>意味</strong>：LayerSkipの学習によって「浅い層でも正確に次の単語を予測できるようになった」ことを示す</li>
+</ul>
+<p><strong>ステップ4：Self-Speculative Decodingの検証</strong></p>
+<p>最後に、推論時の加速手法を試します。</p>
+<ul>
+<li><strong>早期終了推論</strong>：各トークン生成時に、モデルが自信を持てば途中の層で即座に出力</li>
+<li><strong>自己投機的デコーディング</strong>：浅い層（例：12層）だけで仮の出力（ドラフト）を作り、残りの深い層（13〜24層）で確認・訂正</li>
+<li><strong>確認項目</strong>：出力の品質（フルモデルと一致するか）と推論速度の短縮率</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>実装は、<strong>既存のHuggingFace Transformersモデル（Qwen2.5）のforwardメソッドを「差し替え（monkey-patching）」することで、LayerSkipの学習レシピを追加</strong>しています。
+外部ライブラリの改造なしに、Pythonの動的なメソッド差し替えで実現しています。</p>
+<p>以下、3つのコアとなる実装を順に説明します。</p>
+<h3 id="1-layerdropout学習時に層を確率的にスキップ">1. LayerDropout：学習時に層を確率的にスキップ</h3>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LayerDropout</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, layers, ret_tuple</span>):
+        self.orig = [l.forward <span class="hljs-keyword">for</span> l <span class="hljs-keyword">in</span> layers]  <span class="hljs-comment"># 元のforwardを保存</span>
+        <span class="hljs-keyword">for</span> i, layer <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(layers):
+            layer.forward = self._make(i, layer, self.orig[i])  <span class="hljs-comment"># 差し替え</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">prob</span>(<span class="hljs-params">self, i</span>):
+        <span class="hljs-keyword">return</span> self.p_max * i / (<span class="hljs-built_in">len</span>(self.layers) - <span class="hljs-number">1</span>)  <span class="hljs-comment"># 層が深いほど高確率</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_make</span>(<span class="hljs-params">self, i, layer, orig</span>):
+        <span class="hljs-keyword">def</span> <span class="hljs-title function_">fwd</span>(<span class="hljs-params">*args, **kwargs</span>):
+            <span class="hljs-keyword">if</span> layer.training <span class="hljs-keyword">and</span> random.random() &lt; self.prob(i):
+                hs = args[<span class="hljs-number">0</span>]  <span class="hljs-comment"># 入力hidden_statesをそのまま返す（skip）</span>
+                <span class="hljs-keyword">return</span> (hs,) <span class="hljs-keyword">if</span> self.ret_tuple <span class="hljs-keyword">else</span> hs
+            <span class="hljs-keyword">return</span> orig(*args, **kwargs)  <span class="hljs-comment"># 通常通り層を通す</span>
+        <span class="hljs-keyword">return</span> fwd
+</code></pre>
+<p><strong>やっていること：</strong></p>
+<ul>
+<li>各Transformerデコーダ層の <code>forward</code> メソッドを、学習時に<strong>確率的に「入力をそのまま返す」関数に差し替える</strong></li>
+<li>層インデックス <code>i</code> が大きい（深い層）ほどスキップ確率が高くなる</li>
+<li>浅い層（i=0）はスキップ率0%、深い層（i=L-1）は <code>p_max</code> %</li>
+</ul>
+<p><strong>ポイント：</strong> モデルの構造を一切変えず、<strong>メソッドの差し替えだけ</strong>で実現しています。</p>
+<h3 id="2-layercapture中間層の出力を盗み取る">2. LayerCapture：中間層の出力を「盗み取る」</h3>
+<pre><code class="language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LayerCapture</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, layers, exit_layers</span>):
+        <span class="hljs-keyword">for</span> l <span class="hljs-keyword">in</span> exit_layers:
+            self.handles.append(layers[l - <span class="hljs-number">1</span>].register_forward_hook(self._hook(l)))
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_hook</span>(<span class="hljs-params">self, l</span>):
+        <span class="hljs-keyword">def</span> <span class="hljs-title function_">f</span>(<span class="hljs-params">m, i, o</span>):
+            self.buf[l] = _first(o)  <span class="hljs-comment"># 層lの出力hidden_statesを保存</span>
+        <span class="hljs-keyword">return</span> f
+</code></pre>
+<p><strong>やっていること：</strong></p>
+<ul>
+<li>PyTorchの <code>register_forward_hook</code> を使い、<strong>指定した層のforward通過後に出力を自動的に保存</strong></li>
+<li><code>transformers</code> のバージョンによって <code>output_hidden_states</code> の仕様が変わるため、<strong>hook方式を採用してバージョン非依存</strong>にしている</li>
+<li>例えば「4層通過後」「12層通過後」「24層通過後」のhidden_statesを取得できる</li>
+</ul>
+<h3 id="3-損失計算全層で同じlm-headを使ってlossを計算">3. 損失計算：全層で同じLM Headを使ってlossを計算</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">forward_loss</span>(<span class="hljs-params">ids, cap</span>):
+    cap.buf.clear()
+    out = model.model(input_ids=ids, use_cache=<span class="hljs-literal">False</span>)  <span class="hljs-comment"># 通常のforward</span>
+    parts, total = {}, <span class="hljs-number">0.0</span>
+    <span class="hljs-keyword">for</span> l, s <span class="hljs-keyword">in</span> EXIT_SCALES.items():
+        <span class="hljs-keyword">if</span> l == L:  <span class="hljs-comment"># 最終層</span>
+            h = out.last_hidden_state
+        <span class="hljs-keyword">else</span>:       <span class="hljs-comment"># 中間層</span>
+            h = model.model.norm(cap.buf[l])  <span class="hljs-comment"># 中間出力を最終LayerNormで正規化</span>
+        loss_l = ce(h, ids)  <span class="hljs-comment"># 同じLM Headで次トークン予測lossを計算</span>
+        total = total + s * loss_l  <span class="hljs-comment"># 層ごとに重みを掛けて合計</span>
+    <span class="hljs-keyword">return</span> total, parts
+</code></pre>
+<p><strong>やっていること：</strong></p>
+<ul>
+<li>最終層の出力だけでなく、<strong>指定した中間層（4層・12層・18層・24層など）の出力も取得</strong></li>
+<li>中間層の出力は <code>model.model.norm()</code>（最終LayerNorm）に通してから、<code>model.lm_head</code>（最終線形層）に通す</li>
+<li><strong>すべての層が「同じ出口（LM Head）」を共有</strong>するため、浅い層でも最終層と同じ基準で評価される</li>
+</ul>
+<p><strong>重み付け：</strong></p>
+<pre><code class="language-python">EXIT_SCALES = {l: (<span class="hljs-number">1.0</span> <span class="hljs-keyword">if</span> l == L <span class="hljs-keyword">else</span> E_SCALE * l / L) <span class="hljs-keyword">for</span> l <span class="hljs-keyword">in</span> EXIT_LAYERS}
+</code></pre>
+<ul>
+<li>最終層（L）のlossは重み1.0</li>
+<li>中間層のlossは <code>E_SCALE * (層番号 / 総層数)</code> で重み付け（浅い層ほど軽い）</li>
+</ul>
+<h3 id="4-学習ループ通常loss--早期終了lossを合計して逆伝播">4. 学習ループ：通常loss + 早期終了lossを合計して逆伝播</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">train_step</span>(<span class="hljs-params">ids</span>):
+    <span class="hljs-keyword">with</span> torch.autocast(<span class="hljs-string">&quot;cuda&quot;</span>, dtype=AMP_DTYPE):
+        loss, parts = forward_loss(ids, cap)  <span class="hljs-comment"># LayerSkip損失を計算</span>
+    scaler.scale(loss).backward()           <span class="hljs-comment"># 混合精度で逆伝播</span>
+    scaler.step(opt)
+    scaler.update()
+</code></pre>
+<p><strong>やっていること：</strong></p>
+<ul>
+<li>通常の言語モデリング損失（最終層のcross entropy）に、<strong>各中間層の早期終了損失を加算</strong>したものを1つのlossとして逆伝播</li>
+<li>混合精度（fp16/bf16）とGradScalerを使い、GPUメモリを節約しながら学習</li>
+</ul>
+<h3 id="5-推論時自己投機的デコーディング">5. 推論時：自己投機的デコーディング</h3>
+<pre><code class="language-python"><span class="hljs-comment"># transformersのassistant_early_exit引数を使う</span>
+out, tps = bench(assistant_early_exit=k)  <span class="hljs-comment"># k層でドラフト生成</span>
+</code></pre>
+<p><strong>やっていること：</strong></p>
+<ul>
+<li>HuggingFace Transformersの <strong><code>assistant_early_exit</code> 引数</strong>を利用</li>
+<li>この引数に層数 <code>k</code> を指定すると、<strong>浅いk層だけでドラフトを生成し、残りの深い層で検証・訂正</strong>する自己投機的デコーディングが自動的に実行される</li>
+<li>ドラフトモデルを別途用意する必要がなく、<strong>同じモデルの浅い層と深い層を使う</strong>ためメモリ増加ゼロ</li>
+</ul>
+<h3 id="一言">一言</h3>
+<table>
+<thead>
+<tr>
+<th>実装要素</th>
+<th>手法</th>
+<th>ポイント</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LayerDropout</strong></td>
+<td><code>forward</code>メソッドの差し替え</td>
+<td>構造変更なしで層スキップを実現</td>
+</tr>
+<tr>
+<td><strong>LayerCapture</strong></td>
+<td><code>register_forward_hook</code></td>
+<td>バージョン非依存で中間出力を取得</td>
+</tr>
+<tr>
+<td><strong>早期終了損失</strong></td>
+<td>全層を同じLM Headで評価</td>
+<td>浅い層でも最終層と同じ基準で学習</td>
+</tr>
+<tr>
+<td><strong>学習</strong></td>
+<td>通常loss + 重み付き早期終了loss</td>
+<td>1つのlossとして逆伝播</td>
+</tr>
+<tr>
+<td><strong>推論</strong></td>
+<td><code>assistant_early_exit</code>引数</td>
+<td>transformers標準機能で自己投機的デコーディング</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本質的には、「既存のモデルを改造せず、Pythonの動的なメソッド差し替えとhookでLayerSkipの学習レシピを注入している」</strong> という実装です。これにより、どのHuggingFaceモデルにも比較的容易に適用できます。</p>
+<h2 id="実験結果">実験結果</h2>
+<p>今回実験について示していきます。</p>
+<h3 id="1-学習前のベースライン浅い層はほぼランダム">1. 学習前のベースライン：浅い層は「ほぼランダム」</h3>
+<p>学習前に各層で途中終了した場合のperplexityは以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>Perplexity（学習前）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L4</td>
+<td>17,376,926</td>
+</tr>
+<tr>
+<td>L8</td>
+<td>2,724,125</td>
+</tr>
+<tr>
+<td>L12</td>
+<td>2,037,347</td>
+</tr>
+<tr>
+<td>L16</td>
+<td>224,691</td>
+</tr>
+<tr>
+<td>L20</td>
+<td>2,115</td>
+</tr>
+<tr>
+<td>L24（最終層）</td>
+<td>14.4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分析：</strong></p>
+<ul>
+<li>L4〜L16ではperplexityが<strong>数十万〜数千万</strong>という異常な値になっています。これは「次の単語をほぼランダムに予測している」状態です。</li>
+<li>言語モデルのperplexityは語彙サイズ（Qwen2.5では約15万トークン）に近い値を示すと「ランダム予測」とみなされます。17,376,926という値は、モデルが<strong>浅い層では全く意味のある表現を持っていない</strong>ことを示しています。</li>
+<li>L20（2115）でもまだ高く、L24（14.4）で初めて「使える精度」に達します。これは標準的なTransformerの性質で、<strong>深い層まで計算を進めないと質の高い予測ができない</strong>ことを示しています。</li>
+</ul>
+<p>この段階での状態はほぼ想定通り、学習前は解答を出せる状態ではないということになります。</p>
+<h3 id="2-layerskip学習後浅い層が劇的に改善">2. LayerSkip学習後：浅い層が劇的に改善</h3>
+<p>学習後のperplexityは以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>学習前</th>
+<th>学習後</th>
+<th>改善倍率</th>
+<th>改善率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L4</td>
+<td>17,376,926</td>
+<td>9,612</td>
+<td><strong>1,808倍</strong></td>
+<td>99.94%</td>
+</tr>
+<tr>
+<td>L8</td>
+<td>2,724,125</td>
+<td>849</td>
+<td><strong>3,211倍</strong></td>
+<td>99.97%</td>
+</tr>
+<tr>
+<td>L12</td>
+<td>2,037,347</td>
+<td>121</td>
+<td><strong>16,893倍</strong></td>
+<td>99.99%</td>
+</tr>
+<tr>
+<td>L16</td>
+<td>224,691</td>
+<td>130</td>
+<td><strong>1,723倍</strong></td>
+<td>99.94%</td>
+</tr>
+<tr>
+<td>L20</td>
+<td>2,115</td>
+<td>42</td>
+<td><strong>50倍</strong></td>
+<td>98.00%</td>
+</tr>
+<tr>
+<td>L24</td>
+<td>14.4</td>
+<td>11.9</td>
+<td><strong>1.2倍</strong></td>
+<td>17.36%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分析：</strong></p>
+<p><strong>① 浅い層の改善は圧倒的</strong></p>
+<ul>
+<li>L12のperplexityが<strong>約16,900倍</strong>改善しています。これはLayerSkipの学習レシピが「浅い層でも正確に予測できる表現」を効果的に学習させたことを示しています。</li>
+<li>L4・L8・L16も1,700〜3,200倍の改善。LayerSkipの「全層で同じLM Headを使って学習する」設計が、<strong>各層が独立して意味のある表現を持つようになった</strong>と解釈できます。</li>
+</ul>
+<p><strong>② L12が最も改善した理由</strong></p>
+<ul>
+<li>実験では早期終了層としてL6・L12・L18・L24を設定していました。L12は「中間の早期終了層」として、最も学習信号を受けやすい位置にありました。</li>
+<li>L6は改善率は高いものの絶対値（9,612）がまだ高く、完全な実用精度には至っていません。L12（121）は「かなり使える」精度に達しています。</li>
+</ul>
+<p><strong>③ 最終層（L24）も改善</strong></p>
+<ul>
+<li>最終層のperplexityが14.4から11.9（17%改善）になっています。これは意外な結果で、LayerSkipの学習が<strong>最終層の性能も向上させた</strong>ことを意味します。</li>
+<li>原因として、浅い層の改善が「勾配の流れ」を良くし、深い層の学習にも正の影響を与えた可能性があります。</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\layer_skip\image\experimet\1793423369512.png" alt="1793423369512"></p>
+<h3 id="3-学習中の損失推移全層が同時に改善">3. 学習中の損失推移：全層が同時に改善</h3>
+<p>学習の最初50ステップの損失推移は以下の通りです。</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>Total</th>
+<th>L6</th>
+<th>L12</th>
+<th>L18</th>
+<th>L24</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>12.69</td>
+<td>15.63</td>
+<td>14.71</td>
+<td>10.59</td>
+<td>3.09</td>
+</tr>
+<tr>
+<td>10</td>
+<td>10.04</td>
+<td>12.31</td>
+<td>10.77</td>
+<td>7.40</td>
+<td>3.03</td>
+</tr>
+<tr>
+<td>20</td>
+<td>8.33</td>
+<td>9.20</td>
+<td>7.94</td>
+<td>5.75</td>
+<td>3.04</td>
+</tr>
+<tr>
+<td>30</td>
+<td>7.99</td>
+<td>8.16</td>
+<td>7.30</td>
+<td>5.57</td>
+<td>3.06</td>
+</tr>
+<tr>
+<td>40</td>
+<td>7.78</td>
+<td>7.56</td>
+<td>6.62</td>
+<td>5.14</td>
+<td>3.26</td>
+</tr>
+<tr>
+<td>50</td>
+<td>7.68</td>
+<td>7.29</td>
+<td>6.34</td>
+<td>5.17</td>
+<td>3.24</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分析：</strong></p>
+<ul>
+<li><strong>浅い層（L6・L12）の損失が最も急速に減少</strong>しています。L6は15.63→7.29、L12は14.71→6.34と、約半分以下に。</li>
+<li>L18も10.59→5.17と大きく改善。</li>
+<li>L24（最終層）は3.09→3.24とほぼ横ばい。これは「最終層はすでに事前学習で十分に学習済み」であり、LayerSkipの追加学習では大きな変化がないことを示しています。</li>
+<li><strong>p_max（レイヤードロップアウト率）が0.002→0.067へと線形に増加</strong>。学習が進むにつれて深い層を飛ばす確率が上がり、浅い層への依存を強制しています。</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\layer_skip\image\experimet\1793423402541.png" alt="1793423402541"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\layer_skip\image\experimet\1793423423298.png" alt="1793423423298"></p>
+<h3 id="4-推論速度self-speculative-decodingは向上でず">4. 推論速度：Self-Speculative Decodingは向上でず</h3>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th>Tokens/秒</th>
+<th>出力一致</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通常デコード</td>
+<td>27.3</td>
+<td>True</td>
+</tr>
+<tr>
+<td>Self-Speculative（exit=6）</td>
+<td>21.7</td>
+<td>True</td>
+</tr>
+<tr>
+<td>Self-Speculative（exit=8）</td>
+<td>22.0</td>
+<td>True</td>
+</tr>
+<tr>
+<td>Self-Speculative（exit=12）</td>
+<td>20.6</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分析：</strong></p>
+<p><strong>① 速度はむしろ低下</strong></p>
+<ul>
+<li>通常デコード（27.3 tok/s）に対し、self-speculativeは20〜22 tok/sと<strong>約20〜25%遅く</strong>なっています。</li>
+<li>これはLayerSkipの論文で報告されている「最大2.16倍加速」とは大きく異なります。</li>
+</ul>
+<p><strong>② なぜ速度が向上しなかったか</strong></p>
+<ul>
+<li><strong>モデルが小さすぎる</strong>：Qwen2.5-0.5Bは5億パラメータで、T4 GPU上ではすでに比較的高速に動作しています。self-speculativeのoverhead（ドラフト生成→検証の2パス）が、小モデルではメリットを上回っています。</li>
+<li><strong>T4 GPUの制約</strong>：T4は推論専用GPUですが、メモリ帯域が限定的で、小モデルでの投機的デコーディングの効率が出にくい可能性があります。</li>
+<li><strong>exit層が深すぎる</strong>：exit=6（6層のみ）でも21.7 tok/sと、exit=12（12層）の20.6 tok/sと大差がありません。浅い層でのドラフト生成のコスト削減が、検証パスのoverheadを相殺できていません。</li>
+</ul>
+<p><strong>③ 品質は完全に維持</strong></p>
+<ul>
+<li>すべてのモードで「出力一致 = True」。self-speculativeでも通常デコードと<strong>完全に同じ出力</strong>が得られています。品質の劣化はゼロです。</li>
+</ul>
+<h3 id="5-実際のテキスト生成の品質比較">5. 実際のテキスト生成の品質比較</h3>
+<p>ノートブック内で、プロンプトに対する各層の出力確率（正解トークンの確率）も比較されています。</p>
+<table>
+<thead>
+<tr>
+<th>プロンプト</th>
+<th>モデル</th>
+<th>L6</th>
+<th>L12</th>
+<th>L18</th>
+<th>L24</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The history of the Roman Emp</td>
+<td>before</td>
+<td>0.02</td>
+<td>0.05</td>
+<td>0.08</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>after</strong></td>
+<td><strong>0.20</strong></td>
+<td><strong>0.27</strong></td>
+<td><strong>0.53</strong></td>
+<td><strong>1.0</strong></td>
+</tr>
+<tr>
+<td>Albert Einstein was born in</td>
+<td>before</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>0.08</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>after</strong></td>
+<td><strong>0.23</strong></td>
+<td><strong>0.38</strong></td>
+<td><strong>0.55</strong></td>
+<td><strong>1.0</strong></td>
+</tr>
+<tr>
+<td>Monday, Tuesday, Wednesday,</td>
+<td>before</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>0.17</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>after</strong></td>
+<td><strong>0.30</strong></td>
+<td><strong>0.41</strong></td>
+<td><strong>0.69</strong></td>
+<td><strong>1.0</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>分析：</strong></p>
+<ul>
+<li><strong>学習前（before）</strong>：L6・L12では正解トークンの確率が0.00〜0.05と、ほぼランダムレベル。L18でも0.08〜0.17と低い。</li>
+<li><strong>学習後（after）</strong>：L6で0.20〜0.30、L12で0.27〜0.41、L18で0.53〜0.69と、<strong>全層で正解確率が大幅に向上</strong>。</li>
+<li>これは「浅い層でも『次に来るべき単語』をかなり正確に予測できるようになった」ことを、実際のテキスト例で裏付けています。</li>
+</ul>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\layer_skip\image\experimet\1793423452554.png" alt="1793423452554"></p>
+<h3 id="6-総合評価">6. 総合評価</h3>
+<table>
+<thead>
+<tr>
+<th>評価項目</th>
+<th>結果</th>
+<th>評価</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>浅い層の精度改善</strong></td>
+<td>L12で16,893倍改善</td>
+<td>圧倒的な成功</td>
+</tr>
+<tr>
+<td><strong>最終層の精度維持・改善</strong></td>
+<td>14.4→11.9（17%改善）</td>
+<td>成功</td>
+</tr>
+<tr>
+<td><strong>学習の収束</strong></td>
+<td>50ステップで全層損失減少</td>
+<td>良好</td>
+</tr>
+<tr>
+<td><strong>推論加速</strong></td>
+<td>むしろ20%低下</td>
+<td>今回の設定では失敗</td>
+</tr>
+<tr>
+<td><strong>出力品質</strong></td>
+<td>全モードで一致</td>
+<td>完全成功</td>
+</tr>
+</tbody>
+</table>
+<p><strong>結論：</strong>
+この実験は、<strong>LayerSkipの「学習レシピ」の効果を強力に実証</strong>しています。浅い層のperplexityが数千〜数万倍改善したことは、「浅い層でも使えるモデルを育てる」というLayerSkipの核心アイデアが、Qwen2.5-0.5Bという実際のLLMでも有効であることを示しています。</p>
+<p>一方、推論加速については、<strong>モデルサイズ（0.5B）が小さすぎてself-speculativeのoverheadがメリットを上回った</strong>と考えられます。論文で報告されている加速効果は、Llama 7B〜70Bクラスの大規模モデルで顕著になるもので、より大きなモデル（1B以上）や、exit層をより浅く設定（2〜4層）することで、加速効果が現れる可能性があります。</p>
+<h2 id="総括">総括</h2>
+<p><strong>確認した3つのことと結果：</strong></p>
+<table>
+<thead>
+<tr>
+<th>確認項目</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>浅い層でも正確に答えられるか</td>
+<td><strong>確認できた</strong>。L12のperplexityが約16,900倍改善し、浅い層で実用的な精度を達成</td>
+</tr>
+<tr>
+<td>推論を速くできるか</td>
+<td><strong>今回は確認できなかった</strong>。0.5Bモデルではself-speculativeのoverheadが加速を上回り、20〜25%遅化</td>
+</tr>
+<tr>
+<td>精度を保ったまま速くできるか</td>
+<td><strong>品質維持は確認できた</strong>。全モードで通常デコードと完全に同じ出力を確認</td>
+</tr>
+</tbody>
+</table>
+<p><strong>エッセンス：</strong></p>
+<p>LayerSkipの学習レシピ（レイヤードロップアウト + 早期終了損失）は、<strong>「浅い層でも使えるモデル」を実際に作れる</strong>。Qwen2.5-0.5Bでも浅い層のperplexityが数千〜数万倍改善し、中間層の出力が意味のある予測を行えるようになった。</p>
+<p>ただし、<strong>推論加速はモデルサイズに依存</strong>する。0.5Bではself-speculativeのコストがメリットを上回るが、7B以上の大規模モデルでは論文通りの加速が期待できる。</p>
+
+            
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/8vCFnSNz0E4?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
