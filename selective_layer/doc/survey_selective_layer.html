@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x30ec;&#x30a4;&#x30e4;&#x9078;&#x629e;&#x306e;&#x624b;&#x6cd5;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>LLMがプロンプトに応じて文章出力するには膨大な計算が必要です。
+計算量の増加はLLMシステムのレイテンシに直結し、ユーザーのプロンプトに対する応答速度がもっさい動作ということになります。</p>
+<p>現在LLMではこの計算量を削減するための研究成果が実装されています。
+そんな研究テーマの一つとして存在するレイヤ選択の機能について説明していきます。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="レイヤ選択の手法">レイヤ選択の手法</h2>
+<p>それぞれの方向性について、直感的なイメージを交えながら説明いたします。</p>
+<h3 id="1-入力の難易度に応じて計算ステップ数を変える">1. 入力の難易度に応じて計算ステップ数を変える</h3>
+<p><strong>「問題が簡単ならすぐ答え、難しければじっくり考える」</strong> という人間の思考パターンをモデルに取り入れる手法です。</p>
+<p>従来のLLMは、入力が「1+1=？」であろうと複雑な数学の証明であろうと、同じ数の層（例えば32層や64層）を毎回すべて通ります。これは、簡単な問題に対して「考えすぎ（overthinking）」であり、無駄な計算になっています。</p>
+<p>この手法では、<strong>入力全体の難易度や複雑さを判定し、その問題に必要なだけの計算ステップ（深さ）を動的に割り当てます</strong>。</p>
+<p>例えば、以下のようなアプローチがあります。</p>
+<ul>
+<li><strong>早期終了（Early Exit）</strong>: 途中の層で「もう十分答えが確定した」と判断できれば、それ以降の層を計算せずに出力します。</li>
+<li><strong>Test-Time Depth Adaptation</strong>: 問題の難易度に応じて、層をスキップしたり、逆に同じ層を何度も繰り返し適用（ループ）したりして、モデルの深さを調整します。<a href="https://arxiv.org/abs/2507.07996">Skip a Layer or Loop it?</a></li>
+<li><strong>Adaptive Test-Time Compute</strong>: 推論時の「思考トークン」の予算を、問題の難易度に応じて動的に増減させます。<a href="https://arxiv.org/abs/2507.02076">Reasoning on a Budget</a></li>
+</ul>
+<p>一言でいえば、<strong>「問題ごとに必要な深さを変える」</strong> のがこの方向性です。</p>
+<h3 id="2-トークンごとに層を選択する">2. トークンごとに層を選択する</h3>
+<p><strong>「同じ文章の中でも、簡単な単語はサラッと通し、重要で難しい単語だけじっくり処理する」</strong> という発想の手法です。</p>
+<p>ここでの「トークン」とは、文章を分解した最小単位（日本語なら文字やサブワード、英語なら単語や語片）のことです。従来は、生成するすべてのトークンが同じ32層を通っていましたが、実は<strong>トークンによって必要な計算量は大きく異なる</strong>ことが研究で明らかになっています。</p>
+<p>例えば、「〜ですね」「〜ました」のような定型表現や、すでに文中に何度も出てきた単語は、浅い層だけで十分予測できます。一方で、数学の答えの導出部分や、文脈から慎重に推論が必要な固有名詞などは、深い層まで計算する必要があります。</p>
+<p>具体的な手法としては、以下のようなものがあります。</p>
+<ul>
+<li><strong>Layer Skipping（層のスキップ）</strong>: 各層の入口に小さな「ルーター」を置き、「このトークンはこの層を通る必要があるか？」を判定します。必要なければその層を飛ばします。<a href="https://aclanthology.org/2025.findings-acl.377.pdf">DiffSkip</a> <a href="https://arxiv.org/abs/2503.23798">Adaptive Layer-skipping in Pre-trained LLMs</a></li>
+<li><strong>Token-wise Routing</strong>: 各トークンに対して、Attention層やFFN層の計算を部分的に省略・軽量化する方法です。<a href="https://arxiv.org/abs/2506.04179">SkipGPT</a> <a href="https://arxiv.org/abs/2510.13876">What Layers When</a></li>
+<li><strong>Dynamic Layer Routing</strong>: 各トークンごとに、どの層を通るかの経路を動的に決定します。<a href="https://arxiv.org/abs/2510.12773">Dr.LLM</a></li>
+</ul>
+<p>一言でいえば、<strong>「同じ文章の中で、トークンごとに通過する層の数やパスを変える」</strong> のがこの方向性です。</p>
+<h3 id="3-条件付き計算専門家選択moeの系統">3. 条件付き計算・専門家選択（MoEの系統）</h3>
+<p>**「病院で、症状に応じて適切な科（内科・外科・眼科など）の専門医にだけ診てもらう」**ような仕組みです。</p>
+<p>Mixture-of-Experts（MoE、専門家の混合モデル）では、モデル全体には膨大なパラメータ（例えば1兆個）があっても、<strong>入力に応じてその中の一部の「専門家（エキスパート）」だけを活性化</strong>して使います。これにより、全パラメータを使うわけではないので、計算効率を保ちながら大規模なモデルの能力を引き出せます。</p>
+<p>従来のMoEは「どのエキスパートを使うか」を層ごとに決めていましたが、最近の研究ではさらに進化しています。</p>
+<ul>
+<li><strong>Token-Difficulty Driven MoE</strong>: トークンの難易度に応じて、小さなエキスパート（簡単なトークン用）と大きなエキスパート（難しいトークン用）を使い分けます。<a href="https://arxiv.org/abs/2502.12325">DynaMoE</a></li>
+<li><strong>Layer-Adaptive Expert Selection</strong>: 層ごとに活性化するエキスパートの数や種類を調整し、さらに計算を効率化します。<a href="https://arxiv.org/abs/2509.02753">LExI</a></li>
+</ul>
+<p>ただし、MoEは基本的に <strong>「層の中のどの部分（エキスパート）を使うか」</strong> を選ぶ問題であり、<strong>「どの層を通るか」</strong> を選ぶ問題（レイヤー選択）とは少し軸が異なります。もちろん、両方を組み合わせる研究も出てきています。</p>
+<p>一言でいえば、<strong>「巨大なモデルの中から、入力に合った専門家の部分集合だけを使う」</strong> のがこの方向性です。</p>
+<h3 id="3つの方向性の比較まとめ">3つの方向性の比較まとめ</h3>
+<table>
+<thead>
+<tr>
+<th>方向性</th>
+<th>何を変えるか</th>
+<th>比喩</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 入力の難易度に応じて計算ステップ数を変える</td>
+<td><strong>問題全体</strong>に対する計算の深さ</td>
+<td>簡単な問題は早く答え、難問はじっくり考える</td>
+</tr>
+<tr>
+<td>2. トークンごとに層を選択する</td>
+<td><strong>各トークン</strong>が通る層の数・パス</td>
+<td>文章の中で重要な単語だけ念入りに処理する</td>
+</tr>
+<tr>
+<td>3. 条件付き計算・専門家選択（MoE）</td>
+<td>**層の中のどの部分（エキスパート）**を使うか</td>
+<td>症状に応じて適切な科の専門医に診てもらう</td>
+</tr>
+</tbody>
+</table>
+<h2 id="現在主流の手法">現在主流の手法</h2>
+<p>では、どの手法が現在主流とされているのでしょう？
+結論から申し上げますと、<strong>2. トークンごとに層を選択する</strong>の方向性が、現在のレイヤ選択に関する研究の中で最も活発な主流（mainstream）となっています。</p>
+<p>ただし、1. と 3. もそれぞれ隣接した大きな研究領域であり、完全に切り離されているわけではありません。以下、検索で確認できた論文群に基づいて整理いたします。</p>
+<h3 id="1-トークンごとに層を選択する現在の主流">1. トークンごとに層を選択する（現在の主流）</h3>
+<p>2024年から2025年にかけて、デコーダのみのTransformerにおいて「トークンごとに通過させる層の数やパスを変える」手法が多数提案されています。これは、従来の「すべてのトークンをすべての層に通す」均一な計算に対する反発として発展してきた流れです。</p>
+<p>具体的な研究例としては以下が挙げられます。</p>
+<ul>
+<li><strong>DiffSkip</strong> (ACL 2025 Findings): 入力と出力の差分に基づき、トークンごとに層のスキップを差分的に制御する手法です。<a href="https://aclanthology.org/2025.findings-acl.377.pdf">DiffSkip</a></li>
+<li><strong>GateSkip / What Layers When</strong>: residual stream上のゲート機構を用いて、デコーダのみの言語モデルにおけるトークン単位のレイヤースキップを実現しています。<a href="https://arxiv.org/abs/2510.13876">What Layers When</a></li>
+<li><strong>FlexiDepth (Adaptive Layer-skipping)</strong>: 各Transformer層に軽量なrouterとadapterを挿入し、トークンの種類（繰り返しトークンか、計算・不確実性の高いトークンか）に応じて動的に層数を調整します。要約や数学推論の例では、トークンごとに必要な層数が大きく異なることが実証されています。<a href="https://arxiv.org/abs/2503.23798">Adaptive Layer-skipping in Pre-trained LLMs</a></li>
+<li><strong>SkipGPT</strong>: トークン認識（token awareness）とモジュール分離を用いた動的レイヤープルーニングを提案しています。<a href="https://arxiv.org/abs/2506.04179">SkipGPT</a></li>
+<li><strong>Dr.LLM</strong>: すべてのトークンをすべての層に通すことの非効率性を指摘し、動的なレイヤールーティングを提案しています。<a href="https://arxiv.org/abs/2510.12773">Dr.LLM</a></li>
+</ul>
+<p>また、2026年にIEEE Accessに掲載されたレビュー論文 <em>&quot;A Survey of Dynamic Token Computation in Transformers&quot;</em> では、トークンプルーニング・ドロッピング、トークン結合、条件付きトークンルーティング、そして<strong>適応的な深さ（adaptive depth）や早期終了（early-exit）戦略</strong>を「Dynamic Token Computation」として包括的に整理しており、トークン単位の計算制御が確立された研究カテゴリーであることが示されています。<a href="https://doi.org/10.1109/access.2026.3720106">IEEE Access</a></p>
+<h3 id="2-入力の難易度に応じて計算ステップ数を変える">2. 入力の難易度に応じて計算ステップ数を変える</h3>
+<p>これは「Adaptive Test-Time Compute」や「Input-Adaptive Inference」として盛んに研究されていますが、<strong>レイヤー選択そのもの</strong>というよりは、推論時の計算量（reasoning budget、thinking tokensの数、早期終了のタイミングなど）を入力全体の難易度に応じて制御する方向性です。</p>
+<p>例えば、&quot;Reasoning on a Budget: A Survey of Adaptive and Controllable Test-Time Compute in LLMs&quot; では、L2 adaptiveness として「入力の難易度やモデルの自信に基づいて動的に計算をスケールする」手法が整理されています。<a href="https://arxiv.org/abs/2507.02076">Reasoning on a Budget</a> また、<em>&quot;Skip a Layer or Loop it?&quot;</em> では、サンプルごとに最適な層の構成（Chain-of-Layers）を探索する「test-time depth adaptation」が議論されています。<a href="https://arxiv.org/abs/2507.07996">Skip a Layer or Loop it?</a></p>
+<p>ただし、これらは「トークンごと」ではなく「入力（サンプル）ごと」または「推論ステップごと」の適応に焦点が当てられており、<strong>レイヤー選択機能</strong>という問いに対する直接的な答えとしては、トークン単位の層選択（2番）の方が研究の中心にあります。</p>
+<h3 id="3-条件付き計算専門家選択moeの系統-1">3. 条件付き計算・専門家選択（MoEの系統）</h3>
+<p>MoE（Mixture-of-Experts）は大規模モデルの効率化において確立された主要なパラダイムです。近年でも、トークンの難易度に応じて異なるサイズのエキスパートを選択する <strong>DynaMoE</strong><a href="https://arxiv.org/abs/2502.12325">DynaMoE</a> や、レイヤー適応的なエキスパート活性化を行う <strong>LExI</strong><a href="https://arxiv.org/abs/2509.02753">LExI</a> などが提案されています。</p>
+<p>しかし、MoEは基本的に「<strong>層の中で</strong>（または層間で）どのエキスパートを活性化するか」を選択する問題であり、質問にある「レイヤ選択機能」とは少し異なる軸の研究です。もちろん、MoEとレイヤースキッピングを融合させる研究もありますが、<strong>純粋なレイヤー選択</strong>の文脈では、MoE系統は別の大きなカテゴリーとして扱われています。</p>
+<h3 id="補足検証できた範囲と留保事項">補足：検証できた範囲と留保事項</h3>
+<ul>
+<li>トークンごとのレイヤー選択が「理論上の計算量削減」としては主流であることは多くの論文で確認できました。</li>
+<li>一方で、<strong>実際の壁時計時間（wall-clock speedup）に繋げるには、可変的なスキップパターンによるI/Oオーバーヘッドやハードウェア利用率の低下が依然として課題</strong>であるという指摘もあります。FlexiDepthの論文でも、この点が言及されています。<a href="https://arxiv.org/abs/2503.23798">Adaptive Layer-skipping in Pre-trained LLMs</a></li>
+<li>そのため、「トークンごとに層を選択する」研究が最も活発な一方で、実用上は「入力難易度に応じたサンプル単位の適応」や「早期終了」と組み合わせる形で発展していく可能性もあります。</li>
+</ul>
+<p>以上より、<strong>現在のレイヤ選択機能に関する主たる研究は「2. トークンごとに層を選択する」</strong> と考えられます。</p>
+<h2 id="トークンごとにレイヤを選択する仕組み">トークンごとにレイヤを選択する仕組み</h2>
+<p>トークンごとにレイヤを選択する手法は、大きく分けて <strong>「各層の入口に小さな意思決定機構（ルーター/ゲート）を置き、トークンごとにその層を通すかどうかを判断する」</strong> という共通のアーキテクチャを取ります。以下、基本的な方法論を整理して説明いたします。</p>
+<h3 id="1-共通の基本構造層ごとにルーターを挿入する">1. 共通の基本構造：層ごとに「ルーター」を挿入する</h3>
+<p>Transformerの各層（Layer）の手前に、<strong>軽量なルーター（router）</strong> または<strong>ゲート（gate）</strong> を追加します。このルーターは、現在のトークンの隠れ状態（hidden state）を入力として受け取り、「このトークンをこの層に通すべきか？」という二値（または多値の）判断を出力します。</p>
+<p><a href="https://arxiv.org/abs/2503.23798">FlexiDepth</a> では、各Transformer層に軽量なrouterとadapterを挿入し、トークンの種類に応じて動的に層数を調整しています。<a href="https://arxiv.org/abs/2506.04179">SkipGPT</a> も同様に、トークン認識（token-aware）なモジュールを各層に配置して、どの計算モジュールを省略するかを決定します。</p>
+<h3 id="2-選択の方法論主に4つのパターン">2. 選択の方法論：主に4つのパターン</h3>
+<p><strong>A. バイナリスキップ（通す / 飛ばす）</strong></p>
+<p>最も直感的な方法です。ルーターが「0（スキップ）」または「1（通す）」を出力し、通さない場合はその層の計算（Self-AttentionとFFN）を完全に省略します。</p>
+<p>ただし、離散的な0/1の選択は微分不可能なため、通常の誤差逆伝播では学習が困難です。この問題を解決するために、以下のような手法が使われます。</p>
+<ul>
+<li><strong>Gumbel-Softmax /  Concrete分布</strong>: 離散選択を連続的な確率分布で近似し、微分可能にします。</li>
+<li><strong>Straight-Through Estimator</strong>: 順伝播では0/1のハード選択を使い、逆伝播では連続的な勾配を流します。</li>
+</ul>
+<p><a href="https://aclanthology.org/2025.findings-acl.377.pdf">DiffSkip</a> は、この「入力と出力の差分」に基づいて差分的にスキップを制御するアプローチを取っており、微分可能なフレームワークとして設計されています。</p>
+<p><strong>B. 残差ストリーム上のゲーティング（スケーリング）</strong></p>
+<p>層を完全に飛ばすのではなく、<strong>残差接続（residual connection）の貢献度をトークンごとに調整</strong>する方法です。<a href="https://arxiv.org/abs/2510.13876">GateSkip</a>（別名 <a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/7e3491e922bfd199ea34ecafeb7380f0-Paper-Conference.pdf">What Layers When</a>）では、residual stream上にゲート機構を設置し、トークンごとにその層の出力をどれだけ残差に加えるかをスケールすることで、事実上の「部分スキップ」を実現しています。</p>
+<p>数式で表すと、通常の残差接続は <code>x_out = x + Layer(x)</code> ですが、ゲート付きでは <code>x_out = x + g(x) * Layer(x)</code> となり、<code>g(x)</code> が 0 に近ければその層はほとんど無視されたことになります。</p>
+<p><strong>C. 早期終了型（層ごとに「もう十分か？」を判定）</strong></p>
+<p>各層の後に「このトークンの表現はもう十分に定まったか？」を判定する小さな分類器を置き、十分であればそれ以降のすべての層を省略します。これは「トークンごとの早期終了（token-level early exit）」と呼ばれます。</p>
+<p><a href="https://doi.org/10.1109/access.2026.3720106">IEEE Accessのサーベイ</a> では、このような適応的な深さ（adaptive depth）や早期終了戦略を、Dynamic Token Computationの重要なカテゴリーとして整理しています。</p>
+<p><strong>D. ソフト選択（重み付き和）</strong></p>
+<p>離散的に「通す/飛ばす」を選ぶのではなく、<strong>複数の候補パス（浅い層、深い層、異なるAttentionヘッドなど）の出力を重み付けして足し合わせる</strong>方法です。これはMoEの考え方に近く、トークンごとに最適な計算パスをソフトに混合します。</p>
+<p><a href="https://arxiv.org/abs/2510.12773">Dr.LLM</a> は、動的なレイヤールーティング（dynamic layer routing）を提案しており、各トークンに対して通過すべき層の経路を可変に制御します。</p>
+<h3 id="3-学習方法どうやって最適な選択を学ぶか">3. 学習方法：どうやって「最適な選択」を学ぶか</h3>
+<p>単にルーターを置くだけでは、ルーターが「全部通せ」と学習してしまい（計算量が減らない）、あるいは「全部飛ばせ」と学習してしまい（精度が崩壊する）という問題が起こります。これを防ぐために、以下のような学習戦略が取られます。</p>
+<p><strong>計算コストを損失関数に組み込む（Budget Loss）</strong></p>
+<p>目的関数に「計算量のペナルティ項」を加えます。例えば、</p>
+<pre><code>Total Loss = Task Loss（交叉エントロピーなど）+ λ × Compute Cost
+</code></pre>
+<p><code>λ</code> を大きくすれば、モデルは計算量を減らす方向に強く誘導されます。ルーターは「精度を落とさずに計算量を減らす」バランスを学習します。</p>
+<p><strong>強化学習（Policy Gradient）</strong></p>
+<p>ルーターの選択を「方策（policy）」とみなし、REINFORCEなどの方策勾配法で「精度が高く、計算量が少ない選択」を報酬として学習します。</p>
+<p><strong>蒸留（Distillation）による教師あり学習</strong></p>
+<p>まず「すべての層を通したフルモデル」の出力を教師とし、<strong>「どの層を飛ばしても教師の出力に近づく」</strong> ようにルーターを学習します。これにより、スキップによる品質劣化を最小化できます。</p>
+<h3 id="4-実用上の制約と工夫">4. 実用上の制約と工夫</h3>
+<p>トークンごとのレイヤー選択は理論上は魅力的ですが、実際の推論では以下の課題があります。</p>
+<p><strong>ハードウェアの非効率性</strong></p>
+<p>GPU/TPUは<strong>同じ形状の計算をバッチで処理する</strong>ことに最適化されています。しかし、トークンごとに通過する層が異なると、バッチ内のトークンで計算パスが分岐し、<strong>メモリのアクセスパターンが不規則</strong>になります。結果として、理論的なFLOPs削減が必ずしも壁時計時間の短縮に直結しないことがあります。<a href="https://arxiv.org/abs/2503.23798">FlexiDepth</a> の論文でも、この点が実用上の課題として言及されています。</p>
+<p><strong>ブロック単位でのスキップ</strong></p>
+<p>この問題を緩和するため、<strong>「層を1つずつ選ぶ」のではなく「層のブロック（例えば4層まとめて）」を単位としてスキップする</strong>という工夫もあります。これにより、計算グラフの分岐を減らし、ハードウェアへの負担を軽減します。</p>
+<p><strong>トレーニングの不安定性</strong></p>
+<p>ルーターが学習初期に「全部飛ばす」極端な状態に陥ると、復帰が難しくなります。そのため、<strong>学習の初期はフルモデルに近い状態から始め、徐々に計算コストのペナルティを強める</strong>（アニーリング）といった工夫が行われます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\doc\image\survey_selective_layer\1793484240116.png" alt="1793484240116"></p>
+<h2 id="総括">総括</h2>
+<p>LLMの推論効率化において、レイヤ選択は重要な研究テーマです。計算量削減のアプローチは大きく3つに分類されます。</p>
+<p><strong>1. 入力の難易度に応じた計算ステップの調整</strong>は、問題全体に対して必要な深さを変える手法です。簡単な入力には浅い計算で、難しい入力には深い計算を割り当てます。</p>
+<p><strong>2. トークンごとの層選択</strong>は、同じ文章内でもトークンごとに通過する層を変える手法です。定型表現は浅く、重要なトークンは深く処理します。現在、この方向性がレイヤ選択研究の主流です。</p>
+<p>**3. MoE（条件付き計算）**は、層の中の専門家（エキスパート）を選択的に活性化する手法です。レイヤ選択とは軸が異なりますが、隣接する重要な領域です。</p>
+<p>トークンごとの層選択は、各Transformer層の手前に軽量なルーターを配置し、トークンの隠れ状態から通過またはスキップを判断します。離散的な選択を微分可能にするためにGumbel-SoftmaxやStraight-Through Estimatorが用いられ、学習には計算コストを損失関数に組み込むBudget Lossが使われます。</p>
+<p>ただし、トークンごとに計算パスが分岐するため、理論的なFLOPs削減が必ずしも壁時計時間の短縮に直結しないという実用上の課題も残っています。</p>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/VsPHqMmmUBg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+
+            
+        </body>
+        </html>
