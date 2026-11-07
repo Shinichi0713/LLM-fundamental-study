@@ -14,7 +14,7 @@ published: true
 
 ### 1. 姿勢の更新（IMUの角速度から姿勢を求める）
 
-IMUから得られた角速度 $\boldsymbol{\omega}$ をもとに、微小時間 $\Delta t$ 後の姿勢を求める場面です。
+例えばIMUから得られた角速度 $\boldsymbol{\omega}$ をもとに、微小時間 $\Delta t$ 後の姿勢を求める場面です。
 
 - 現在の姿勢：$\mathbf{q}(t)$
 - 微小回転：$\Delta\mathbf{q}$（角速度 $\boldsymbol{\omega}$ から作られるクォータニオン）
@@ -207,6 +207,189 @@ $$
 - 次にその結果に $\mathbf{q}^*$（共役クォータニオン）を右から掛ける
 
 この「左から掛けて、右から共役を掛ける」という形が、3次元ベクトルを回転させる標準的な方法です。
+
+
+## 計算例
+
+クォータニオンの積を、**実際の数値を使って1つずつ展開**してみます。
+
+### 例1: 基本的なハミルトン積
+
+2つのクォータニオンを次のように定義します。
+
+$$
+\mathbf{q} = \begin{bmatrix} 2 \\ 3 \\ 0 \\ 1 \end{bmatrix} = 2 + 3i + 0j + 1k, \quad
+\mathbf{p} = \begin{bmatrix} 1 \\ 2 \\ 1 \\ 0 \end{bmatrix} = 1 + 2i + 1j + 0k
+$$
+
+積 $\mathbf{q} \otimes \mathbf{p}$ は、**分配法則**で展開します。
+
+$$
+\mathbf{q} \otimes \mathbf{p} = (2 + 3i + 0j + 1k)(1 + 2i + 1j + 0k)
+$$
+
+各項を掛け合わせます（$i^2 = j^2 = k^2 = -1$、$ij = k$、$jk = i$、$ki = j$ を使います）。
+
+| 項 | 計算 | 結果 |
+|---|---|---|
+| $2 \times 1$ | $2$ | $2$ |
+| $2 \times 2i$ | $4i$ | $4i$ |
+| $2 \times 1j$ | $2j$ | $2j$ |
+| $2 \times 0k$ | $0$ | $0$ |
+| $3i \times 1$ | $3i$ | $3i$ |
+| $3i \times 2i$ | $6i^2$ | $-6$ |
+| $3i \times 1j$ | $3ij$ | $3k$ |
+| $3i \times 0k$ | $0$ | $0$ |
+| $0j \times 1$ | $0$ | $0$ |
+| $0j \times 2i$ | $0$ | $0$ |
+| $0j \times 1j$ | $0$ | $0$ |
+| $0j \times 0k$ | $0$ | $0$ |
+| $1k \times 1$ | $k$ | $k$ |
+| $1k \times 2i$ | $2ki$ | $2j$ |
+| $1k \times 1j$ | $kj$ | $-i$ |
+| $1k \times 0k$ | $0$ | $0$ |
+
+これらを**実部・$i$・$j$・$k$ ごとにまとめる**と：
+
+- **実部**: $2 - 6 = -4$
+- **$i$**: $4 + 3 - 1 = 6$
+- **$j$**: $2 + 2 = 4$
+- **$k$**: $3 + 1 = 4$
+
+したがって：
+
+$$
+\mathbf{q} \otimes \mathbf{p} = \begin{bmatrix} -4 \\ 6 \\ 4 \\ 4 \end{bmatrix}
+$$
+
+### 例2: 行列形式での計算（プログラムと同じ方法）
+
+先ほどの例を、C++コードと同じ**行列形式**で計算してみます。
+
+$$
+\mathbf{q} \otimes \mathbf{p} = \mathbf{Q}(\mathbf{q}) \mathbf{p}
+$$
+
+ここで、$\mathbf{Q}(\mathbf{q})$ は：
+
+$$
+\mathbf{Q}(\mathbf{q}) = \begin{bmatrix}
+2 & -3 & 0 & -1 \\
+3 & 2 & -1 & 0 \\
+0 & 1 & 2 & -3 \\
+1 & 0 & 3 & 2
+\end{bmatrix}
+$$
+
+これに $\mathbf{p} = [1, 2, 1, 0]^T$ を掛けます。
+
+$$
+\begin{bmatrix}
+2 & -3 & 0 & -1 \\
+3 & 2 & -1 & 0 \\
+0 & 1 & 2 & -3 \\
+1 & 0 & 3 & 2
+\end{bmatrix} \begin{bmatrix} 1 \\ 2 \\ 1 \\ 0 \end{bmatrix} = \begin{bmatrix}
+2 \times 1 + (-3) \times 2 + 0 \times 1 + (-1) \times 0 \\
+3 \times 1 + 2 \times 2 + (-1) \times 1 + 0 \times 0 \\
+0 \times 1 + 1 \times 2 + 2 \times 1 + (-3) \times 0 \\
+1 \times 1 + 0 \times 2 + 3 \times 1 + 2 \times 0
+\end{bmatrix} = \begin{bmatrix} -4 \\ 6 \\ 4 \\ 4 \end{bmatrix}
+$$
+
+展開した結果と一致します。
+
+### 例3: 非可換性の確認（順番を変えると結果が変わる）
+
+同じ $\mathbf{q}$、$\mathbf{p}$ で、順番を逆にして $\mathbf{p} \otimes \mathbf{q}$ を計算します。
+
+行列形式で：
+
+$$
+\mathbf{P}(\mathbf{p}) = \begin{bmatrix}
+1 & -2 & -1 & 0 \\
+2 & 1 & 0 & -1 \\
+1 & 0 & 1 & -2 \\
+0 & 1 & -1 & 1
+\end{bmatrix}
+$$
+
+$$
+\mathbf{P}(\mathbf{p}) \mathbf{q} = \begin{bmatrix}
+1 & -2 & -1 & 0 \\
+2 & 1 & 0 & -1 \\
+1 & 0 & 1 & -2 \\
+0 & 1 & -1 & 1
+\end{bmatrix} \begin{bmatrix} 2 \\ 3 \\ 0 \\ 1 \end{bmatrix} = \begin{bmatrix}
+1 \times 2 + (-2) \times 3 + (-1) \times 0 + 0 \times 1 \\
+2 \times 2 + 1 \times 3 + 0 \times 0 + (-1) \times 1 \\
+1 \times 2 + 0 \times 3 + 1 \times 0 + (-2) \times 1 \\
+0 \times 2 + 1 \times 3 + (-1) \times 0 + 1 \times 1
+\end{bmatrix} = \begin{bmatrix} -4 \\ 6 \\ 0 \\ 4 \end{bmatrix}
+$$
+
+比較すると：
+
+$$
+\mathbf{q} \otimes \mathbf{p} = \begin{bmatrix} -4 \\ 6 \\ 4 \\ 4 \end{bmatrix}, \quad
+\mathbf{p} \otimes \mathbf{q} = \begin{bmatrix} -4 \\ 6 \\ 0 \\ 4 \end{bmatrix}
+$$
+
+**3番目の要素（$j$成分）が異なります。** これが非可換性です。
+
+### 例4: 回転の合成（IMUで実際に使われる場面）
+
+IMUの姿勢更新で使われる形を数値で確認します。
+
+現在の姿勢を「Z軸周りに30度回転」とします。
+
+$$
+\mathbf{q} = \begin{bmatrix} \cos 15^\circ \\ 0 \\ 0 \\ \sin 15^\circ \end{bmatrix} \approx \begin{bmatrix} 0.9659 \\ 0 \\ 0 \\ 0.2588 \end{bmatrix}
+$$
+
+微小回転を「Z軸周りに10度（$\approx$ 0.1745 rad）」とします。微小時間 $\Delta t$ での角速度に対応するクォータニオンは：
+
+$$
+\Delta\mathbf{q} \approx \begin{bmatrix} 1 \\ 0 \\ 0 \\ \frac{0.1745}{2} \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \\ 0 \\ 0.0873 \end{bmatrix}
+$$
+
+姿勢の更新は：
+
+$$
+\mathbf{q}_{\text{new}} = \mathbf{q} \otimes \Delta\mathbf{q}
+$$
+
+行列形式で計算します。
+
+$$
+\mathbf{q}_{\text{new}} = \begin{bmatrix}
+0.9659 & 0 & 0 & -0.2588 \\
+0 & 0.9659 & -0.2588 & 0 \\
+0 & 0.2588 & 0.9659 & 0 \\
+0.2588 & 0 & 0 & 0.9659
+\end{bmatrix} \begin{bmatrix} 1 \\ 0 \\ 0 \\ 0.0873 \end{bmatrix} = \begin{bmatrix}
+0.9659 - 0.0226 \\ 0 \\ 0 \\ 0.2588 + 0.0843
+\end{bmatrix} = \begin{bmatrix} 0.9433 \\ 0 \\ 0 \\ 0.3431 \end{bmatrix}
+$$
+
+正規化後の回転角を確認すると：
+
+$$
+\theta_{\text{new}} = 2 \arctan\left(\frac{0.3431}{0.9433}\right) \approx 2 \times 20^\circ = 40^\circ
+$$
+
+**30度 + 10度 = 40度** となり、回転が正しく合成されています。
+
+### 計算順序
+
+クォータニオンの積は、**「2つの回転を1つにまとめる」**操作です。数値を実際に追うと：
+
+1. **分配法則で展開**し、$i^2 = j^2 = k^2 = -1$ と $ij = k$ などのルールで整理する
+2. **行列形式**にするとプログラムへの実装が容易になる
+3. **順番を変えると結果が変わる**（非可換性）ため、回転の適用順序に注意が必要
+
+もっと複雑な例（例えば3軸同時回転の合成など）が必要でしたら、お知らせください。
+
 
 ということで本日はクォータニオン積について扱いました。
 
