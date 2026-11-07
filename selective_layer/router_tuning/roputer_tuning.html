@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x6982;&#x8981;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>本日はLLMの計算速度を向上する<a href="https://yoshishinnze.hatenablog.com/entry/2026/12/25/043000">Selective Layer関係</a>の論文について説明していきます。
+論文はRouter-Tuningというものです。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="概要">概要</h2>
+<p><strong>Router-Tuning</strong>は、EMNLP 2025のメイントラックに採択された研究です。以下にその明細をまとめます。</p>
+<h3 id="論文明細">論文明細</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>タイトル</strong></td>
+<td>Router-Tuning: A Simple and Effective Approach for Dynamic Depth</td>
+</tr>
+<tr>
+<td><strong>著者</strong></td>
+<td>Shwai He, Tao Ge, Guoheng Sun, Bowei Tian, Xiaoyang Wang, Dong Yu</td>
+</tr>
+<tr>
+<td><strong>所属</strong></td>
+<td>University of Maryland, College Park; Tencent AI Lab</td>
+</tr>
+<tr>
+<td><strong>会議</strong></td>
+<td>EMNLP 2025 (Main Conference)</td>
+</tr>
+<tr>
+<td><strong>ページ</strong></td>
+<td>pp. 1925–1938</td>
+</tr>
+<tr>
+<td><strong>arXiv</strong></td>
+<td><a href="https://arxiv.org/abs/2410.13184">2410.13184</a></td>
+</tr>
+<tr>
+<td><strong>PDF</strong></td>
+<td><a href="https://aclanthology.org/2025.emnlp-main.99.pdf">ACL Anthology</a></td>
+</tr>
+<tr>
+<td><strong>コード</strong></td>
+<td><a href="https://github.com/CASE-Lab-UMD/Router-Tuning-Mixture-of-Depths">GitHub</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="研究の概要">研究の概要</h3>
+<p>この論文は、<strong>Mixture of Depths (MoD)</strong> の実用化における2つの課題を解決することを目指しています。</p>
+<ol>
+<li><strong>学習コストの高さ</strong>: 従来のMoDはモデル全体をスクラッチから学習するか、高価な継続的事前学習が必要でした。</li>
+<li><strong>精度劣化のリスク</strong>: TransformerブロックやMLP層をスキップすると性能が大きく低下します。</li>
+</ol>
+<p><strong>Router-Tuning</strong> のアイデアは、<strong>バックボーンモデルのパラメータを完全に固定し、軽量なルーターネットワーク（単層の投影層）のみを小規模データセットでファインチューニングする</strong>というものです。ルーターは全体パラメータの0.01%未満であり、学習コストはLoRAよりもさらに低く、Nvidia RTX A6000で30分未満で完了します。</p>
+<p>さらに、精度劣化を防ぐため、**Attention層に動的な深さを適用する「MindSkip」**を提案しています。Attention層はMLP層に比べ冗長性が高く、スキップしても性能劣化が小さいことが知られているためです。</p>
+<h3 id="主な実験結果">主な実験結果</h3>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>推論速度向上</td>
+<td><strong>21% speedup</strong></td>
+</tr>
+<tr>
+<td>性能低下</td>
+<td><strong>わずか 0.2%</strong></td>
+</tr>
+<tr>
+<td>対象モデル</td>
+<td>Llama, Mistral, Qwen, DeepSeek-MoE, OLMoE</td>
+</tr>
+<tr>
+<td>学習時間</td>
+<td>RTX A6000 で30分未満</td>
+</tr>
+<tr>
+<td>適用粒度</td>
+<td>シーケンスレベル（トークンレベルではなく）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="解決したい課題">解決したい課題</h2>
+<p>本論文が解決しようとした課題は、<strong>Mixture of Depths (MoD)</strong> を実用化する際に立ちはだかる<strong>2つの根本的な障壁</strong>です。</p>
+<h3 id="課題1学習コストが膨大である">課題1：学習コストが膨大である</h3>
+<p>MoDは入力に応じて層を動的にスキップすることで計算効率を高める有望な手法ですが、従来のアプローチには<strong>壊滅的な学習コスト</strong>が伴いました。</p>
+<p>具体的には、以下の2つの方法しかありませんでした。</p>
+<ul>
+<li><strong>スクラッチからの事前学習</strong>: MoD対応のルーターを持つモデルをゼロから学習し直す。[Raposo et al., 2024] の手法に相当します。</li>
+<li><strong>高価な継続的事前学習</strong>: 学習済みモデルにMoDを組み込み、大規模なデータで長時間の追加学習を行う。[Tan et al., 2024] の手法に相当します。</li>
+</ul>
+<p>いずれも、既存の強力な学習済みLLM（LlamaやQwenなど）にMoDを「後付け」するには現実的ではありませんでした。論文では、この障壁を**「既存LLMへのMoD統合における大きな障壁（significant barrier）」**と表現しています。<a href="https://aclanthology.org/2025.emnlp-main.99.pdf">Router-Tuning</a></p>
+<h3 id="課題2スキップ対象を選ぶと性能が大きく劣化する">課題2：スキップ対象を選ぶと性能が大きく劣化する</h3>
+<p>MoDで層をスキップする際、<strong>「何をスキップ対象にするか」</strong> が極めて重要です。従来のMoDは主に<strong>Transformerブロック全体</strong>や<strong>MLP層</strong>をスキップ対象にしていましたが、これらはスキップに対して非常に敏感です。</p>
+<p>論文内の実験（Table 1）では、以下のような結果が示されています。</p>
+<table>
+<thead>
+<tr>
+<th>スキップ対象</th>
+<th>速度向上</th>
+<th>平均性能（Llama-3）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline（スキップなし）</td>
+<td>1.00×</td>
+<td>69.7%</td>
+</tr>
+<tr>
+<td><strong>Block（ブロック全体）</strong></td>
+<td>1.27×</td>
+<td><strong>61.3%</strong>（-8.4ポイント）</td>
+</tr>
+<tr>
+<td><strong>MLP層</strong></td>
+<td>1.06×</td>
+<td><strong>61.8%</strong>（-7.9ポイント）</td>
+</tr>
+<tr>
+<td><strong>Attention層（MindSkip）</strong></td>
+<td>1.21×</td>
+<td><strong>69.4%</strong>（-0.3ポイント）</td>
+</tr>
+</tbody>
+</table>
+<p>MLP層やブロック全体をスキップすると<strong>8ポイント近い性能低下</strong>が生じる一方、Attention層をスキップしても性能低下は<strong>わずか0.3ポイント</strong>に留まります。つまり、従来のMoDは「速くはなるが、壊れてしまう」というトレードオフに陥っていたのです。</p>
+<h3 id="論文の解決策2つのアイデア">論文の解決策：2つのアイデア</h3>
+<p>これら2つの課題に対し、本論文は以下の2つを提案しています。</p>
+<p><strong>① Router-Tuning（学習コスト問題の解決）</strong></p>
+<p>バックボーンモデルのパラメータを<strong>完全に固定</strong>し、<strong>ルーター（単層の線形投影層）のみをファインチューニング</strong>します。ルーターは全体パラメータの<strong>0.01%未満</strong>であり、小規模データセットと少ない学習ステップで済みます。結果として、Nvidia RTX A6000で<strong>30分未満</strong>で学習が完了し、従来手法（DLOなど）と比較して<strong>1000倍高速</strong>です。</p>
+<p><strong>② MindSkip：Attention with Dynamic Depths（性能劣化問題の解決）</strong></p>
+<p>スキップ対象を<strong>Attention層に絞る</strong>ことで、性能劣化を最小化します。Attention層は先行研究でも冗長性が高いことが知られており、KVキャッシュのメモリ消費や二次的な計算コストも削減できるため、効率と精度の両立が可能になります。</p>
+<h2 id="提案手法">提案手法</h2>
+<p>本論文の提案手法は、<strong>「既存の強力なLLMを壊さずに、最小限のコストで動的な層スキップ能力を後付けする」</strong> というものです。2つの柱から成り立っています。</p>
+<h3 id="柱1router-tuning学習方法">柱1：Router-Tuning（学習方法）</h3>
+<p><strong>「本体は一切触らず、鍵穴だけを調整する」</strong> イメージです。</p>
+<p>従来のMoD（Mixture of Depths）は、モデル全体を最初から学習し直すか、長時間の追加学習が必要でした。本論文はこれを根本から変え、<strong>バックボーンモデルのパラメータを完全に凍結（固定）し、各層に新しく付けた「ルーター」という小さな判断機構だけを学習</strong>します。</p>
+<p>ルーターは<strong>単層の線形層（入力次元→1次元）<strong>で、全体のパラメータの</strong>0.01%未満</strong>です。これにより、学習データも少なく、時間もNvidia RTX A6000で<strong>30分未満</strong>で済みます。LoRAよりも圧倒的に安価です。</p>
+<h3 id="柱2mindskipスキップ対象の選び方">柱2：MindSkip（スキップ対象の選び方）</h3>
+<p><strong>「無駄を削るなら、削っても壊れにくい部分から」</strong> という発想です。</p>
+<p>Transformer層の中で「スキップしても性能がほとんど落ちない部分」はどこか？論文の実験では、<strong>Attention層</strong>がその答えでした。</p>
+<table>
+<thead>
+<tr>
+<th>削る対象</th>
+<th>性能への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MLP層</td>
+<td>大幅に劣化（約8ポイント低下）</td>
+</tr>
+<tr>
+<td>ブロック全体</td>
+<td>大幅に劣化（約8ポイント低下）</td>
+</tr>
+<tr>
+<td><strong>Attention層</strong></td>
+<td><strong>ほぼ影響なし（0.3ポイントのみ）</strong></td>
+</tr>
+</tbody>
+</table>
+<p>MindSkipは、<strong>Attention層だけを動的にスキップする</strong>仕組みです。AttentionはKVキャッシュのメモリ消費も大きく、計算量もシーケンス長の2乗に比例するため、スキップの効果が大きいという利点もあります。</p>
+<h3 id="ルーターの動作イメージ">ルーターの動作イメージ</h3>
+<p>各Attention層の手前にルーターが配置されています。ルーターは入力シーケンス全体を見て、「この層は必要？」を0から1のスコアで判定します。</p>
+<pre><code>入力シーケンス → [平均プーリング] → [ルーター: 単層線形] → sigmoid → スコアR(x)
+                                                     ↓
+                                              R(x) &gt;= 閾値τ ?
+                                                 Yes → Attention層を通す
+                                                  No → Attention層を飛ばす
+</code></pre>
+<p>この0/1の判断は微分不可能ですが、<strong>Straight-Through Estimator</strong>というテクニックで、順伝播ではハードな0/1を使い、逆伝播ではソフトな勾配を流すことで、ルーターだけを勾配法で学習できます。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\router_tuning\image\roputer_tuning\1794087715798.png" alt="1794087715798"></p>
+<h3 id="なぜシーケンスレベルなのか">なぜ「シーケンスレベル」なのか？</h3>
+<p>本論文では<strong>トークンごとではなく、シーケンス（入力文）全体で一括して「この層を通すかどうか」</strong> を決めます。これには理由があります。</p>
+<p>トークンごとにスキップを変えると、バッチ内の各トークンが異なる計算パスを通るため、GPUの並列計算が複雑化し、実際の壁時計時間が短縮しにくくなります。シーケンスレベルなら、<strong>「この層はこの入力では全トークン分スキップ」</strong> と統一的に扱えるため、ハードウェア効率が良く、実際の速度向上（21%）が実現できます。</p>
+<h3 id="全体像のまとめ">全体像のまとめ</h3>
+<pre><code>既存の学習済みLLM（Llama, Qwen, Mistralなど）
+        ↓
+各Attention層に「ルーター」（単層線形形層）を挿入
+        ↓
+バックボーンは完全固定 → ルーターだけを小規模データで学習（30分未満）
+        ↓
+推論時: ルーターが各Attention層の必要性を判定
+        ↓
+不要なAttention層をスキップ → 21%高速化、性能低下わずか0.2%
+</code></pre>
+<p>一言で表すと、<strong>「本体はそのまま、Attention層の通過/スキップを決める小さなルーターだけを安価に学習し、速くて壊れにくい動的推論を実現する」</strong> 手法です。</p>
+<h2 id="実験">実験</h2>
+<p>本論文の実験は、既存の強力なLLMにRouter-Tuningを適用したとき、実際に速くなり、しかも壊れないのか? ということを検証しています。
+以下に問題設定と結果を整理して説明いたします。</p>
+<h3 id="問題設定何を検証したか">問題設定（何を検証したか）</h3>
+<p><strong>使用モデル</strong>
+以下の5つの代表的なオープンソースLLMで検証し、<strong>手法がモデルによらず通用するか</strong>を確認しました。</p>
+<ul>
+<li><strong>Llama-3</strong>（Meta）</li>
+<li><strong>Mistral</strong>（Mistral AI）</li>
+<li><strong>Qwen</strong>（Alibaba）</li>
+<li><strong>DeepSeek-MoE</strong>（DeepSeek）</li>
+<li><strong>OLMoE</strong>（Allen AI）</li>
+</ul>
+<p><strong>評価タスク</strong>
+言語モデルの総合的な知識・推論能力を測る、標準的な8つのベンチマークを使用しました。</p>
+<table>
+<thead>
+<tr>
+<th>ベンチマーク</th>
+<th>測る能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ARC-C</td>
+<td>科学の多肢選択推論</td>
+</tr>
+<tr>
+<td>BoolQ</td>
+<td>Yes/No質問応答</td>
+</tr>
+<tr>
+<td>HellaSwag</td>
+<td>常識的な文脈完結</td>
+</tr>
+<tr>
+<td>MMLU</td>
+<td>多岐にわたる知識</td>
+</tr>
+<tr>
+<td>OBQA</td>
+<td>オープン・ブック質問応答</td>
+</tr>
+<tr>
+<td>PIQA</td>
+<td>物理的常識推論</td>
+</tr>
+<tr>
+<td>RTE</td>
+<td>テキスト含意認識</td>
+</tr>
+<tr>
+<td>WinoGrande</td>
+<td>代名詞解決・常識推論</td>
+</tr>
+</tbody>
+</table>
+<p><strong>比較対象（何と比べたか）</strong></p>
+<table>
+<thead>
+<tr>
+<th>比較相手</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Baseline</strong></td>
+<td>スキップなしの通常のモデル（全層通過）</td>
+</tr>
+<tr>
+<td><strong>Blockスキップ</strong></td>
+<td>Transformerブロック全体をスキップする従来MoD</td>
+</tr>
+<tr>
+<td><strong>MLPスキップ</strong></td>
+<td>MLP層だけをスキップする従来MoD</td>
+</tr>
+<tr>
+<td><strong>DLO</strong>（Tan et al.）</td>
+<td>継続的事前学習ベースのMoD適用手法</td>
+</tr>
+<tr>
+<td><strong>LoRA</strong></td>
+<td>パラメータ効率学習との組み合わせ検証</td>
+</tr>
+</tbody>
+</table>
+<p><strong>実験の条件</strong></p>
+<ul>
+<li><strong>スキップ対象</strong>: 最大16層をスキップ可能に設定</li>
+<li><strong>容量制約</strong>: 全体の50%の層しか使わない（=半分をスキップ）という厳しい条件</li>
+<li><strong>適用粒度</strong>: シーケンスレベル（1つの入力文に対して「この層を使うか」を一括決定）</li>
+</ul>
+<h3 id="実験結果何が分かったか">実験結果（何が分かったか）</h3>
+<p><strong>結果1：「何をスキップするか」で性能が劇的に変わる</strong></p>
+<p>同じ「50%の層をスキップする」条件でも、<strong>スキップ対象を変えるだけで性能が大きく異なる</strong>ことが明らかになりました。</p>
+<table>
+<thead>
+<tr>
+<th>スキップ対象</th>
+<th>速度向上</th>
+<th>平均性能（Llama-3）</th>
+<th>性能低下幅</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline（なし）</td>
+<td>1.00×</td>
+<td>69.7%</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Block全体</strong></td>
+<td>1.27×</td>
+<td>61.3%</td>
+<td><strong>-8.4ポイント</strong></td>
+</tr>
+<tr>
+<td><strong>MLP層</strong></td>
+<td>1.06×</td>
+<td>61.8%</td>
+<td><strong>-7.9ポイント</strong></td>
+</tr>
+<tr>
+<td><strong>Attention層（MindSkip）</strong></td>
+<td>1.21×</td>
+<td>69.4%</td>
+<td><strong>-0.3ポイント</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>ポイント</strong>: Attention層をスキップしても性能低下はわずか0.3ポイントですが、MLPやブロック全体をスキップすると<strong>8ポイント近く崩壊</strong>します。これは「Attention層には冗長性が多く、MLP層には重要な知識が詰まっている」ことを示しています。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\router_tuning\image\roputer_tuning\1794088865301.png" alt="1794088865301"></p>
+<p><strong>結果2：Router-Tuningは圧倒的に学習が速い</strong></p>
+<table>
+<thead>
+<tr>
+<th>手法</th>
+<th>学習にかかる時間・コスト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DLO（従来の継続学習型MoD）</td>
+<td>大規模な継続的事前学習が必要</td>
+</tr>
+<tr>
+<td><strong>Router-Tuning（提案手法）</strong></td>
+<td><strong>RTX A6000で30分未満</strong></td>
+</tr>
+<tr>
+<td>速度差</td>
+<td><strong>DLOの約1000倍高速</strong></td>
+</tr>
+</tbody>
+</table>
+<p>ルーターは全体パラメータの0.01%未満なので、学習データも少なく、GPU時間も極めて短く済みます。</p>
+<p><strong>結果3：速度と精度のバランスが優秀</strong></p>
+<ul>
+<li><strong>推論速度向上</strong>: <strong>21%の加速</strong></li>
+<li><strong>性能低下</strong>: <strong>わずか0.2%</strong></li>
+<li><strong>メモリ使用量</strong>: KVキャッシュの削減により大幅削減</li>
+</ul>
+<p>これは「速くなった代わりに壊れた」ではなく、<strong>「ほぼ壊さずに有意に速くなった」</strong> ことを意味します。</p>
+<p><strong>結果4：モデルを問わず通用する</strong></p>
+<p>Llama-3だけでなく、Mistral、Qwen、DeepSeek-MoE、OLMoEでも同様の傾向が確認されました。特にMoEモデル（DeepSeek-MoE, OLMoE）では、<strong>エキスパートレベルでRouter-Tuningを適用</strong>することで、MoE特有の計算コストも削減できることが示されています。</p>
+<p><strong>結果5：LoRAとの組み合わせも可能</strong></p>
+<p>Router-Tuning（ルーターだけ学習）とLoRA（アダプタ層の学習）を<strong>同時に適用</strong>することも可能で、タスク適応と推論効率化を同時に実現できます。これにより、特定の下流タスクにファインチューニングしつつ、動的な層スキップも併用できる柔軟性が示されました。</p>
+<h2 id="総括">総括</h2>
+<p><strong>Router-Tuning</strong>は、LLMの推論を高速化する「Mixture of Depths（MoD）」を、<strong>実用的なコストで既存モデルに後付け</strong>する手法です。</p>
+<p><strong>解決した課題</strong>
+MoDは「重要でない層を飛ばす」ことで計算を削減しますが、従来は①<strong>モデル全体の再学習が必要</strong>でコストが高く、②<strong>飛ばす対象を選ぶと性能が大きく劣化</strong>するという2つの障壁がありました。</p>
+<p><strong>提案の核心</strong></p>
+<ul>
+<li><strong>Router-Tuning</strong>: モデルの本体は完全に固定し、各層に付けた<strong>小さなルーター（全体の0.01%未満）だけ</strong>を30分程度で学習。LoRAよりも圧倒的に安価です。</li>
+<li><strong>MindSkip</strong>: スキップ対象を<strong>Attention層に絞る</strong>。MLPやブロック全体を削ると性能が崩壊しますが、Attention層には冗長性が多く、削ってもほぼ壊れません。</li>
+</ul>
+<p><strong>結果</strong></p>
+<ul>
+<li><strong>21%の推論加速</strong></li>
+<li><strong>性能低下はわずか0.2%</strong></li>
+<li>Llama・Mistral・Qwen・MoEモデルなどで有効性を確認</li>
+<li>LoRAとの併用も可能</li>
+</ul>
+<p>一言でいえば、<strong>「本体はそのままに、Attention層の通過/スキップを決める小さなルーターだけを安価に学習し、速くて壊れにくい動的推論を実現する」</strong> 手法です。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/VsPHqMmmUBg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+            
+        </body>
+        </html>
