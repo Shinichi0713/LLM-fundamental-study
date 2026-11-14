@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>先日読んだ論文 <a href="https://yoshishinnze.hatenablog.com/entry/2026/12/24/043000">Router-Tuning</a>について論文に記載されているような効果があるかについて実験を行ってみようと思います。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="実験">実験</h2>
+<p>実際に実施する実験の内容について説明していきます。</p>
+<h3 id="1-実験の意図は何か">1. 実験の意図は何か</h3>
+<p>LLMは文章を生成する際、すべての層を毎回通すため計算コストが高く、応答が遅くなります。そこで <strong>「重要でない計算を省略して速くする」</strong> 手法として Router-Tuning があります。</p>
+<p>しかし、本当に</p>
+<ul>
+<li><strong>モデルの本体を一切触らずに</strong>、</li>
+<li><strong>わずか数分〜数十分の学習で</strong>、</li>
+<li><strong>精度をほぼ落とさずに</strong>、</li>
+<li><strong>実際の処理速度が上がるのか？</strong></li>
+</ul>
+<p>ということを、Google Colabeでも実行可能な小さなモデル（Qwen2.5-0.5B）を使って<strong>再現・確認</strong>するのがこの実験の目的です。</p>
+<h3 id="2-実験設定">2. 実験設定</h3>
+<p>実験は <strong>5つのステップ</strong> で進めていきます。</p>
+<p><strong>① モデル準備と凍結</strong>
+Qwen2.5-0.5B（5億パラメータの言語モデル）を読み込み、<strong>すべての重みを固定（凍結）</strong> します。これは「本体は絶対に壊さない」という Router-Tuning の基本方針です。</p>
+<p><strong>② どの Attention 層を飛ばせるかを分析</strong>
+各 Transformer 層について、「Attention を通す前と後の表現がどれくらい似ているか」をコサイン類似度で測ります。<strong>似ていれば「この層の Attention はほとんど変化を起こしていない＝冗長＝飛ばしても大丈夫」</strong> と判断し、飛ばし候補の層を 12 層選びます。</p>
+<p><strong>③ ルーターの取り付けと学習</strong>
+選ばれた 12 層の Attention の手前に、<strong>「この層は必要か？」を判断する小さなルーター（単層の線形変換）</strong> を付けます。このルーターだけを 300 ステップ、小さなデータ（Wikitext）で学習します。学習時は「文章の予測精度を保ちつつ、できるだけ Attention を省略するように」と教えます。</p>
+<p><strong>④ 精度の検証</strong>
+学習したルーターが本当に良い判断をしているか、以下で確認します。</p>
+<ul>
+<li><strong>Perplexity（文章の予測しやすさ）</strong>: 数値が低いほど文章を正しく予測できている</li>
+<li><strong>ARC-Easy（小中学生向け科学問題）</strong>: ゼロショットで正解率を測定</li>
+<li><strong>静的ベースラインとの比較</strong>: 同じ数の層を「固定で」飛ばした場合と比較</li>
+</ul>
+<p><strong>⑤ 速度の検証</strong>
+実際に処理が速くなったかを測定します。</p>
+<ul>
+<li><strong>Prefill</strong>: 長い文章を一度に処理する時間（256/1024/2048 トークン）</li>
+<li><strong>Decode</strong>: 新しい文章を 128 トークン生成するスループット</li>
+</ul>
+<h3 id="3-実験の問題設定">3. 実験の問題設定</h3>
+<p>実験を実施した条件について整理しました。
+実行環境はGoogle Colabです。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>モデル</strong></td>
+<td>Qwen/Qwen2.5-0.5B</td>
+<td>小規模な言語モデル（実験用）</td>
+</tr>
+<tr>
+<td><strong>総層数</strong></td>
+<td>24 層</td>
+<td>うち 12 層を飛ばし候補に</td>
+</tr>
+<tr>
+<td><strong>飛ばし目標</strong></td>
+<td>候補 12 層のうち半分（50%）</td>
+<td>つまり平均して 6 層の Attention を省略</td>
+</tr>
+<tr>
+<td><strong>ルーターが見る範囲</strong></td>
+<td>先頭 64 トークン</td>
+<td>文章の最初の部分だけ見て判断</td>
+</tr>
+<tr>
+<td><strong>学習データ</strong></td>
+<td>Wikitext-2（小規模な Wikipedia データ）</td>
+<td>300 ステップ、バッチサイズ 8</td>
+</tr>
+<tr>
+<td><strong>学習対象</strong></td>
+<td>ルーターの重みのみ（約 0.01%）</td>
+<td>モデル本体は一切更新しない</td>
+</tr>
+<tr>
+<td><strong>判断のしきい値 τ</strong></td>
+<td>0.2〜0.8 で変化させて検証</td>
+<td>τ が高いほど「飛ばし」が増える</td>
+</tr>
+</tbody>
+</table>
+<p>表下に設定した τ は「Attention層を実行するかスキップするか」の境界線を決める 0〜1 のしきい値です。</p>
+<p>実装は以下の2ステップです。</p>
+<ol>
+<li><strong>スコアの計算</strong>: ルーター（単層の線形変換）が、入力の先頭 64 トークンの平均表現から <strong>0〜1 のスコア s</strong> を sigmoid で出力します。</li>
+<li><strong>しきい値判定</strong>: <code>s &gt;= τ</code> なら「この層を実行」、<code>s &lt; τ</code> なら「スキップ」と二値化します。</li>
+</ol>
+<p><strong>τ の値で挙動が変わります。</strong></p>
+<table>
+<thead>
+<tr>
+<th>τ の値</th>
+<th>意味</th>
+<th>実行される層の割合</th>
+<th>精度</th>
+<th>速度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>低い（0.2）</td>
+<td>緩い判定</td>
+<td>多い</td>
+<td>高い</td>
+<td>速くなりにくい</td>
+</tr>
+<tr>
+<td>高い（0.8）</td>
+<td>厳しい判定</td>
+<td>少ない</td>
+<td>低い</td>
+<td>速くなりやすい</td>
+</tr>
+</tbody>
+</table>
+<p>つまり、<strong>τ は「速度と精度のトレードオフ」を手動で調整するダイヤル</strong>のようなパラメータです。学習中は τ=0.5 で固定し、推論時に τ を変えることで「どれだけ積極的に層を飛ばすか」を制御します。</p>
+<h3 id="4-期待する出力">4. 期待する出力</h3>
+<p>実験が成功すると、以下のような結果が得られるはずです。</p>
+<p><strong>精度面</strong></p>
+<ul>
+<li><strong>ルーター適用後の perplexity</strong> が、<strong>「同じ数の層を固定で飛ばした場合」よりも良い</strong></li>
+<li><strong>ベースライン（全層通過）との差</strong>が小さい（論文では 0.2% 程度の低下）</li>
+</ul>
+<p>これが確認できれば、「ルーターが賢く『この入力ではこの層は不要』と判断できている」ことの証拠になります。</p>
+<p><strong>速度面</strong></p>
+<ul>
+<li><strong>Prefill 時間</strong>が短縮される（特に長い文章ほど効果が大きい）</li>
+<li><strong>Decode スループット</strong>が向上する（1 秒間に生成できるトークン数が増える）</li>
+</ul>
+<p><strong>トレードオフの可視化</strong>
+しきい値 τ を変える実験で、以下の関係が確認できます。</p>
+<ul>
+<li>τ を上げる（厳しく飛ばす）→ <strong>速くなるが</strong>、perplexity が悪化（精度低下）</li>
+<li>τ を下げる（保守的に飛ばす）→ <strong>精度は保たれるが</strong>、速度向上が小さい</li>
+</ul>
+<p>この「速度と精度のトレードオフ曲線」が描ければ、実験は成功です。</p>
+<p><strong>層ごとの実行率</strong>
+各候補層の「実際に実行された割合」が、0 か 1 に張り付いているか、それとも中間的な値かを確認できます。</p>
+<ul>
+<li><strong>0 か 1 に張り付く</strong> → 実質的に「この層は常に飛ばす/常に通す」という静的な判断を学習しただけ</li>
+<li><strong>入力によって変わる</strong> → 本当に動的な判断ができている</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>今回実験の実装について要点となることを説明していきます。
+一言でいうのであれば、モデル本体は一切触らず、既存の Attention 層の forward を差し替えるだけで動的スキップを実現するという実装です。</p>
+<h3 id="1-routerルーターの実装">1. Router（ルーター）の実装</h3>
+<p>ルーターは <strong>「各 Attention 層の手前に置く、超軽量な判断機構」</strong> です。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 各スキップ候補層に 1 つずつ</span>
+self.routers = nn.ModuleDict({
+    <span class="hljs-built_in">str</span>(i): nn.Linear(d_model, <span class="hljs-number">1</span>)  <span class="hljs-comment"># 入力: 隠れ状態, 出力: 1次元のスコア</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> self.skip_layers
+})
+</code></pre>
+<p><strong>動作の流れ</strong>は以下の通りです。</p>
+<ol>
+<li><strong>入力の集約</strong>: 文章の先頭 <code>PREFIX_LEN</code>（64）トークンの隠れ状態を平均し、1 つのベクトルに圧縮</li>
+<li><strong>正規化</strong>: LayerNorm でスケールを統一</li>
+<li><strong>スコア化</strong>: 単層の線形変換 → sigmoid で <strong>0〜1 のスコア s</strong> を出力</li>
+<li><strong>判定</strong>: <code>s &gt;= τ</code> なら実行（1）、<code>s &lt; τ</code> ならスキップ（0）</li>
+</ol>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">score</span>(<span class="hljs-params">self, i, hs</span>):
+    p = hs[:, :self.prefix_len].<span class="hljs-built_in">float</span>().mean(<span class="hljs-number">1</span>)   <span class="hljs-comment"># [B, D] プロンプト平均</span>
+    p = F.layer_norm(p, p.shape[-<span class="hljs-number">1</span>:])             <span class="hljs-comment"># 正規化</span>
+    <span class="hljs-keyword">return</span> torch.sigmoid(self.routers[<span class="hljs-built_in">str</span>(i)](p))  <span class="hljs-comment"># [B, 1] 0〜1のスコア</span>
+</code></pre>
+<p><strong>初期化の工夫</strong>も重要です。バイアスを <code>1.0</code> に設定することで、学習開始時は sigmoid(1.0)≈0.73 となり、τ=0.5 では<strong>最初は全層を実行</strong>する状態から始まります。これにより、学習初期からモデルが壊れるのを防ぎます。</p>
+<h3 id="2-mindskip-クラス層の-forward-を差し替える">2. MindSkip クラス：層の forward を差し替える</h3>
+<p>これが本実装の<strong>最大の特徴</strong>です。モデルの構造を変更するのではなく、<strong>既存の <code>self_attn.forward</code> を実行時に書き換え（monkey patching）</strong> ます。</p>
+<pre><code class="language-python"><span class="hljs-comment"># 元の forward を保存</span>
+self.orig[i] = self.layers[i].self_attn.forward
+
+<span class="hljs-comment"># 新しい forward に差し替え</span>
+self.layers[i].self_attn.forward = self._make(i)
+</code></pre>
+<p>これにより、既存の学習済みモデルに対して<strong>後付けで</strong>動的スキップを導入できます。</p>
+<h3 id="3-4つの動作モード">3. 4つの動作モード</h3>
+<p>差し替えた forward は、モードに応じて異なる動作をします。</p>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th>動作</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>off</code></td>
+<td>元の Attention をそのまま実行</td>
+<td>ベースライン測定</td>
+</tr>
+<tr>
+<td><code>route</code></td>
+<td>ルーターのスコアで <strong>0/1 ゲートを掛ける</strong>（計算は省略しない）</td>
+<td>学習・perplexity 評価</td>
+</tr>
+<tr>
+<td><code>skip</code></td>
+<td>ルーターの判断に従い、<strong>Attention 計算自体を省略</strong>（バッチサイズ 1 専用）</td>
+<td>速度計測・生成</td>
+</tr>
+<tr>
+<td><code>static</code></td>
+<td>指定した層を常にスキップ</td>
+<td>比較用ベースライン</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>route</code> と <code>skip</code> の違い</strong>が重要です。</p>
+<ul>
+<li><code>route</code> は「Attention は計算するが、出力に 0 を掛けて無効化」（勾配計算が必要なため）</li>
+<li><code>skip</code> は「Attention 計算を丸ごと飛ばす」（実際の速度向上を測るため）</li>
+</ul>
+<h3 id="4-straight-through-estimator">4. Straight-Through Estimator</h3>
+<p><code>sigmoid(x) &gt;= τ</code> の判定は<strong>微分不可能</strong>です。これを学習可能にするのが以下の実装です。</p>
+<pre><code class="language-python">hard = (s &gt;= self.tau).<span class="hljs-built_in">float</span>()           <span class="hljs-comment"># 順伝播: 0 か 1 のハードな値</span>
+<span class="hljs-keyword">if</span> self.train_gate:
+    g = hard + s - s.detach()           <span class="hljs-comment"># Straight-Through Estimator</span>
+</code></pre>
+<ul>
+<li><code>detach()</code> で勾配を止め、ソフトな <code>s</code> の値をそのまま流す</li>
+<li>順伝播では <code>hard</code>（0/1）を使い、逆伝播では <code>s</code>（0〜1の連続値）の勾配を流す</li>
+<li>これにより、ルーターのパラメータを通常の勾配法で学習できる</li>
+</ul>
+<h3 id="5-損失関数lm-損失--容量損失">5. 損失関数：LM 損失 + 容量損失</h3>
+<p>ルーターだけを学習する際、<strong>「精度を保ちつつ、目標の割合だけ層を飛ばす」</strong> ように教えます。</p>
+<pre><code class="language-python">lm = F.cross_entropy(...)                          <span class="hljs-comment"># 文章予測の損失</span>
+exec_frac = torch.stack([g.mean() <span class="hljs-keyword">for</span> g <span class="hljs-keyword">in</span> ms.gates.values()]).mean()
+loss = lm + CAP_LAMBDA * (exec_frac - TARGET_CAPACITY) ** <span class="hljs-number">2</span>
+</code></pre>
+<ul>
+<li><strong>LM 損失</strong>: 文章を正しく予測できるか（精度を保つ）</li>
+<li><strong>容量損失</strong>: 実際の実行割合 <code>exec_frac</code> が目標 <code>TARGET_CAPACITY</code>（0.5）から離れるとペナルティ</li>
+<li><code>CAP_LAMBDA</code>（5.0）でペナルティの強さを調整</li>
+</ul>
+<h3 id="6-冗長性分析どの層を飛ばし候補にするか">6. 冗長性分析：どの層を飛ばし候補にするか</h3>
+<p>全層を飛ばし候補にするのは非効率です。そこで <strong>「Attention の寄与が小さい層さい層＝冗長な層」</strong> をコサイン類似度で選定します。</p>
+<pre><code class="language-python"><span class="hljs-comment"># Attention の入力 x と、出力 x+Attn(x) の類似度を測定</span>
+sim = F.cosine_similarity(x, x + attn_out)  <span class="hljs-comment"># 高いほど冗長（変化が小さい）</span>
+</code></pre>
+<p>類似度が<strong>高い</strong>層ほど「Attention を通しても表現がほとんど変わらない＝飛ばしても大丈夫」なので、スキップ候補に選びます。</p>
+<h3 id="7-評価の実装上の重要点">7. 評価の実装上の重要点</h3>
+<p><strong>Perplexity 測定の注意</strong></p>
+<ul>
+<li>先頭 64 トークンを「プロンプト」としてルーターに見せ、<strong>その後ろのトークンだけ</strong>で perplexity を測定</li>
+<li>これにより「ルーターが未来のトークンを見て判断する」という情報漏れを防ぐ</li>
+</ul>
+<p><strong>ARC-Easy 評価</strong></p>
+<ul>
+<li>各選択肢の対数尤度で回答を選択（<code>acc_norm</code> は文字数で正規化）</li>
+<li>ルーターは質問文の先頭トークンだけ見て判断し、<strong>選択肢のトークンは見ない</strong></li>
+<li>これも情報漏れ防止のため</li>
+</ul>
+<p><strong>速度計測</strong></p>
+<ul>
+<li><code>skip</code> モードで実際に Attention 計算を省略</li>
+<li><strong>ルーターの判断コスト（先頭 64 トークンの平均計算 + 線形変換）も計測に含める</strong></li>
+<li>これにより「理論上の FLOPs 削減」ではなく「実際の速さ」を測定</li>
+</ul>
+<h3 id="実装全体のまとめ">実装全体のまとめ</h3>
+<pre><code>既存モデルを読み込み → 全パラメータを凍結
+        ↓
+各層の Attention 冗長性をコサイン類似度で分析 → 飛ばし候補 12 層を選定
+        ↓
+候補層の self_attn.forward を差し替え（monkey patching）
+        ↓
+ルーター（単層線形）を追加 → 初期バイアス 1.0 で「全層実行」から開始
+        ↓
+学習: LM損失 + 容量損失 でルーターのみ 300 ステップ学習
+        ↓
+推論: τ を変えながら perplexity・速度・ARC精度を評価
+</code></pre>
+<p>実装コード：<a href="https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/selective_layer/router_tuning/src">https://github.com/Shinichi0713/LLM-fundamental-study/tree/main/selective_layer/router_tuning/src</a></p>
+<h2 id="実験結果">実験結果</h2>
+<p>結論から言うと、今回の設定では <strong>「精度は維持できておらず、速度向上も確認できない」</strong> という結果でした。
+今回の結果のみから論文の主張を否定することはできず、実験の設定がまだ手法の効果が出る条件に達していない可能性を考えています。</p>
+<h3 id="結果の全体像">結果の全体像</h3>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>Baseline</th>
+<th>Router</th>
+<th>Static</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Perplexity</strong></td>
+<td>14.04</td>
+<td><strong>18.59</strong></td>
+<td><strong>17.01</strong></td>
+</tr>
+<tr>
+<td><strong>ARC-Easy 精度</strong></td>
+<td>0.56</td>
+<td><strong>0.57</strong></td>
+<td>0.53</td>
+</tr>
+<tr>
+<td><strong>Prefill 1024 加速</strong></td>
+<td>1.00×</td>
+<td><strong>1.04×</strong></td>
+<td><strong>1.06×</strong></td>
+</tr>
+<tr>
+<td><strong>Decode 加速</strong></td>
+<td>1.00×</td>
+<td><strong>1.03×</strong></td>
+<td><strong>1.05×</strong></td>
+</tr>
+</tbody>
+</table>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\router_tuning\image\experiment\1794092079169.png" alt="1794092079169"></p>
+<h3 id="ポイント1速度は向上しているが効果は限定的">ポイント1：速度は向上しているが、効果は限定的</h3>
+<ul>
+<li><strong>Prefill（1024トークン）</strong>: Router で <strong>4%</strong>、Static で <strong>6%</strong> の加速</li>
+<li><strong>Decode（生成）</strong>: Router で <strong>3%</strong>、Static で <strong>5%</strong> の加速</li>
+</ul>
+<p>Static（固定で層を飛ばす）の方が一貫して速い結果になっています。これは Router の判断にコストがかかるためです。</p>
+<h3 id="ポイント2router-が非常に保守的飛ばしが少ない">ポイント2：Router が非常に保守的（飛ばしが少ない）</h3>
+<p><strong>「ルーターが実行した Attention 層数：22/24層」</strong></p>
+<p>つまり、<strong>24層中わずか2層しか飛ばしていません</strong>。論文の設定では「候補12層のうち半分（6層）を飛ばす」が目標でしたが、実際にはほとんど飛ばしていない状態です。</p>
+<p>これが速度向上が限定的（3〜4%）な原因です。</p>
+<h3 id="ポイント3perplexity-の劣化が大きい">ポイント3：Perplexity の劣化が大きい</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>PPL</th>
+<th>Baseline からの変化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline</td>
+<td>14.04</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Router</strong></td>
+<td><strong>18.59</strong></td>
+<td><strong>+32% 悪化</strong></td>
+</tr>
+<tr>
+<td><strong>Static</strong></td>
+<td><strong>17.01</strong></td>
+<td><strong>+21% 悪化</strong></td>
+</tr>
+</tbody>
+</table>
+<p>論文では「性能低下わずか0.2%」と報告されていますが、この実験では <strong>Perplexity が大幅に悪化</strong>しています。これにはいくつかの理由が考えられます。</p>
+<ul>
+<li><strong>モデルサイズ</strong>: 論文は Llama-3（8B）など大きなモデルで検証。0.5B の小さなモデルでは層の冗長性が少なく、飛ばすと壊れやすい</li>
+<li><strong>学習不足</strong>: 300 ステップ・小さなデータではルーターが十分に学習できていない可能性</li>
+<li><strong>τ=0.5 の設定</strong>: 初期バイアス 1.0 のままでは sigmoid(1.0)≈0.73 で、τ=0.5 なら「ほぼ全層実行」になってしまう</li>
+</ul>
+<h3 id="ポイント4arc-easy-精度は意外と健闘">ポイント4：ARC-Easy 精度は意外と健闘</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>ARC-Easy 正解率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline</td>
+<td>0.56</td>
+</tr>
+<tr>
+<td><strong>Router</strong></td>
+<td><strong>0.57</strong> ← わずかに上回る</td>
+</tr>
+<tr>
+<td>Static</td>
+<td>0.53</td>
+</tr>
+</tbody>
+</table>
+<p>Perplexity は大きく悪化していますが、<strong>多肢選択タスク（ARC-Easy）では Router が Baseline をわずかに上回る</strong>結果が出ています。これは「ルーターが不要な計算を省き、本質的な判断に集中できた」可能性もありますが、誤差の範囲とも言えます。</p>
+<h3 id="ポイント5生成トークンの一致率が極めて低い">ポイント5：生成トークンの一致率が極めて低い</h3>
+<p><strong>token_match_vs_base = 0.047（約5%）</strong></p>
+<p>Baseline と比較して、生成されたトークンの一致率が <strong>約5%</strong> しかありません。これはモデルの振る舞いが大きく変わっていることを示しています。</p>
+<h3 id="結論この実験で示されたこと">結論：この実験で示されたこと</h3>
+<ul>
+<li>実装は正しく動作している（ルーターが判断し、層をスキップしている）</li>
+<li>速度はわずかに向上（3〜6%）</li>
+<li>スキップする層が少なすぎる（目標6層に対し実際2層）</li>
+<li>Perplexity が大幅に悪化（論文の結果とは大きく異なる）</li>
+<li>生成結果が Baseline と大きく異なる（一致率5%）</li>
+</ul>
+<h3 id="事後アクションの検討">事後アクションの検討</h3>
+<p>今回結果を受けて次に行うべきアクションについて検討しました。</p>
+<ol>
+<li><strong>容量を目標に近づける</strong>: <code>CAP_LAMBDA</code> を 20〜50 に上げる、<code>MAX_STEPS</code> を増やす、<code>LR</code> を上げる。それでも <code>exec</code> が 0.5 に届かなければ、τ を上げて実行割合を下げられるかを見ます。</li>
+<li><strong>ルータの価値を確認する</strong>: 層ごとの <code>exec_rate</code> の表を見てください。全層が 0 か 1 に張り付いていれば、入力依存の判断はなく、静的な選択と同じです。学習データが wikitext だけだと入力が似通っているので、コード・数学・Wikipedia などを混ぜるとルータが働く余地が出ます。</li>
+<li><strong>評価の精度を上げる</strong>: ARC は問題数を増やす（500以上）か、HellaSwag など別タスクを加えます。</li>
+<li><strong>速度の測り方を改善する</strong>: ベースラインと各方式を交互に何度も測って中央値を取る、<code>reps</code> を増やす、2層スキップではなく6層程度のスキップで測る、といった対応が必要です。</li>
+<li><strong>条件を変える</strong>: decode のコスト中の Attention の割合は、モデルが大きいほど、またコンテキストが長いほど増えます。1.5B〜3B 級のモデルと、2k〜8k トークンの長い文脈で decode を測ると、Attention 層をスキップする効果が見えやすくなります。</li>
+</ol>
+<h2 id="総括">総括</h2>
+<p><strong>結論</strong>: 今回の実験では、Router-Tuning の論文で報告されたような「精度を保ちつつ大幅に高速化する」効果は<strong>確認できませんでした</strong>。</p>
+<p><strong>実験結果のエッセンス</strong></p>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>速度向上</strong></td>
+<td>わずか 3〜6%。Static（固定スキップ）の方が一貫して速い</td>
+</tr>
+<tr>
+<td><strong>スキップ層数</strong></td>
+<td>目標 6 層に対し、実際は<strong>わずか 2 層</strong>のみ（極めて保守的）</td>
+</tr>
+<tr>
+<td><strong>Perplexity</strong></td>
+<td>Baseline 14.04 → Router <strong>18.59</strong>（<strong>+32% 悪化</strong>）</td>
+</tr>
+<tr>
+<td><strong>ARC-Easy 精度</strong></td>
+<td>Baseline 0.56 → Router <strong>0.57</strong>（同等〜わずかに上回る）</td>
+</tr>
+<tr>
+<td><strong>生成一致率</strong></td>
+<td>Baseline との一致率 <strong>約 5%</strong>（振る舞いが大きく変化）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>所感</strong></p>
+<p>実装は正しく動作し、ルーターが動的に判断していること自体は確認できました。しかし、<strong>「飛ばす層が少なすぎて速度効果が限定的」</strong> かつ <strong>「Perplexity が大幅に劣化」</strong> という結果となり、論文の主張とは大きく異なる outcome でした。</p>
+<p>この乖離の主な原因として、<strong>① 0.5B モデルでは層の冗長性が不足</strong>、<strong>② 300 ステップ・小データでは学習が不十分</strong>、<strong>③ τ=0.5 の設定では飛ばしが起きにくい</strong>、の 3 点が考えられます。つまり、<strong>「手法自体は動いたが、効果が出る条件（モデル規模・学習量・ハイパーパラメータ）に達していなかった」</strong> と総括できます。</p>
+
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/VsPHqMmmUBg?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+            
+        </body>
+        </html>
