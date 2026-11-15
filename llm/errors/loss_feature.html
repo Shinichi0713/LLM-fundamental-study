@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>1&period; &#x4fa1;&#x5024;&#x30d9;&#x30fc;&#x30b9;&#x306e;&#x30ed;&#x30b9;&#x95a2;&#x6570;&#xff08;DQN &sol; TD&#x8aa4;&#x5dee;&#x306e;&#x4e8c;&#x4e57;&#xff09;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>添付の内容で説明されている3種類のロス関数について、それぞれのメリット・デメリットを説明します。</p>
+<h3 id="1-価値ベースのロス関数dqn--td誤差の二乗">1. 価値ベースのロス関数（DQN / TD誤差の二乗）</h3>
+<p><strong>形式</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="double-struck">E</mi><mo stretchy="false">[</mo><mo stretchy="false">(</mo><mi>r</mi><mo>+</mo><mi>γ</mi><msub><mrow><mi>max</mi><mo>⁡</mo></mrow><msup><mi>a</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msub><mi>Q</mi><mo stretchy="false">(</mo><msup><mi>s</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo separator="true">,</mo><msup><mi>a</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo separator="true">;</mo><msup><mi>θ</mi><mo>−</mo></msup><mo stretchy="false">)</mo><mo>−</mo><mi>Q</mi><mo stretchy="false">(</mo><mi>s</mi><mo separator="true">,</mo><mi>a</mi><mo separator="true">;</mo><mi>θ</mi><mo stretchy="false">)</mo><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">L(\theta) = \mathbb{E}[(r + \gamma \max_{a&#x27;} Q(s&#x27;, a&#x27;; \theta^-) - Q(s, a; \theta))^2]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathbb">E</span><span class="mopen">[(</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0213em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">max</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6828em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">Q</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">−</span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal">Q</span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">a</span><span class="mpunct">;</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></p>
+<p><strong>メリット</strong></p>
+<ul>
+<li><strong>学習が比較的安定する</strong>: TD誤差の二乗を最小化するという明確な目標があるため、Q値が収束しやすいです。</li>
+<li><strong>サンプル効率が高い</strong>: Experience Replay（経験再生）を使って過去のデータを再利用できるため、同じデータから何度も学習でき、サンプルを無駄にしません。</li>
+<li><strong>オフ方策学習が可能</strong>: 実際に実行した行動でなくても、Replay Bufferに溜まった様々な行動のデータから学習できます。これにより、探索と学習を並行して進められます。</li>
+<li><strong>実装が比較的シンプル</strong>: 「ターゲットQ値と現在のQ値の差を縮める」という直感的な構造で、コードが整理しやすいです。</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li><strong>行動空間が大きいと厳しい</strong>: 行動の選択に <code>max</code> 演算を使うため、アクションの種類が膨大になると計算コストが高くなります（連続行動空間には不向き）。</li>
+<li><strong>Q値の過大評価（Overestimation）</strong>: <code>max</code> 演算の影響で、ノイズを含むQ値が過大に評価されやすいです（Double DQNなどの改良で対処します）。</li>
+<li><strong>方策そのものを直接学習しない</strong>: Q値を介して間接的に方策を得るため、確率的な行動選択の細かい調整が難しいです。</li>
+</ul>
+<h3 id="2-方策ベースのロス関数方策勾配法">2. 方策ベースのロス関数（方策勾配法）</h3>
+<p><strong>形式</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><mi>J</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><msub><mi mathvariant="double-struck">E</mi><mrow><mi>τ</mi><mo>∼</mo><msub><mi>π</mi><mi>θ</mi></msub></mrow></msub><mo stretchy="false">[</mo><msub><mo>∑</mo><mi>t</mi></msub><msup><mi>γ</mi><mi>t</mi></msup><msub><mi>r</mi><mi>t</mi></msub><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">L(\theta) = -J(\theta) = -\mathbb{E}_{\tau \sim \pi_\theta}[\sum_t \gamma^t r_t]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">−</span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0933em;vertical-align:-0.2997em;"></span><span class="mord">−</span><span class="mord"><span class="mord mathbb">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.1132em;">τ</span><span class="mrel mtight">∼</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3488em;margin-left:-0.0359em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1512em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2559em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1308em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7936em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></p>
+<p><strong>メリット</strong></p>
+<ul>
+<li><strong>連続行動空間にも対応できる</strong>: Q値の <code>max</code> 演算が不要なため、モーターのトルクやトレードの売買量のような連続値のアクションを直接扱えます。</li>
+<li><strong>確率的な方策を自然に表現できる</strong>: 「この状況では70%の確率で右、30%で左」といった確率的な行動を直接学習できます。</li>
+<li><strong>収束先が明確</strong>: 報酬期待値を直接最大化するため、理論的に安定した方策に収束しやすいです。</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li><strong>サンプル効率が悪い</strong>: 1つのエピソード分のデータで1回の更新しかできない（オンライン学習）ため、同じデータを使い回せません。大量の試行が必要になります。</li>
+<li><strong>学習が不安定になりやすい</strong>: 報酬の分散が大きいと、勾配のノイズも大きくなり、学習が安定しにくいです。</li>
+<li><strong>局所最適に陥りやすい</strong>: 一度ある行動に偏ると、そこから抜け出すための探索が難しくなります。</li>
+<li><strong>ベースライン（基準値）がない</strong>: 報酬そのものを使うため、「平均的な行動より良いか悪いか」の相対評価ができず、学習効率が落ちます（これを解決するのがActor-Critic系）。</li>
+</ul>
+<h3 id="3-actor-critic系のロス関数a2ca3c-ppoなど">3. Actor-Critic系のロス関数（A2C/A3C, PPOなど）</h3>
+<p><strong>形式</strong>: Critic の MSE + Actor の方策勾配（PPOではクリップ付き）</p>
+<p><strong>メリット</strong></p>
+<ul>
+<li><strong>価値ベースと方策ベースの良いとこ取り</strong>: Criticが価値関数を学習して安定性を確保し、Actorが方策を直接最適化して柔軟な行動選択ができます。</li>
+<li><strong>アドバンテージを使える</strong>: 「平均より良い行動か悪い行動か」を明確に評価できるため、学習の分散が減り、効率が大幅に向上します。</li>
+<li><strong>PPOでは学習が非常に安定</strong>: クリッピングにより、1回の更新で方策が大きく変わることを防ぎ、学習の破綻（Collapse）を回避できます。</li>
+<li><strong>並列学習に強い</strong>: A3CやPPOは複数の環境を並列に走らせてデータを集められるため、サンプル収集を高速化できます。</li>
+</ul>
+<p><strong>デメリット</strong></p>
+<ul>
+<li><strong>実装が複雑</strong>: ActorとCriticの2つのネットワークを同時に学習させる必要があり、ハイパーパラメータも多くなります。</li>
+<li><strong>ハイパーパラメータの調整が難しい</strong>: 学習率、割引率、GAEのパラメータ、PPOのクリップ係数など、調整すべき設定が多く、チューニングに時間がかかります。</li>
+<li><strong>Criticの価値推定がずれると影響が大きい</strong>: Criticが正確でないと、Actorが誤ったアドバンテージに基づいて更新され、両方が悪化する悪循環に陥ることがあります。</li>
+<li><strong>計算コストが高い</strong>: 2つのネットワークを管理・更新する必要があるため、メモリと計算資源を多く消費します。</li>
+</ul>
+<h3 id="3種類の比較まとめ">3種類の比較まとめ</h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>価値ベース（DQN）</th>
+<th>方策ベース（方策勾配）</th>
+<th>Actor-Critic系（PPO等）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>学習の安定性</strong></td>
+<td>高い（TD誤差の二乗）</td>
+<td>低い（分散が大きい）</td>
+<td>中〜高い（PPOは高い）</td>
+</tr>
+<tr>
+<td><strong>サンプル効率</strong></td>
+<td>高い（Replay可）</td>
+<td>低い</td>
+<td>中程度</td>
+</tr>
+<tr>
+<td><strong>連続行動への対応</strong></td>
+<td>不向き</td>
+<td>得意</td>
+<td>得意</td>
+</tr>
+<tr>
+<td><strong>実装の複雑さ</strong></td>
+<td>シンプル</td>
+<td>シンプル</td>
+<td>複雑</td>
+</tr>
+<tr>
+<td><strong>探索の柔軟性</strong></td>
+<td>オフ方策で強い</td>
+<td>オン方策のみ</td>
+<td>オン方策中心</td>
+</tr>
+<tr>
+<td><strong>ハイパーパラメータ</strong></td>
+<td>比較的少ない</td>
+<td>少ない</td>
+<td>多い</td>
+</tr>
+</tbody>
+</table>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
