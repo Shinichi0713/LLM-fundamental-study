@@ -1,0 +1,75 @@
+{
+  "name": "Demo evaluation",
+  "dataset": "data/benchmark_ja.json",
+  "concurrency": 4,
+  "timeout_ms": 60000,
+  "temperature": 0.0,
+  "max_tokens": 256,
+  "pass_threshold": 0.6,
+  "retries": 1,
+  "models": [
+    {
+      "id": "Nova Flash",
+      "provider": "mock",
+      "profile": "fast",
+      "color": "#38bdf8",
+      "input_price_per_mtok": 0.10,
+      "output_price_per_mtok": 0.40
+    },
+    {
+      "id": "Atlas Balanced",
+      "provider": "mock",
+      "profile": "balanced",
+      "color": "#a78bfa",
+      "input_price_per_mtok": 2.00,
+      "output_price_per_mtok": 8.00
+    },
+    {
+      "id": "Orion Pro",
+      "provider": "mock",
+      "profile": "quality",
+      "color": "#34d399",
+      "input_price_per_mtok": 10.00,
+      "output_price_per_mtok": 30.00
+    },
+    {
+      "id": "Local Llama",
+      "provider": "mock",
+      "profile": "local",
+      "color": "#fbbf24",
+      "input_price_per_mtok": 0.00,
+      "output_price_per_mtok": 0.00
+    },
+    {
+      "id": "OpenAI GPT-4o mini",
+      "provider": "openai",
+      "base_url": "https://api.openai.com/v1",
+      "model": "gpt-4o-mini",
+      "api_key_env": "OPENAI_API_KEY",
+      "color": "#f472b6",
+      "input_price_per_mtok": 0.15,
+      "output_price_per_mtok": 0.60,
+      "enabled": false
+    },
+    {
+      "id": "Ollama Llama 3.2",
+      "provider": "openai",
+      "base_url": "http://localhost:11434/v1",
+      "model": "llama3.2",
+      "color": "#22d3ee",
+      "input_price_per_mtok": 0.00,
+      "output_price_per_mtok": 0.00,
+      "enabled": false
+    },
+    {
+      "id": "LM Studio Local",
+      "provider": "openai",
+      "base_url": "http://localhost:1234/v1",
+      "model": "local-model",
+      "color": "#a3e635",
+      "input_price_per_mtok": 0.00,
+      "output_price_per_mtok": 0.00,
+      "enabled": false
+    }
+  ]
+}
