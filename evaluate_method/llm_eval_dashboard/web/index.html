@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ja" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Eval Dashboard</title>
+  <meta name="description" content="C++ 製の LLM 性能評価ダッシュボード">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M14 44V20h7l11 15 11-15h7v24h-7V31L32 45 21 31v13z' fill='%2338bdf8'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="grid-lines"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">◈</div>
+      <div>
+        <div class="brand-title">LLM EVAL</div>
+        <div class="brand-sub">performance dashboard</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <label class="select-wrap">
+        <span>RUN</span>
+        <select id="run-select" aria-label="実行結果を選択"></select>
+      </label>
+      <button id="theme-toggle" class="icon-btn" title="テーマを切り替える" aria-label="テーマを切り替える">☀</button>
+      <button id="run-btn" class="primary-btn">
+        <span class="play">▶</span> ベンチマーク実行
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow" id="run-meta">LOADING</div>
+        <h1>LLM 性能評価<br><span class="grad">ダッシュボード</span></h1>
+        <p class="lede">
+          品質・速度・信頼性・コストを一つの画面で比較。
+          C++ 製の評価エンジンが OpenAI 互換 API をストリーミングで計測し、
+          結果をその場で可視化します。
+        </p>
+      </div>
+      <div class="kpis" id="kpis" aria-live="polite"></div>
+    </section>
+
+    <section class="panel leaderboard-panel">
+      <div class="panel-head">
+        <div>
+          <h2>リーダーボード</h2>
+          <p>総合スコアは品質 45%・速度 20%・信頼性 15%・レイテンシ 10%・コスト 10% の加重平均です。</p>
+        </div>
+        <div class="panel-tools">
+          <a id="export-link" class="ghost-btn" href="#" title="CSV をダウンロード">CSV 出力</a>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="leaderboard">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>モデル</th>
+              <th class="sortable" data-sort="overall">Overall</th>
+              <th class="sortable" data-sort="quality">品質</th>
+              <th class="sortable" data-sort="success_rate">成功率</th>
+              <th class="sortable" data-sort="tokens_per_sec">tok/s</th>
+              <th class="sortable" data-sort="p50_latency_ms">p50</th>
+              <th class="sortable" data-sort="avg_ttft_ms">TTFT</th>
+              <th class="sortable" data-sort="cost_per_1k_usd">コスト/1k</th>
+              <th>Pass</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="panel span-7">
+        <div class="panel-head">
+          <div>
+            <h2>能力レーダー</h2>
+            <p>カテゴリ別の平均品質スコア（0–100）。凡例をクリックして比較対象を切り替えられます。</p>
+          </div>
+        </div>
+        <div class="chart-wrap radar-wrap">
+          <canvas id="radar" height="340"></canvas>
+          <div class="legend" id="radar-legend"></div>
+        </div>
+      </section>
+
+      <section class="panel span-5">
+        <div class="panel-head">
+          <div>
+            <h2>品質 vs 速度</h2>
+            <p>右上ほど高性能。破線は Pareto frontier（非劣解）です。</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="scatter" height="340"></canvas>
+        </div>
+      </section>
+
+      <section class="panel span-7">
+        <div class="panel-head">
+          <div>
+            <h2>レイテンシ / スループット</h2>
+            <p>p50・p95 の応答時間と、生成速度（tokens/sec）を比較します。</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="latency" height="360"></canvas>
+        </div>
+      </section>
+
+      <section class="panel span-5">
+        <div class="panel-head">
+          <div>
+            <h2>カテゴリ別スコア</h2>
+            <p>モデル × タスク領域のヒートマップ。</p>
+          </div>
+        </div>
+        <div id="heatmap" class="heatmap"></div>
+        <div class="heat-legend"><span>0</span><div class="heat-scale"></div><span>100</span></div>
+      </section>
+
+      <section class="panel span-12">
+        <div class="panel-head">
+          <div>
+            <h2>実行履歴</h2>
+            <p>保存された実行ごとの Overall スコア推移。改善やリグレッションを追跡できます。</p>
+          </div>
+          <div class="legend" id="history-legend"></div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="history" height="280"></canvas>
+        </div>
+      </section>
+
+      <section class="panel span-12">
+        <div class="panel-head details-head">
+          <div>
+            <h2>プロンプト別の詳細</h2>
+            <p>各行を展開すると、モデルの生出力・一致キーワード・トークン数などを確認できます。</p>
+          </div>
+          <div class="panel-tools wrap">
+            <select id="detail-model" aria-label="モデルで絞り込み"></select>
+            <select id="detail-category" aria-label="カテゴリで絞り込み"></select>
+            <input id="detail-search" type="search" placeholder="プロンプト / 出力を検索" aria-label="検索">
+            <label class="check"><input type="checkbox" id="fail-only"> 失敗のみ</label>
+          </div>
+        </div>
+        <div id="details" class="details"></div>
+      </section>
+    </div>
+
+    <footer>
+      <span>LLM Eval Dashboard · C++17</span>
+      <span id="footer-stats"></span>
+    </footer>
+  </main>
+
+  <!-- Run modal -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h2 id="modal-title">ベンチマークを実行</h2>
+          <p>評価するモデルとプロンプト数を選択してください。</p>
+        </div>
+        <button id="modal-close" class="icon-btn" aria-label="閉じる">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field-row">
+          <label class="field grow">
+            <span>実行名</span>
+            <input id="run-name" type="text" placeholder="Evaluation">
+          </label>
+          <label class="field">
+            <span>並列数</span>
+            <select id="run-concurrency">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="4" selected>4</option>
+              <option value="6">6</option>
+              <option value="8">8</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>プロンプト数</span>
+            <select id="run-max-items">
+              <option value="6">6</option>
+              <option value="12">12</option>
+              <option value="24" selected>24（すべて）</option>
+              <option value="0">全件</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="model-list-head">
+          <span>モデル</span>
+          <span class="hint-inline">mock は API キー不要で即時実行できます</span>
+        </div>
+        <div id="model-list" class="model-list"></div>
+
+        <details class="custom-model">
+          <summary>カスタムエンドポイントを追加</summary>
+          <div class="custom-grid">
+            <label class="field"><span>表示名</span><input id="custom-id" placeholder="My Model"></label>
+            <label class="field"><span>Base URL</span><input id="custom-url" placeholder="http://localhost:8000/v1"></label>
+            <label class="field"><span>モデル名</span><input id="custom-model" placeholder="model-name"></label>
+            <label class="field"><span>API キー環境変数</span><input id="custom-key" placeholder="OPENAI_API_KEY"></label>
+            <label class="field"><span>種別</span>
+              <select id="custom-provider">
+                <option value="openai">OpenAI 互換</option>
+                <option value="mock">mock</option>
+              </select>
+            </label>
+            <label class="field"><span>入力 $/1M tok</span><input id="custom-in" type="number" step="0.01" value="0"></label>
+            <label class="field"><span>出力 $/1M tok</span><input id="custom-out" type="number" step="0.01" value="0"></label>
+          </div>
+          <p class="hint">API キー自体は送信されません。サーバー側の環境変数から読み込みます。</p>
+        </details>
+      </div>
+      <div class="modal-foot">
+        <button id="modal-cancel" class="ghost-btn">キャンセル</button>
+        <button id="modal-start" class="primary-btn">実行する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live job panel -->
+  <div id="job-panel" class="job-panel hidden" aria-live="polite">
+    <div class="job-head">
+      <div>
+        <div class="job-title" id="job-title">ベンチマーク実行中</div>
+        <div class="job-sub" id="job-message">準備中...</div>
+      </div>
+      <button id="job-cancel" class="ghost-btn small">中止</button>
+    </div>
+    <div class="progress"><div id="job-bar"></div></div>
+    <div class="job-meta"><span id="job-percent">0%</span><span id="job-elapsed">0s</span></div>
+    <div id="job-models" class="job-models"></div>
+  </div>
+
+  <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
