@@ -511,8 +511,9 @@ void App::setup_routes() {
     std::set<std::string> wanted;
     bool explicit_selection = false;
 
-    if (body.contains("model_ids") && body["model_ids"].is_array() &&
-        !body["model_ids"].empty()) {
+    if (body.contains("model_ids") && body["model_ids"].is_array()) {
+      // An explicit (even empty) array means "use exactly these config
+      // models". This lets the UI run only ad-hoc custom_models.
       explicit_selection = true;
       for (const auto& id : body["model_ids"]) {
         if (id.is_string()) {
