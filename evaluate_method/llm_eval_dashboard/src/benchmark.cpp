@@ -370,6 +370,10 @@ ModelSummary summarize_model(const ModelTarget& model,
                     0.15 * summary.success_rate + 0.10 * latency_score +
                     0.10 * cost_score;
   summary.overall = clamp01(summary.overall / 100.0) * 100.0;
+  if (success_count == 0) {
+    // Do not reward a model that produced no successful response at all.
+    summary.overall = 0.0;
+  }
   return summary;
 }
 

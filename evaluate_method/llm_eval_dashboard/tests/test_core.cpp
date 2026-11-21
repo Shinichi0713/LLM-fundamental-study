@@ -162,6 +162,17 @@ void test_summary() {
   CHECK(summary.overall > 0.0);
   CHECK(summary.overall <= 100.0);
   CHECK_NEAR(summary.category_scores["math"], 75.0, 1e-9);
+
+  // A model with no successful requests must not receive a positive score.
+  std::vector<RequestResult> failures(2);
+  for (auto& result : failures) {
+    result.model_id = "model-a";
+    result.category = "math";
+    result.ok = false;
+  }
+  ModelSummary failed = summarize_model(model, failures, 0.6);
+  CHECK_EQ(failed.success_rate, 0.0);
+  CHECK_EQ(failed.overall, 0.0);
 }
 
 void test_select_items() {
