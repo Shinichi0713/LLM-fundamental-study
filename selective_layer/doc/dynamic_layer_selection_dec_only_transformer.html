@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x8ad6;&#x6587;&#x660e;&#x7d30;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+/* 目次全体のコンテナ */
+nav {
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 40px 0;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+/* 「目次」というタイトル */
+nav h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0969da;
+    color: #24292f;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* タイトルの前にアイコン（絵文字）を追加 */
+nav h3::before {
+    content: "📖";
+    margin-right: 8px;
+}
+
+/* リストのスタイル調整 */
+#toc {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#toc li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* リンクのスタイル */
+#toc a {
+    color: #0969da;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+#toc a:hover {
+    color: #cf222e;
+    transform: translateX(5px); /* ホバー時に少し右に動く */
+}
+
+/* h3（小見出し）がある場合のネスト表現（JSの修正も必要） */
+.toc-h3 {
+    padding-left: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+
+/* 記事タイトル (h1) */
+h1 {
+    font-size: 2rem;
+    color: #24292f;
+    line-height: 1.3;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 3px double #e1e4e8; /* 二重線で上品に */
+    text-align: center; /* タイトルを中央に寄せて特別感を出す */
+}
+
+/* セクション見出し (h2) */
+h2 {
+    font-size: 1.5rem;
+    color: #24292f;
+    padding: 0.5rem 1rem;
+    margin: 40px 0 20px 0;
+    background: linear-gradient(transparent 70%, #e8f0fe 70%); /* 下側に薄い色のアクセント */
+    border-left: 6px solid #0969da; /* 目次のテーマカラーと合わせる */
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+}
+
+/* 強調文字 (strong) */
+strong {
+    font-weight: bold;
+    color: #cf222e; /* ホバー時の赤色と合わせて統一感を出す */
+    background: linear-gradient(transparent 60%, #fff2cc 60%); /* 黄色のマーカー風 */
+    padding: 0 2px;
+}
+
+/* 引用のコンテナ */
+blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 30px 0;
+    background-color: #f6f8fa; /* 目次の背景より少しだけ濃いグレー */
+    border-left: 5px solid #d0d7de; /* 落ち着いたグレーの境界線 */
+    color: #57606a; /* 文字色は少し薄くして引用らしさを出す */
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 引用符のアイコンを装飾として追加 */
+blockquote::before {
+    content: "“";
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    font-size: 40px;
+    color: #d0d7de;
+    font-family: serif;
+    line-height: 1;
+}
+
+/* 読者になるボタンのデザイン */
+.btn-subscribe {
+    display: inline-block;
+    padding: 12px 35px; /* 横幅を広めにとって存在感を出します */
+    background-color: #383838; /* お好みの色に変更してください */
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-subscribe:hover {
+    background-color: #555555;
+    text-decoration: none;
+}
+
+/* はてなブログで見えてしまう数式データを非表示にする */
+.katex-html {
+    display: none !important;
+}
+
+.katex-mathml {
+    display: inline !important;
+}
+/* Amazonカード型のオシャレなデザイン */
+.shop-card {
+    display: flex;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* マウスホップした時の動き */
+.shop-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.shop-card-image {
+    width: 150px;
+    min-width: 150px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-card-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px;
+}
+
+.shop-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.shop-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.shop-card-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+/* Amazonらしいオレンジボタン */
+.shop-card-link a {
+    display: inline-block;
+    background-color: #ff9900;
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.shop-card-link a:hover {
+    background-color: #e68a00;
+}
+
+/* スマホ対応：縦並びにする */
+@media (max-width: 480px) {
+    .shop-card {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    .shop-card-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+<nav>
+        <h3>目次</h3>
+        <ul id="toc"></ul> 
+</nav>
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p>LLMの応用拡大に伴って消費するリソースの大きさも課題となってきています。
+<a href="https://yoshishinnze.hatenablog.com/entry/2026/11/29/043000">LLMの計算量を削減することを主旨とする論文が研究</a>されており、著者も何度か紹介してきました。
+今日はそんなLLMのレイヤ選択に関する論文の紹介です。</p>
+<button id="bgm-trigger" style="padding: 10px 20px; font-size: 16px; background-color: #008cba; color: white; border: none; border-radius: 5px; cursor: pointer;">
+  🎵 BGMを再生する
+</button>
+<h2 id="論文明細">論文明細</h2>
+<p>「Dynamic Layer Selection in Decoder-Only Transformers」の論文明細情報は以下の通りです。</p>
+<h3 id="論文明細情報">論文明細情報</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">項目</th>
+<th style="text-align:left">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>論文タイトル</strong></td>
+<td style="text-align:left">Dynamic Layer Selection in Decoder-Only Transformers</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>著者</strong></td>
+<td style="text-align:left">Theodore Glavas, Joud Chataoui, Florence Regol, Wassim Jabbour, Antonios Valkanas, Boris N. Oreshkin, Mark Coates</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>著者所属</strong></td>
+<td style="text-align:left">McGill University<br>International Laboratory on Learning Systems (ILLS)<br>Mila Québec AI Institute<br>Amazon Science</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>発表学会・ワークショップ</strong></td>
+<td style="text-align:left">4th NeurIPS Efficient Natural Language and Speech Processing Workshop (ENLSP-IV 2024)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>開催日・場所</strong></td>
+<td style="text-align:left">2024年12月14日、Vancouver, British Columbia, Canada</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>arXiv ID</strong></td>
+<td style="text-align:left"><a href="https://arxiv.org/abs/2410.20022">arXiv:2410.20022</a></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>arXiv投稿日</strong></td>
+<td style="text-align:left">2024年10月26日</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>論文PDF</strong></td>
+<td style="text-align:left"><a href="https://neurips2024-enlsp.github.io/papers/paper_50.pdf">ENLSP-IV 2024 Proceedings (PDF)</a></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>発表動画</strong></td>
+<td style="text-align:left"><a href="https://slideslive.com/39029430/dynamic-layer-selection-in-decoderonly-transformers">SlidesLive</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="補足">補足</h3>
+<p>この論文は、<a href="https://nips.cc/virtual/2024/workshop/84731">NeurIPS 2024</a>のワークショップ「<a href="https://neurips2024-enlsp.github.io/">ENLSP-IV</a>」で発表されたものです。LLMの推論効率化に関する研究で、デコーダのみ型Transformerにおける「layer skipping（層スキップ）」と「early exiting（早期終了）」の2つの動的推論手法を比較・検討しています。著者のうちTheodore GlavasとJoud Chataouiは共同第一著者（*印）として記載されています。</p>
+<p>情報源: <a href="https://proceedings.mlr.press/v262/">ENLSP-IV 2024 Proceedings</a>、<a href="https://arxiv.org/abs/2410.20022">arXiv</a>、<a href="https://neurips2024-enlsp.github.io/accepted_papers.html">ENLSP Workshop 2024</a></p>
+<h2 id="研究背景">研究背景</h2>
+<p>本論文は、大規模言語モデル（LLM）の<strong>推論効率化</strong>という課題に基づいて研究されています。具体的には、以下のような背景と問題意識から研究が行われました。</p>
+<h3 id="主要な課題">主要な課題</h3>
+<p><strong>1. LLMの巨大化による推論コストの増大</strong></p>
+<p>LLMの配布・再利用が進む中、モデルのライフサイクル全体において、<strong>学習よりも推論が計算コストを支配する</strong>ようになりました。そのため、推論時の計算量を削減する技術が急務となっています。</p>
+<p><strong>2. 自己回帰的生成における動的推論の困難さ</strong></p>
+<p>自然言語生成（NLG）は自己回帰的にトークンを生成するため、動的ネットワーク（入力に応じて計算量を調整する手法）の適用に以下の課題があります：</p>
+<ul>
+<li><strong>誤差の累積</strong>: 1つのトークンの計算を削減すると生じる誤差が、後続のトークン生成に影響し、誤ったトークンへの依存やKVキャッシュの不完全な更新を招きます。</li>
+<li><strong>出力語彙空間の巨大さ</strong>: 中間層で分類ヘッドを評価するコストが高く、軽量なコントローラーが隠れ状態を使って層の実行を制御する必要があります。</li>
+<li><strong>トークン単位適応のオーバーヘッド</strong>: 各トークンごとに計算を調整すると、長い生成過程でオーバーヘッドが累積するため、コントローラーは極めて軽量でなければなりません。</li>
+</ul>
+<p><strong>3. 既存手法の比較が不明確</strong></p>
+<p>推論効率化の代表的な手法として「early exit（早期終了）」と「layer skipping（層スキップ）」がありますが、<strong>どちらがモデルの隠れ状態の誤差を最小化できるかについて、既存文献では明確な結論が得られていませんでした</strong>。</p>
+<h3 id="研究ゴール">研究ゴール</h3>
+<p>著者らは以下の3つの問いに答えるために実験を行っています：</p>
+<ol>
+<li><strong>early exitとlayer skippingのどちらが効果的か？</strong></li>
+<li><strong>隠れ状態を使った層スキップコントローラーは、実際に有効か？</strong></li>
+<li><strong>シーケンス単位での計算割り当てにより、大幅な効率化は可能か？</strong></li>
+</ol>
+<p>これらの問いに対する実験的検討を通じて、LLMの推論効率化における動的層選択の可能性と限界を明らかにすることが、本論文の研究ゴールとされています。</p>
+<h2 id="研究内容">研究内容</h2>
+<p>本論文では、デコーダのみ型Transformerの推論効率化を目的として、以下の<strong>4つの主要な手法・戦略</strong>が研究されています。</p>
+<h3 id="1-layer-skipping層スキップ">1. Layer Skipping（層スキップ）</h3>
+<p>各デコーダ層の実行をバイナリ変数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">G_l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">G</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> で制御し、一部の層を実行せずにスキップする手法です。論文では以下の2種類の層スキップ戦略が比較されました：</p>
+<ul>
+<li><strong>Uniform Layer Skipping（均等層スキップ）</strong>: 実行する層を入力全体に均等に分散させて配置</li>
+<li><strong>Random Layer Skipping（ランダム層スキップ）</strong>: 実行する層をランダムに選択（バッチごとにシャッフル）</li>
+</ul>
+<p>第1層は常に実行されるようにしています（埋め込み変換に重要な役割を果たすため）。</p>
+<h3 id="2-early-exiting早期終了">2. Early Exiting（早期終了）</h3>
+<p>特定の層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>E</mi></msub></mrow><annotation encoding="application/x-tex">L_E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> で計算を打ち切り、それ以降の層を実行しない手法です。これは「途中の層で出力を得て終了する」という動的推論の代表的なアプローチです。</p>
+<h3 id="3-per-token-layer-skipping-controllerトークン単位コントローラー">3. Per-token Layer Skipping Controller（トークン単位コントローラー）</h3>
+<p>各トークン生成時に、前層の隠れ状態 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>h</mi><mi>t</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">h^{l-1}_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.135em;vertical-align:-0.2458em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8892em;"><span style="top:-2.4542em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.1031em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2458em;"><span></span></span></span></span></span></span></span></span></span> を入力として、各層を実行するかスキップするかを決定する<strong>軽量な学習可能コントローラー</strong>です。</p>
+<p>本論文の重要な貢献の一つとして、このコントローラーに<strong>隠れ状態を入力する場合</strong>と、<strong>固定の定数を入力する場合</strong>を比較し、「隠れ状態を使っても性能に差がない」という結果を示しています。</p>
+<h3 id="4-oracle-controllerシーケンス単位のオラクル制御">4. Oracle Controller（シーケンス単位のオラクル制御）</h3>
+<p>シーケンスごとに最適な計算割り当てを行う理論的上限を示すための<strong>オラクルコントローラー</strong>です。これは「理想的な計算割り当てができれば、どれだけ効率化できるか」を示すものです。</p>
+<p>実験の結果、オラクル制御により<strong>平均して23.3%の層のみを使用しても、フルモデルと同等の性能が達成できる</strong>ことが示されました。</p>
+<blockquote>
+<p><strong>オラクルコントローラ</strong>
+オラクル制御（Oracle Controller）とは、本論文において <strong>「シーケンス単位で最適な計算割り当てを行う理論的上限を示すための実験的装置」</strong> として導入されたものです。
+<strong>オラクル制御の概要</strong>
+<strong>1. 基本的な考え方</strong>
+「オラクル（oracle）」とは機械学習の文脈で「最適解をあらかじめ知っている存在」を指します。本論文のオラクル制御は、<strong>各入力シーケンス（プロンプト）に対して、どの層を実行すれば最も良い性能が得られるかを事後的に最適に割り当てる</strong>制御器です。
+<strong>2. 目的</strong>
+実用的な学習可能なコントローラーを構築する前に、<strong>「シーケンス単位の適応が理想的に行えた場合、どれだけ計算を削減できるか」</strong> という可能性の限界を示すことが目的です。つまり、実際のコントローラーが目指すべき理論的上限（ベンチマーク）として機能します。
+<strong>3. 具体的な仕組み</strong></p>
+<ul>
+<li>各シーケンスに対して、実行する層の組み合わせを探索し、<strong>ROUGE指標が最も高くなる層の割り当て</strong>を見つける</li>
+<li>この決定は<strong>シーケンスごとに一度だけ行われ</strong>、生成中の各トークンでは追加の判断は不要</li>
+<li>トークン単位の適応と異なり、長い生成過程でのオーバーヘッドが累積しない
+<strong>4. 実験結果</strong>
+オラクル制御の実験により、<strong>平均して23.3%の層のみを使用しても、フルモデル（全層使用）と同等の性能が達成できる</strong>ことが示されました。これは、シーケンス単位での動的計算割り当てが劇的な効率化の可能性を持つことを意味します。</li>
+</ul>
+</blockquote>
+<h3 id="手法の比較まとめ">手法の比較まとめ</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">手法</th>
+<th style="text-align:left">概要</th>
+<th style="text-align:left">特徴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Early Exiting</strong></td>
+<td style="text-align:left">層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>E</mi></msub></mrow><annotation encoding="application/x-tex">L_E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> で打ち切り</td>
+<td style="text-align:left">誤差が上位層に集中しやすい</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Uniform Layer Skipping</strong></td>
+<td style="text-align:left">層を均等に配置して実行</td>
+<td style="text-align:left">隠れ状態の誤差が分散され、トークン予測に有利</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Random Layer Skipping</strong></td>
+<td style="text-align:left">層をランダムに選択</td>
+<td style="text-align:left">ベースラインとして使用</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Per-token Controller</strong></td>
+<td style="text-align:left">各トークンごとに隠れ状態で判断</td>
+<td style="text-align:left">隠れ状態を使わなくても同等性能が得られる</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Oracle Controller</strong></td>
+<td style="text-align:left">シーケンス単位で最適割り当て</td>
+<td style="text-align:left">大幅な計算削減の可能性を示す</td>
+</tr>
+</tbody>
+</table>
+<p>これらの手法をOPT-1.3B（Alpacaデータセットでファインチューニング）を用いて、ROUGE指標や隠れ状態のコサイン類似度で評価しています。</p>
+<h2 id="実験内容">実験内容</h2>
+<p>本論文では、以下の<strong>3つの実験</strong>が行われています。それぞれの実験内容、条件、結果をまとめます。</p>
+<h3 id="共通の実験条件">共通の実験条件</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">項目</th>
+<th style="text-align:left">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>モデル</strong></td>
+<td style="text-align:left">OPT-1.3B（24層のデコーダのみ型Transformer）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>ファインチューニング</strong></td>
+<td style="text-align:left">Alpacaデータセット</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>評価指標</strong></td>
+<td style="text-align:left">ROUGE、隠れ状態のコサイン類似度</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>計算コストの定義</strong></td>
+<td style="text-align:left">実行したデコーダ層の数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>（埋め込み層・分類ヘッドは除く）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>プロンプト処理</strong></td>
+<td style="text-align:left">プロンプトは全層で処理（並列処理可能なため）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>生成トークン処理</strong></td>
+<td style="text-align:left">自己回帰的に生成されるトークン <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mrow><mn>1</mn><mo>:</mo><mi>T</mi></mrow></msub></mrow><annotation encoding="application/x-tex">y_{1:T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> に対して動的推論を適用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="実験1-layer-skipping-vs-early-exitingsection-31">実験1: Layer Skipping vs Early Exiting（Section 3.1）</h3>
+<p><strong>実験内容</strong></p>
+<p>同じ計算コスト <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>（実行する層の数）を与えた場合、<strong>early exiting</strong>と<strong>layer skipping</strong>のどちらが隠れ状態の誤差を小さく抑えられるかを比較しました。</p>
+<p><strong>実験条件</strong></p>
+<ul>
+<li>計算コスト <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>1</mn><mo separator="true">,</mo><mn>2</mn><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><mn>24</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">c \in \{1, 2, \dots, 24\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">24</span><span class="mclose">}</span></span></span></span>（全24層のうち <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> 層を実行）</li>
+<li><strong>Early Exiting (EE)</strong>: 下位 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> 層を実行し、<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> 層目で打ち切り</li>
+<li><strong>Uniform Layer Skipping (ULS)</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> 層を入力全体に均等に分散して配置して実行</li>
+<li><strong>Random Layer Skipping (RLS)</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> 層をランダムに選択（バッチごとにシャッフル）</li>
+<li>第1層は常に実行（埋め込み変換に重要なため）</li>
+</ul>
+<p><strong>評価方法</strong></p>
+<ul>
+<li><strong>最終層隠れ状態の保存度</strong>: フルモデルの最終隠れ状態 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>h</mi><mi>t</mi><mi>L</mi></msubsup></mrow><annotation encoding="application/x-tex">h_t^L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0883em;vertical-align:-0.247em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span> と、削減モデルの最終隠れ状態 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>h</mi><mrow><mi>t</mi><mo separator="true">,</mo><mi>c</mi></mrow><mi>L</mi></msubsup></mrow><annotation encoding="application/x-tex">h_{t,c}^L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2244em;vertical-align:-0.3831em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">c</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3831em;"><span></span></span></span></span></span></span></span></span></span> のコサイン類似度</li>
+<li><strong>KVキャッシュ伝播誤差</strong>: 各層の中間隠れ状態の平均コサイン類似度</li>
+</ul>
+<p><strong>実験結果</strong></p>
+<ul>
+<li><strong>Uniform Layer Skippingが最も最終層の隠れ状態を正確に再現</strong>（コサイン類似度が最も高い）</li>
+<li>Early Exitingは中間層の類似度は高いが、<strong>最終層の類似度が最も低い</strong>（誤差が上位層に集中）</li>
+<li><strong>トレードオフの発見</strong>:
+<ul>
+<li>Early Exiting: 誤差が上位層に集中し、次トークン予測が悪化するがKVキャッシュ精度は高い</li>
+<li>Layer Skipping: 誤差が分散され、トークン予測性能が良いがKVキャッシュ精度は低い</li>
+</ul>
+</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mo stretchy="false">{</mo><mn>12</mn><mo separator="true">,</mo><mn>16</mn><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">c = \{12, 16\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">12</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">16</span><span class="mclose">}</span></span></span></span> で、Uniform Layer Skippingが中間層・最終層の両方で優位</li>
+</ul>
+<h3 id="実験2-隠れ状態を使うコントローラーの有効性section-32">実験2: 隠れ状態を使うコントローラーの有効性（Section 3.2）</h3>
+<p><strong>実験内容</strong></p>
+<p>トークン単位の層スキップコントローラーが、<strong>隠れ状態 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>h</mi><mi>t</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">h_t^{l-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.135em;vertical-align:-0.2458em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8892em;"><span style="top:-2.4542em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.1031em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2458em;"><span></span></span></span></span></span></span></span></span></span> を入力として使う場合</strong>と、<strong>固定の定数を入力する場合</strong>で性能に差があるかを検証しました。</p>
+<p><strong>実験条件</strong></p>
+<ul>
+<li>ファインチューニング済みモデルに、各層 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi></mrow><annotation encoding="application/x-tex">l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span></span></span></span> に対して学習可能なスキップコントローラー <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>g</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">g_l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を追加</li>
+<li>コントローラーは前層の隠れ状態 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>h</mi><mi>t</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">h_t^{l-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.135em;vertical-align:-0.2458em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8892em;"><span style="top:-2.4542em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.1031em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2458em;"><span></span></span></span></span></span></span></span></span></span> を入力とし、スキップ変数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">G_l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">G</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> を出力</li>
+<li>損失関数: 予測誤差 + 計算コストの正則化項</li>
+<li>比較対象: 同じコントローラー構造で、<strong>隠れ状態の代わりに固定入力</strong>を与えるベースライン</li>
+</ul>
+<p><strong>実験結果</strong></p>
+<ul>
+<li><strong>隠れ状態を使っても、固定入力と比較して統計的に有意な性能差は認められなかった</strong></li>
+<li>つまり、軽量なコントローラーは高次元の隠れ状態から意味のある文脈情報を抽出できていない</li>
+<li><strong>トークンに依存しない（token-agnostic）スキップ確率を学習するだけで、十分な性能が得られる</strong></li>
+<li>これは、トークン単位の適応に隠れ状態を使う必要性が低いことを示唆</li>
+</ul>
+<h3 id="実験3-シーケンス単位のオラクル制御section-33">実験3: シーケンス単位のオラクル制御（Section 3.3）</h3>
+<p><strong>実験内容</strong></p>
+<p>トークン単位ではなく<strong>シーケンス単位</strong>で計算量を割り当てる場合、どれだけ効率化できるかを、オラクル制御（最適解を知る仮想的な制御器）で調査しました。</p>
+<p>因みに、この論文で説明されているシーケンス単位とは、入力プロンプトごとに計算量を一度だけ決定して、生成中の各トークンレベルで追加の判断を行わないというアプローチです。</p>
+<p><strong>実験条件</strong></p>
+<ul>
+<li>各シーケンス（プロンプト）に対して、<strong>ROUGEが最大化される層の割り当て</strong>を事後的に探索</li>
+<li>この決定はシーケンスごとに一度だけ行われ、生成中の各トークンでは追加判断なし</li>
+<li>フルモデルと同等のROUGEを達成する最小の計算コストを探索</li>
+</ul>
+<p><strong>実験結果</strong></p>
+<ul>
+<li><strong>平均して23.3%の層のみを使用しても、フルモデル（全24層）と同等の性能が達成可能</strong></li>
+<li>シーケンス単位での動的計算割り当ては、劇的な効率化の可能性を持つ</li>
+<li>トークン単位の適応に比べ、オーバーヘッドが累積しないという利点がある</li>
+</ul>
+<h3 id="実験結果のまとめ">実験結果のまとめ</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">実験</th>
+<th style="text-align:left">主要な問い</th>
+<th style="text-align:left">結論</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>実験1</strong></td>
+<td style="text-align:left">Early exit vs Layer skipping</td>
+<td style="text-align:left"><strong>Layer skipping（特に均等配置）が優位</strong>。誤差が分散され、最終層の精度が高い</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>実験2</strong></td>
+<td style="text-align:left">隠れ状態を使うコントローラーの有効性</td>
+<td style="text-align:left"><strong>隠れ状態を使わなくても同等性能</strong>。トークン非依存の確率学習で十分</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>実験3</strong></td>
+<td style="text-align:left">シーケンス単位適応の限界</td>
+<td style="text-align:left"><strong>平均23.3%の層でフルモデル同等性能が可能</strong>。大きな効率化の余地あり</td>
+</tr>
+</tbody>
+</table>
+<p>これらの結果から、本論文は「トークン単位の複雑な適応よりも、シーケンス単位の計算割り当ての方が効率化の可能性が高い」という方向性を示唆しています。</p>
+<h2 id="総括">総括</h2>
+<p>本論文は、デコーダのみ型Transformerの推論効率化において、<strong>layer skipping（層スキップ）がearly exitingより優位</strong>であり、<strong>トークン単位の動的適応は限界がある</strong>一方、<strong>シーケンス単位の計算割り当てに大きな可能性がある</strong>ことを実験的に示しました。具体的には、layer skippingの方が隠れ状態の誤差を分散でき、軽量なコントローラーは隠れ状態を使っても固定入力と同等の性能しか出せず、シーケンス単位のオラクル制御では<strong>平均23.3%の層でフルモデルと同等の性能</strong>が達成できることを報告しています。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+<div style="width: 1px; height: 1px; overflow: hidden; opacity: 0; position: absolute;">
+  <iframe id="bgm-player" width="100" height="100" 
+  src="https://www.youtube.com/embed/5zaphSaegxw?enablejsapi=1" 
+  title="BGM Player" frameborder="0" allow="autoplay">
+  </iframe>
+</div>
+
+<script>
+const toc = document.getElementById('toc');
+// h2 と h3 の両方を取得
+const headings = document.querySelectorAll('h2, h3');
+
+headings.forEach((heading, i) => {
+    if (!heading.id) heading.id = `heading-${i}`;
+    
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    
+    // h3 の場合はクラスを付与して字下げする
+    if (heading.tagName === 'H3') {
+        li.classList.add('toc-h3');
+    }
+    
+    li.appendChild(link);
+    toc.appendChild(li);
+});
+
+// スムーズスクロールを有効にする
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+  document.getElementById('bgm-trigger').addEventListener('click', function() {
+    var iframe = document.getElementById('bgm-player');
+    
+    // すでに再生中の場合は一時停止、停止中の場合は再生するトグル処理
+    if (this.innerText.includes('再生')) {
+      // JavaScript API経由で再生コマンドを送信
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      this.innerText = '⏸ BGMを停止する';
+      this.style.backgroundColor = '#f44336'; // ボタンの色を赤系に
+    } else {
+      iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      this.innerText = '🎵 BGMを再生する';
+      this.style.backgroundColor = '#008cba'; // ボタンの色を青系に
+    }
+  });
+</script>
+        </body>
+        </html>
