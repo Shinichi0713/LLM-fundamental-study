@@ -1,0 +1,1141 @@
+<!-- ============================================================
+     はてなブログ「HTML編集」モード用の記事本文
+     生成元: readme.md
+     記事タイトルははてなブログ側のタイトル欄に設定してください
+     インタラクションが動かない場合は、末尾のスクリプト部分を
+     「デザイン > カスタマイズ > 記事下」へ移動してください
+     ============================================================ -->
+<div data-hatena-article="1" style="font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans','BIZ UDPGothic',Meiryo,sans-serif;font-size:16px;line-height:1.9;color:#1f2937;letter-spacing:.01em;overflow-wrap:break-word;word-wrap:break-word;">
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><a href="https://yoshishinnze.hatenablog.com/entry/2026/12/30/043000" style="color:#1d4ed8;text-decoration:underline;text-underline-offset:2px;">先日紹介した Dynamic Layer Selection in Decoder-Only Transformers で提案</a>されている "質問ごとに計算の深さを使い分けると、同じ計算量でかなり良い結果が出せる" という結果が確認できるかについて実験の上確認していきます。</p>
+<div role="navigation" aria-label="目次" style="margin:0 0 32px;padding:18px 22px;border:1px solid #dbeafe;border-radius:10px;background-color:#f8fafc;font-size:14px;line-height:1.75;">
+<div style="margin:0 0 10px;padding-left:10px;border-left:4px solid #2563eb;font-size:15px;font-weight:700;color:#1e3a8a;letter-spacing:.04em;">目次</div>
+<ol style="margin:0;padding-left:1.4em;list-style:decimal;">
+<li style="margin:4px 0;"><a href="#sec-1" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">実験意義</a></li>
+<ul style="margin:4px 0 8px;padding-left:1.15em;list-style:circle;">
+<li style="margin:4px 0;"><a href="#sec-2" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">1. 論文の主張を「再現」ではなく「検証」する実験</a></li>
+<li style="margin:4px 0;"><a href="#sec-3" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">2. オラクルの「上限値」としての性質を正しく扱う</a></li>
+<li style="margin:4px 0;"><a href="#sec-4" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">3. 実用化への道筋を示す「ルーター」実験</a></li>
+</ul>
+<li style="margin:4px 0;"><a href="#sec-5" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">実験内容</a></li>
+<ul style="margin:4px 0 8px;padding-left:1.15em;list-style:circle;">
+<li style="margin:4px 0;"><a href="#sec-6" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">1. 実験の条件：何を使ったか</a></li>
+<li style="margin:4px 0;"><a href="#sec-7" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">2. 実験の内容：何をどうしたか</a></li>
+</ul>
+<li style="margin:4px 0;"><a href="#sec-8" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">実験コード</a></li>
+<ul style="margin:4px 0 8px;padding-left:1.15em;list-style:circle;">
+<li style="margin:4px 0;"><a href="#sec-9" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">データの準備</a></li>
+<li style="margin:4px 0;"><a href="#sec-10" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">モデルの読み込み</a></li>
+<li style="margin:4px 0;"><a href="#sec-11" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">uniform_pattern 関数</a></li>
+<li style="margin:4px 0;"><a href="#sec-12" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">skip_layers コンテキストマネージャ</a></li>
+<li style="margin:4px 0;"><a href="#sec-13" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">生成とROUGE-L評価</a></li>
+<li style="margin:4px 0;"><a href="#sec-16" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">オラクルの計算</a></li>
+<li style="margin:4px 0;"><a href="#sec-19" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">学習ルーター</a></li>
+<li style="margin:4px 0;"><a href="#sec-23" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">LoRA微調整</a></li>
+</ul>
+<li style="margin:4px 0;"><a href="#sec-27" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">実験結果</a></li>
+<ul style="margin:4px 0 8px;padding-left:1.15em;list-style:circle;">
+<li style="margin:4px 0;"><a href="#sec-28" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">実験結果の全体像</a></li>
+<li style="margin:4px 0;"><a href="#sec-29" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">3. 再現できなかった点：c=4（浅いモデル）の選択比率</a></li>
+<li style="margin:4px 0;"><a href="#sec-30" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">4. 学習ルーターの結果：実用化への道のり</a></li>
+</ul>
+<li style="margin:4px 0;"><a href="#sec-31" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">結果のまとめ</a></li>
+<ul style="margin:4px 0 8px;padding-left:1.15em;list-style:circle;">
+<li style="margin:4px 0;"><a href="#sec-32" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">再現できたこと</a></li>
+<li style="margin:4px 0;"><a href="#sec-33" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">再現できなかったこと</a></li>
+<li style="margin:4px 0;"><a href="#sec-34" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">この結果の限界</a></li>
+</ul>
+<li style="margin:4px 0;"><a href="#sec-35" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">実験まとめ</a></li>
+<li style="margin:4px 0;"><a href="#sec-36" style="color:#1e40af;text-decoration:none;border-bottom:1px dotted #93c5fd;">関連記事</a></li>
+</ol>
+</div>
+<h2 id="sec-1" style="margin:48px 0 22px;padding:12px 18px;border-radius:8px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;font-size:22px;line-height:1.5;font-weight:700;letter-spacing:.02em;box-shadow:0 2px 6px rgba(30,58,138,.18);scroll-margin-top:80px;">実験意義</h2>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">今回実験の意義は、<strong style="font-weight:700;">論文が提示する『動的レイヤ選択』の効果が、縮小版の設定でも本物かどうかを、オラクルという上限値を手がかりに検証する</strong> 点にあります。</p>
+<h3 id="sec-2" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">1. 論文の主張を「再現」ではなく「検証」する実験</h3>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">論文は「OPT-1.3B を Alpaca で6エポックフル微調整し、オラクルによる動的レイヤ選択で平均5.6層（23.3%）でフルモデルと同等の ROUGE-L に到達した」と報告しています。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">今回実験は、その<strong style="font-weight:700;">絶対値を再現することを目標としていません</strong>。以下の問いを検証することを実験目的とします。</p>
+<div style="margin:18px 0 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e2e8f0;border-radius:8px;"><table style="width:100%;border-collapse:collapse;border-spacing:0;background-color:#ffffff;font-size:14px;line-height:1.65;"><thead><tr><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">問い</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">この実験で確認したこと</th></tr></thead><tbody><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">オラクルと静的モデルの差は本物か？</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">β=8 で oracle が静的 c=8 を +0.075（約4割）上回ることを確認</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">その差は「ノイズの事後利用」だけか？</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">greedy oracle と静的がほぼ同じ（0.184 vs 0.182）なので、<strong style="font-weight:700;">sampling advantage だけでは説明できない</strong></td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">混合そのものに意味があるか？</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">random mix が静的を下回るため、<strong style="font-weight:700;">「混ぜるだけ」ではなく系列ごとの配分が重要</strong></td></tr></tbody></table></div>
+<h3 id="sec-3" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">2. オラクルの「上限値」としての性質を正しく扱う</h3>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">論文のオラクルは、テストの正解スコアを見て最適な深さを選ぶため、<strong style="font-weight:700;">実用可能な制御器ではなく「理論上の上限」</strong> です。実験記録でもこの点を明確に認識しています。</p>
+<blockquote style="margin:20px 0;padding:14px 18px;border-left:4px solid #94a3b8;border-radius:0 8px 8px 0;background-color:#f8fafc;color:#475569;font-size:14.5px;line-height:1.85;"><p style="margin:0;color:inherit;font-size:inherit;line-height:inherit;">「オラクルはテスト用の正解 ROUGE を使うので、ばらつきのなかから良い出力を選べてしまう」</p></blockquote>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">今回の実験では、<strong style="font-weight:700;">greedy oracle</strong> と <strong style="font-weight:700;">random mix</strong> を対照実験として導入することで、オラクルの数字を以下のように分解しました。</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">greedy oracle</strong>: 各プロンプトで予算内の最良を選ぶ（sampling advantage のみ）</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">random mix</strong>: 同じ選択比率をランダムに配分（比率だけの効果）</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">oracle</strong>: 予算をプロンプト間で融通する（配分効果＋sampling advantage）</li></ul>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">この構造により、<strong style="font-weight:700;">「配分効果そのもの」</strong> を切り出すことが出来るはずです。</p>
+<h3 id="sec-4" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">3. 実用化への道筋を示す「ルーター」実験</h3>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">プロンプトの埋め込みから各深さの ROUGE-L を予測する<strong style="font-weight:700;">軽量ルーター</strong>（Ridge 回帰）を学習し、オラクル・random mix と比較しています。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">これは、<strong style="font-weight:700;">「オラクルは上限だが、どこまで実用化できるか」</strong> という問いに直接対応する実験です。</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">ルーターが random mix を上回れば、<strong style="font-weight:700;">プロンプトの情報だけで難易度を判別し、適切な深さを選べる</strong>可能性がある</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">ルーターの予測と実測の相関が改善した（特に c=8, c=12）ことは、<strong style="font-weight:700;">学習可能なパターンが存在する</strong>ことを示唆</li></ul>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">今回実験は、オラクルという「理想値」と実用化の間の<strong style="font-weight:700;">ギャップを測る第一歩</strong>として意義があります。</p>
+<h2 id="sec-5" style="margin:48px 0 22px;padding:12px 18px;border-radius:8px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;font-size:22px;line-height:1.5;font-weight:700;letter-spacing:.02em;box-shadow:0 2px 6px rgba(30,58,138,.18);scroll-margin-top:80px;">実験内容</h2>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">この実験は、<strong style="font-weight:700;">AI（大規模言語モデル）の計算を、入力に応じて賢く減らせるのか</strong> を調べたものです。</p>
+<h3 id="sec-6" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">1. 実験の条件：何を使ったか</h3>
+<div style="margin:18px 0 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e2e8f0;border-radius:8px;"><table style="width:100%;border-collapse:collapse;border-spacing:0;background-color:#ffffff;font-size:14px;line-height:1.65;"><thead><tr><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">項目</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">内容</th></tr></thead><tbody><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">モデル</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">OPT-1.3B（24層のdecoder-only Transformer）</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">データ</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">Alpaca（指示に従う文章を生成する学習データ）</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">評価データ数</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">500件（論文は7,800件だが、Colab環境で回るよう縮小）</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">計算環境</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">Google Colab（無料のT4 GPU）</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">層の構成</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">4パターン（c = 4, 8, 12, 24層）</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">評価指標</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">ROUGE-L（生成した文章と正解がどれだけ似ているか、0〜1で大きいほど良い）</td></tr></tbody></table></div>
+<p style="margin:22px 0 10px;padding:7px 12px;border-left:4px solid #60a5fa;border-radius:0 4px 4px 0;background-color:#eff6ff;color:#1e40af;font-size:14.5px;line-height:1.7;"><strong style="font-weight:700;">「c = 4, 8, 12, 24」って何？</strong></p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">c = 24</strong>：24層すべて使う（通常通り、フルモデル）</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">c = 12</strong>：24層の半分だけ使う</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">c = 8</strong>：さらに少ない層</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">c = 4</strong>：1/6の層だけ使う</li></ul>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">層は<strong style="font-weight:700;">均等に間引く</strong>方式（Uniform Layer Skipping）を使います。例えば c=4 なら、24層のうち約4層だけを等間隔に残します。</p>
+<h3 id="sec-7" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">2. 実験の内容：何をどうしたか</h3>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">実験は大きく2つのパートに分かれます。</p>
+<p style="margin:22px 0 10px;padding:7px 12px;border-left:4px solid #60a5fa;border-radius:0 4px 4px 0;background-color:#eff6ff;color:#1e40af;font-size:14.5px;line-height:1.7;"><strong style="font-weight:700;">パートA：微調整なしで、まず現状を測る</strong></p>
+<ol style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">4つのモデルで文章を生成</strong></p>
+<ul style="margin:.35em 0 .5em;padding-left:1.3em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">同じ500個の質問に対して、c=4, 8, 12, 24 のそれぞれで回答を生成</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">生成方法は「greedy decoding」（毎回最も確率の高い単語を選ぶ）</li></ul></li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">ROUGE-L で採点</strong></p>
+<ul style="margin:.35em 0 .5em;padding-left:1.3em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">各（質問, 層数）の組み合わせで、生成文章と正解の一致度を計算</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">結果は「質問500個 × 層数4種類」のスコア表（行列）になります</li></ul></li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">オラクル（Oracle）で「理想の使い分け」を計算</strong></p>
+<ul style="margin:.35em 0 .5em;padding-left:1.3em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">オラクル</strong>とは「各質問に対して、どの層数が最も良い答えを出すかを<strong style="font-weight:700;">正解スコアを見て選べる仮想の賢い制御器</strong>」です</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">制約：全質問の<strong style="font-weight:700;">平均コスト（層数）が予算 β 以下</strong></li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">目的：平均スコア（ROUGE-L）を最大化</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">解法：これは「多選択ナップサック問題」と呼ばれる組み合わせ最適化問題で、動的計画法（DP）で解きます</li></ul>
+<p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;">例えば「平均で8層まで使っていい」という予算なら、簡単な質問には c=4、難しい質問には c=12 を割り当てるように選びます。</p></li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">比較対象を複数用意</strong></p>
+<ul style="margin:.35em 0 .5em;padding-left:1.3em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">静的 c=8</strong>：すべての質問を c=8 で処理</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">greedy oracle</strong>：各質問で予算内の最良の1つを選ぶ（予算の融通はしない）</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">random mix</strong>：オラクルと同じ選択比率をランダムに割り当て</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">oracle</strong>：予算を質問間で融通して最適化</li></ul>
+<p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;">これにより、「良い答えを選んだから上手くいったのか」「配分そのものが効いたのか」を切り分けます。</p></li></ol>
+<p style="margin:22px 0 10px;padding:7px 12px;border-left:4px solid #60a5fa;border-radius:0 4px 4px 0;background-color:#eff6ff;color:#1e40af;font-size:14.5px;line-height:1.7;"><strong style="font-weight:700;">パートB：層を削った状態で微調整して、モデルを立て直す</strong></p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">パートAでは「元のモデルをそのまま削っただけ」ですが、深く削る（c=4など）と性能が大きく落ちます。そこで：</p>
+<ol style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">各層構成（c=4, 8, 12, 24）ごとに LoRA で微調整</strong></p>
+<ul style="margin:.35em 0 .5em;padding-left:1.3em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">LoRA は「モデルの重みの大部分はそのままに、少量のパラメータだけを追加学習する」手法</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">各 c ごとに別々のアダプタを学習</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">学習データ：Alpaca から2,000件、1エポック（論文は全量・6エポック）</li></ul></li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">微調整後に再び生成・評価</strong></p>
+<ul style="margin:.35em 0 .5em;padding-left:1.3em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">パートAと同じ500問で生成し、ROUGE-L を計算</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">オラクル・greedy oracle・random mix・ルーターを再度比較</li></ul></li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><p style="margin:0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">学習ルーター（実用化の試み）</strong></p>
+<ul style="margin:.35em 0 .5em;padding-left:1.3em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">プロンプト（質問文）の埋め込みベクトルから、各層数のスコアを予測する軽量モデル（Ridge回帰）を学習</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">「この質問なら c=8 で十分そう」という判断を、正解スコアを見ずに予測する</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">これがオラクルに近い性能を出せれば、「実際に使える制御器」になり得る</li></ul></li></ol>
+<h2 id="sec-8" style="margin:48px 0 22px;padding:12px 18px;border-radius:8px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;font-size:22px;line-height:1.5;font-weight:700;letter-spacing:.02em;box-shadow:0 2px 6px rgba(30,58,138,.18);scroll-margin-top:80px;">実験コード</h2>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">今回で行った実験コードについて説明していきます。</p>
+<h3 id="sec-9" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">データの準備</h3>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">Alpacaデータセット（指示に従う文章生成の学習データ）を読み込み、以下のように分割します：</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">評価用</strong>：データの末尾15%相当から500件</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">学習用</strong>：データの先頭70%相当から2,000件</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">重複なし</strong>：評価と学習でデータが被らないように設計</li></ul>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">ds = load_dataset("tatsu-lab/alpaca", split="train")
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">各データは以下の形式に変換されます：</p>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">### Instruction:
+（指示文）
+
+### Input:
+（入力文）
+
+### Response:
+</code></pre>
+<h3 id="sec-10" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">モデルの読み込み</h3>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">tok = AutoTokenizer.from_pretrained(...)
+model = AutoModelForCausalLM.from_pretrained(..., torch_dtype=torch.float16).to(device).eval()
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">OPT-1.3Bモデルを <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">float16</code>（半精度浮動小数点）で読み込み、GPUに配置します。これによりメモリを節約します。</p>
+<h3 id="sec-11" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">uniform_pattern</code> 関数</h3>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">def uniform_pattern(L, c):
+    U = [1]
+    for l in range(2, L + 1):
+        U.append(1 if sum(U) &lt;= (l - 1) * c / L + 1e-9 else 0)
+    return U
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">論文の式(2)をそのまま実装したものです。24層から <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">c</code> 層を<strong style="font-weight:700;">均等に間引く</strong>パターンを生成します。</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">c=4</code> の場合：約1, 7, 13, 19層目が残る</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">1層目は必ず残す</li></ul>
+<h3 id="sec-12" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">skip_layers</code> コンテキストマネージャ</h3>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">@contextmanager
+def skip_layers(model, c):
+    dec = model.model.decoder
+    orig_layers = dec.layers
+    keep = [i for i, g in enumerate(uniform_pattern(...)) if g]
+    ...
+    dec.layers = torch.nn.ModuleList([orig_layers[i] for i in keep])
+    try:
+        yield
+    finally:
+        dec.layers = orig_layers  # 必ず元に戻す
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">この実装の核心部分です。</strong> Python の <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">contextmanager</code> を使い、<code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">with</code> ブロックの間だけモデルの層を差し替えます。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">工夫点</strong>：層を抜くだけだと Attention が「自分は何層目か」を表す <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">layer_idx</code> の番号がずれ、計算が壊れます。そこで、残した層に <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">0, 1, 2...</code> と新しく番号を振り直しています。<code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">finally</code> で必ず元に戻す設計により、安全に層を差し替えられます。</p>
+<h3 id="sec-13" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">生成とROUGE-L評価</h3>
+<h4 id="sec-14" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">generate_all</code> 関数</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">@torch.no_grad()
+def generate_all(c, tag="", m=None, prep=None):
+    path = f"{CFG['out_dir']}/gens{tag}_c{c}_n{len(prompts)}.json"
+    if os.path.exists(path):
+        return json.load(open(path))  # キャッシュがあれば読み込み
+    ...
+    with skip_layers(base_for_skip(m), c):
+        for s in tqdm(...):  # バッチ処理
+            ...
+    json.dump(outs, open(path, "w"), ...)  # キャッシュに保存
+    return outs
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">生成結果をキャッシュする設計</strong>が重要です。一度生成した結果はJSONファイルに保存し、再実行時は読み込むだけにします。これにより、Colabのセッション切断後も再計算を避けられます。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">プロンプトを<strong style="font-weight:700;">長さ順に並べる</strong>ことで、パディング（無駄な計算）を減らす工夫も入っています。</p>
+<h4 id="sec-15" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">rouge_matrix</code> 関数</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">def rouge_matrix(gens):
+    return np.array([[scorer.score(refs[i], gens[c][i])["rougeL"].fmeasure
+                      for c in costs]
+                     for i in range(len(prompts))])
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">各（質問, 層数）の組み合わせでROUGE-Lスコアを計算し、<strong style="font-weight:700;">500×4の行列 <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">R</code></strong> を作ります。<code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">R[i, j]</code> は「質問iを層数jで処理したときのスコア」です。</p>
+<h3 id="sec-16" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">オラクルの計算</h3>
+<h4 id="sec-17" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">solve_oracle</code> 関数</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">def solve_oracle(R, costs, betas):
+    n, k = R.shape
+    g = reduce(gcd, costs); u = [c // g for c in costs]
+    Wmax = n * max(u)
+    prev = np.zeros(Wmax + 1)
+    choices = np.zeros((n, Wmax + 1), dtype=np.int8)
+    for i in range(n):
+        new = np.full(Wmax + 1, -np.inf); ch = np.zeros(Wmax + 1, dtype=np.int8)
+        for j in range(k):
+            cand = np.full(Wmax + 1, -np.inf)
+            cand[u[j]:] = prev[:Wmax + 1 - u[j]] + R[i, j]
+            ...
+        prev, choices[i] = new, ch
+    ...
+</code></pre>
+<p style="margin:22px 0 10px;padding:7px 12px;border-left:4px solid #60a5fa;border-radius:0 4px 4px 0;background-color:#eff6ff;color:#1e40af;font-size:14.5px;line-height:1.7;"><strong style="font-weight:700;">多選択ナップサック問題を動的計画法（DP）で解いています。</strong></p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">各質問に対して4つの層数（c=4,8,12,24）から1つを選ぶ</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">全質問の平均コストが予算 β 以下</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">平均ROUGE-Lを最大化</li></ul>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">効率化の工夫</strong>：コストの最大公約数（g=4）で割って整数化し、計算量を削減しています。</p>
+<h4 id="sec-18" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">analyze_oracle</code> 関数</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">def analyze_oracle(R, label, plot=True):
+    ...
+    orc_score = np.array([R[idx_n, a].mean() for a in assigns])
+    shares = np.array([np.bincount(a, minlength=len(costs)) / n for a in assigns])
+    ...
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">以下の4つを計算・比較します：</p>
+<ol style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">oracle</strong>：DPで最適化した配分</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">greedy oracle</strong>：各質問で予算内の最良を選ぶ（予算の融通なし）</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">random mix</strong>：同じ選択比率をランダムに配分</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">static</strong>：固定の層数で全質問を処理</li></ol>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">結果は2つのグラフで可視化されます：</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">左</strong>：予算 β に対する平均ROUGE-Lの曲線</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">右</strong>：オラクルが各層数を選んだ割合（%）</li></ul>
+<h3 id="sec-19" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">学習ルーター</h3>
+<h4 id="sec-20" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;">特徴量抽出</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">@torch.no_grad()
+def extract_features():
+    ...
+    hs = model(**enc, output_hidden_states=True).hidden_states[FEAT_LAYER]
+    m = enc["attention_mask"].unsqueeze(-1).to(hs.dtype)
+    pooled = ((hs * m).sum(1) / m.sum(1)).float().cpu().numpy()
+    lens = enc["attention_mask"].sum(1).float().cpu().numpy()
+    ...
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">プロンプトの特徴量として以下を使用します：</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">OPTの第12層の隠れ状態</strong>を attention mask で平均プーリング</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">プロンプトの長さ</strong>の対数</li></ul>
+<h4 id="sec-21" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;">Ridge回帰による予測</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">Rhat = np.column_stack([
+    cross_val_predict(make_pipeline(StandardScaler(), Ridge(alpha=ALPHA)), X, R[:, j], cv=cv)
+    for j in range(len(costs))])
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">5分割交差検証で、各層数のROUGE-Lを予測します。<code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">StandardScaler</code> で特徴量を正規化し、<code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">Ridge</code>（正則化付き線形回帰）で学習します。</p>
+<h4 id="sec-22" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;">ルーターの動作</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">ok = Rhat &gt;= (Rhat[:, [-1]] - tau); ok[:, -1] = True
+sel = ok.argmax(1)
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">「予測スコアがフルモデル（c=24）より閾値 τ 以内に収まる最安の層数」を選びます。τを動かすことで、コストと精度のトレードオフ曲線を描きます。</p>
+<h3 id="sec-23" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">LoRA微調整</h3>
+<h4 id="sec-24" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;">LoRAの設定</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">lora_cfg = LoraConfig(r=CFG["lora_r"], lora_alpha=2 * CFG["lora_r"],
+                      target_modules=["q_proj", "k_proj", "v_proj", "out_proj", "fc1", "fc2"])
+peft_model = get_peft_model(model, lora_cfg, adapter_name=f"c{costs[0]}")
+for c in costs[1:]:
+    peft_model.add_adapter(f"c{c}", lora_cfg)
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">各層数（c=4,8,12,24）ごとに別々のLoRAアダプタを用意します。</strong> これにより、同じベースモデルに対して異なる層構成での学習パラメータを切り替えて使えます。</p>
+<h4 id="sec-25" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;">学習データの作成</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">def make_example(prompt, output):
+    p = tok(prompt)["input_ids"]
+    o = tok(output, add_special_tokens=False)["input_ids"][:CFG["max_new_tokens"] - 1] + [tok.eos_token_id]
+    return p + o, [-100] * len(p) + o
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">損失計算からプロンプト部分を除外</strong>するため、プロンプト部分のラベルを <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">-100</code>（無視）に設定します。これにより、モデルは「応答部分の生成」のみを学習します。</p>
+<h4 id="sec-26" style="margin:28px 0 12px;padding:2px 0 2px 11px;border-left:5px solid #3b82f6;color:#0f172a;font-size:16.5px;line-height:1.6;font-weight:700;scroll-margin-top:80px;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">train_adapter</code> 関数</h4>
+<pre style="margin:18px 0 24px;padding:16px 18px;border-radius:8px;background-color:#0f172a;color:#e2e8f0;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:13px;line-height:1.7;overflow-x:auto;-webkit-overflow-scrolling:touch;tab-size:4;"><code class="language-python" style="margin:0;padding:0;border:0;background:none;color:inherit;font-family:inherit;font-size:inherit;white-space:pre;">def train_adapter(c):
+    ...
+    with skip_layers(base, c):  # スキップ状態のまま学習
+        for ep in range(CFG["ft_epochs"]):
+            ...
+            with torch.autocast("cuda", dtype=torch.float16):
+                loss = peft_model(...).loss / accum
+            scaler.scale(loss).backward()
+            ...
+</code></pre>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">層を削った状態のまま学習する</strong>のが重要です。<code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">skip_layers</code> コンテキストマネージャの中で勾配計算を行い、削った構成に適応したパラメータを学習します。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">学習の工夫：</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">GradScaler</code> + <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">autocast("cuda", float16)</code>：fp16混合精度でメモリを節約</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">勾配累積（<code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">accum=2</code>）：小さいバッチサイズでも実効的に大きなバッチを模擬</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">アダプタのキャッシュ：学習済みパラメータを <code style="padding:2px 6px;border-radius:4px;background-color:#eef2ff;color:#3730a3;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:.88em;">lora_c{c}_n{2000}_e{1}.pt</code> に保存</li></ul>
+<h2 id="sec-27" style="margin:48px 0 22px;padding:12px 18px;border-radius:8px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;font-size:22px;line-height:1.5;font-weight:700;letter-spacing:.02em;box-shadow:0 2px 6px rgba(30,58,138,.18);scroll-margin-top:80px;">実験結果</h2>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">実験結果について説明していきます。</p>
+<h3 id="sec-28" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">実験結果の全体像</h3>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">実験は<strong style="font-weight:700;">Part A（微調整なし）</strong> と<strong style="font-weight:700;">Part B（LoRA微調整あり）</strong> の2段階で行われました。</p>
+<p style="margin:22px 0 10px;padding:7px 12px;border-left:4px solid #60a5fa;border-radius:0 4px 4px 0;background-color:#eff6ff;color:#1e40af;font-size:14.5px;line-height:1.7;"><strong style="font-weight:700;">1. 微調整の効果：フルモデルの品質が大幅に改善</strong></p>
+<div style="margin:18px 0 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e2e8f0;border-radius:8px;"><table style="width:100%;border-collapse:collapse;border-spacing:0;background-color:#ffffff;font-size:14px;line-height:1.65;"><thead><tr><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">指標</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">微調整前</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">微調整後</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">論文</th></tr></thead><tbody><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">フルモデルの ROUGE-L</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">0.232</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">0.312</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">0.342</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">フルに並ぶ最小コスト β</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">17.0層 (70.8%)</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">11.5層 (47.9%)</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">5.6層 (23.3%)</td></tr></tbody></table></div>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">解説</strong>：</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">微調整により、フルモデルの品質が0.232→0.312と大幅に改善し、<strong style="font-weight:700;">論文の0.342に近づきました</strong>。これは「基準となるモデルの品質は確保できた」と言えます。</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">オラクルがフルモデルに並ぶための最小コストも、70.8%→47.9%と改善しました。</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">しかし、<strong style="font-weight:700;">論文の23.3%には届かず、約2倍のコストが必要</strong>でした。</li></ul>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">結果は以下の図のようになっています。
+調整の前後でROUGE-Lに改善が確認出来ました。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><img src="image.png" alt="alt text" style="max-width:100%;height:auto;border-radius:8px;" loading="lazy"></p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><img src="image/readme/1795306609942.png" alt="1795306609942" style="max-width:100%;height:auto;border-radius:8px;" loading="lazy"></p>
+<p style="margin:22px 0 10px;padding:7px 12px;border-left:4px solid #60a5fa;border-radius:0 4px 4px 0;background-color:#eff6ff;color:#1e40af;font-size:14.5px;line-height:1.7;"><strong style="font-weight:700;">2. オラクルの効果は「本物」：予算配分の効果が大きい</strong></p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">予算 β=8（平均8層まで使える）での比較：</p>
+<div style="margin:18px 0 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e2e8f0;border-radius:8px;"><table style="width:100%;border-collapse:collapse;border-spacing:0;background-color:#ffffff;font-size:14px;line-height:1.65;"><thead><tr><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">手法</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">ROUGE-L</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">静的 c=8 との差</th></tr></thead><tbody><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">静的 c=8</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">0.182</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">—</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">greedy oracle</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">0.184</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">+0.002</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">random mix</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">0.143</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">-0.039</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">oracle</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">0.257</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">+0.075（約4割増）</strong></td></tr></tbody></table></div>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">この結果から3つの重要なことが分かります</strong>。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">① sampling advantage（ノイズの事後利用）は小さい</strong>
+greedy oracle（0.184）と静的 c=8（0.182）はほぼ同じです。つまり、「複数の出力からたまたま良いものを選んだだけ」では、オラクルの高性能を説明できません。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">② 予算配分の効果は大きい</strong>
+oracle（0.257）は静的 c=8（0.182）を <strong style="font-weight:700;">+0.075（約4割）上回りました</strong>。これは「簡単な質問には浅いモデル、難しい質問には深いモデル」と使い分けることの効果が実在することを示しています。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">③ 混合そのものは損になる</strong>
+random mix（0.143）は静的 c=8（0.182）を下回りました。これは、深さと品質の関係が「上に凸」（c=4→8で大きく伸び、その先は伸びが鈍る）ため、無作為に混ぜると平均で損になることを意味します。この不利を払ってもoracleが上回っているので、<strong style="font-weight:700;">「適材適所の配分」そのものが効いている</strong>と言えます。</p>
+<h3 id="sec-29" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">3. 再現できなかった点：c=4（浅いモデル）の選択比率</h3>
+<div style="margin:18px 0 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e2e8f0;border-radius:8px;"><table style="width:100%;border-collapse:collapse;border-spacing:0;background-color:#ffffff;font-size:14px;line-height:1.65;"><thead><tr><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">項目</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">論文</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">今回</th></tr></thead><tbody><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">フルに並ぶ最小 β での c=4 選択率</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">69.6%</strong></td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">11.4%</strong></td></tr></tbody></table></div>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">論文では「浅いモデル（c=4）を大部分使う」絵になっていましたが、今回はc=4がほとんど選ばれませんでした。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">推測される原因</strong>：</p>
+<ul style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">論文は<strong style="font-weight:700;">フル微調整・全量（7,800件）・6エポック</strong></li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;">今回は<strong style="font-weight:700;">LoRA（軽量微調整）・2,000件・1エポック</strong></li></ul>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">深く削った構成（c=4）を立て直すには、学習の容量（LoRAのrank）も学習量（データ数・エポック数）も不十分だった可能性があります。c=4モデルの品質が回復しきれていないため、オラクルが「浅いモデルを選ぶ」判断をしなかったと推測されます。</p>
+<h3 id="sec-30" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">4. 学習ルーターの結果：実用化への道のり</h3>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">プロンプトの情報だけから、どの深さが適切かを予測する「ルーター」の結果です。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">予測と実測の相関</strong>（c=4, 8, 12, 24の順）：</p>
+<div style="margin:18px 0 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #e2e8f0;border-radius:8px;"><table style="width:100%;border-collapse:collapse;border-spacing:0;background-color:#ffffff;font-size:14px;line-height:1.65;"><thead><tr><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">深さ</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">微調整前</th><th style="padding:10px 12px;border:1px solid #cbd5e1;background-color:#1e3a8a;color:#ffffff;font-weight:700;font-size:13.5px;text-align:left;white-space:nowrap;vertical-align:middle;">微調整後</th></tr></thead><tbody><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">c=4</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">0.311</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">0.108</td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">c=8</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">0.140</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;"><strong style="font-weight:700;">0.342</strong></td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">c=12</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;">0.179</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#ffffff;"><strong style="font-weight:700;">0.391</strong></td></tr><tr><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">c=24</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">0.363</td><td style="padding:9px 12px;border:1px solid #e2e8f0;color:#1f2937;font-size:inherit;line-height:inherit;vertical-align:top;background-color:#f6f9fc;">0.340</td></tr></tbody></table></div>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">c=8とc=12は改善しましたが、c=4は低下しました。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">重要なポイント</strong>：ルーターに効くのは「各モデルの絶対的な品質」ではなく、「<strong style="font-weight:700;">モデル間の差</strong>」（例：c=24とc=8の差）です。水準の予測が当たっても、差の予測が当たらないことは十分ありえます。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">実用化の見込みは、<strong style="font-weight:700;">ルーターとrandom mixの曲線の差</strong>で判断する必要があります。この差が大きければ、「プロンプトの情報だけで難易度を判別し、適切な深さを選べる」可能性があります。</p>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><img src="image/readme/1795306687344.png" alt="1795306687344" style="max-width:100%;height:auto;border-radius:8px;" loading="lazy"></p>
+<h2 id="sec-31" style="margin:48px 0 22px;padding:12px 18px;border-radius:8px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;font-size:22px;line-height:1.5;font-weight:700;letter-spacing:.02em;box-shadow:0 2px 6px rgba(30,58,138,.18);scroll-margin-top:80px;">結果のまとめ</h2>
+<h3 id="sec-32" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">再現できたこと</h3>
+<ol style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">オラクルと静的モデルの差は大きく出た</strong>（β=8で+0.075）</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">greedyと静的はほぼ同じ</strong> → sampling advantageは小さく、配分効果が主因</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">random mixは静的を下回る</strong> → 「混ぜるだけ」ではなく、系列ごとの選択が重要</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">フルモデルの絶対値は論文水準に到達</strong>（0.312 vs 0.342）</li></ol>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">結論</strong>：論文の「系列単位で深さを選べば得がある」という定性傾向は、縮小版でも確認できました。</p>
+<h3 id="sec-33" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">再現できなかったこと</h3>
+<ol style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">「層の23%でフルと同等」には届かなかった</strong>（47.9%まで）</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">c=4が選ばれなかった</strong>（11.4% vs 論文69.6%）</li></ol>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">原因</strong>：再現条件の差（フル微調整 vs LoRA、全量 vs 2,000件、6エポック vs 1エポック）</p>
+<h3 id="sec-34" style="margin:40px 0 16px;padding:0 0 7px;border-bottom:2px solid #bfdbfe;color:#1e3a8a;font-size:19px;line-height:1.55;font-weight:700;scroll-margin-top:80px;">この結果の限界</h3>
+<ol style="margin:.8em 0 1.1em;padding-left:1.6em;font-size:inherit;line-height:inherit;color:inherit;"><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">n=500・1シード・信頼区間なし</strong>：細かい差（0.182 vs 0.184など）は誤差の範囲</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">オラクルは出力のノイズも事後的に利用</strong>：greedyとの比較で小さいと分かりましたが、完全には排除されていません</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">プロンプトの扱いが簡易版</strong>：論文はプロンプトをフル層で処理し、生成トークンだけ層を飛ばしますが、今回は全体を層削除モデルで処理しています</li><li style="margin:.35em 0;font-size:inherit;line-height:inherit;color:inherit;"><strong style="font-weight:700;">ルーターのコスト未計上</strong>：プロンプト1回分の前向き計算がかかります</li></ol>
+<h2 id="sec-35" style="margin:48px 0 22px;padding:12px 18px;border-radius:8px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;font-size:22px;line-height:1.5;font-weight:700;letter-spacing:.02em;box-shadow:0 2px 6px rgba(30,58,138,.18);scroll-margin-top:80px;">実験まとめ</h2>
+<p style="margin:0 0 1.15em;font-size:inherit;line-height:inherit;color:inherit;">「質問ごとに計算の深さを使い分けると、同じ計算量でかなり良い結果が出せる」という論文の核心は再現できた。ただし、「24層中5.6層でフルと同等」という絶対値は、LoRA・縮小データ・短い学習では達成できなかった。浅いモデルの品質を立て直すことが、効率化の鍵である。</p>
+<h2 id="sec-36" style="margin:48px 0 22px;padding:12px 18px;border-radius:8px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#ffffff;font-size:22px;line-height:1.5;font-weight:700;letter-spacing:.02em;box-shadow:0 2px 6px rgba(30,58,138,.18);scroll-margin-top:80px;">関連記事</h2>
+<div data-role="related-articles" style="margin:0;padding:0;">
+<p style="margin:0 0 14px;font-size:13px;line-height:1.8;color:#475569;">この記事と内容が近い過去記事を、ブログ内の記事から自動で選びました。</p>
+<a href="https://yoshishinnze.hatenablog.com/entry/2026/07/07/043000" target="_blank" rel="noopener" data-related-card="1" style="display:block;margin:0 0 12px;padding:14px 16px;border:1px solid #dbeafe;border-left:5px solid #2563eb;border-radius:0 10px 10px 0;background-color:#ffffff;box-shadow:0 1px 2px rgba(15,23,42,.04);text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease;">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;"><span style="display:inline-block;padding:2px 9px;border-radius:999px;background-color:#eff6ff;color:#1e40af;font-size:10.5px;font-weight:700;line-height:1.6;letter-spacing:.06em;">AI</span><span style="font-size:11px;line-height:1.6;color:#64748b;font-weight:600;letter-spacing:.02em;">2026.07.07</span></div>
+<div style="margin:7px 0 0;font-size:15.5px;line-height:1.55;font-weight:700;color:#1e3a8a;">ACL2026採択のCARESについて読んでみた<span aria-hidden="true" style="color:#2563eb;font-weight:700;"> →</span></div>
+<p style="margin:5px 0 0;font-size:12.5px;line-height:1.7;color:#475569;">昨日に引き続きACL2026採択論文を読み進めています。 同じく仕組み・原理に関する論文で読んでみたものはCARESです。 ACL2026で採択された CARES: Context-Aware Resolution Selector f…</p>
+</a>
+<a href="https://yoshishinnze.hatenablog.com/entry/2025/12/24/061608" target="_blank" rel="noopener" data-related-card="1" style="display:block;margin:0 0 12px;padding:14px 16px;border:1px solid #dbeafe;border-left:5px solid #2563eb;border-radius:0 10px 10px 0;background-color:#ffffff;box-shadow:0 1px 2px rgba(15,23,42,.04);text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease;">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;"><span style="display:inline-block;padding:2px 9px;border-radius:999px;background-color:#eff6ff;color:#1e40af;font-size:10.5px;font-weight:700;line-height:1.6;letter-spacing:.06em;">AI</span><span style="font-size:11px;line-height:1.6;color:#64748b;font-weight:600;letter-spacing:.02em;">2025.12.24</span></div>
+<div style="margin:7px 0 0;font-size:15.5px;line-height:1.55;font-weight:700;color:#1e3a8a;">LLM: KVキャッシュ<span aria-hidden="true" style="color:#2563eb;font-weight:700;"> →</span></div>
+<p style="margin:5px 0 0;font-size:12.5px;line-height:1.7;color:#475569;">KVキャッシュ（Key-Value Cache） は、LLMが文章を生成する際の「計算の無駄」を省き、生成速度を劇的に向上させるための最も重要な推論最適化技術の一つです。 なぜこの技術が必要なのか、LLMの「生成の仕組み」に潜む課題から…</p>
+</a>
+<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/03/000000" target="_blank" rel="noopener" data-related-card="1" style="display:block;margin:0 0 12px;padding:14px 16px;border:1px solid #dbeafe;border-left:5px solid #2563eb;border-radius:0 10px 10px 0;background-color:#ffffff;box-shadow:0 1px 2px rgba(15,23,42,.04);text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease;">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;"><span style="display:inline-block;padding:2px 9px;border-radius:999px;background-color:#eff6ff;color:#1e40af;font-size:10.5px;font-weight:700;line-height:1.6;letter-spacing:.06em;">AI</span><span style="font-size:11px;line-height:1.6;color:#64748b;font-weight:600;letter-spacing:.02em;">2025.10.03</span></div>
+<div style="margin:7px 0 0;font-size:15.5px;line-height:1.55;font-weight:700;color:#1e3a8a;">CNNで盤目の推論が出来るか実験(2)<span aria-hidden="true" style="color:#2563eb;font-weight:700;"> →</span></div>
+<p style="margin:5px 0 0;font-size:12.5px;line-height:1.7;color:#475569;">前回より盤目やワールドをCNNモデルに視覚情報を入力として与えているが、果たしてどの程度の精密さで認識しているのだろうか？という疑問を解消するべくCNNモデルで盤面の座標を正確に当てられるかを確認しています。 前回は学習用のデータを作れ…</p>
+</a>
+<a href="https://yoshishinnze.hatenablog.com/entry/2026/01/04/094139" target="_blank" rel="noopener" data-related-card="1" style="display:block;margin:0 0 12px;padding:14px 16px;border:1px solid #dbeafe;border-left:5px solid #2563eb;border-radius:0 10px 10px 0;background-color:#ffffff;box-shadow:0 1px 2px rgba(15,23,42,.04);text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease;">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;"><span style="display:inline-block;padding:2px 9px;border-radius:999px;background-color:#eff6ff;color:#1e40af;font-size:10.5px;font-weight:700;line-height:1.6;letter-spacing:.06em;">AI</span><span style="font-size:11px;line-height:1.6;color:#64748b;font-weight:600;letter-spacing:.02em;">2026.01.04</span></div>
+<div style="margin:7px 0 0;font-size:15.5px;line-height:1.55;font-weight:700;color:#1e3a8a;">LLM: 特徴量を用いた知識蒸留の実験<span aria-hidden="true" style="color:#2563eb;font-weight:700;"> →</span></div>
+<p style="margin:5px 0 0;font-size:12.5px;line-height:1.7;color:#475569;">知識蒸留における「出力のみ（Response-based）」と「中間層（Feature-based）」の違いを比較する実験として、MNIST（手書き数字）の分類タスクを用いた軽量な実験を行いました。 本試験はGoogle Colabで数…</p>
+</a>
+<a href="https://yoshishinnze.hatenablog.com/entry/2025/10/20/000000" target="_blank" rel="noopener" data-related-card="1" style="display:block;margin:0 0 12px;padding:14px 16px;border:1px solid #dbeafe;border-left:5px solid #2563eb;border-radius:0 10px 10px 0;background-color:#ffffff;box-shadow:0 1px 2px rgba(15,23,42,.04);text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease,background-color .15s ease;">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;"><span style="display:inline-block;padding:2px 9px;border-radius:999px;background-color:#eff6ff;color:#1e40af;font-size:10.5px;font-weight:700;line-height:1.6;letter-spacing:.06em;">AI</span><span style="font-size:11px;line-height:1.6;color:#64748b;font-weight:600;letter-spacing:.02em;">2025.10.20</span></div>
+<div style="margin:7px 0 0;font-size:15.5px;line-height:1.55;font-weight:700;color:#1e3a8a;">Google Colabを使ったLLMのファインチューニング<span aria-hidden="true" style="color:#2563eb;font-weight:700;"> →</span></div>
+<p style="margin:5px 0 0;font-size:12.5px;line-height:1.7;color:#475569;">Google Colabはクラウドで使え、gpuの使用環境や、ニューラルネットワークを構築する基本的なパッケージが揃った非常にありがたい環境です。 ですが、近年のLLMを動作させようとすると、メモリ不足になることが多く、LLMを動かすこ…</p>
+</a>
+<p style="margin:12px 0 0;font-size:11.5px;line-height:1.65;color:#94a3b8;">※ 本文と過去記事のタイトル・概要の類似度による自動選定です。</p>
+</div>
+</div>
+
+<script>
+/*!
+ * hatena_interactive.js
+ * はてなブログの記事本文に貼り付ける、依存ライブラリなしの軽量インタラクション集。
+ *
+ * - 読了プログレスバー
+ * - 解答のクイズモード（ぼかし → クリックで開示、進捗カウンタ）
+ * - コードブロックのコピー
+ * - 目次のスムーズスクロール＋現在地ハイライト
+ * - 見出しクリックでリンクコピー
+ * - VXLAN カプセル化のミニクイズ
+ * - キーボードショートカット（Q / R / T / ?）
+ *
+ * 記事内のスクリプトが使えない場合は、はてなブログの
+ * 「デザイン > カスタマイズ > 記事下」などにこのファイルの中身を貼り付けてください。
+ */
+(function () {
+  "use strict";
+
+  var root = document.querySelector("[data-hatena-article]");
+  if (!root || root.getAttribute("data-enhanced") === "1") return;
+  root.setAttribute("data-enhanced", "1");
+
+  var reduceMotion = false;
+  try {
+    reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch (err) {}
+
+  var STORAGE_KEY = "hatena-quiz:" + location.pathname;
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function store(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch (err) {}
+  }
+
+  function restore(key) {
+    try {
+      return window.localStorage.getItem(key);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* トースト                                                           */
+  /* ------------------------------------------------------------------ */
+
+  var toastEl = null;
+  var toastTimer = null;
+
+  function toast(message) {
+    if (!toastEl) {
+      toastEl = document.createElement("div");
+      toastEl.setAttribute("role", "status");
+      toastEl.setAttribute("aria-live", "polite");
+      toastEl.style.cssText =
+        "position:fixed;left:50%;bottom:92px;z-index:10000;" +
+        "transform:translateX(-50%) translateY(10px);" +
+        "max-width:min(88vw,440px);padding:10px 18px;border-radius:999px;" +
+        "background:rgba(15,23,42,.94);color:#fff;font-size:13px;" +
+        "line-height:1.65;text-align:center;font-weight:600;" +
+        "box-shadow:0 10px 30px rgba(15,23,42,.32);opacity:0;" +
+        "pointer-events:none;transition:opacity .2s ease,transform .2s ease;" +
+        "font-family:inherit;";
+      document.body.appendChild(toastEl);
+    }
+
+    toastEl.textContent = message;
+    requestAnimationFrame(function () {
+      toastEl.style.opacity = "1";
+      toastEl.style.transform = "translateX(-50%) translateY(0)";
+    });
+
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(function () {
+      toastEl.style.opacity = "0";
+      toastEl.style.transform = "translateX(-50%) translateY(10px)";
+    }, 2200);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* コピー                                                             */
+  /* ------------------------------------------------------------------ */
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.cssText =
+        "position:fixed;top:-1000px;left:-1000px;opacity:0;";
+      document.body.appendChild(area);
+      area.select();
+      try {
+        var ok = document.execCommand("copy");
+        area.remove();
+        ok ? resolve() : reject(new Error("copy failed"));
+      } catch (err) {
+        area.remove();
+        reject(err);
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 紙吹雪（小さい祝福）                                               */
+  /* ------------------------------------------------------------------ */
+
+  function burst(x, y, count) {
+    if (reduceMotion) return;
+
+    var colors = [
+      "#2563eb",
+      "#22d3ee",
+      "#10b981",
+      "#f59e0b",
+      "#ef4444",
+      "#8b5cf6",
+    ];
+    var layer = document.createElement("div");
+    layer.setAttribute("aria-hidden", "true");
+    layer.style.cssText =
+      "position:fixed;inset:0;z-index:10001;overflow:hidden;" +
+      "pointer-events:none;";
+    document.body.appendChild(layer);
+
+    for (var i = 0; i < (count || 32); i++) {
+      var piece = document.createElement("span");
+      var size = 6 + Math.random() * 7;
+      piece.style.cssText =
+        "position:absolute;left:" +
+        x +
+        "px;top:" +
+        y +
+        "px;width:" +
+        size +
+        "px;height:" +
+        size * 0.55 +
+        "px;border-radius:2px;background:" +
+        colors[i % colors.length] +
+        ";opacity:1;will-change:transform,opacity;";
+      layer.appendChild(piece);
+
+      var angle = Math.random() * Math.PI * 2;
+      var distance = 80 + Math.random() * 230;
+      var dx = Math.cos(angle) * distance;
+      var dy = Math.sin(angle) * distance + 130;
+      var spin = Math.random() * 720 - 360;
+
+      var animation = piece.animate(
+        [
+          { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+          {
+            transform:
+              "translate(" + dx + "px," + dy + "px) rotate(" + spin + "deg)",
+            opacity: 0,
+          },
+        ],
+        {
+          duration: 1100 + Math.random() * 700,
+          easing: "cubic-bezier(.2,.7,.3,1)",
+          fill: "forwards",
+        }
+      );
+      animation.onfinish = function () {
+        this.cancel();
+      };
+    }
+
+    window.setTimeout(function () {
+      layer.remove();
+    }, 2400);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 読了プログレスバー                                                 */
+  /* ------------------------------------------------------------------ */
+
+  var progressBar = document.createElement("div");
+  progressBar.setAttribute("aria-hidden", "true");
+  progressBar.style.cssText =
+    "position:fixed;top:0;left:0;height:3px;width:0%;z-index:9999;" +
+    "background:linear-gradient(90deg,#1e3a8a,#3b82f6,#22d3ee);" +
+    "box-shadow:0 0 8px rgba(59,130,246,.6);pointer-events:none;" +
+    "transition:width .08s linear;";
+  document.body.appendChild(progressBar);
+
+  function updateProgress() {
+    var rect = root.getBoundingClientRect();
+    var total = rect.height - window.innerHeight;
+    var scrolled = -rect.top;
+    var ratio = total > 0 ? scrolled / total : 1;
+    progressBar.style.width = clamp(ratio, 0, 1) * 100 + "%";
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* フローティング操作パネル                                           */
+  /* ------------------------------------------------------------------ */
+
+  var panel = document.createElement("div");
+  panel.setAttribute("data-role", "controls");
+  panel.style.cssText =
+    "position:fixed;right:14px;bottom:16px;z-index:9998;display:flex;" +
+    "flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px;" +
+    "max-width:calc(100vw - 28px);padding:7px;border-radius:18px;" +
+    "background:rgba(255,255,255,.94);border:1px solid #dbeafe;" +
+    "box-shadow:0 12px 32px rgba(15,23,42,.18);font-family:inherit;";
+  document.body.appendChild(panel);
+
+  var BUTTON_STYLE =
+    "appearance:none;border:0;border-radius:999px;padding:7px 12px;" +
+    "font-size:12.5px;font-weight:700;line-height:1;cursor:pointer;" +
+    "background:#eff6ff;color:#1e40af;font-family:inherit;" +
+    "white-space:nowrap;transition:background .15s ease,color .15s ease," +
+    "transform .12s ease;";
+
+  function makeButton(label, title) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    if (title) button.title = title;
+    button.style.cssText = BUTTON_STYLE;
+    button.addEventListener("mouseenter", function () {
+      if (button.getAttribute("aria-pressed") === "true") return;
+      button.style.background = "#dbeafe";
+    });
+    button.addEventListener("mouseleave", function () {
+      if (button.getAttribute("aria-pressed") === "true") return;
+      button.style.background = "#eff6ff";
+    });
+    button.addEventListener("pointerdown", function () {
+      button.style.transform = "scale(.96)";
+    });
+    button.addEventListener("pointerup", function () {
+      button.style.transform = "";
+    });
+    button.addEventListener("pointerleave", function () {
+      button.style.transform = "";
+    });
+    panel.appendChild(button);
+    return button;
+  }
+
+  var quizButton = makeButton("クイズ", "解答を隠して自習モードにする（Q）");
+  var revealButton = makeButton("全表示", "解答をすべて表示する（R）");
+  revealButton.style.display = "none";
+  var counter = document.createElement("span");
+  counter.setAttribute("aria-live", "polite");
+  counter.style.cssText =
+    "padding:0 4px;font-size:12px;font-weight:700;color:#64748b;" +
+    "font-variant-numeric:tabular-nums;display:none;";
+  panel.appendChild(counter);
+
+  var topButton = makeButton("↑", "ページの先頭へ（T）");
+
+  /* ------------------------------------------------------------------ */
+  /* クイズモード                                                       */
+  /* ------------------------------------------------------------------ */
+
+  var answers = Array.prototype.slice.call(
+    root.querySelectorAll('p[data-answer="1"]')
+  );
+  if (!answers.length) {
+    answers = Array.prototype.slice.call(root.querySelectorAll("p")).filter(
+      function (p) {
+        return p.textContent.replace(/^\s+/, "").indexOf("解答：") === 0;
+      }
+    );
+    answers.forEach(function (p) {
+      p.setAttribute("data-answer", "1");
+    });
+  }
+
+  var total = answers.length;
+  var revealed = 0;
+  var quizOn = false;
+  var celebrated = false;
+
+  answers.forEach(function (p, index) {
+    p.setAttribute("data-revealed", "0");
+
+    p.addEventListener("click", function () {
+      if (!quizOn) return;
+      revealAnswer(p);
+    });
+
+    p.addEventListener("keydown", function (event) {
+      if (!quizOn) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        revealAnswer(p);
+      }
+    });
+
+    if (index === 0) {
+      p.setAttribute("data-first-answer", "1");
+    }
+  });
+
+  function updateCounter() {
+    counter.textContent = revealed + " / " + total;
+    if (revealed === total && total > 0) {
+      counter.style.color = "#047857";
+    } else {
+      counter.style.color = "#64748b";
+    }
+  }
+
+  function blurAnswer(p) {
+    p.style.filter = "blur(5px)";
+    p.style.cursor = "zoom-in";
+    p.style.userSelect = "none";
+    p.style.transition = "filter .25s ease";
+    p.style.outline = "1px dashed rgba(16,185,129,.45)";
+    p.style.outlineOffset = "2px";
+    p.setAttribute("aria-label", "解答を表示（クリックまたは Enter）");
+  }
+
+  function unblurAnswer(p) {
+    p.style.filter = "";
+    p.style.cursor = "";
+    p.style.userSelect = "";
+    p.style.outline = "";
+    p.style.outlineOffset = "";
+  }
+
+  function revealAnswer(p) {
+    if (p.getAttribute("data-revealed") === "1") return;
+    p.setAttribute("data-revealed", "1");
+    p.style.filter = "none";
+    p.style.cursor = "pointer";
+    p.style.userSelect = "";
+    p.style.outline = "";
+    p.style.outlineOffset = "";
+    p.setAttribute("aria-label", "解答を表示しました");
+    revealed += 1;
+    updateCounter();
+
+    if (!reduceMotion) {
+      p.animate(
+        [
+          { boxShadow: "0 0 0 0 rgba(16,185,129,.55)" },
+          { boxShadow: "0 0 0 10px rgba(16,185,129,0)" },
+        ],
+        { duration: 620, easing: "ease-out" }
+      );
+    }
+
+    if (quizOn && total > 0 && revealed === total && !celebrated) {
+      celebrated = true;
+      toast("全 " + total + " 問、解答を表示しました。おつかれさまでした！");
+      burst(window.innerWidth / 2, window.innerHeight * 0.36, 40);
+    }
+  }
+
+  function setQuiz(enabled, silent) {
+    quizOn = enabled;
+    celebrated = false;
+
+    quizButton.setAttribute("aria-pressed", enabled ? "true" : "false");
+    quizButton.textContent = enabled ? "クイズ中" : "クイズ";
+    quizButton.style.background = enabled ? "#1e3a8a" : "#eff6ff";
+    quizButton.style.color = enabled ? "#ffffff" : "#1e40af";
+    quizButton.style.boxShadow = enabled
+      ? "0 3px 10px rgba(30,58,138,.32)"
+      : "";
+
+    revealButton.style.display = enabled ? "" : "none";
+    counter.style.display = enabled ? "" : "none";
+
+    revealed = 0;
+    celebrated = false;
+
+    answers.forEach(function (p) {
+      p.setAttribute("data-revealed", "0");
+      if (enabled) {
+        p.setAttribute("tabindex", "0");
+        p.setAttribute("role", "button");
+        blurAnswer(p);
+      } else {
+        p.removeAttribute("tabindex");
+        p.removeAttribute("role");
+        p.removeAttribute("aria-label");
+        unblurAnswer(p);
+      }
+    });
+
+    updateCounter();
+    store(STORAGE_KEY, enabled ? "1" : "0");
+
+    if (enabled && !silent) {
+      toast("クイズモード：解答はクリックで表示（Q で解除）");
+    }
+  }
+
+  quizButton.addEventListener("click", function () {
+    setQuiz(!quizOn);
+  });
+
+  revealButton.addEventListener("click", function () {
+    if (!quizOn) return;
+    answers.forEach(revealAnswer);
+  });
+
+  topButton.addEventListener("click", function () {
+    window.scrollTo({
+      top: 0,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  });
+
+  if (total > 0 && restore(STORAGE_KEY) === "1") {
+    setQuiz(true, true);
+  } else if (total === 0) {
+    quizButton.style.display = "none";
+    revealButton.style.display = "none";
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* コードブロックのコピー                                             */
+  /* ------------------------------------------------------------------ */
+
+  Array.prototype.forEach.call(root.querySelectorAll("pre"), function (pre) {
+    var wrapper = document.createElement("div");
+    wrapper.style.cssText = "position:relative;margin:18px 0 24px;";
+    pre.style.margin = "0";
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    var button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "コピー";
+    button.title = "このコードをコピー";
+    button.style.cssText =
+      "position:absolute;top:8px;right:8px;z-index:2;appearance:none;" +
+      "border:1px solid rgba(148,163,184,.55);border-radius:6px;" +
+      "padding:4px 10px;font-family:inherit;font-size:11.5px;" +
+      "font-weight:700;line-height:1.5;cursor:pointer;" +
+      "color:#e2e8f0;background:rgba(15,23,42,.72);" +
+      "transition:background .15s ease,color .15s ease;";
+    wrapper.appendChild(button);
+
+    button.addEventListener("click", function () {
+      copyText(pre.innerText)
+        .then(function () {
+          button.textContent = "コピー済み";
+          button.style.background = "#10b981";
+          button.style.borderColor = "#10b981";
+          button.style.color = "#ffffff";
+          window.setTimeout(function () {
+            button.textContent = "コピー";
+            button.style.background = "rgba(15,23,42,.72)";
+            button.style.borderColor = "rgba(148,163,184,.55)";
+            button.style.color = "#e2e8f0";
+          }, 1600);
+        })
+        .catch(function () {
+          toast("コピーできませんでした。手動で選択してください。");
+        });
+    });
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* 目次：スムーズスクロール＋現在地ハイライト                         */
+  /* ------------------------------------------------------------------ */
+
+  // 環境によって id が落ちても、目次リンクが動くように補完する
+  Array.prototype.forEach.call(
+    root.querySelectorAll("h2,h3,h4"),
+    function (heading, index) {
+      if (!heading.id) {
+        heading.id = "sec-" + (index + 1);
+      }
+    }
+  );
+
+  var toc = root.querySelector('[aria-label="目次"]');
+  var tocLinks = toc
+    ? Array.prototype.slice.call(toc.querySelectorAll('a[href^="#"]'))
+    : [];
+
+  tocLinks.forEach(function (link) {
+    link.style.padding = "1px 4px";
+    link.style.margin = "0 -4px";
+    link.style.borderRadius = "4px";
+    link.style.transition = "background .15s ease,color .15s ease";
+
+    link.addEventListener("click", function (event) {
+      var id = link.getAttribute("href").slice(1);
+      var target = document.getElementById(id);
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", "#" + id);
+      }
+    });
+  });
+
+  var activeLink = null;
+
+  function updateActiveToc() {
+    if (!tocLinks.length) return;
+
+    var line = window.scrollY + 140;
+    var current = null;
+
+    tocLinks.forEach(function (link) {
+      var id = link.getAttribute("href").slice(1);
+      var heading = document.getElementById(id);
+      if (!heading) return;
+      if (heading.getBoundingClientRect().top + window.scrollY <= line) {
+        current = link;
+      }
+    });
+
+    if (current === activeLink) return;
+
+    if (activeLink) {
+      activeLink.style.background = "";
+      activeLink.style.color = "";
+      activeLink.style.fontWeight = "";
+    }
+
+    activeLink = current;
+
+    if (activeLink) {
+      activeLink.style.background = "#dbeafe";
+      activeLink.style.color = "#1e3a8a";
+      activeLink.style.fontWeight = "700";
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 見出しクリックでリンクをコピー                                     */
+  /* ------------------------------------------------------------------ */
+
+  Array.prototype.forEach.call(
+    root.querySelectorAll("h2[id],h3[id],h4[id]"),
+    function (heading) {
+      heading.style.cursor = "pointer";
+      heading.title = "クリックでこの見出しの URL をコピー";
+
+      heading.addEventListener("click", function () {
+        var selected = window.getSelection
+          ? String(window.getSelection())
+          : "";
+        if (selected.length > 0) return;
+
+        var url =
+          location.origin +
+          location.pathname +
+          location.search +
+          "#" +
+          heading.id;
+
+        copyText(url)
+          .then(function () {
+            toast("見出しリンクをコピーしました");
+          })
+          .catch(function () {
+            toast("コピーできませんでした");
+          });
+      });
+    }
+  );
+
+  /* ------------------------------------------------------------------ */
+  /* VXLAN カプセル化ミニクイズ                                         */
+  /* ------------------------------------------------------------------ */
+
+  (function initPuzzle() {
+    var box = root.querySelector('[data-widget="vxlan-puzzle"]');
+    if (!box) return;
+
+    var chips = Array.prototype.slice.call(
+      box.querySelectorAll("[data-order]")
+    );
+    var slotRow = box.querySelector('[data-role="slots"]');
+    var status = box.querySelector('[data-role="status"]');
+    var resetButton = box.querySelector('[data-role="reset"]');
+    var hintButton = box.querySelector('[data-role="hint"]');
+    var hintText = box.querySelector('[data-role="hint-text"]');
+    if (!chips.length || !slotRow) return;
+
+    var picked = [];
+    var checked = false;
+
+    function chipBaseStyle(chip) {
+      chip.disabled = false;
+      chip.style.opacity = "";
+      chip.style.cursor = "pointer";
+      chip.style.transform = "";
+      chip.style.background = "#ffffff";
+      chip.style.color = "#1e3a8a";
+    }
+
+    function render() {
+      slotRow.innerHTML = "";
+
+      for (var i = 0; i < 4; i++) {
+        var slot = document.createElement("span");
+        slot.style.cssText =
+          "display:inline-flex;align-items:center;justify-content:center;" +
+          "min-width:92px;min-height:36px;padding:6px 10px;" +
+          "border-radius:8px;border:1px dashed #93c5fd;" +
+          "background:#f8fafc;color:#1e3a8a;font-size:12px;" +
+          "font-weight:700;text-align:center;line-height:1.35;" +
+          "transition:background .15s ease,border-color .15s ease;";
+
+        var chip = picked[i];
+
+        if (chip) {
+          slot.textContent = chip.textContent;
+
+          if (checked) {
+            var good = Number(chip.getAttribute("data-order")) === i + 1;
+            slot.style.borderStyle = "solid";
+            slot.style.borderColor = good ? "#10b981" : "#ef4444";
+            slot.style.background = good ? "#ecfdf5" : "#fef2f2";
+            slot.style.color = good ? "#065f46" : "#991b1b";
+          } else {
+            slot.style.borderStyle = "solid";
+            slot.style.borderColor = "#60a5fa";
+            slot.style.background = "#dbeafe";
+          }
+        } else {
+          slot.textContent = "？";
+        }
+
+        slotRow.appendChild(slot);
+
+        if (i < 3) {
+          var arrow = document.createElement("span");
+          arrow.textContent = "→";
+          arrow.setAttribute("aria-hidden", "true");
+          arrow.style.cssText =
+            "color:#93c5fd;font-size:12px;font-weight:700;";
+          slotRow.appendChild(arrow);
+        }
+      }
+    }
+
+    function check() {
+      checked = true;
+      var ok = picked.every(function (chip, index) {
+        return Number(chip.getAttribute("data-order")) === index + 1;
+      });
+
+      render();
+
+      if (ok) {
+        status.textContent =
+          "正解！外側から IPv4 → UDP → VXLAN → イーサネットフレームの順です。";
+        status.style.color = "#047857";
+        chips.forEach(function (chip) {
+          chip.disabled = true;
+          chip.style.cursor = "default";
+        });
+        var rect = box.getBoundingClientRect();
+        burst(rect.left + rect.width / 2, rect.top + 40, 18);
+      } else {
+        status.textContent =
+          "おしい！外側（トンネルの入口）から順番に選び直してみましょう。";
+        status.style.color = "#b91c1c";
+      }
+    }
+
+    chips.forEach(function (chip) {
+      chipBaseStyle(chip);
+
+      chip.addEventListener("click", function () {
+        if (chip.disabled || picked.length >= 4) return;
+
+        picked.push(chip);
+        chip.disabled = true;
+        chip.style.opacity = ".35";
+        chip.style.cursor = "default";
+        chip.style.transform = "scale(.97)";
+        chip.style.background = "#e2e8f0";
+        chip.style.color = "#64748b";
+
+        checked = false;
+        status.textContent = "";
+        render();
+
+        if (picked.length === 4) check();
+      });
+    });
+
+    if (resetButton) {
+      resetButton.addEventListener("click", function () {
+        picked = [];
+        checked = false;
+        status.textContent = "";
+        chips.forEach(chipBaseStyle);
+        render();
+      });
+    }
+
+    if (hintButton && hintText) {
+      hintButton.addEventListener("click", function () {
+        var shown = hintText.style.display !== "none";
+        hintText.style.display = shown ? "none" : "";
+        hintButton.textContent = shown ? "ヒント" : "ヒントを隠す";
+      });
+    }
+
+    render();
+  })();
+
+  /* ------------------------------------------------------------------ */
+  /* 関連記事カード                                                     */
+  /* ------------------------------------------------------------------ */
+
+  (function setupRelatedCards() {
+    var cards = root.querySelectorAll("[data-related-card]");
+    if (!cards.length) return;
+
+    function activate(card) {
+      if (!reduceMotion) {
+        card.style.transform = "translateY(-2px)";
+      }
+      card.style.boxShadow = "0 10px 24px rgba(30,58,138,.16)";
+      card.style.backgroundColor = "#f8fbff";
+    }
+
+    function deactivate(card) {
+      card.style.transform = "";
+      card.style.boxShadow = "";
+      card.style.backgroundColor = "";
+    }
+
+    Array.prototype.forEach.call(cards, function (card) {
+      card.addEventListener("mouseenter", function () {
+        activate(card);
+      });
+      card.addEventListener("mouseleave", function () {
+        deactivate(card);
+      });
+      card.addEventListener("focus", function () {
+        activate(card);
+      });
+      card.addEventListener("blur", function () {
+        deactivate(card);
+      });
+    });
+  })();
+
+  /* ------------------------------------------------------------------ */
+  /* キーボードショートカット                                           */
+  /* ------------------------------------------------------------------ */
+
+  document.addEventListener("keydown", function (event) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+    var target = event.target;
+    if (
+      target &&
+      (target.isContentEditable ||
+        /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
+    ) {
+      return;
+    }
+
+    var key = event.key.toLowerCase();
+
+    if (key === "q" || key === "Q") {
+      if (total === 0) return;
+      event.preventDefault();
+      setQuiz(!quizOn);
+    } else if (key === "r") {
+      if (!quizOn) return;
+      event.preventDefault();
+      answers.forEach(revealAnswer);
+    } else if (key === "t") {
+      event.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    } else if (event.key === "?") {
+      event.preventDefault();
+      toast("Q: クイズ切替 / R: 解答を全表示 / T: 先頭へ / 見出しクリック: リンクをコピー");
+    }
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* スクロールイベント                                                 */
+  /* ------------------------------------------------------------------ */
+
+  var ticking = false;
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      updateProgress();
+      updateActiveToc();
+    });
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+})();
+</script>

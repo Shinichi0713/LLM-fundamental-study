@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x5b9f;&#x9a13;&#x610f;&#x7fa9;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<p><a href="https://yoshishinnze.hatenablog.com/entry/2026/12/30/043000">先日紹介した Dynamic Layer Selection in Decoder-Only Transformers で提案</a>されている &quot;質問ごとに計算の深さを使い分けると、同じ計算量でかなり良い結果が出せる&quot; という結果が確認できるかについて実験の上確認していきます。</p>
+<h2 id="実験意義">実験意義</h2>
+<p>今回実験の意義は、<strong>論文が提示する『動的レイヤ選択』の効果が、縮小版の設定でも本物かどうかを、オラクルという上限値を手がかりに検証する</strong> 点にあります。</p>
+<h3 id="1-論文の主張を再現ではなく検証する実験">1. 論文の主張を「再現」ではなく「検証」する実験</h3>
+<p>論文は「OPT-1.3B を Alpaca で6エポックフル微調整し、オラクルによる動的レイヤ選択で平均5.6層（23.3%）でフルモデルと同等の ROUGE-L に到達した」と報告しています。</p>
+<p>今回実験は、その<strong>絶対値を再現することを目標としていません</strong>。以下の問いを検証することを実験目的とします。</p>
+<table>
+<thead>
+<tr>
+<th>問い</th>
+<th>この実験で確認したこと</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>オラクルと静的モデルの差は本物か？</td>
+<td>β=8 で oracle が静的 c=8 を +0.075（約4割）上回ることを確認</td>
+</tr>
+<tr>
+<td>その差は「ノイズの事後利用」だけか？</td>
+<td>greedy oracle と静的がほぼ同じ（0.184 vs 0.182）なので、<strong>sampling advantage だけでは説明できない</strong></td>
+</tr>
+<tr>
+<td>混合そのものに意味があるか？</td>
+<td>random mix が静的を下回るため、<strong>「混ぜるだけ」ではなく系列ごとの配分が重要</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-オラクルの上限値としての性質を正しく扱う">2. オラクルの「上限値」としての性質を正しく扱う</h3>
+<p>論文のオラクルは、テストの正解スコアを見て最適な深さを選ぶため、<strong>実用可能な制御器ではなく「理論上の上限」</strong> です。実験記録でもこの点を明確に認識しています。</p>
+<blockquote>
+<p>「オラクルはテスト用の正解 ROUGE を使うので、ばらつきのなかから良い出力を選べてしまう」</p>
+</blockquote>
+<p>今回の実験では、<strong>greedy oracle</strong> と <strong>random mix</strong> を対照実験として導入することで、オラクルの数字を以下のように分解しました。</p>
+<ul>
+<li><strong>greedy oracle</strong>: 各プロンプトで予算内の最良を選ぶ（sampling advantage のみ）</li>
+<li><strong>random mix</strong>: 同じ選択比率をランダムに配分（比率だけの効果）</li>
+<li><strong>oracle</strong>: 予算をプロンプト間で融通する（配分効果＋sampling advantage）</li>
+</ul>
+<p>この構造により、<strong>「配分効果そのもの」</strong> を切り出すことが出来るはずです。</p>
+<h3 id="3-実用化への道筋を示すルーター実験">3. 実用化への道筋を示す「ルーター」実験</h3>
+<p>プロンプトの埋め込みから各深さの ROUGE-L を予測する<strong>軽量ルーター</strong>（Ridge 回帰）を学習し、オラクル・random mix と比較しています。</p>
+<p>これは、<strong>「オラクルは上限だが、どこまで実用化できるか」</strong> という問いに直接対応する実験です。</p>
+<ul>
+<li>ルーターが random mix を上回れば、<strong>プロンプトの情報だけで難易度を判別し、適切な深さを選べる</strong>可能性がある</li>
+<li>ルーターの予測と実測の相関が改善した（特に c=8, c=12）ことは、<strong>学習可能なパターンが存在する</strong>ことを示唆</li>
+</ul>
+<p>今回実験は、オラクルという「理想値」と実用化の間の<strong>ギャップを測る第一歩</strong>として意義があります。</p>
+<h2 id="実験内容">実験内容</h2>
+<p>この実験は、<strong>AI（大規模言語モデル）の計算を、入力に応じて賢く減らせるのか</strong> を調べたものです。</p>
+<h3 id="1-実験の条件何を使ったか">1. 実験の条件：何を使ったか</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>モデル</strong></td>
+<td>OPT-1.3B（24層のdecoder-only Transformer）</td>
+</tr>
+<tr>
+<td><strong>データ</strong></td>
+<td>Alpaca（指示に従う文章を生成する学習データ）</td>
+</tr>
+<tr>
+<td><strong>評価データ数</strong></td>
+<td>500件（論文は7,800件だが、Colab環境で回るよう縮小）</td>
+</tr>
+<tr>
+<td><strong>計算環境</strong></td>
+<td>Google Colab（無料のT4 GPU）</td>
+</tr>
+<tr>
+<td><strong>層の構成</strong></td>
+<td>4パターン（c = 4, 8, 12, 24層）</td>
+</tr>
+<tr>
+<td><strong>評価指標</strong></td>
+<td>ROUGE-L（生成した文章と正解がどれだけ似ているか、0〜1で大きいほど良い）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>「c = 4, 8, 12, 24」って何？</strong></p>
+<ul>
+<li><strong>c = 24</strong>：24層すべて使う（通常通り、フルモデル）</li>
+<li><strong>c = 12</strong>：24層の半分だけ使う</li>
+<li><strong>c = 8</strong>：さらに少ない層</li>
+<li><strong>c = 4</strong>：1/6の層だけ使う</li>
+</ul>
+<p>層は<strong>均等に間引く</strong>方式（Uniform Layer Skipping）を使います。例えば c=4 なら、24層のうち約4層だけを等間隔に残します。</p>
+<h3 id="2-実験の内容何をどうしたか">2. 実験の内容：何をどうしたか</h3>
+<p>実験は大きく2つのパートに分かれます。</p>
+<p><strong>パートA：微調整なしで、まず現状を測る</strong></p>
+<ol>
+<li>
+<p><strong>4つのモデルで文章を生成</strong></p>
+<ul>
+<li>同じ500個の質問に対して、c=4, 8, 12, 24 のそれぞれで回答を生成</li>
+<li>生成方法は「greedy decoding」（毎回最も確率の高い単語を選ぶ）</li>
+</ul>
+</li>
+<li>
+<p><strong>ROUGE-L で採点</strong></p>
+<ul>
+<li>各（質問, 層数）の組み合わせで、生成文章と正解の一致度を計算</li>
+<li>結果は「質問500個 × 層数4種類」のスコア表（行列）になります</li>
+</ul>
+</li>
+<li>
+<p><strong>オラクル（Oracle）で「理想の使い分け」を計算</strong></p>
+<ul>
+<li><strong>オラクル</strong>とは「各質問に対して、どの層数が最も良い答えを出すかを<strong>正解スコアを見て選べる仮想の賢い制御器</strong>」です</li>
+<li>制約：全質問の<strong>平均コスト（層数）が予算 β 以下</strong></li>
+<li>目的：平均スコア（ROUGE-L）を最大化</li>
+<li>解法：これは「多選択ナップサック問題」と呼ばれる組み合わせ最適化問題で、動的計画法（DP）で解きます</li>
+</ul>
+<p>例えば「平均で8層まで使っていい」という予算なら、簡単な質問には c=4、難しい質問には c=12 を割り当てるように選びます。</p>
+</li>
+<li>
+<p><strong>比較対象を複数用意</strong></p>
+<ul>
+<li><strong>静的 c=8</strong>：すべての質問を c=8 で処理</li>
+<li><strong>greedy oracle</strong>：各質問で予算内の最良の1つを選ぶ（予算の融通はしない）</li>
+<li><strong>random mix</strong>：オラクルと同じ選択比率をランダムに割り当て</li>
+<li><strong>oracle</strong>：予算を質問間で融通して最適化</li>
+</ul>
+<p>これにより、「良い答えを選んだから上手くいったのか」「配分そのものが効いたのか」を切り分けます。</p>
+</li>
+</ol>
+<p><strong>パートB：層を削った状態で微調整して、モデルを立て直す</strong></p>
+<p>パートAでは「元のモデルをそのまま削っただけ」ですが、深く削る（c=4など）と性能が大きく落ちます。そこで：</p>
+<ol>
+<li>
+<p><strong>各層構成（c=4, 8, 12, 24）ごとに LoRA で微調整</strong></p>
+<ul>
+<li>LoRA は「モデルの重みの大部分はそのままに、少量のパラメータだけを追加学習する」手法</li>
+<li>各 c ごとに別々のアダプタを学習</li>
+<li>学習データ：Alpaca から2,000件、1エポック（論文は全量・6エポック）</li>
+</ul>
+</li>
+<li>
+<p><strong>微調整後に再び生成・評価</strong></p>
+<ul>
+<li>パートAと同じ500問で生成し、ROUGE-L を計算</li>
+<li>オラクル・greedy oracle・random mix・ルーターを再度比較</li>
+</ul>
+</li>
+<li>
+<p><strong>学習ルーター（実用化の試み）</strong></p>
+<ul>
+<li>プロンプト（質問文）の埋め込みベクトルから、各層数のスコアを予測する軽量モデル（Ridge回帰）を学習</li>
+<li>「この質問なら c=8 で十分そう」という判断を、正解スコアを見ずに予測する</li>
+<li>これがオラクルに近い性能を出せれば、「実際に使える制御器」になり得る</li>
+</ul>
+</li>
+</ol>
+<h2 id="実験コード">実験コード</h2>
+<p>今回で行った実験コードについて説明していきます。</p>
+<h3 id="データの準備">データの準備</h3>
+<p>Alpacaデータセット（指示に従う文章生成の学習データ）を読み込み、以下のように分割します：</p>
+<ul>
+<li><strong>評価用</strong>：データの末尾15%相当から500件</li>
+<li><strong>学習用</strong>：データの先頭70%相当から2,000件</li>
+<li><strong>重複なし</strong>：評価と学習でデータが被らないように設計</li>
+</ul>
+<pre><code class="language-python">ds = load_dataset(<span class="hljs-string">&quot;tatsu-lab/alpaca&quot;</span>, split=<span class="hljs-string">&quot;train&quot;</span>)
+</code></pre>
+<p>各データは以下の形式に変換されます：</p>
+<pre><code>### Instruction:
+（指示文）
+
+### Input:
+（入力文）
+
+### Response:
+</code></pre>
+<h3 id="モデルの読み込み">モデルの読み込み</h3>
+<pre><code class="language-python">tok = AutoTokenizer.from_pretrained(...)
+model = AutoModelForCausalLM.from_pretrained(..., torch_dtype=torch.float16).to(device).<span class="hljs-built_in">eval</span>()
+</code></pre>
+<p>OPT-1.3Bモデルを <code>float16</code>（半精度浮動小数点）で読み込み、GPUに配置します。これによりメモリを節約します。</p>
+<h3 id="uniform_pattern-関数"><code>uniform_pattern</code> 関数</h3>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">uniform_pattern</span>(<span class="hljs-params">L, c</span>):
+    U = [<span class="hljs-number">1</span>]
+    <span class="hljs-keyword">for</span> l <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">2</span>, L + <span class="hljs-number">1</span>):
+        U.append(<span class="hljs-number">1</span> <span class="hljs-keyword">if</span> <span class="hljs-built_in">sum</span>(U) &lt;= (l - <span class="hljs-number">1</span>) * c / L + <span class="hljs-number">1e-9</span> <span class="hljs-keyword">else</span> <span class="hljs-number">0</span>)
+    <span class="hljs-keyword">return</span> U
+</code></pre>
+<p>論文の式(2)をそのまま実装したものです。24層から <code>c</code> 層を<strong>均等に間引く</strong>パターンを生成します。</p>
+<ul>
+<li><code>c=4</code> の場合：約1, 7, 13, 19層目が残る</li>
+<li>1層目は必ず残す</li>
+</ul>
+<h3 id="skip_layers-コンテキストマネージャ"><code>skip_layers</code> コンテキストマネージャ</h3>
+<pre><code class="language-python"><span class="hljs-meta">@contextmanager</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">skip_layers</span>(<span class="hljs-params">model, c</span>):
+    dec = model.model.decoder
+    orig_layers = dec.layers
+    keep = [i <span class="hljs-keyword">for</span> i, g <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(uniform_pattern(...)) <span class="hljs-keyword">if</span> g]
+    ...
+    dec.layers = torch.nn.ModuleList([orig_layers[i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> keep])
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">yield</span>
+    <span class="hljs-keyword">finally</span>:
+        dec.layers = orig_layers  <span class="hljs-comment"># 必ず元に戻す</span>
+</code></pre>
+<p><strong>この実装の核心部分です。</strong> Python の <code>contextmanager</code> を使い、<code>with</code> ブロックの間だけモデルの層を差し替えます。</p>
+<p><strong>工夫点</strong>：層を抜くだけだと Attention が「自分は何層目か」を表す <code>layer_idx</code> の番号がずれ、計算が壊れます。そこで、残した層に <code>0, 1, 2...</code> と新しく番号を振り直しています。<code>finally</code> で必ず元に戻す設計により、安全に層を差し替えられます。</p>
+<h3 id="生成とrouge-l評価">生成とROUGE-L評価</h3>
+<h4 id="generate_all-関数"><code>generate_all</code> 関数</h4>
+<pre><code class="language-python"><span class="hljs-meta">@torch.no_grad()</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_all</span>(<span class="hljs-params">c, tag=<span class="hljs-string">&quot;&quot;</span>, m=<span class="hljs-literal">None</span>, prep=<span class="hljs-literal">None</span></span>):
+    path = <span class="hljs-string">f&quot;<span class="hljs-subst">{CFG[<span class="hljs-string">&#x27;out_dir&#x27;</span>]}</span>/gens<span class="hljs-subst">{tag}</span>_c<span class="hljs-subst">{c}</span>_n<span class="hljs-subst">{<span class="hljs-built_in">len</span>(prompts)}</span>.json&quot;</span>
+    <span class="hljs-keyword">if</span> os.path.exists(path):
+        <span class="hljs-keyword">return</span> json.load(<span class="hljs-built_in">open</span>(path))  <span class="hljs-comment"># キャッシュがあれば読み込み</span>
+    ...
+    <span class="hljs-keyword">with</span> skip_layers(base_for_skip(m), c):
+        <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> tqdm(...):  <span class="hljs-comment"># バッチ処理</span>
+            ...
+    json.dump(outs, <span class="hljs-built_in">open</span>(path, <span class="hljs-string">&quot;w&quot;</span>), ...)  <span class="hljs-comment"># キャッシュに保存</span>
+    <span class="hljs-keyword">return</span> outs
+</code></pre>
+<p><strong>生成結果をキャッシュする設計</strong>が重要です。一度生成した結果はJSONファイルに保存し、再実行時は読み込むだけにします。これにより、Colabのセッション切断後も再計算を避けられます。</p>
+<p>プロンプトを<strong>長さ順に並べる</strong>ことで、パディング（無駄な計算）を減らす工夫も入っています。</p>
+<h4 id="rouge_matrix-関数"><code>rouge_matrix</code> 関数</h4>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">rouge_matrix</span>(<span class="hljs-params">gens</span>):
+    <span class="hljs-keyword">return</span> np.array([[scorer.score(refs[i], gens[c][i])[<span class="hljs-string">&quot;rougeL&quot;</span>].fmeasure
+                      <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> costs]
+                     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(prompts))])
+</code></pre>
+<p>各（質問, 層数）の組み合わせでROUGE-Lスコアを計算し、<strong>500×4の行列 <code>R</code></strong> を作ります。<code>R[i, j]</code> は「質問iを層数jで処理したときのスコア」です。</p>
+<h3 id="オラクルの計算">オラクルの計算</h3>
+<h4 id="solve_oracle-関数"><code>solve_oracle</code> 関数</h4>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">solve_oracle</span>(<span class="hljs-params">R, costs, betas</span>):
+    n, k = R.shape
+    g = reduce(gcd, costs); u = [c // g <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> costs]
+    Wmax = n * <span class="hljs-built_in">max</span>(u)
+    prev = np.zeros(Wmax + <span class="hljs-number">1</span>)
+    choices = np.zeros((n, Wmax + <span class="hljs-number">1</span>), dtype=np.int8)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):
+        new = np.full(Wmax + <span class="hljs-number">1</span>, -np.inf); ch = np.zeros(Wmax + <span class="hljs-number">1</span>, dtype=np.int8)
+        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(k):
+            cand = np.full(Wmax + <span class="hljs-number">1</span>, -np.inf)
+            cand[u[j]:] = prev[:Wmax + <span class="hljs-number">1</span> - u[j]] + R[i, j]
+            ...
+        prev, choices[i] = new, ch
+    ...
+</code></pre>
+<p><strong>多選択ナップサック問題を動的計画法（DP）で解いています。</strong></p>
+<ul>
+<li>各質問に対して4つの層数（c=4,8,12,24）から1つを選ぶ</li>
+<li>全質問の平均コストが予算 β 以下</li>
+<li>平均ROUGE-Lを最大化</li>
+</ul>
+<p><strong>効率化の工夫</strong>：コストの最大公約数（g=4）で割って整数化し、計算量を削減しています。</p>
+<h4 id="analyze_oracle-関数"><code>analyze_oracle</code> 関数</h4>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">analyze_oracle</span>(<span class="hljs-params">R, label, plot=<span class="hljs-literal">True</span></span>):
+    ...
+    orc_score = np.array([R[idx_n, a].mean() <span class="hljs-keyword">for</span> a <span class="hljs-keyword">in</span> assigns])
+    shares = np.array([np.bincount(a, minlength=<span class="hljs-built_in">len</span>(costs)) / n <span class="hljs-keyword">for</span> a <span class="hljs-keyword">in</span> assigns])
+    ...
+</code></pre>
+<p>以下の4つを計算・比較します：</p>
+<ol>
+<li><strong>oracle</strong>：DPで最適化した配分</li>
+<li><strong>greedy oracle</strong>：各質問で予算内の最良を選ぶ（予算の融通なし）</li>
+<li><strong>random mix</strong>：同じ選択比率をランダムに配分</li>
+<li><strong>static</strong>：固定の層数で全質問を処理</li>
+</ol>
+<p>結果は2つのグラフで可視化されます：</p>
+<ul>
+<li><strong>左</strong>：予算 β に対する平均ROUGE-Lの曲線</li>
+<li><strong>右</strong>：オラクルが各層数を選んだ割合（%）</li>
+</ul>
+<h3 id="学習ルーター">学習ルーター</h3>
+<h4 id="特徴量抽出">特徴量抽出</h4>
+<pre><code class="language-python"><span class="hljs-meta">@torch.no_grad()</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">extract_features</span>():
+    ...
+    hs = model(**enc, output_hidden_states=<span class="hljs-literal">True</span>).hidden_states[FEAT_LAYER]
+    m = enc[<span class="hljs-string">&quot;attention_mask&quot;</span>].unsqueeze(-<span class="hljs-number">1</span>).to(hs.dtype)
+    pooled = ((hs * m).<span class="hljs-built_in">sum</span>(<span class="hljs-number">1</span>) / m.<span class="hljs-built_in">sum</span>(<span class="hljs-number">1</span>)).<span class="hljs-built_in">float</span>().cpu().numpy()
+    lens = enc[<span class="hljs-string">&quot;attention_mask&quot;</span>].<span class="hljs-built_in">sum</span>(<span class="hljs-number">1</span>).<span class="hljs-built_in">float</span>().cpu().numpy()
+    ...
+</code></pre>
+<p>プロンプトの特徴量として以下を使用します：</p>
+<ul>
+<li><strong>OPTの第12層の隠れ状態</strong>を attention mask で平均プーリング</li>
+<li><strong>プロンプトの長さ</strong>の対数</li>
+</ul>
+<h4 id="ridge回帰による予測">Ridge回帰による予測</h4>
+<pre><code class="language-python">Rhat = np.column_stack([
+    cross_val_predict(make_pipeline(StandardScaler(), Ridge(alpha=ALPHA)), X, R[:, j], cv=cv)
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(costs))])
+</code></pre>
+<p>5分割交差検証で、各層数のROUGE-Lを予測します。<code>StandardScaler</code> で特徴量を正規化し、<code>Ridge</code>（正則化付き線形回帰）で学習します。</p>
+<h4 id="ルーターの動作">ルーターの動作</h4>
+<pre><code class="language-python">ok = Rhat &gt;= (Rhat[:, [-<span class="hljs-number">1</span>]] - tau); ok[:, -<span class="hljs-number">1</span>] = <span class="hljs-literal">True</span>
+sel = ok.argmax(<span class="hljs-number">1</span>)
+</code></pre>
+<p>「予測スコアがフルモデル（c=24）より閾値 τ 以内に収まる最安の層数」を選びます。τを動かすことで、コストと精度のトレードオフ曲線を描きます。</p>
+<h3 id="lora微調整">LoRA微調整</h3>
+<h4 id="loraの設定">LoRAの設定</h4>
+<pre><code class="language-python">lora_cfg = LoraConfig(r=CFG[<span class="hljs-string">&quot;lora_r&quot;</span>], lora_alpha=<span class="hljs-number">2</span> * CFG[<span class="hljs-string">&quot;lora_r&quot;</span>],
+                      target_modules=[<span class="hljs-string">&quot;q_proj&quot;</span>, <span class="hljs-string">&quot;k_proj&quot;</span>, <span class="hljs-string">&quot;v_proj&quot;</span>, <span class="hljs-string">&quot;out_proj&quot;</span>, <span class="hljs-string">&quot;fc1&quot;</span>, <span class="hljs-string">&quot;fc2&quot;</span>])
+peft_model = get_peft_model(model, lora_cfg, adapter_name=<span class="hljs-string">f&quot;c<span class="hljs-subst">{costs[<span class="hljs-number">0</span>]}</span>&quot;</span>)
+<span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> costs[<span class="hljs-number">1</span>:]:
+    peft_model.add_adapter(<span class="hljs-string">f&quot;c<span class="hljs-subst">{c}</span>&quot;</span>, lora_cfg)
+</code></pre>
+<p><strong>各層数（c=4,8,12,24）ごとに別々のLoRAアダプタを用意します。</strong> これにより、同じベースモデルに対して異なる層構成での学習パラメータを切り替えて使えます。</p>
+<h4 id="学習データの作成">学習データの作成</h4>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">make_example</span>(<span class="hljs-params">prompt, output</span>):
+    p = tok(prompt)[<span class="hljs-string">&quot;input_ids&quot;</span>]
+    o = tok(output, add_special_tokens=<span class="hljs-literal">False</span>)[<span class="hljs-string">&quot;input_ids&quot;</span>][:CFG[<span class="hljs-string">&quot;max_new_tokens&quot;</span>] - <span class="hljs-number">1</span>] + [tok.eos_token_id]
+    <span class="hljs-keyword">return</span> p + o, [-<span class="hljs-number">100</span>] * <span class="hljs-built_in">len</span>(p) + o
+</code></pre>
+<p><strong>損失計算からプロンプト部分を除外</strong>するため、プロンプト部分のラベルを <code>-100</code>（無視）に設定します。これにより、モデルは「応答部分の生成」のみを学習します。</p>
+<h4 id="train_adapter-関数"><code>train_adapter</code> 関数</h4>
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">train_adapter</span>(<span class="hljs-params">c</span>):
+    ...
+    <span class="hljs-keyword">with</span> skip_layers(base, c):  <span class="hljs-comment"># スキップ状態のまま学習</span>
+        <span class="hljs-keyword">for</span> ep <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(CFG[<span class="hljs-string">&quot;ft_epochs&quot;</span>]):
+            ...
+            <span class="hljs-keyword">with</span> torch.autocast(<span class="hljs-string">&quot;cuda&quot;</span>, dtype=torch.float16):
+                loss = peft_model(...).loss / accum
+            scaler.scale(loss).backward()
+            ...
+</code></pre>
+<p><strong>層を削った状態のまま学習する</strong>のが重要です。<code>skip_layers</code> コンテキストマネージャの中で勾配計算を行い、削った構成に適応したパラメータを学習します。</p>
+<p>学習の工夫：</p>
+<ul>
+<li><code>GradScaler</code> + <code>autocast(&quot;cuda&quot;, float16)</code>：fp16混合精度でメモリを節約</li>
+<li>勾配累積（<code>accum=2</code>）：小さいバッチサイズでも実効的に大きなバッチを模擬</li>
+<li>アダプタのキャッシュ：学習済みパラメータを <code>lora_c{c}_n{2000}_e{1}.pt</code> に保存</li>
+</ul>
+<h2 id="実験結果">実験結果</h2>
+<p>実験結果について説明していきます。</p>
+<h3 id="実験結果の全体像">実験結果の全体像</h3>
+<p>実験は<strong>Part A（微調整なし）</strong> と<strong>Part B（LoRA微調整あり）</strong> の2段階で行われました。</p>
+<p><strong>1. 微調整の効果：フルモデルの品質が大幅に改善</strong></p>
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>微調整前</th>
+<th>微調整後</th>
+<th>論文</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>フルモデルの ROUGE-L</strong></td>
+<td>0.232</td>
+<td><strong>0.312</strong></td>
+<td>0.342</td>
+</tr>
+<tr>
+<td><strong>フルに並ぶ最小コスト β</strong></td>
+<td>17.0層 (70.8%)</td>
+<td><strong>11.5層 (47.9%)</strong></td>
+<td>5.6層 (23.3%)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>解説</strong>：</p>
+<ul>
+<li>微調整により、フルモデルの品質が0.232→0.312と大幅に改善し、<strong>論文の0.342に近づきました</strong>。これは「基準となるモデルの品質は確保できた」と言えます。</li>
+<li>オラクルがフルモデルに並ぶための最小コストも、70.8%→47.9%と改善しました。</li>
+<li>しかし、<strong>論文の23.3%には届かず、約2倍のコストが必要</strong>でした。</li>
+</ul>
+<p>結果は以下の図のようになっています。
+調整の前後でROUGE-Lに改善が確認出来ました。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\dynamic_layer_selection\image.png" alt="alt text"></p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\dynamic_layer_selection\image\readme\1795306609942.png" alt="1795306609942"></p>
+<p><strong>2. オラクルの効果は「本物」：予算配分の効果が大きい</strong></p>
+<p>予算 β=8（平均8層まで使える）での比較：</p>
+<table>
+<thead>
+<tr>
+<th>手法</th>
+<th>ROUGE-L</th>
+<th>静的 c=8 との差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>静的 c=8</td>
+<td>0.182</td>
+<td>—</td>
+</tr>
+<tr>
+<td>greedy oracle</td>
+<td>0.184</td>
+<td>+0.002</td>
+</tr>
+<tr>
+<td>random mix</td>
+<td>0.143</td>
+<td>-0.039</td>
+</tr>
+<tr>
+<td><strong>oracle</strong></td>
+<td><strong>0.257</strong></td>
+<td><strong>+0.075（約4割増）</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>この結果から3つの重要なことが分かります</strong>。</p>
+<p><strong>① sampling advantage（ノイズの事後利用）は小さい</strong>
+greedy oracle（0.184）と静的 c=8（0.182）はほぼ同じです。つまり、「複数の出力からたまたま良いものを選んだだけ」では、オラクルの高性能を説明できません。</p>
+<p><strong>② 予算配分の効果は大きい</strong>
+oracle（0.257）は静的 c=8（0.182）を <strong>+0.075（約4割）上回りました</strong>。これは「簡単な質問には浅いモデル、難しい質問には深いモデル」と使い分けることの効果が実在することを示しています。</p>
+<p><strong>③ 混合そのものは損になる</strong>
+random mix（0.143）は静的 c=8（0.182）を下回りました。これは、深さと品質の関係が「上に凸」（c=4→8で大きく伸び、その先は伸びが鈍る）ため、無作為に混ぜると平均で損になることを意味します。この不利を払ってもoracleが上回っているので、<strong>「適材適所の配分」そのものが効いている</strong>と言えます。</p>
+<h3 id="3-再現できなかった点c4浅いモデルの選択比率">3. 再現できなかった点：c=4（浅いモデル）の選択比率</h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>論文</th>
+<th>今回</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>フルに並ぶ最小 β での c=4 選択率</strong></td>
+<td><strong>69.6%</strong></td>
+<td><strong>11.4%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>論文では「浅いモデル（c=4）を大部分使う」絵になっていましたが、今回はc=4がほとんど選ばれませんでした。</p>
+<p><strong>推測される原因</strong>：</p>
+<ul>
+<li>論文は<strong>フル微調整・全量（7,800件）・6エポック</strong></li>
+<li>今回は<strong>LoRA（軽量微調整）・2,000件・1エポック</strong></li>
+</ul>
+<p>深く削った構成（c=4）を立て直すには、学習の容量（LoRAのrank）も学習量（データ数・エポック数）も不十分だった可能性があります。c=4モデルの品質が回復しきれていないため、オラクルが「浅いモデルを選ぶ」判断をしなかったと推測されます。</p>
+<h3 id="4-学習ルーターの結果実用化への道のり">4. 学習ルーターの結果：実用化への道のり</h3>
+<p>プロンプトの情報だけから、どの深さが適切かを予測する「ルーター」の結果です。</p>
+<p><strong>予測と実測の相関</strong>（c=4, 8, 12, 24の順）：</p>
+<table>
+<thead>
+<tr>
+<th>深さ</th>
+<th>微調整前</th>
+<th>微調整後</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c=4</td>
+<td>0.311</td>
+<td>0.108</td>
+</tr>
+<tr>
+<td>c=8</td>
+<td>0.140</td>
+<td><strong>0.342</strong></td>
+</tr>
+<tr>
+<td>c=12</td>
+<td>0.179</td>
+<td><strong>0.391</strong></td>
+</tr>
+<tr>
+<td>c=24</td>
+<td>0.363</td>
+<td>0.340</td>
+</tr>
+</tbody>
+</table>
+<p>c=8とc=12は改善しましたが、c=4は低下しました。</p>
+<p><strong>重要なポイント</strong>：ルーターに効くのは「各モデルの絶対的な品質」ではなく、「<strong>モデル間の差</strong>」（例：c=24とc=8の差）です。水準の予測が当たっても、差の予測が当たらないことは十分ありえます。</p>
+<p>実用化の見込みは、<strong>ルーターとrandom mixの曲線の差</strong>で判断する必要があります。この差が大きければ、「プロンプトの情報だけで難易度を判別し、適切な深さを選べる」可能性があります。</p>
+<p><img src="file:///d:\PycharmProjects\LLM-research\LLM-fundamental-study\selective_layer\dynamic_layer_selection\image\readme\1795306687344.png" alt="1795306687344"></p>
+<h2 id="結果のまとめ">結果のまとめ</h2>
+<h3 id="再現できたこと">再現できたこと</h3>
+<ol>
+<li><strong>オラクルと静的モデルの差は大きく出た</strong>（β=8で+0.075）</li>
+<li><strong>greedyと静的はほぼ同じ</strong> → sampling advantageは小さく、配分効果が主因</li>
+<li><strong>random mixは静的を下回る</strong> → 「混ぜるだけ」ではなく、系列ごとの選択が重要</li>
+<li><strong>フルモデルの絶対値は論文水準に到達</strong>（0.312 vs 0.342）</li>
+</ol>
+<p><strong>結論</strong>：論文の「系列単位で深さを選べば得がある」という定性傾向は、縮小版でも確認できました。</p>
+<h3 id="再現できなかったこと">再現できなかったこと</h3>
+<ol>
+<li><strong>「層の23%でフルと同等」には届かなかった</strong>（47.9%まで）</li>
+<li><strong>c=4が選ばれなかった</strong>（11.4% vs 論文69.6%）</li>
+</ol>
+<p><strong>原因</strong>：再現条件の差（フル微調整 vs LoRA、全量 vs 2,000件、6エポック vs 1エポック）</p>
+<h3 id="この結果の限界">この結果の限界</h3>
+<ol>
+<li><strong>n=500・1シード・信頼区間なし</strong>：細かい差（0.182 vs 0.184など）は誤差の範囲</li>
+<li><strong>オラクルは出力のノイズも事後的に利用</strong>：greedyとの比較で小さいと分かりましたが、完全には排除されていません</li>
+<li><strong>プロンプトの扱いが簡易版</strong>：論文はプロンプトをフル層で処理し、生成トークンだけ層を飛ばしますが、今回は全体を層削除モデルで処理しています</li>
+<li><strong>ルーターのコスト未計上</strong>：プロンプト1回分の前向き計算がかかります</li>
+</ol>
+<h2 id="実験まとめ">実験まとめ</h2>
+<p>「質問ごとに計算の深さを使い分けると、同じ計算量でかなり良い結果が出せる」という論文の核心は再現できた。ただし、「24層中5.6層でフルと同等」という絶対値は、LoRA・縮小データ・短い学習では達成できなかった。浅いモデルの品質を立て直すことが、効率化の鍵である。</p>
+
+            
+            
+        </body>
+        </html>
